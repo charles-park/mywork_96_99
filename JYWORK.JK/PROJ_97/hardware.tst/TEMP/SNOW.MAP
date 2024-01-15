@@ -1,0 +1,720 @@
+################################################################################
+#                                                                              #
+#      Micro Series Universal Linker V4.46M/DXT        09/Dec/96  09:18:16     #
+#                                                                              #
+#           Target CPU    =  8051                                              #
+#           List file     =  snow.map                                          #
+#           Output file 1 =  snow.hex                                          #
+#           Output format =  intel-standard                                    #
+#           Command line  =  -f SNOW (-c8051 -D_R=0                            #
+#                            -Z(CODE)INTVEC,RCODE,D_CDATA,I_CDATA,X_CDATA,     #
+#                            C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST=0           #
+#                                                                              #
+#                            -Z(XDATA)C_ARGX,X_UDATA,X_IDATA,ECSTR,RF_XDATA,   #
+#                            XSTACK=0                                          #
+#                            -Z(DATA)C_ARGD,D_UDATA,D_IDATA=22                 #
+#                            -Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK            #
+#                            -Z(BIT)C_ARGB,BITVARS=0                           #
+#                            -e_medium_write=_formatted_write                  #
+#                            -e_medium_read=_formatted_read cl8051m SNOW -o    #
+#                            SNOW.HEX -x -l SNOW.MAP -Fintel-standard)         #
+#                                                                              #
+#                                               (c) Copyright IAR Systems 1994 #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+       Program entry at : 0000  Relocatable, from module : CSTARTUP
+
+
+
+                ****************************************
+                *                                      *
+                *             MODULE MAP               *
+                *                                      *
+                ****************************************
+
+  DEFINED ABSOLUTE ENTRIES
+  PROGRAM MODULE, NAME : ?ABS_ENTRY_MOD
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           _R                      0000            CSTARTUP
+
+
+  SEGMENTS IN THE MODULE
+  ======================
+C_ARGI
+  Relative segment, address : 0022 - 004B
+
+    *************************************************************************
+
+  FILE NAME : c:\dos\cci_hdsl\lib\cl8051m.r03
+  PROGRAM MODULE, NAME : CSTARTUP
+
+  SEGMENTS IN THE MODULE
+  ======================
+CSTACK
+  Relative segment, address : 004C - 0069
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 0002
+    -------------------------------------------------------------------------
+RCODE
+  Relative segment, address : 0026 - 00D5
+    -------------------------------------------------------------------------
+D_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+ECSTR
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+CCSTR
+  Relative segment, address : Not in use    
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : exit
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 00D6 - 00D7
+           ENTRIES                ADDRESS          REF BY MODULE
+           exit                    00D6            Not referred to
+           ?C_EXIT                 00D6            CSTARTUP
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : frexp
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 0990 - 0A63
+           ENTRIES                ADDRESS          REF BY MODULE
+           frexp                   0990            sqrt
+               idata = 0022 ( 0004 , 0007 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : sqrt
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 0A64 - 0BE1
+           ENTRIES                ADDRESS          REF BY MODULE
+           sqrt                    0A64            snow
+               idata = 002D ( 000C , 0004 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?XOR_ASG_R567_A_DISP_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 00D8 - 00E1
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?XOR_ASG_R567_A_DISP_L00
+                                   00D8            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETDOWN_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 00E2 - 0104
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETDOWN_L00            00E4            ?XOR_ASG_R567_A_DISP_L00
+           ?SETDOWN2_L00           00E2            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_DISP_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0105 - 012B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_DISP_L00    0105            ?XOR_ASG_R567_A_DISP_L00
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SI_DIV_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 012C - 015B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SI_DIV_L00             0132            sqrt
+                                                   ?SI_MOD_L00
+           ?SI_DIV_R_L00           012C            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SI_MOD_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 015C - 0178
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SI_MOD_L00             0162            snow
+           ?SI_MOD_R_L00           015C            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?UI_DIV_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0179 - 01CB
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?UI_DIV_L00             017F            ?SI_DIV_L00
+           ?UI_DIV_R_L00           0179            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?L_SHL_L01
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01CC - 01E6
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?L_SHL_L01              01CC            sqrt
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?L_ADD_ASG_R0_R4567_L01
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01E7 - 0200
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?L_ADD_ASG_R0_R4567_L01
+                                   01E7            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_MUL_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0201 - 0320
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_MUL_L02              0213            frexp
+                                                   sqrt
+                                                   ?F_OPERATION_L02
+                                                   snow
+           ?F_MUL2_R0123_L02       0201            Not referred to
+           ?F_MUL2_R4567_L02       020B            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_ROUND_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0321 - 0382
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_ROUND_L02            0321            ?F_MUL_L02
+                                                   ?F_ADDSUB_L02
+           ?F_PACK_L02             033C            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+           ?F_UP_ROUND_L02         032C            ?F_DIV_L02
+           ?F_R_TEST_L02           032A            ?F_DIV_L02
+           ?F_ROUND_2_L02          0325            Not referred to
+           ?F_UNDERFLOW_L02        034F            ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?FLT_TO_LONG_L02
+           ?F_OVERFLOW_L02         0349            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?FLT_TO_LONG_L02
+           ?F_SHIFT_LEFT_L02       0355            ?F_MUL_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?LONG_TO_FLT_L02
+           ?F_SHIFT_LEFT_2_L02     0359            ?F_DIV_L02
+           ?F_SHIFT_RIGHT_L02      0364            ?F_ADDSUB_L02
+           ?F_SHIFT_RIGHT_2_L02    0363            ?FLT_TO_LONG_L02
+           ?F_0_SUB_L02            0375            ?FLT_TO_LONG_L02
+                                                   ?LONG_TO_FLT_L02
+           ?F_EXIT_L02             0345            ?FLT_TO_LONG_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_DIV_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0383 - 047B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_DIV_L02              038F            frexp
+                                                   sqrt
+                                                   ?F_OPERATION_L02
+                                                   snow
+           ?F_DIV_R_L02            0383            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_UNPACK_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 047C - 049E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_UNPACK_L02           047C            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_ADDSUB_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 049F - 05C6
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_SUB_L02              04AB            ?F_OPERATION_L02
+           ?F_SUB_R_L02            049F            Not referred to
+           ?F_ADD_L02              04CA            sqrt
+                                                   ?F_ADD_POST_L02
+                                                   ?F_OPERATION_L02
+                                                   snow
+           ?F_ADD2_R0123_L02       04B8            Not referred to
+           ?F_ADD2_R4567_L02       04C2            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?FLT_TO_LONG_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 05C7 - 0608
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?R4567_FLT_TO_LONG_L02
+                                   05C7            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LONG_TO_FLT_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0609 - 064F
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?R4567_LONG_TO_FLT_L02
+                                   0609            sqrt
+                                                   snow
+           ?R4567_ULONG_TO_FLT_L02
+                                   0614            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_CMP_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0650 - 069F
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_CMP_L02              0650            frexp
+                                                   sqrt
+                                                   snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_OPERATION_R1_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 06A0 - 06F3
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_ADD_ASG_R1_R4567_L02
+                                   06A0            Not referred to
+           ?F_SUB_ASG_R1_R4567_L02
+                                   06A5            Not referred to
+           ?F_MUL_ASG_R1_R4567_L02
+                                   06AA            sqrt
+           ?F_DIV_ASG_R1_R4567_L02
+                                   06AF            sqrt
+           ?F_NEG_ASG_R1_R4567_L02
+                                   06B4            Not referred to
+           ?F_ADD_POST_R1_R4567_L02
+                                   06B9            Not referred to
+           ?F_OPERATION_R1_L02     06BD            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_ADD_POST_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 06F4 - 06FD
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_ADD_POST_L02         06F4            ?F_OPERATION_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_OPERATION_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 06FE - 0790
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_OPERATION_L02        06FE            ?F_OPERATION_R1_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?VC_SWITCH_L05
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0791 - 07B9
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?A_V_SWITCH_L05         0791            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 07BA - 07E7
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_A_L17             07CC            Not referred to
+           ?LD_A_R123_L17          07BA            Not referred to
+           ?LD_A_R567_L17          07C4            Not referred to
+           ?LD_A_R123_DISP_L17     07BF            Not referred to
+           ?LD_A_R567_DISP_L17     07C9            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 07E8 - 0804
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_L17         07E8            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_AR5_R123_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0805 - 0835
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_DISP_L17    0805            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0836 - 0856
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_L17         0836            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_AR3_R567_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0857 - 0887
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_DISP_L17    0857            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_AR3_R567_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0888 - 08C1
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_A_L17            08A2            Not referred to
+           ?ST_A_R123_L17          0888            Not referred to
+           ?ST_A_R567_L17          0896            snow
+           ?ST_A_R123_DISP_L17     088F            Not referred to
+           ?ST_A_R567_DISP_L17     089D            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AR5_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 08C2 - 08CC
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_AR5_R123_L17        08C2            frexp
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AR3_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 08CD - 08D7
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_AR3_R567_L17        08CD            frexp
+                                                   snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AR3_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 08D8 - 08E2
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_AR3_R567_DISP_L17   08D8            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AA_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 08E3 - 0918
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_AA_L17           08E3            ?STORE_AR5_R123_L17
+                                                   ?STORE_AR3_R567_L17
+                                                   ?STORE_AR3_R567_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?VERSION_L17
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           ?CL8051M_5_12_L17       C893            frexp
+                                                   sqrt
+                                                   snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STO_R4567_IR0_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0919 - 0924
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STO_R4567_IR0_L20      0919            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STO_R4567_IR1_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0925 - 0930
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STO_R4567_IR1_L20      0925            frexp
+                                                   sqrt
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R567_IR1_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0931 - 0939
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R567_IR1_L20        0931            frexp
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R123_IR1_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 093A - 0942
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R123_IR1_L20        093A            frexp
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R4567_IR0_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0943 - 094E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R4567_IR0_L20       0943            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R4567_IR1_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 094F - 095A
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R4567_IR1_L20       094F            frexp
+                                                   sqrt
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R0123_IR0_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 095B - 0966
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R0123_IR0_L20       095B            sqrt
+                                                   snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STO_R4567_DPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0967 - 0972
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STO_R4567_DPTR_L20     0967            snow
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R4567_XDPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0973 - 097E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R4567_XDPTR_L20     0973            snow
+
+    -------------------------------------------------------------------------
+    *************************************************************************
+
+  FILE NAME : snow.r03
+  PROGRAM MODULE, NAME : snow
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 0BE2 - 2014
+           ENTRIES                ADDRESS          REF BY MODULE
+           EX0_int                 0E33            Not referred to
+               interrupt function
+           EX1_int                 0CE3            Not referred to
+               interrupt function
+           Init                    1EDB            Not referred to
+           Led_init                1072            Not referred to
+               idata = 0022 ( 0002 , 0000 )
+           SCON_int                0F32            Not referred to
+               interrupt function
+           Serial_init             0BE2            Not referred to
+               idata = 0022 ( 0002 , 0009 )
+           id_jumper_check         1E8D            Not referred to
+               idata = 0022 ( 0003 , 0000 )
+           led_temp_protocol_check
+                                   1C51            Not referred to
+               idata = 0028 ( 0013 , 0000 )
+           main                    1F5D            CSTARTUP
+           mpm_protocol_check      1422            Not referred to
+               idata = 002C ( 000D , 0000 )
+           point                   1279            Not referred to
+               idata = 0022 ( 0000 , 0006 )
+           send_mpm                1347            Not referred to
+               idata = 0028 ( 0001 , 0003 )
+           sensor_protocol_check   16FC            Not referred to
+               idata = 003D ( 000F , 0000 )
+           sensor_struct_init      13C7            Not referred to
+               idata = 0022 ( 0000 , 0006 )
+           tx_send                 12BC            Not referred to
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 0025
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : 0000 - 02C8
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : 02C9 - 02D9
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : 097F - 098F
+
+                ****************************************
+                *                                      *
+                *        SEGMENTS IN DUMP ORDER        *
+                *                                      *
+                ****************************************
+
+ SEGMENT               START ADDRESS    END ADDRESS  TYPE  ORG  P/N  ALIGN
+ =======               =============    ===========  ====  ===  ===  =====
+C_ARGB                          Not in use            dse  stc  pos   0     
+BITVARS                         Not in use            dse  flt  pos   0     
+INTVEC                      0000     -     0025       com  stc  pos   0     
+RCODE                       0026     -     097E       rel  flt  pos   0     
+D_CDATA                         Not in use            rel  flt  pos   0     
+I_CDATA                         Not in use            rel  flt  pos   0     
+X_CDATA                     097F     -     098F       rel  flt  pos   0     
+C_ICALL                         Not in use            dse  flt  pos   0     
+C_RECFN                         Not in use            dse  flt  pos   0     
+CSTR                            Not in use            dse  flt  pos   0     
+CCSTR                           Not in use            rel  flt  pos   0     
+CODE                        0990     -     2014       rel  flt  pos   0     
+CONST                           Not in use            dse  flt  pos   0     
+C_ARGX                          Not in use            dse  stc  pos   0     
+X_UDATA                     0000     -     02C8       rel  flt  pos   0     
+X_IDATA                     02C9     -     02D9       rel  flt  pos   0     
+ECSTR                           Not in use            rel  flt  pos   0     
+RF_XDATA                        Not in use            dse  flt  pos   0     
+XSTACK                          Not in use            dse  flt  pos   0     
+C_ARGD                          Not in use            dse  stc  pos   0     
+D_UDATA                         Not in use            rel  flt  pos   0     
+D_IDATA                         Not in use            rel  flt  pos   0     
+C_ARGI                      0022     -     004B       rel  flt  pos   0     
+I_UDATA                         Not in use            rel  flt  pos   0     
+I_IDATA                         Not in use            rel  flt  pos   0     
+CSTACK                      004C     -     0069       rel  flt  pos   0     
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+Errors: none
+Warnings: none
+

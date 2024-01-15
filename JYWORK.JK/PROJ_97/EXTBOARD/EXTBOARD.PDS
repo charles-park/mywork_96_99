@@ -1,0 +1,39 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    EXTEND COMMUNICATION BOARD
+PATTERN
+REVISION 1.0
+AUTHOR   MR. PARK
+COMPANY  JINYANG INDUSTRIAL CO.,
+DATE     97/02/18
+
+CHIP  EXT  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          HZO                  COMBINATORIAL ; INPUT
+PIN  2          DIN                  COMBINATORIAL ; INPUT
+PIN  3          HZIN                 COMBINATORIAL ; INPUT(LABLE : HZ-IN)
+PIN  4          TX                   COMBINATORIAL ; INPUT
+PIN  10         GND                  ; INPUT
+PIN  12         HZI                  COMBINATORIAL ; OUTPUT
+PIN  13         DOUT                 COMBINATORIAL ; OUTPUT
+PIN  14         HZOUT                COMBINATORIAL ; OUTPUT(LABLE : HZ-OUT)
+PIN  15         RX                   COMBINATORIAL ; OUTPUT
+PIN  16         RXLED                COMBINATORIAL ; OUTPUT
+PIN  17         TXLED                COMBINATORIAL ; OUTPUT
+PIN  18         HZLED                COMBINATORIAL ; OUTPUT
+PIN  20         VCC                  ; INPUT
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+HZI    = HZIN                        ; INPUT 4 HZ(LABLE : HZ-IN)
+DOUT   = /TX                         ; OUTPUT TXD(-> LOGGER RXD)
+HZOUT  = HZO                         ; OUTPUT 4 HZ(LABLE : HZ-OUT)
+RX     = DIN                         ; INPUT RXD( <- LOGGER TXD)
+RXLED  = /TX                         ; RECEIVE LED
+TXLED  = DIN                         ; TRANSIVE LED
+HZLED  = (HZIN * HZO)+(/HZIN * /HZO) ; 4 HZ LED
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

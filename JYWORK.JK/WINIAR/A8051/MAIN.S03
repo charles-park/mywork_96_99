@@ -1,0 +1,14 @@
+        NAME    main
+
+        EXTERN  rightshift
+
+        RSEG    CODE
+main    MOV     A,start
+        MOV     B,#4    
+        LCALL   rightshift
+        RET
+
+        RSEG    DATA
+start   DB      11
+
+        END     main

@@ -1,0 +1,207 @@
+
+
+			OMFCONV V1.0
+			------------
+
+This tool will convert Intels format OMF for 8051 files to files containing
+UBROF format that is linkable with IARs linker XLINK version 4.36 and above.
+The converter will convert everything in the OMF format with the exception of 
+line numbers, function-block and block information with their information of 
+function- and block-locals. In effect this limits the level of debug to assembler with public symbols.
+
+
+			CONVERTER
+			---------
+
+The usage is:
+
+	OMFCONV OMF-file UBROF-file {list-file}
+
+At usage the converter lists, either on the screen or in the list-file, the 
+modules it converts and its segments (relocatable as well as absolute ones). 
+
+The assembler type of relocatable segment info will look like:
+
+	Segment 'name' of type 'type' alignment 'align'
+
+The PL/M-51 type of relocatable segment info will look like:
+
+	Segment 'name' of type 'type' alignment 'align' mapped to 'name2'
+
+
+	name :== is OMF type of segment name
+
+	type :== CODE, 
+		 XDATA, 
+		 DATA, 
+		 IDATA, 
+		 BIT or 
+		 unknown (will be of UNTYPED memory type to XLINK)
+
+	align :== UNIT (allocate anywhere), 
+		  BITADRESS (allocate in bit memory at start of byte unit), 
+	   	  INPAGE (allocate in a 256 byte block), 
+		  INBLOCK (allocate in a 2048 byte block), 
+		  PAGE (allocate at the start of a 256 byte block) or 
+		  unknown (will be of UNIT alignment to XLINK)
+
+	name2 :== PLM_CODE (here is the code), 
+		  PLM_CONST (and here is the constants), 
+		  PLM_XDATA (the auxiliary memory), 
+		  PLM_BIT (bit variables comes here), 
+		  PLM_DATA (here comes the variables normally), 
+		  PLM_IDATA (idata variables), 
+	 	  PLM_BITDATA (bitaddressable data memory), 
+		  PLM_DATA_OV (locals and parameters comes here normally), 
+		  PLM_IDATA_OV (idata locals and parameters), 
+		  PLM_BIT_OV (bit locals and parameters) or 
+		  PLM_BITDATA_OV (locals in bitaddressable data memory)
+
+The converter will map PL/M-51 type of segments to a 'name2' segment 
+
+
+			LINKING
+			-------	
+
+The linker XLINK will overlay the PL/M-51 overlayable segments, but there is 
+no way to tell the linker that a module calls another module indirectly. To over-
+come this one must do a dummy call from the calling module to the called module.
+
+Remember, that if you convert a PL/M-51 or Intel assembler system, to convert 
+the libraries also and include them when linking with C.
+
+Make sure that there is only one startup routine and one reset vector to that
+routine.
+
+Use the LNKPLM.XCL linker control file when linking. 
+
+Actions to be taken for assembler type of segments:
+
+	Add the segment 'name' to the segment list with the segment 'type'
+	in the LNKPLM.XCL file. 
+
+Actions to be taken for assembler and PL/M-51 type of segments:
+
+	If the alignment is INPAGE or INBLOCK you must yourself see to that
+	the segment part is contained in a 256 or 2048 byte block of memory.
+	DO it with the following command for INPAGE segments:
+
+		-Z('type')'name','name',...=0-FF,100-1FF,200-2FF,...
+
+	and for INBLOCK segments:
+
+		-Z('type')'name','name',...=0-7FF,800-FFF,1000-17FF,...
+
+	If the alignment is PAGE you must put the segment to start at a 256
+	byte block. Do it with the following command in the LNKPLM.XCL file:
+	
+		-Z('type')'name'=256byteblock
+
+
+
+			C Compiler
+			----------
+
+Note that the PL/M-51 system only uses upper-case characters in symbols, 
+therfore define/declare all your C symbols that you want to use in/get from 
+PL/M-51 in uppercase characters.
+
+To be able to call PL/M-51 routines or let PLM call C functions there is a 
+keyword 'plm' in ICC8051. You must either use the -e option or set 
+
+	#pragma language=extended
+
+in your source.
+
+Example:
+
+	extern plm int F1(data char parm);	/* A PLM routine */
+
+	plm void F2(data char parm)		/* A PLM callable function */
+	  {
+	  }
+
+An option to define/declare is to use the function pragma:
+
+	#pragma function=plm
+
+		def/decl1
+		def/decl2
+		...
+		def/decln
+
+	#pragma function=default
+
+Note that PL/M-51 functions must be prototyped. I.e. the following examples
+are wrong:
+
+	int plm F();		/* void parameter missing */
+
+	int plm F(i);		/* Old-style not allowed */
+	int i;
+	  {
+	  }
+
+Memory attribute (storage) for PL/M-51 function arguments is "data" but can
+be overrided. Note that the PL/M-51 only stores parameters in "data" or "bit" 
+storage.
+
+The usable function return values and function parameters for plm functions 
+are void, char, short and int that will be mapped to PL/M-51 none, byte, word 
+and word.
+
+Static and global variables with the following types will be matched:
+	char 		      - byte
+	short 		      - word
+	int 		      - word
+	array of the above    - array of the above
+	struct with the above - struct with the above
+These types will not automatically be matched from C to PL/M-51:
+	pointer
+	long
+	float
+	double
+	long double
+
+To map C pointers to PL/M-51 pointers and vice-versa use the macros in the
+include file PLM.H. 
+
+	PLM_to_C_p(mem,adr)	will convert a PL/M-51 two or one byte pointer
+				to the C three-byte pointer
+
+	C_to_PLM_byte_p(p)	will convert a C three-byte pointer into a 
+				PLM one-byte pointer
+
+	C_to_PLM_word_p(p)	will convert a C three-byte pointer into a 
+				PLM two-byte pointer
+
+	C_to_PLM_memory(p)	will get the memory type from a C three-byte 
+				pointer
+
+You can also map the C three-byte pointer to the following PL/M-51 structure:
+
+	declare pointer structure (memory_type byte, adress word);
+
+And to use the pointer do:
+
+	declare idata_p based pointer.adress byte idata;
+	declare xdata_p based pointer.adress byte auxiliary;
+	declare const_p based pointer.adress byte constant;
+
+	do case pointer.memory_type;
+	byte = idata_p;
+	byte = xdata_p;
+	byte = constant;
+	end;
+
+
+
+Note: On the distribution there is an example system with the following
+files:
+	C00.C
+	C01.C
+	C02.C
+	C03.C
+	P01.P
+	P02.P
+	

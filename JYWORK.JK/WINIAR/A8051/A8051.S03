@@ -1,0 +1,37 @@
+        name    VERIFY
+        titl    '          A8051 Relocating Macro Assembler by IAR Systems'
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                                                         ;
+;      Test program for the A8051 Assembler V2.00         ;
+;                                                         ;
+;      All instructions and operators are used.           ;
+;                                                         ;
+;      Note: This program is not to be processed by       ;
+;                                                         ;
+;      XLINK.                                             ;
+;                                                         ;
+;                #######################                  ;
+;                #    IAR Systems AB   #                  ;
+;                #    P.O. Box 23051   #                  ;
+;                #   S-750 23 Uppsala  #                  ;
+;                #       SWEDEN        #                  ;
+;                #######################                  ;
+;                                                         ;
+;              Phone: +46 18 157920                       ;
+;              Fax:   +46 18 133021                       ;
+;                                                         ;
+;      Written by: Anders Rundgren                        ;
+;                                                         ;
+; (c) Copyright IAR Systems 1983-1990			  ;
+;                                                         ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        pstitl  '          Operators etc...'
+$a8051opr
+        pstitl  '          All the 8051 instructions in op-code order'
+$a8051ins
+        pstitl  '          A sample macro'
+$a8051mac
+        endmod
+        module IAR_Systems___Software_that_works
+        nop
+        end

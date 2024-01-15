@@ -1,0 +1,17 @@
+        NAME    first
+
+        ORG     0
+main    MOV     R0,#0
+        MOV     R1,#0
+loop    INC     R1
+        MOV     A,R1
+        DA      A
+        MOV     R1,A
+        MOV     A,R0
+        ADDC    A,#0
+        DA      A
+        MOV     R0,A
+        JNC     loop
+        RET
+
+        END

@@ -1,0 +1,282 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12K/DXT                              12/Dec/96  10:55:39     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  small                                                                 #
+#           Source file   =  sample.c                                                              #
+#           List file     =  sample.lst                                                            #
+#           Object file   =  sample.r03                                                            #
+#           ASM file      =  sample.s03                                                            #
+#           Command line  =  -ms sample -L -q -a sample.s03 -s                                     #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+   \   0000                    NAME    sample(17)
+   \   0000                    RSEG    CODE(0)
+   \   0000                    RSEG    D_UDATA(0)
+   \   0000                    RSEG    BITVARS(0)
+   \   0000                    PUBLIC  delay
+   \   0000                    $DEFFN  delay(3,0,0,0,1,0,0,0),main,end_led,key_scan
+   \   0000                    PUBLIC  end_led
+   \   0000                    $DEFFN  end_led(1,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  initiliaze
+   \   0000                    $DEFFN  initiliaze(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  key_scan
+   \   0000                    $DEFFN  key_scan(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  main
+   \   0000                    $DEFFN  main(0,0,0,0,0,0,0,0)
+   \   0000                    EXTERN  ?CL8051S_5_12_L17
+   \   0000                    RSEG    CODE
+      1          #include "io51.h"
+      2          #include "sample.h"
+      3          
+      4          data static Led_Data;
+      5          data static Key_Data;
+      6          data static bit Key_Flag;
+      7          
+      8          void delay(data unsigned char Count)
+      9          {
+   \   0000            delay:
+     10              data unsigned int Comp;
+     11              data unsigned char i;
+     12          
+     13              for(i=0;i<Count;i++)
+   \   0000  750000            MOV     $LOCBD delay+2,#0
+   \   0003  8C00              MOV     $LOCBD delay+3,R4
+   \   0005            ?0001:
+   \   0005  E500              MOV     A,$LOCBD delay+2
+   \   0007  C3                CLR     C
+   \   0008  9500              SUBB    A,$LOCBD delay+3
+   \   000A  501A              JNC     ?0000
+   \   000C            ?0002:
+     14                  for(Count=0;Count<5000;Count++) ;
+   \   000C  750000            MOV     $LOCBD delay+3,#0
+   \   000F            ?0005:
+   \   000F  E500              MOV     A,$LOCBD delay+3
+   \   0011  7D00              MOV     R5,#0
+   \   0013  C3                CLR     C
+   \   0014  FC                MOV     R4,A
+   \   0015  9488              SUBB    A,#136
+   \   0017  ED                MOV     A,R5
+   \   0018  6480              XRL     A,#128
+   \   001A  9493              SUBB    A,#147
+   \   001C  5004              JNC     ?0004
+   \   001E            ?0006:
+   \   001E  0500              INC     $LOCBD delay+3
+     15          }
+   \   0020  80ED              SJMP    ?0005
+   \   0022            ?0004:
+   \   0022  0500              INC     $LOCBD delay+2
+   \   0024  80DF              SJMP    ?0001
+   \   0026            ?0000:
+   \   0026  22                RET
+     16          
+     17          void initiliaze(void)
+     18          {
+   \   0027            initiliaze:
+     19              Key_Data = 0;
+   \   0027  E4                CLR     A
+   \   0028  F503              MOV     Key_Data+1,A
+   \   002A  F502              MOV     Key_Data,A
+     20              Led_Data = 0;
+   \   002C  F501              MOV     Led_Data+1,A
+   \   002E  F500              MOV     Led_Data,A
+     21          
+     22              Key_Flag = Stop;       /* Key Input Flag, Stop_Key == Stop, Run_Key == Run */
+   \   0030  D200              SETB    Key_Flag
+     23          
+     24              P1 = ~Led_Data;     /* Led All Off Instruction */
+   \   0032  E501              MOV     A,Led_Data+1
+   \   0034  F4                CPL     A
+   \   0035  F590              MOV     P1,A
+     25          
+     26              Run_Led = Off;      /* Set & Stop Status */
+   \   0037  D2B0              SETB    P3.0
+     27              Stop_Led = On;
+   \   0039  C2B1              CLR     P3.1
+     28              Set_Led = On;
+   \   003B  C2B2              CLR     P3.2
+     29          }
+   \   003D  22                RET
+     30          
+     31          void key_scan(void)
+     32          {
+   \   003E            key_scan:
+   \   003E            ?0009:
+     33              while(Key_Flag)
+   \   003E  30003A            JNB     Key_Flag,?0008
+   \   0041            ?0010:
+     34              {
+     35                  if(Inc_Key == On)
+   \   0041  20B512            JB      P3.5,?0012
+   \   0044            ?0011:
+     36                  {
+     37                      Led_Data++;
+   \   0044  0501              INC     Led_Data+1
+   \   0046  E501              MOV     A,Led_Data+1
+   \   0048  7002              JNZ     $+4
+   \   004A  0500              INC     Led_Data
+     38                      P1=~Led_Data;
+   \   004C  F4                CPL     A
+   \   004D  F590              MOV     P1,A
+     39                      delay(1);
+   \   004F  7C01              MOV     R4,#1
+   \   0051  120000            LCALL   $REFFN delay
+   \   0054  8023              SJMP    ?0013
+   \   0056            ?0012:
+     40                  }
+     41                  else if(Dec_Key == On)
+   \   0056  20B714            JB      P3.7,?0015
+   \   0059            ?0014:
+     42                  {
+     43                      Led_Data--;
+   \   0059  E501              MOV     A,Led_Data+1
+   \   005B  1501              DEC     Led_Data+1
+   \   005D  7002              JNZ     $+4
+   \   005F  1500              DEC     Led_Data
+     44                      P1=~Led_Data;
+   \   0061  E501              MOV     A,Led_Data+1
+   \   0063  F4                CPL     A
+   \   0064  F590              MOV     P1,A
+     45                      delay(1);
+   \   0066  7C01              MOV     R4,#1
+   \   0068  120000            LCALL   $REFFN delay
+   \   006B  800C              SJMP    ?0016
+   \   006D            ?0015:
+     46                  }
+     47                  else if(Run_Key == On)
+   \   006D  20B309            JB      P3.3,?0018
+   \   0070            ?0017:
+     48                  {
+     49                      Set_Led = Off;
+   \   0070  D2B2              SETB    P3.2
+     50                      Stop_Led = Off;
+   \   0072  D2B1              SETB    P3.1
+     51                      Run_Led = On;
+   \   0074  C2B0              CLR     P3.0
+     52                      Key_Flag == Run;
+   \   0076  A200              MOV     C,Key_Flag
+   \   0078  B3                CPL     C
+   \   0079            ?0018:
+   \   0079            ?0016:
+   \   0079            ?0013:
+     53                  }
+     54              }
+     55          }
+   \   0079  80C3              SJMP    ?0009
+   \   007B            ?0008:
+   \   007B  22                RET
+     56          
+     57          void end_led(void)
+     58          {
+   \   007C            end_led:
+     59              data unsigned char i=0;
+   \   007C  750000            MOV     $LOCBD end_led,#0
+     60          
+     61              for(i=0 ; i<5 ; i++)
+   \   007F  750000            MOV     $LOCBD end_led,#0
+   \   0082            ?0020:
+   \   0082  E500              MOV     A,$LOCBD end_led
+   \   0084  C3                CLR     C
+   \   0085  9405              SUBB    A,#5
+   \   0087  5014              JNC     ?0019
+   \   0089            ?0021:
+     62              {
+     63                  P1 = On;
+   \   0089  759000            MOV     P1,#0
+     64                  delay(2);
+   \   008C  7C02              MOV     R4,#2
+   \   008E  120000            LCALL   $REFFN delay
+     65                  P1 = ~On;
+   \   0091  7590FF            MOV     P1,#255
+     66                  delay(2);
+   \   0094  7C02              MOV     R4,#2
+   \   0096  120000            LCALL   $REFFN delay
+   \   0099  0500              INC     $LOCBD end_led
+     67              }
+     68          }
+   \   009B  80E5              SJMP    ?0020
+   \   009D            ?0019:
+   \   009D  22                RET
+     69          
+     70          void main(void)
+     71          {
+   \   009E            main:
+     72              initiliaze();
+   \   009E  120000            LCALL   $REFFN initiliaze
+   \   00A1            ?0024:
+     73              while(1)
+     74              {
+     75                  if(Key_Flag)
+   \   00A1  30000B            JNB     Key_Flag,?0027
+   \   00A4            ?0026:
+     76                  {
+     77                      initiliaze();       /* Stop & Set Mode Status */
+   \   00A4  120000            LCALL   $REFFN initiliaze
+     78                      end_led();
+   \   00A7  120000            LCALL   $REFFN end_led
+     79                      key_scan();
+   \   00AA  120000            LCALL   $REFFN key_scan
+     80                  }
+     81                  else
+   \   00AD  8028              SJMP    ?0028
+   \   00AF            ?0027:
+     82                  {
+     83                      if(Stop_Key == On)    Key_Flag = Stop;
+   \   00AF  20B404            JB      P3.4,?0030
+   \   00B2            ?0029:
+   \   00B2  D200              SETB    Key_Flag
+   \   00B4  800C              SJMP    ?0031
+   \   00B6            ?0030:
+     84                      else if(Led_Data == 0)   Key_Flag = Stop;
+   \   00B6  E501              MOV     A,Led_Data+1
+   \   00B8  4500              ORL     A,Led_Data
+   \   00BA  7004              JNZ     ?0033
+   \   00BC            ?0032:
+   \   00BC  D200              SETB    Key_Flag
+   \   00BE  8002              SJMP    ?0034
+   \   00C0            ?0033:
+     85                      else    Key_Flag = Run;
+   \   00C0  C200              CLR     Key_Flag
+   \   00C2            ?0034:
+   \   00C2            ?0031:
+     86                      
+     87                      P1 = ~Led_Data--;
+   \   00C2  AC01              MOV     R4,Led_Data+1
+   \   00C4  AD00              MOV     R5,Led_Data
+   \   00C6  E501              MOV     A,Led_Data+1
+   \   00C8  1501              DEC     Led_Data+1
+   \   00CA  7002              JNZ     $+4
+   \   00CC  1500              DEC     Led_Data
+   \   00CE  EC                MOV     A,R4
+   \   00CF  F4                CPL     A
+   \   00D0  F590              MOV     P1,A
+     88          
+     89                      delay(3);           /* Delay Time 3 * 5000 = 15000 , Loop Time */
+   \   00D2  7C03              MOV     R4,#3
+   \   00D4  120000            LCALL   $REFFN delay
+   \   00D7            ?0028:
+     90                  }
+     91              }
+     92          }
+   \   00D7  80C8              SJMP    ?0024
+   \   0000                    RSEG    D_UDATA
+   \   0000            Led_Data:
+   \   0002                    DS      2
+   \   0002            Key_Data:
+   \   0004                    DS      2
+   \   0000                    RSEG    BITVARS
+   \   0000            Key_Flag:
+   \   0001                    DS      1
+   \   0001                    END
+
+Errors: none
+Warnings: none
+Code size: 217
+Constant size: 0
+Static variable size: Data(4) Idata(0) Bit(1) Xdata(0)
+

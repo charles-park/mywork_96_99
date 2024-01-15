@@ -1,0 +1,91 @@
+STORIGE BOARD                                 Revised:   October 16, 1995
+1000                                          Revision: 
+Bill Of Materials              October   16, 1995     11:03:27     Page    1
+
+ Item  Quantity  Reference                 Part         
+_____________________________________________________
+
+    1       1    AR1                       ARRAYR       
+
+    2       1    BT1                       3V           
+
+    3      13    C1,C2,C3,C4,C5,C6,C7,C8,  104          
+                 C9,C10,C11,C12,C13
+
+    4       1    C8                        1000UF       
+
+    5       2    C14,C15                   30P          
+
+    6       1    C16                       47P          
+
+    7       1    C17                       100UF        
+
+    8       7    C19,C20,C21,C22,C23,C24,  10UF         
+                 C25
+
+    9       1    C24                       1OUF         
+
+   10       1    D1                        KBL202       
+
+   11       2    D2,D3                     1N4148       
+
+   12       1    JP1                       HEADER 2X2   
+
+   13       1    JP2                       HEADER 10    
+
+   14       3    JP3,JP4,JP8               HEADER 5     
+
+   15       1    JP5                       POWER        
+
+   16       1    JP6                       HEADER 4X2   
+
+   17       1    JP7                       HEADER 20X2  
+
+   18       1    R1                        4.7M         
+
+   19       3    R2,R4,R9                  100          
+
+   20       1    R3                        100K         
+
+   21       4    R4,R5,R6,R12              10K          
+
+   22       2    R7,R8                     1K           
+
+   23       1    R13                       200          
+
+   24       2    U1,U13                    MAX232       
+
+   25       1    U2                        LCD          
+
+   26       1    U3                        74HC573      
+STORIGE BOARD                                 Revised:   October 16, 1995
+1000                                          Revision: 
+Bill Of Materials              October   16, 1995     11:03:27     Page    2
+
+ Item  Quantity  Reference                 Part         
+_____________________________________________________
+
+   27       1    U4                        27C256       
+
+   28       1    U5                        80C31/2      
+
+   29       1    U7                        LM7805       
+
+   30       2    U8,U9                     75176        
+
+   31       1    U8                        16V8         
+
+   32       1    U10                       146818       
+
+   33       1    U11                       62256        
+
+   34       1    U12                       MAX1232      
+
+   35       1    U14                       8250         
+
+   36       1    X1                        1.8432MZ     
+
+   37       1    X2                        11.0592MZ    
+
+   38       1    Y1                        4.194MHZ     
+

@@ -1,0 +1,1256 @@
+################################################################################
+#                                                                              #
+#      IAR Universal Linker V4.48F/386                                         #
+#                                                                              #
+#           Link time     =  08/Dec/98  10:29:12                               #
+#           Target CPU    =  8051                                              #
+#           List file     =  ews_5ea.map                                       #
+#           Output file 1 =  ews_5ea.hex                                       #
+#           Output format =  intel-standard                                    #
+#           Command line  =  -f EWS_5EA (-c8051 -D_R=0                         #
+#                            -Z(CODE)INTVEC,RCODE,D_CDATA,I_CDATA,X_CDATA,     #
+#                            C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST=0           #
+#                            -Z(XDATA)C_ARGX,X_UDATA,X_IDATA,ECSTR,RF_XDATA=0  #
+#                            -Z(DATA)C_ARGD,D_UDATA,D_IDATA=28                 #
+#                            -Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK            #
+#                            -Z(BIT)C_ARGB,BITVARS=0                           #
+#                            -e_medium_write=_formatted_write                  #
+#                            -e_medium_read=_formatted_read cl8051l EWS_5EA    #
+#                            -o EWS_5EA.hex -x -l EWS_5EA.map -Fintel-standard #
+#                            )                                                 #
+#                                                                              #
+#                                               (c) Copyright IAR Systems 1996 #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+       Program entry at : 0000  Relocatable, from module : CSTARTUP
+
+
+
+                ****************************************
+                *                                      *
+                *             MODULE MAP               *
+                *                                      *
+                ****************************************
+
+  DEFINED ABSOLUTE ENTRIES
+  PROGRAM MODULE, NAME : ?ABS_ENTRY_MOD
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           _R                      0000            CSTARTUP
+
+
+  SEGMENTS IN THE MODULE
+  ======================
+C_ICALL
+  Relative segment, address : 0EBC - 0ECB
+    -------------------------------------------------------------------------
+C_ARGX
+  Relative segment, address : 0000 - 0073
+    -------------------------------------------------------------------------
+C_ARGD
+  Relative segment, address : 0028 - 002B
+
+    *************************************************************************
+
+  FILE NAME : d:\lang\cci_hdsl\lib\cl8051l.r03
+  PROGRAM MODULE, NAME : CSTARTUP
+
+  SEGMENTS IN THE MODULE
+  ======================
+CSTACK
+  Relative segment, address : 002C - 0049
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 0002
+    -------------------------------------------------------------------------
+RCODE
+  Relative segment, address : 002E - 00DD
+    -------------------------------------------------------------------------
+D_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+ECSTR
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+CCSTR
+  Relative segment, address : Not in use    
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : exit
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 00DE - 00DF
+           ENTRIES                ADDRESS          REF BY MODULE
+           exit                    00DE            Not referred to
+           ?C_EXIT                 00DE            CSTARTUP
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : atan
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 0ECC - 0EF6
+           ENTRIES                ADDRESS          REF BY MODULE
+           atan                    0ECC            ews_5ea
+               xdata = 0016 ( 0000 , 0004 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : cos
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 0EF7 - 0F21
+           ENTRIES                ADDRESS          REF BY MODULE
+           cos                     0EF7            ews_5ea
+               xdata = 0039 ( 0000 , 0004 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : _heap_of_memory
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+CONST
+  Relative segment, address : 37A0 - 37A5
+           ENTRIES                ADDRESS          REF BY MODULE
+           _heap_of_memory         37A0            malloc
+           _top_of_heap            37A3            malloc
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : 0074 - 0843
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : 0D1B - 0D1D
+           ENTRIES                ADDRESS          REF BY MODULE
+           _last_heap_object       0D1B            malloc
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : 0EB3 - 0EB5
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : malloc
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 0F22 - 10D0
+           ENTRIES                ADDRESS          REF BY MODULE
+           _make_new_mem_hole      0F22            Not referred to
+               xdata = 0051 ( 0003 , 0006 )
+           malloc                  0F86            ews_5ea
+               xdata = 005A ( 0009 , 0002 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : modf
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 10D1 - 113B
+           ENTRIES                ADDRESS          REF BY MODULE
+           modf                    10D1            _sinus
+               xdata = 0006 ( 0008 , 0007 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : _satan
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 113C - 128A
+           ENTRIES                ADDRESS          REF BY MODULE
+           _satan                  1210            atan
+               xdata = 0012 ( 0000 , 0004 )
+           STATIC DEFS LEFT
+           xatan
+               xdata = 0006 ( 0008 , 0004 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : sin
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 128B - 129B
+           ENTRIES                ADDRESS          REF BY MODULE
+           sin                     128B            ews_5ea
+               xdata = 0039 ( 0000 , 0004 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : _sinus
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 129C - 14AE
+           ENTRIES                ADDRESS          REF BY MODULE
+           _sinus                  129C            cos
+                                                   sin
+               xdata = 0015 ( 001E , 0006 )
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?I_MUL_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 00E0 - 00F4
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?I_MUL_L00              00E0            ?IMUL_ASG_L00
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SI_DIV_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 00F5 - 0124
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SI_DIV_L00             00FB            ?SI_MOD_L00
+                                                   ?IMUL_ASG_L00
+           ?SI_DIV_R_L00           00F5            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SI_MOD_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0125 - 0141
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SI_MOD_L00             012B            ?IMUL_ASG_L00
+           ?SI_MOD_R_L00           0125            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?UI_DIV_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0142 - 0194
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?UI_DIV_L00             0148            ?SI_DIV_L00
+                                                   ?UI_MOD_L00
+                                                   ?IMUL_ASG_L00
+           ?UI_DIV_R_L00           0142            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?UI_MOD_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0195 - 01A3
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?UI_MOD_L00             019B            ?IMUL_ASG_L00
+           ?UI_MOD_R_L00           0195            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?IADD_ASG_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01A4 - 01F0
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?IADD_ASG_L00           01A4            ?IADD_ASG_R123_AR5_L00
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?IADD_ASG_R123_AR5_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01F1 - 020F
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?IADD_ASG_R123_AR5_L00
+                                   01F1            ews_5ea
+           ?IADD_ASG_R123_AR5_DISP_L00
+                                   0200            Not referred to
+           ?IADD_ASG_R123_AR5_A_L00
+                                   01FB            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?IADD_POST_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0210 - 027A
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?IADD_POST_L00          0210            ?IADD_POST_R567_AR3_L00
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?IADD_POST_R567_AR3_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 027B - 0294
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?IADD_POST_R567_AR3_L00
+                                   027B            ews_5ea
+           ?IADD_POST_R567_AR3_DISP_L00
+                                   0285            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?IMUL_ASG_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0295 - 0341
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?IMUL_ASG_L00           0295            ?IMUL_ASG_R123_AR5_L00
+                                                   ?IMUL_ASG_R123_AR7_L00
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?IMUL_ASG_R123_AR5_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0342 - 03A6
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?IMUL_ASG_R123_AR5_L00
+                                   0342            Not referred to
+           ?SIDIV_ASG_R123_AR5_L00
+                                   0347            Not referred to
+           ?UIDIV_ASG_R123_AR5_L00
+                                   034C            Not referred to
+           ?SIMOD_ASG_R123_AR5_L00
+                                   0351            Not referred to
+           ?UIMOD_ASG_R123_AR5_L00
+                                   0356            ews_5ea
+           ?IMUL_ASG_R123_AR5_DISP_L00
+                                   036C            Not referred to
+           ?SIDIV_ASG_R123_AR5_DISP_L00
+                                   0371            Not referred to
+           ?UIDIV_ASG_R123_AR5_DISP_L00
+                                   0376            Not referred to
+           ?SIMOD_ASG_R123_AR5_DISP_L00
+                                   037B            Not referred to
+           ?UIMOD_ASG_R123_AR5_DISP_L00
+                                   0380            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?IMUL_ASG_R123_AR7_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 03A7 - 040B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?IMUL_ASG_R123_AR7_L00
+                                   03A7            Not referred to
+           ?SIDIV_ASG_R123_AR7_L00
+                                   03AC            Not referred to
+           ?UIDIV_ASG_R123_AR7_L00
+                                   03B1            Not referred to
+           ?SIMOD_ASG_R123_AR7_L00
+                                   03B6            Not referred to
+           ?UIMOD_ASG_R123_AR7_L00
+                                   03BB            ews_5ea
+           ?IMUL_ASG_R123_AR7_DISP_L00
+                                   03D1            Not referred to
+           ?SIDIV_ASG_R123_AR7_DISP_L00
+                                   03D6            Not referred to
+           ?UIDIV_ASG_R123_AR7_DISP_L00
+                                   03DB            Not referred to
+           ?SIMOD_ASG_R123_AR7_DISP_L00
+                                   03E0            Not referred to
+           ?UIMOD_ASG_R123_AR7_DISP_L00
+                                   03E5            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?L_ADD_L01
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 040C - 042D
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?L_ADD_L01              041E            ews_5ea
+           ?L_ADD2_R0123_L01       040C            Not referred to
+           ?L_ADD2_R4567_L01       0416            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_MUL_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 042E - 054D
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_MUL_L02              0440            _satan
+                                                   _sinus
+                                                   ?F_OPERATION_L02
+                                                   ews_5ea
+           ?F_MUL2_R0123_L02       042E            Not referred to
+           ?F_MUL2_R4567_L02       0438            _satan
+                                                   _sinus
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_ROUND_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 054E - 05AF
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_ROUND_L02            054E            ?F_MUL_L02
+                                                   ?F_ADDSUB_L02
+           ?F_PACK_L02             0569            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+           ?F_UP_ROUND_L02         0559            ?F_DIV_L02
+           ?F_R_TEST_L02           0557            ?F_DIV_L02
+           ?F_ROUND_2_L02          0552            Not referred to
+           ?F_UNDERFLOW_L02        057C            ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?FLT_TO_LONG_L02
+           ?F_OVERFLOW_L02         0576            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?FLT_TO_LONG_L02
+           ?F_SHIFT_LEFT_L02       0582            ?F_MUL_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?LONG_TO_FLT_L02
+           ?F_SHIFT_LEFT_2_L02     0586            ?F_DIV_L02
+           ?F_SHIFT_RIGHT_L02      0591            ?F_ADDSUB_L02
+           ?F_SHIFT_RIGHT_2_L02    0590            ?FLT_TO_LONG_L02
+           ?F_0_SUB_L02            05A2            ?FLT_TO_LONG_L02
+                                                   ?LONG_TO_FLT_L02
+           ?F_EXIT_L02             0572            ?FLT_TO_LONG_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_DIV_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 05B0 - 06A8
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_DIV_L02              05BC            ?F_OPERATION_L02
+                                                   ews_5ea
+           ?F_DIV_R_L02            05B0            _satan
+                                                   _sinus
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_UNPACK_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 06A9 - 06CB
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_UNPACK_L02           06A9            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_ADDSUB_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 06CC - 07F3
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_SUB_L02              06D8            ?F_OPERATION_L02
+           ?F_SUB_R_L02            06CC            _sinus
+                                                   ews_5ea
+           ?F_ADD_L02              06F7            modf
+                                                   _satan
+                                                   _sinus
+                                                   ?F_ADD_POST_L02
+                                                   ?F_OPERATION_L02
+                                                   ews_5ea
+           ?F_ADD2_R0123_L02       06E5            Not referred to
+           ?F_ADD2_R4567_L02       06EF            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?FLT_TO_LONG_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 07F4 - 0835
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?R4567_FLT_TO_LONG_L02
+                                   07F4            modf
+                                                   _sinus
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LONG_TO_FLT_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0836 - 087C
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?R4567_LONG_TO_FLT_L02
+                                   0836            modf
+                                                   _sinus
+           ?R4567_ULONG_TO_FLT_L02
+                                   0841            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LONG_TO_FLT_R_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 087D - 08D7
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?R0123_LONG_TO_FLT_L02
+                                   087D            Not referred to
+           ?R0123_ULONG_TO_FLT_L02
+                                   0892            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_CMP_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 08D8 - 0927
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_CMP_L02              08D8            modf
+                                                   _satan
+                                                   _sinus
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_OPERATION_DPTR_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0928 - 0981
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_ADD_ASG_DPTR_R4567_L02
+                                   0928            _sinus
+                                                   ews_5ea
+           ?F_SUB_ASG_DPTR_R4567_L02
+                                   092D            Not referred to
+           ?F_MUL_ASG_DPTR_R4567_L02
+                                   0932            Not referred to
+           ?F_DIV_ASG_DPTR_R4567_L02
+                                   0937            _satan
+           ?F_NEG_ASG_DPTR_R4567_L02
+                                   0942            modf
+                                                   _sinus
+           ?F_ADD_POST_DPTR_R4567_L02
+                                   093C            Not referred to
+           ?F_OPERATION_DPTR_L02   0945            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_ADD_POST_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0982 - 098B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_ADD_POST_L02         0982            ?F_OPERATION_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_OPERATION_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 098C - 0A1E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_OPERATION_L02        098C            ?F_OPERATION_DPTR_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SC_SWITCH_L05
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0A1F - 0A54
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?AR1_SC_SWITCH_L05      0A1F            Not referred to
+           ?AR3_SC_SWITCH_L05      0A24            Not referred to
+           ?AR5_SC_SWITCH_L05      0A29            ews_5ea
+           ?AR7_SC_SWITCH_L05      0A2E            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?C_SWITCH_L05
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0A55 - 0A8A
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?A_S_SWITCH_L05         0A55            Not referred to
+           ?C_SWITCH               0A65            ?SC_SWITCH_L05
+           ?C_SWITCH_D             0A81            ?SC_SWITCH_L05
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0A8B - 0AB8
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_A_L17             0A9D            Not referred to
+           ?LD_A_R123_L17          0A8B            Not referred to
+           ?LD_A_R567_L17          0A95            malloc
+                                                   ews_5ea
+           ?LD_A_R123_DISP_L17     0A90            ews_5ea
+           ?LD_A_R567_DISP_L17     0A9A            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_AR5_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0AB9 - 0ACA
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_AR5_R123_L17        0ABE            Not referred to
+           ?LD_AR5_R123_DISP_L17   0AB9            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_AR7_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0ACB - 0ADC
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_AR7_R123_L17        0AD0            Not referred to
+           ?LD_AR7_R123_DISP_L17   0ACB            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_AR1_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0ADD - 0AEE
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_AR1_R567_L17        0AE2            ews_5ea
+           ?LD_AR1_R567_DISP_L17   0ADD            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_AR3_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0AEF - 0B00
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_AR3_R567_L17        0AF4            ews_5ea
+           ?LD_AR3_R567_DISP_L17   0AEF            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_AB_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0B01 - 0B37
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_AB_L17            0B01            ?LOAD_AR5_R123_L17
+                                                   ?LOAD_AR7_R123_L17
+                                                   ?LOAD_AR1_R567_L17
+                                                   ?LOAD_AR3_R567_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_R567_R123_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0B38 - 0B3D
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R567_R123_DISP_L17
+                                   0B38            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_R123_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0B3E - 0B43
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R123_R567_DISP_L17
+                                   0B3E            malloc
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0B44 - 0B8B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_R123_L17          0B44            ?LOAD_R123_R567_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0B8C - 0BD7
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_R567_L17          0B8C            ?LOAD_R567_R123_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_R4567_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0BD8 - 0BDD
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R4567_R123_L17      0BD8            modf
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_R4567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0BDE - 0C3E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_R4567_L17         0BDE            ?LOAD_R4567_R123_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0C3F - 0C5B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_L17         0C3F            ?IADD_ASG_R123_AR5_L00
+                                                   ?LOAD_A_L17
+                                                   ?LOAD_AR5_R123_L17
+                                                   ?LOAD_AR7_R123_L17
+                                                   ?LOAD_R4567_R123_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_R4567_R123_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0C5C - 0C8C
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_DISP_L17    0C5C            ?IADD_ASG_R123_AR5_L00
+                                                   ?LOAD_A_L17
+                                                   ?LOAD_AR5_R123_L17
+                                                   ?LOAD_AR7_R123_L17
+                                                   ?LOAD_R567_R123_DISP_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_AR7_R123_DISP_L17
+                                                   ?STORE_R567_R123_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0C8D - 0CAD
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_L17         0C8D            ?IADD_POST_R567_AR3_L00
+                                                   ?IMUL_ASG_R123_AR5_L00
+                                                   ?IMUL_ASG_R123_AR7_L00
+                                                   ?LOAD_A_L17
+                                                   ?LOAD_AR1_R567_L17
+                                                   ?LOAD_AR3_R567_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_AR3_R567_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0CAE - 0CDE
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_DISP_L17    0CAE            ?IADD_POST_R567_AR3_L00
+                                                   ?IMUL_ASG_R123_AR5_L00
+                                                   ?IMUL_ASG_R123_AR7_L00
+                                                   ?LOAD_A_L17
+                                                   ?LOAD_AR1_R567_L17
+                                                   ?LOAD_AR3_R567_L17
+                                                   ?LOAD_R123_R567_DISP_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_AR3_R567_DISP_L17
+                                                   ?STORE_R123_R567_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0CDF - 0D18
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_A_L17            0CF9            Not referred to
+           ?ST_A_R123_L17          0CDF            malloc
+           ?ST_A_R567_L17          0CED            malloc
+                                                   ews_5ea
+           ?ST_A_R123_DISP_L17     0CE6            ews_5ea
+           ?ST_A_R567_DISP_L17     0CF4            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AR7_R123_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0D19 - 0D23
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_AR7_R123_DISP_L17   0D19            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AR3_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0D24 - 0D2E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_AR3_R567_L17        0D24            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AR3_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0D2F - 0D39
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_AR3_R567_DISP_L17   0D2F            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AA_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0D3A - 0D6F
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_AA_L17           0D3A            ?STORE_AR7_R123_DISP_L17
+                                                   ?STORE_AR3_R567_L17
+                                                   ?STORE_AR3_R567_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_R567_R123_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0D70 - 0D75
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_R567_R123_DISP_L17
+                                   0D70            malloc
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_R123_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0D76 - 0D7B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_R123_R567_DISP_L17
+                                   0D76            malloc
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0D7C - 0D9C
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_R123_L17         0D7C            ?STORE_R123_R567_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0D9D - 0DD7
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_R567_L17         0D9D            ?STORE_R567_R123_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_R4567_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0DD8 - 0DDD
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_R4567_R123_L17      0DD8            modf
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_R4567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0DDE - 0E2B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_R4567_L17        0DDE            ?STORE_R4567_R123_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?VERSION_L17
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           ?CL8051L_5_12_L17       C893            atan
+                                                   cos
+                                                   _heap_of_memory
+                                                   malloc
+                                                   modf
+                                                   _satan
+                                                   sin
+                                                   _sinus
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?PUSH_R4567_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E2C - 0E3D
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?PUSH_R4567_L20         0E2C            _satan
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?POP_R0123_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E3E - 0E4F
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?POP_R0123_L20          0E3E            _satan
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R567_CDPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E50 - 0E5B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R567_CDPTR_L20      0E50            malloc
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_IND_DPTR2_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E5C - 0E68
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_IND_DPTR2_L20     0E5C            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LCALL_IND_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E69 - 0E6A
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LCALL_IND_L20          0E69            ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STO_R567_DPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E6B - 0E73
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STO_R567_DPTR_L20      0E6B            malloc
+                                                   _sinus
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STO_R123_DPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E74 - 0E7C
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STO_R123_DPTR_L20      0E74            malloc
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STO_R4567_DPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E7D - 0E88
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STO_R4567_DPTR_L20     0E7D            atan
+                                                   cos
+                                                   modf
+                                                   _satan
+                                                   sin
+                                                   _sinus
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R567_XDPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E89 - 0E91
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R567_XDPTR_L20      0E89            malloc
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R123_XDPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E92 - 0E9A
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R123_XDPTR_L20      0E92            malloc
+                                                   modf
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R4567_XDPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0E9B - 0EA6
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R4567_XDPTR_L20     0E9B            modf
+                                                   _satan
+                                                   _sinus
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LD_R0123_XDPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0EA7 - 0EB2
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LD_R0123_XDPTR_L20     0EA7            modf
+                                                   _satan
+                                                   _sinus
+                                                   ews_5ea
+
+    -------------------------------------------------------------------------
+    *************************************************************************
+
+  FILE NAME : ews_5ea.r03
+  PROGRAM MODULE, NAME : ews_5ea
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 14AF - 379F
+           ENTRIES                ADDRESS          REF BY MODULE
+           SCON_int                35A7            Not referred to
+               interrupt function
+           T0_int                  2C72            Not referred to
+               interrupt function
+           T2_int                  3667            Not referred to
+               interrupt function
+           adc_read                163C            Not referred to
+               xdata = 000A ( 0004 , 0000 )
+           cal_means_read          2FDD            Not referred to
+               xdata = 0051 ( 0003 , 0000 )
+           data_move               349D            Not referred to
+               xdata = 0006 ( 0000 , 0001 )
+           data_pros               32FE            Not referred to
+               xdata = 0051 ( 0000 , 0002 )
+           delay                   3249            Not referred to
+               xdata = 0006 ( 0002 , 0002 )
+           init_serial_grp         206C            Not referred to
+               xdata = 0065 ( 0003 , 000C )
+           init_serial_pro         2359            Not referred to
+               xdata = 0065 ( 0000 , 0009 )
+           led16_pros              16C6            Not referred to
+               xdata = 0006 ( 0000 , 0002 )
+           led_data_send           33C1            Not referred to
+               xdata = 0051 ( 0004 , 0000 )
+           led_pros                3365            Not referred to
+           main                    372C            CSTARTUP
+               data = 0028 ( 0004 , 0000 )
+           maxmin_load             156B            Not referred to
+               xdata = 0051 ( 0002 , 0002 )
+           maxmin_save             14AF            Not referred to
+               xdata = 0006 ( 0000 , 0005 )
+           ok_send                 2BEF            Not referred to
+               xdata = 0007 ( 0002 , 0001 )
+           pros_struct_init1       3200            Not referred to
+           pros_struct_init2       3220            Not referred to
+               xdata = 0051 ( 0000 , 0003 )
+           protocol_event          251A            Not referred to
+               xdata = 0056 ( 0001 , 0004 )
+           protocol_q              2689            Not referred to
+               xdata = 0051 ( 0000 , 0005 )
+           receive_check           34D4            Not referred to
+           rtcc_date_time_set      2D45            Not referred to
+               xdata = 0051 ( 0000 , 0004 )
+           rtcc_init               2C73            Not referred to
+               xdata = 0055 ( 0001 , 0000 )
+           rtcc_read               2E68            Not referred to
+               xdata = 0000 ( 0006 , 0000 )
+           rx_catch                2A61            Not referred to
+               indirect function = 0EBC
+               xdata = 000A ( 0006 , 0003 )
+           rx_check                2845            Not referred to
+               indirect function = 0EC0
+               xdata = 0006 ( 0000 , 0003 )
+           save_data_check         2F85            Not referred to
+               xdata = 0055 ( 0001 , 0000 )
+           save_ram_init           2F02            Not referred to
+               xdata = 0051 ( 0001 , 0000 )
+           save_ram_load           2F5A            Not referred to
+           sensor_init             3293            Not referred to
+           set_protocol_flag       24DC            Not referred to
+               xdata = 0051 ( 0000 , 0005 )
+           struct_initiliaze       304B            Not referred to
+               xdata = 0051 ( 0000 , 0006 )
+           transmit_check          3539            Not referred to
+           variable_init           30B8            Not referred to
+           wind_direction_cal      1B67            Not referred to
+               indirect function = 0EC4
+               xdata = 003D ( 0013 , 0001 )
+           wind_speed_ms_cal       1E45            Not referred to
+               indirect function = 0EC8
+               xdata = 000B ( 000F , 0001 )
+    -------------------------------------------------------------------------
+CONST
+  Relative segment, address : 37A6 - 3D25
+           ENTRIES                ADDRESS          REF BY MODULE
+           NAME                    3876            Not referred to
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 002D
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : 0844 - 0D1A
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : 0D1E - 0D23
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : 0EB6 - 0EBB
+
+                ****************************************
+                *                                      *
+                *        SEGMENTS IN DUMP ORDER        *
+                *                                      *
+                ****************************************
+
+ SEGMENT               START ADDRESS    END ADDRESS  TYPE  ORG  P/N  ALIGN
+ =======               =============    ===========  ====  ===  ===  =====
+C_ARGB                          Not in use            dse  stc  pos   0     
+BITVARS                         Not in use            dse  flt  pos   0     
+INTVEC                      0000     -     002D       com  stc  pos   0     
+RCODE                       002E     -     0EB2       rel  flt  pos   0     
+D_CDATA                         Not in use            rel  flt  pos   0     
+I_CDATA                         Not in use            rel  flt  pos   0     
+X_CDATA                     0EB3     -     0EBB       rel  flt  pos   0     
+C_ICALL                     0EBC     -     0ECB       rel  flt  pos   0     
+C_RECFN                         Not in use            dse  flt  pos   0     
+CSTR                            Not in use            dse  flt  pos   0     
+CCSTR                           Not in use            rel  flt  pos   0     
+CODE                        0ECC     -     379F       rel  flt  pos   0     
+CONST                       37A0     -     3D25       rel  flt  pos   0     
+C_ARGX                      0000     -     0073       rel  stc  pos   0     
+X_UDATA                     0074     -     0D1A       rel  flt  pos   0     
+X_IDATA                     0D1B     -     0D23       rel  flt  pos   0     
+ECSTR                           Not in use            rel  flt  pos   0     
+RF_XDATA                        Not in use            dse  flt  pos   0     
+C_ARGD                      0028     -     002B       rel  stc  pos   0     
+D_UDATA                         Not in use            rel  flt  pos   0     
+D_IDATA                         Not in use            rel  flt  pos   0     
+C_ARGI                          Not in use            dse  flt  pos   0     
+I_UDATA                         Not in use            rel  flt  pos   0     
+I_IDATA                         Not in use            rel  flt  pos   0     
+CSTACK                      002C     -     0049       rel  flt  pos   0     
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+Memory type       Used
+-----------       ----
+CODE             15654 bytes
+DATA                 4 bytes
+XDATA             3364 bytes
+IDATA               30 bytes
+
+Errors: none
+Warnings: none
+

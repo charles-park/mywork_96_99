@@ -1,0 +1,20 @@
+Microtek Motorola S format implementation.
+
+The FMMOT.DLL is used to load Motorola S fromat with Hitachi symbol extension
+as implemented by Microtek's LNK180 linker. To support Microtek's implementation
+following deviations are supported:
+
+  - The S5 and S8 are not generated correctly (wrong checksum) and are therefore
+    ignored. Since they convey no important information, this should induce no
+    errors. A problem could occur when the S8 record would not report a zero
+    load offset (should not occur on Zilog CPU). In this case the load offset
+    must be manually set in the 'Download file options' dialog.
+
+  - 'Symbol table' in the beginning of the file is read in as well. All symbols
+    are put in the 'Assembler labels' group. This allows setting of fetch 
+    breakpoints and watches (requires SW release 7.13b or higher) on these
+    symbols.
+
+Since the Motorola S file is a regular nondocument text file, its format can
+not be safely detected, and is reported binary. User must override this by 
+setting the file type to 'Other' and specifying the 'FMMOT.DLL' as the loader.

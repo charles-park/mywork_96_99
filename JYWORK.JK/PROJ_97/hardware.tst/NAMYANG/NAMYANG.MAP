@@ -1,0 +1,533 @@
+################################################################################
+#                                                                              #
+#      IAR Universal Linker V4.48F/386                                         #
+#                                                                              #
+#           Link time     =  11/Mar/97  09:57:51                               #
+#           Target CPU    =  8051                                              #
+#           List file     =  namyang.map                                       #
+#           Output file 1 =  namyang.hex                                       #
+#           Output format =  intel-standard                                    #
+#           Command line  =  -f NAMYANG (-c8051 -D_R=0                         #
+#                            -Z(XDATA)C_ARGX,X_UDATA,X_IDATA,NO_INIT,ECSTR=0   #
+#                            -Z(CODE)INTVEC=0                                  #
+#                            -Z(CODE)RCODE,D_CDATA,I_CDATA,X_CDATA=100         #
+#                            -Z(CODE)C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST     #
+#                            -Z(DATA)C_ARGD,D_UDATA,D_IDATA=28                 #
+#                            -Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK            #
+#                            -Z(BIT)C_ARGB,BITVARS=0                           #
+#                            -e_small_write=_formatted_write                   #
+#                            -e_medium_read=_formatted_read NAMYANG cl8051m    #
+#                            -Fintel-standard -o NAMYANG.hex -x -l NAMYANG.map #
+#                            )                                                 #
+#                                                                              #
+#                                               (c) Copyright IAR Systems 1996 #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+       Program entry at : 0000  Relocatable, from module : CSTARTUP
+
+
+
+                ****************************************
+                *                                      *
+                *             MODULE MAP               *
+                *                                      *
+                ****************************************
+
+  DEFINED ABSOLUTE ENTRIES
+  PROGRAM MODULE, NAME : ?ABS_ENTRY_MOD
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           _R                      0000            CSTARTUP
+
+
+  SEGMENTS IN THE MODULE
+  ======================
+C_ICALL
+  Relative segment, address : 0890 - 089B
+    -------------------------------------------------------------------------
+C_ARGI
+  Relative segment, address : 0028 - 0034
+
+    *************************************************************************
+
+  FILE NAME : namyang.r03
+  PROGRAM MODULE, NAME : namyang
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 089C - 2017
+           ENTRIES                ADDRESS          REF BY MODULE
+           AD_read                 1267            Not referred to
+           EX0_int                 1AD1            Not referred to
+               interrupt function
+           EX1_int                 1BF5            Not referred to
+               interrupt function
+           Humi_cal                1763            Not referred to
+               indirect function = 0890
+           Loc                     123F            Not referred to
+               idata = 0028 ( 0000 , 0004 )
+           SCON_int                19EE            Not referred to
+               interrupt function
+           Sun_cal                 15F2            Not referred to
+               indirect function = 0894
+           Temp_cal                1353            Not referred to
+               indirect function = 0898
+           check_mpm               0C42            Not referred to
+               idata = 002D ( 0002 , 0000 )
+           init_serial             0A94            Not referred to
+           init_struct             0A37            Not referred to
+               idata = 002F ( 0000 , 0006 )
+           init_variable           089C            Not referred to
+           initiliaze              0ACF            Not referred to
+           main                    1E4D            CSTARTUP
+           send_struct             116E            Not referred to
+               idata = 0028 ( 0002 , 0003 )
+    -------------------------------------------------------------------------
+CONST
+  Relative segment, address : 2018 - 24C7
+           ENTRIES                ADDRESS          REF BY MODULE
+           NAME                    2018            Not referred to
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 0025
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : 0000 - 05DA
+           ENTRIES                ADDRESS          REF BY MODULE
+           Loop                    0000            Not referred to
+    -------------------------------------------------------------------------
+BITVARS
+  Relative segment, address : 0020.0 - 0020.1
+
+    *************************************************************************
+
+  FILE NAME : c:\cci_hdsl\lib\cl8051m.r03
+  PROGRAM MODULE, NAME : CSTARTUP
+
+  SEGMENTS IN THE MODULE
+  ======================
+CSTACK
+  Relative segment, address : 0035 - 0052
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 0002
+    -------------------------------------------------------------------------
+RCODE
+  Relative segment, address : 0100 - 01AF
+    -------------------------------------------------------------------------
+D_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+ECSTR
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+CCSTR
+  Relative segment, address : Not in use    
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : exit
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01B0 - 01B1
+           ENTRIES                ADDRESS          REF BY MODULE
+           exit                    01B0            Not referred to
+           ?C_EXIT                 01B0            CSTARTUP
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?XOR_ASG_R567_A_DISP_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01B2 - 01BB
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?XOR_ASG_R567_A_DISP_L00
+                                   01B2            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETDOWN_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01BC - 01DE
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETDOWN_L00            01BE            ?XOR_ASG_R567_A_DISP_L00
+           ?SETDOWN2_L00           01BC            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_DISP_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01DF - 0205
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_DISP_L00    01DF            ?XOR_ASG_R567_A_DISP_L00
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?UI_DIV_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0206 - 0258
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?UI_DIV_L00             020C            namyang
+           ?UI_DIV_R_L00           0206            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_MUL_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0259 - 0378
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_MUL_L02              026B            namyang
+           ?F_MUL2_R0123_L02       0259            Not referred to
+           ?F_MUL2_R4567_L02       0263            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_ROUND_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0379 - 03DA
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_ROUND_L02            0379            ?F_MUL_L02
+                                                   ?F_ADDSUB_L02
+           ?F_PACK_L02             0394            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+           ?F_UP_ROUND_L02         0384            ?F_DIV_L02
+           ?F_R_TEST_L02           0382            ?F_DIV_L02
+           ?F_ROUND_2_L02          037D            Not referred to
+           ?F_UNDERFLOW_L02        03A7            ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?FLT_TO_LONG_L02
+           ?F_OVERFLOW_L02         03A1            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?FLT_TO_LONG_L02
+           ?F_SHIFT_LEFT_L02       03AD            ?F_MUL_L02
+                                                   ?F_ADDSUB_L02
+                                                   ?LONG_TO_FLT_L02
+           ?F_SHIFT_LEFT_2_L02     03B1            ?F_DIV_L02
+           ?F_SHIFT_RIGHT_L02      03BC            ?F_ADDSUB_L02
+           ?F_SHIFT_RIGHT_2_L02    03BB            ?FLT_TO_LONG_L02
+           ?F_0_SUB_L02            03CD            ?FLT_TO_LONG_L02
+                                                   ?LONG_TO_FLT_L02
+           ?F_EXIT_L02             039D            ?FLT_TO_LONG_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_DIV_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 03DB - 04D3
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_DIV_L02              03E7            namyang
+           ?F_DIV_R_L02            03DB            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_UNPACK_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 04D4 - 04F6
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_UNPACK_L02           04D4            ?F_MUL_L02
+                                                   ?F_DIV_L02
+                                                   ?F_ADDSUB_L02
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_ADDSUB_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 04F7 - 061E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_SUB_L02              0503            Not referred to
+           ?F_SUB_R_L02            04F7            Not referred to
+           ?F_ADD_L02              0522            namyang
+           ?F_ADD2_R0123_L02       0510            Not referred to
+           ?F_ADD2_R4567_L02       051A            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?FLT_TO_LONG_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 061F - 0660
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?R4567_FLT_TO_LONG_L02
+                                   061F            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LONG_TO_FLT_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0661 - 06A7
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?R4567_LONG_TO_FLT_L02
+                                   0661            Not referred to
+           ?R4567_ULONG_TO_FLT_L02
+                                   066C            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?F_CMP_L02
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 06A8 - 06F7
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?F_CMP_L02              06A8            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?VC_SWITCH_L05
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 06F8 - 0720
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?A_V_SWITCH_L05         06F8            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0721 - 074E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_A_L17             0733            Not referred to
+           ?LD_A_R123_L17          0721            Not referred to
+           ?LD_A_R567_L17          072B            Not referred to
+           ?LD_A_R123_DISP_L17     0726            Not referred to
+           ?LD_A_R567_DISP_L17     0730            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 074F - 076B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_L17         074F            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 076C - 079C
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_DISP_L17    076C            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 079D - 07BD
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_L17         079D            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_AR3_R567_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 07BE - 07EE
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_DISP_L17    07BE            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+                                                   ?STORE_AR3_R567_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 07EF - 0828
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_A_L17            0809            Not referred to
+           ?ST_A_R123_L17          07EF            Not referred to
+           ?ST_A_R567_L17          07FD            Not referred to
+           ?ST_A_R123_DISP_L17     07F6            Not referred to
+           ?ST_A_R567_DISP_L17     0804            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AR3_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0829 - 0833
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_AR3_R567_L17        0829            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AR3_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0834 - 083E
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?ST_AR3_R567_DISP_L17   0834            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_AA_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 083F - 0874
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_AA_L17           083F            ?STORE_AR3_R567_L17
+                                                   ?STORE_AR3_R567_DISP_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?VERSION_L17
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           ?CL8051M_5_12_L17       C893            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_IND_DPTR2_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0875 - 0881
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_IND_DPTR2_L20     0875            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LCALL_IND_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0882 - 0883
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LCALL_IND_L20          0882            namyang
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STO_R4567_DPTR_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0884 - 088F
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STO_R4567_DPTR_L20     0884            namyang
+
+    -------------------------------------------------------------------------
+                ****************************************
+                *                                      *
+                *        SEGMENTS IN DUMP ORDER        *
+                *                                      *
+                ****************************************
+
+ SEGMENT               START ADDRESS    END ADDRESS  TYPE  ORG  P/N  ALIGN
+ =======               =============    ===========  ====  ===  ===  =====
+C_ARGB                          Not in use            dse  stc  pos   0     
+BITVARS                    0020.0    -    0020.1      rel  flt  pos   0     
+C_ARGX                          Not in use            dse  stc  pos   0     
+X_UDATA                     0000     -     05DA       rel  flt  pos   0     
+X_IDATA                         Not in use            rel  flt  pos   0     
+NO_INIT                         Not in use            dse  flt  pos   0     
+ECSTR                           Not in use            rel  flt  pos   0     
+INTVEC                      0000     -     0025       com  stc  pos   0     
+RCODE                       0100     -     088F       rel  stc  pos   0     
+D_CDATA                         Not in use            rel  flt  pos   0     
+I_CDATA                         Not in use            rel  flt  pos   0     
+X_CDATA                         Not in use            rel  flt  pos   0     
+C_ICALL                     0890     -     089B       rel  flt  pos   0     
+C_RECFN                         Not in use            dse  flt  pos   0     
+CSTR                            Not in use            dse  flt  pos   0     
+CCSTR                           Not in use            rel  flt  pos   0     
+CODE                        089C     -     2017       rel  flt  pos   0     
+CONST                       2018     -     24C7       rel  flt  pos   0     
+C_ARGD                          Not in use            dse  stc  pos   0     
+D_UDATA                         Not in use            rel  flt  pos   0     
+D_IDATA                         Not in use            rel  flt  pos   0     
+C_ARGI                      0028     -     0034       rel  flt  pos   0     
+I_UDATA                         Not in use            rel  flt  pos   0     
+I_IDATA                         Not in use            rel  flt  pos   0     
+CSTACK                      0035     -     0052       rel  flt  pos   0     
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+Memory type       Used
+-----------       ----
+CODE              9198 bytes
+XDATA             1499 bytes
+IDATA               43 bytes
+BIT                  2 bits
+
+Errors: none
+Warnings: none
+

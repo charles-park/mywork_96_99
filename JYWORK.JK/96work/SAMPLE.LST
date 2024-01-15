@@ -1,0 +1,59 @@
+####################################################################################################
+#                                                                                                  #
+#       Archimedes 8096/80C196 C-Compiler V3.01C/DXT                       15/Jul/98  09:47:05     #
+#                                                                                                  #
+#           Target option =  80C196                                                                #
+#           Memory model  =  large                                                                 #
+#           Source file   =  sample.c                                                              #
+#           List file     =  sample.lst                                                            #
+#           Object file   =  sample.r15                                                            #
+#           Command line  =  -ml -v1 sample.c -L -q                                                #
+#                                                                                                  #
+#                                                                   (c) Copyright Archimedes 1992  #
+####################################################################################################
+
+   \   0000                    NAME    sample(16)
+   \   0000                    RSEG    CODE(1)
+   \   0000                    PUBLIC  main
+   \   0000                    EXTERN  ?CL8096_3_01_L00
+   \   0000                    RSEG    CODE
+      1          /* #include <io196_kc.h> */
+   \   0000            $REG8096.INC
+      2          #include <io8096.h>
+      3          #include <stdio.h>
+      4          #include <stdlib.h>
+      5          
+      6          void main(void)
+      7          {
+   \   0000            main:
+   \   0000  69040018          SUB     SP,#4
+      8                  unsigned int a;
+      9                  unsigned char b;
+     10          
+     11                  a = b = 0;
+   \   0004  111C              CLRB    R0
+   \   0006  C718021C          STB     R0,2[SP]
+   \   000A  111D              CLRB    R1
+   \   000C  C2181C            ST      R0,[SP]
+   \   000F            ?0001:
+     12                  while(1)        {
+     13                          a++;
+   \   000F  A0181C            LD      R0,SP
+   \   0012  A21C1A            LD      R8,[R0]
+   \   0015  071A              INC     R8
+   \   0017  C21C1A            ST      R8,[R0]
+     14                          b++;
+   \   001A  45020018          ADD     R0,SP,#2
+   \   001E  1C
+   \   001F  B21C1A            LDB     R8,[R0]
+   \   0022  171A              INCB    R8
+   \   0024  C61C1A            STB     R8,[R0]
+     15                  }
+     16          }
+   \   0027  27E6              SJMP    ?0001
+   \   0029                    END
+
+Errors: none
+Warnings: none
+Code size: 41
+

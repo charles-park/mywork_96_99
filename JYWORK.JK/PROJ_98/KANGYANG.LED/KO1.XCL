@@ -1,0 +1,20 @@
+-c8051
+-D_R=0
+-Z(CODE)INTVEC,RCODE,D_CDATA,I_CDATA,X_CDATA,C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST=0
+
+-Z(XDATA)C_ARGX,X_UDATA,X_IDATA,ECSTR,RF_XDATA=0
+
+-Z(DATA)C_ARGD,D_UDATA,D_IDATA=28
+
+-Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK
+
+-Z(BIT)C_ARGB,BITVARS=0
+-e_medium_write=_formatted_write
+-e_medium_read=_formatted_read
+cl8051l
+ko1
+
+-o ko1.hex
+-x
+-l ko1.map
+-Fintel-standard

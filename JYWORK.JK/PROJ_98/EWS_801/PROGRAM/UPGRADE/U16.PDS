@@ -1,0 +1,39 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    W/S W/D TEMP BOARD ( KEY INTERRUPT ) 
+PATTERN  
+REVISION 
+AUTHOR   PARK WOONG
+COMPANY  JINYANG INC.
+DATE     96/10/20
+
+CHIP  DECOD  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          TXD                  COMBINATORIAL ; INPUT
+PIN  3          KINT                 COMBINATORIAL ; INPUT
+PIN  4          PRTST                COMBINATORIAL ; INPUT
+PIN  6          BUZ                  COMBINATORIAL ; INPUT
+PIN  10         GND     ; INPUT
+PIN  12         TXDV                 COMBINATORIAL ; OUTPUT
+PIN  13         INT1                 COMBINATORIAL ; OUTPUT
+PIN  15         PRTON                COMBINATORIAL ; OUTPUT
+PIN  16         PRTOFF               COMBINATORIAL ; OUTPUT
+PIN  17         BUZZER               COMBINATORIAL ; OUTPUT
+PIN  20         VCC     ; INPUT
+
+;----------------------------------- Boolean Equation Segment ------
+
+EQUATIONS
+TXDV    =  TXD
+INT1    =  KINT
+PRTON   =  PRTST
+PRTOFF  = /PRTST
+BUZZER  = /BUZ
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------
+

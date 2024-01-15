@@ -1,0 +1,49 @@
+	NAME	sample(17)
+	RSEG	CODE(0)
+	RSEG	D_UDATA(0)
+	RSEG	BITVARS(0)
+	PUBLIC	delay
+	$DEFFN	delay(0,0,0,0,2,0,0,0)
+	PUBLIC	initiliaze
+	$DEFFN	initiliaze(0,0,0,0,0,0,0,0),main
+	PUBLIC	main
+	$DEFFN	main(0,0,0,0,0,0,0,0)
+	EXTERN	?CL8051M_5_12_L17
+	RSEG	CODE
+delay:
+	MOV	$LOCBD delay+1,R4
+	MOV	$LOCBD delay,R5
+	RET
+initiliaze:
+	CLR	A
+	MOV	Key_Data+1,A
+	MOV	Key_Data,A
+	CLR	A
+	MOV	Led_Data+1,A
+	MOV	Led_Data,A
+	CLR	Key_Flag
+	MOV	A,Led_Data+1
+	CPL	A
+	MOV	P1,A
+	SETB	P3.0
+	CLR	P3.1
+	CLR	P3.2
+	RET
+main:
+	LCALL	$REFFN initiliaze
+?0001:
+	JNB	Key_Flag,?0004
+?0003:
+	SJMP	?0005
+?0004:
+?0005:
+	SJMP	?0001
+	RSEG	D_UDATA
+Led_Data:
+	DS	2
+Key_Data:
+	DS	2
+	RSEG	BITVARS
+Key_Flag:
+	DS	1
+	END

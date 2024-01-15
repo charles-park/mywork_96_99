@@ -1,0 +1,49 @@
+
+;PALASM Design Description
+;----------------------------------- Declaration Segment -----------
+
+TITLE    MAIN PROCESSER MODULE U26
+PATTERN  
+REVISION 2.0
+AUTHOR   M.J.M
+COMPANY  JINYANG
+DATE     03/22/97
+
+CHIP  GATE  PALCE16V8
+;----------------------------------- PIN Declarations --------------
+
+PIN  1          P11                  COMBINATORIAL ; INPUT
+PIN  2          P12                  COMBINATORIAL ; INPUT
+PIN  3          P13                  COMBINATORIAL ; INPUT
+PIN  4          P14                  COMBINATORIAL ; INPUT
+PIN  5          P15                  COMBINATORIAL ; INPUT
+PIN  6          RD                   COMBINATORIAL ; INPUT
+PIN  7          WR                   COMBINATORIAL ; INPUT
+PIN  8          SINT2                COMBINATORIAL ; INPUT
+PIN  9          SINT3                COMBINATORIAL ; INPUT
+PIN  11         IRQ                  COMBINATORIAL ; INPUT
+PIN  12         RAM_CS               COMBINATORIAL ; OUTPUT
+PIN  13         RTC_CS               COMBINATORIAL ; OUTPUT
+PIN  14         SI2_CS               COMBINATORIAL ; OUTPUT
+PIN  15         SI3_CS               COMBINATORIAL ; OUTPUT
+PIN  16         LED_CS               COMBINATORIAL ; OUTPUT
+PIN  17         RST_CS               COMBINATORIAL ; OUTPUT
+PIN  18         INT0                 COMBINATORIAL ; OUTPUT
+PIN  19         INT1                 COMBINATORIAL ; OUTPUT
+PIN  10         GND                                ;
+PIN  20         VCC                                ;
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+/RAM_CS =  P15 *  P14 *  P13 *  P12 *  P11         ; --11111-
+/RTC_CS = /P15 * /P14 * /P13 * /P12 *  P11         ; --00001-
+/SI2_CS = /P15 * /P14 * /P13 *  P12 * /P11         ; --00010-
+/SI3_CS = /P15 * /P14 * /P13 *  P12 *  P11         ; --00011-
+ LED_CS = /P15 * /P14 *  P13 * /P12 * /P11 * /WR   ; --00100-
+ RST_CS = /P15 * /P14 *  P13 * /P12 *  P11 * /WR   ; --00101-
+/INT0   = SINT2
+/INT1   = SINT3
+
+;----------------------------------- End ---------------------------
+

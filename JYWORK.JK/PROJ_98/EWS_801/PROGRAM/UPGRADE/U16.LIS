@@ -1,0 +1,53 @@
+U16.pds
+
+PALASM90  PARSER   - MARKET RELEASE (2-14-90)
+ (C) - COPYRIGHT ADVANCED MICRO DEVICES INC., 1990
+
+
+                    ***********************************
+                    *     PALASM PARSER LISTING       *
+                    ***********************************
+
+LINE #   |----+----1----+----2----+----3----+----4----+----5----+----6----+
+   1     |;PALASM Design Description
+   2     |
+   3     |;---------------------------------- Declaration Segment ------------
+   4     |TITLE    W/S W/D TEMP BOARD ( KEY INTERRUPT ) 
+   5     |PATTERN  
+   6     |REVISION 
+   7     |AUTHOR   PARK WOONG
+   8     |COMPANY  JINYANG INC.
+   9     |DATE     96/10/20
+  10     |
+  11     |CHIP  DECOD  PALCE16V8
+  12     |
+  13     |;---------------------------------- PIN Declarations ---------------
+  14     |PIN  1          TXD                  COMBINATORIAL ; INPUT
+  15     |PIN  3          KINT                 COMBINATORIAL ; INPUT
+  16     |PIN  4          PRTST                COMBINATORIAL ; INPUT
+  17     |PIN  6          BUZ                  COMBINATORIAL ; INPUT
+  18     |PIN  10         GND     ; INPUT
+  19     |PIN  12         TXDV                 COMBINATORIAL ; OUTPUT
+  20     |PIN  13         INT1                 COMBINATORIAL ; OUTPUT
+  21     |PIN  15         PRTON                COMBINATORIAL ; OUTPUT
+  22     |PIN  16         PRTOFF               COMBINATORIAL ; OUTPUT
+  23     |PIN  17         BUZZER               COMBINATORIAL ; OUTPUT
+  24     |PIN  20         VCC     ; INPUT
+  25     |
+  26     |;----------------------------------- Boolean Equation Segment ------
+  27     |
+  28     |EQUATIONS
+  29     |TXDV    =  TXD
+  30     |INT1    =  KINT
+  31     |PRTON   =  PRTST
+  32     |PRTOFF  = /PRTST
+  33     |BUZZER  = /BUZ
+  34     |
+  35     |;----------------------------------- Simulation Segment ------------
+  36     |SIMULATION
+  37     |
+  38     |;-------------------------------------------------------------------
+
+ %% PARSE %%    No errors.  No warnings.
+
+ %% PARSE %%    File processed successfully.    File:  U16.pds

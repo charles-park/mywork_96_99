@@ -1,0 +1,48 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    WIND DIRECTION & SPEED GAL
+PATTERN  
+REVISION 
+AUTHOR   MR.JIN
+COMPANY  JINYANG IND
+DATE     11/20/95
+
+CHIP  DECOD  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A15                  COMBINATORIAL ; INPUT 
+PIN  2          A14                  COMBINATORIAL ; INPUT
+PIN  3          RD                   COMBINATORIAL ; INPUT
+PIN  4          WR                   COMBINATORIAL ; INPUT
+PIN  6          RXDV                 COMBINATORIAL ; INPUT
+PIN  7          ERST                 COMBINATORIAL ; INPUT
+PIN  8          TXD                  COMBINATORIAL ; INPUT
+PIN  9          BLUE                 COMBINATORIAL ; INPUT
+PIN  10         GND                             ; INPUT 
+PIN  11         RED                  COMBINATORIAL ; INPUT
+PIN  12         IDV                  COMBINATORIAL ; OUTPUT
+PIN  13         BDRV                 COMBINATORIAL ; OUTPUT
+PIN  14         RDRV                 COMBINATORIAL ; OUTPUT
+PIN  15         RXD                  COMBINATORIAL ; OUTPUT
+PIN  16         RST                  COMBINATORIAL ; OUTPUT
+PIN  17         TXDV                 COMBINATORIAL ; OUTPUT
+PIN  18         ADC                  COMBINATORIAL ; OUTPUT
+PIN  19         RAM                  COMBINATORIAL ; OUTPUT
+PIN  20         VCC                             ; INPUT 
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/IDV    = (/RD + /WR) *  A15 * /A14            ; 8000h
+/RAM    = (/RD + /WR) * /A15
+/ADC    = (/RD + /WR) *  A15 *  A14            ; C000h
+/TXDV   =  TXD
+/RXD    = /RXDV
+/BDRV   = /BLUE
+/RDRV   = /RED
+/RST    = /ERST
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

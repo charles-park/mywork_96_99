@@ -1,0 +1,4 @@
+        MACRO   %repeat
+L_\@:
+        ENDMAC
+

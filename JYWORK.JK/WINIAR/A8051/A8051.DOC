@@ -1,0 +1,38 @@
+		
+
+			- A8051.DOC -
+
+
+		   A8051 2.03 Release Notes
+		   ========================
+
+Created: 940922 [IMAF]
+
+Dear User;
+
+This file contains important information which is not available in the current
+manual.  PLEASE READ IT (as this may save you a lot of time)!
+
+This release of the A8051 cross assembler is upwardly compatible with previous
+versions.  
+
+		Version 2.00 - 2.02 changes
+
+The enhancements are entirely devoted to support the 4.00 version
+and above of IAR's 8051 C compiler.  The added directives are therefore only
+specified in the 8051 C manual.
+
+Other changes:  The MS-DOS version now has a symbol-table capability in excess
+of 1000 symbols on a machine with 512K user RAM.
+
+		Version 2.03 changes
+
+AJMP and ACALL can now be used in relocatable segments. Note that if the 
+AJMP/ACALL is not in the same page as the label, error 18 "Range error" will
+be produced from the linker, telling the file, module, and the relative place
+in the segment.
+
+AJMP, ACALL, and short jumps can now jump to an external label, SFB, or SFE.
+See the error note above.
+
+Include files for Siemens 80751/752 chip and 80552 chip is now included.

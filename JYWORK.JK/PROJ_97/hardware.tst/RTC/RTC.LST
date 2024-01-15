@@ -1,0 +1,379 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12K/DXT                              23/Jan/97  09:47:33     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  large                                                                 #
+#           Source file   =  rtc.c                                                                 #
+#           List file     =  rtc.lst                                                               #
+#           Object file   =  rtc.r03                                                               #
+#           Command line  =  RTC.C -ml -s -K -P -L -q -C                                           #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+   \   0000                    NAME    rtc(18)
+   \   0000                    RSEG    CODE(0)
+   \   0000                    RSEG    X_IDATA(0)
+   \   0000                    RSEG    X_CDATA(0)
+   \   0000                    PUBLIC  Alram_Set
+   \   0000                    $DEFFN  Alram_Set(0,0,0,0,0,0,3,0)
+   \   0000                    PUBLIC  Mode_Set
+   \   0000                    $DEFFN  Mode_Set(0,0,0,0,0,0,1,0)
+   \   0000                    PUBLIC  RTC_Set
+   \   0000                    $DEFFN  RTC_Set(0,0,0,0,0,0,4,0)
+   \   0000                    PUBLIC  Ret_data
+   \   0000                    $DEFFN  Ret_data(0,0,1,0,0,0,1,0)
+   \   0000                    PUBLIC  Time_Set
+   \   0000                    $DEFFN  Time_Set(0,0,0,0,0,0,3,0)
+   \   0000                    PUBLIC  init_rtc
+   \   0000                    $DEFFN  init_rtc(0,0,0,0,0,0,0,0)
+   \   0000                    EXTERN  ?A_S_SWITCH_L05
+   \   0000                    EXTERN  ?CL8051L_5_12_L17
+   \   0000                    RSEG    CODE
+      1          #include <io51.h>
+      2          #include <rtc_def.h>
+      3          
+      4          void init_rtc(void)
+      5          {
+   \   0000            init_rtc:
+      6              // Register B MSB 7 bit is Start & Stop Control
+      7              // if MSB == 1 then Stop, other then RUN
+      8          
+      9              switch(XTAL)
+   \   0000  E4                CLR     A
+   \   0001  FD                MOV     R5,A
+   \   0002  04                INC     A
+   \   0003  BD0045            CJNE    R5,#0,?0004
+   \   0006  B40114            CJNE    A,#1,?0002
+   \   0009            ?0001:
+     10              {
+     11                  case    1:      // Crystal is 4.194304 Mhz
+     12                      output(REG_B, REG_B_SET | Config | Stop);
+   \   0009  900000            MOV     DPTR,#Config
+   \   000C  E0                MOVX    A,@DPTR
+   \   000D  449E              ORL     A,#158
+   \   000F  4480              ORL     A,#128
+   \   0011  90800B            MOV     DPTR,#32779
+   \   0014  F0                MOVX    @DPTR,A
+     13                      output(REG_A, REG_A_SET);
+   \   0015  740E              MOV     A,#14
+   \   0017  90800A            MOV     DPTR,#32778
+   \   001A  F0                MOVX    @DPTR,A
+     14                      break;
+   \   001B  8036              SJMP    ?0000
+   \   001D            ?0002:
+   \   001D  B40214            CJNE    A,#2,?0003
+     15          
+     16                  case    2:      // Crystal is 1.048576 Mhz
+     17                      output(REG_B, REG_B_SET | Config | Stop);
+   \   0020  900000            MOV     DPTR,#Config
+   \   0023  E0                MOVX    A,@DPTR
+   \   0024  449E              ORL     A,#158
+   \   0026  4480              ORL     A,#128
+   \   0028  90800B            MOV     DPTR,#32779
+   \   002B  F0                MOVX    @DPTR,A
+     18                      output(REG_A, REG_A_SET);
+   \   002C  740E              MOV     A,#14
+   \   002E  90800A            MOV     DPTR,#32778
+   \   0031  F0                MOVX    @DPTR,A
+     19                      break;
+   \   0032  801F              SJMP    ?0000
+   \   0034            ?0003:
+   \   0034  B40314            CJNE    A,#3,?0004
+     20          
+     21                  case    3:      // Crystal is 32.768 Khz
+     22                      output(REG_B, REG_B_SET | Config | Stop);
+   \   0037  900000            MOV     DPTR,#Config
+   \   003A  E0                MOVX    A,@DPTR
+   \   003B  449E              ORL     A,#158
+   \   003D  4480              ORL     A,#128
+   \   003F  90800B            MOV     DPTR,#32779
+   \   0042  F0                MOVX    @DPTR,A
+     23                      output(REG_A, REG_A_SET);
+   \   0043  740E              MOV     A,#14
+   \   0045  90800A            MOV     DPTR,#32778
+   \   0048  F0                MOVX    @DPTR,A
+     24                      break;
+   \   0049  8008              SJMP    ?0000
+   \   004B            ?0004:
+     25          
+     26                  default  :
+     27                      output(REG_A, 0xff);
+   \   004B  74FF              MOV     A,#255
+   \   004D  90800A            MOV     DPTR,#32778
+   \   0050  F0                MOVX    @DPTR,A
+     28                      break;
+   \   0051  8000              SJMP    ?0000
+   \   0053            ?0000:
+     29              }
+     30          
+     31              output(REG_B,(REG_B_SET | Config) & Run );        //  Stop RTC(Stop = MSB 7 Bit is 1)
+   \   0053  900000            MOV     DPTR,#Config
+   \   0056  E0                MOVX    A,@DPTR
+   \   0057  449E              ORL     A,#158
+   \   0059  547F              ANL     A,#127
+   \   005B  90800B            MOV     DPTR,#32779
+   \   005E  F0                MOVX    @DPTR,A
+     32          }
+   \   005F  22                RET
+     33          
+     34          void Alram_Set(Byte H_Alram, Byte M_Alram, Byte S_Alram)
+     35          {
+   \   0060            Alram_Set:
+     36              output(REG_B, REG_B_SET | Config | Stop);
+   \   0060  900000            MOV     DPTR,#Config
+   \   0063  E0                MOVX    A,@DPTR
+   \   0064  449E              ORL     A,#158
+   \   0066  4480              ORL     A,#128
+   \   0068  90800B            MOV     DPTR,#32779
+   \   006B  F0                MOVX    @DPTR,A
+     37          
+     38              output(Hour_Alram,H_Alram);
+   \   006C  EC                MOV     A,R4
+   \   006D  908005            MOV     DPTR,#32773
+   \   0070  F0                MOVX    @DPTR,A
+   \   0071  900000            MOV     DPTR,#$LOCBX Alram_Set
+   \   0074  F0                MOVX    @DPTR,A
+     39              output(Min_Alram,M_Alram);
+   \   0075  ED                MOV     A,R5
+   \   0076  908003            MOV     DPTR,#32771
+   \   0079  F0                MOVX    @DPTR,A
+   \   007A  900000            MOV     DPTR,#$LOCBX Alram_Set+1
+   \   007D  F0                MOVX    @DPTR,A
+     40              output(Sec_Alram,S_Alram);
+   \   007E  EE                MOV     A,R6
+   \   007F  908001            MOV     DPTR,#32769
+   \   0082  F0                MOVX    @DPTR,A
+   \   0083  900000            MOV     DPTR,#$LOCBX Alram_Set+2
+   \   0086  F0                MOVX    @DPTR,A
+     41          
+     42              output(REG_B, (REG_B_SET | Config) & Run);
+   \   0087  900000            MOV     DPTR,#Config
+   \   008A  E0                MOVX    A,@DPTR
+   \   008B  449E              ORL     A,#158
+   \   008D  547F              ANL     A,#127
+   \   008F  90800B            MOV     DPTR,#32779
+   \   0092  F0                MOVX    @DPTR,A
+     43          }
+   \   0093  22                RET
+     44          
+     45          void Mode_Set(Byte Mode)
+     46          {
+   \   0094            Mode_Set:
+     47          }
+   \   0094  EC                MOV     A,R4
+   \   0095  900000            MOV     DPTR,#$LOCBX Mode_Set
+   \   0098  F0                MOVX    @DPTR,A
+   \   0099  22                RET
+     48          
+     49          void RTC_Set(Byte YY, Byte MM, Byte DM, Byte DW)
+     50          {
+   \   009A            RTC_Set:
+     51              output(REG_B, REG_B_SET | Config | Stop);
+   \   009A  900000            MOV     DPTR,#Config
+   \   009D  E0                MOVX    A,@DPTR
+   \   009E  449E              ORL     A,#158
+   \   00A0  4480              ORL     A,#128
+   \   00A2  90800B            MOV     DPTR,#32779
+   \   00A5  F0                MOVX    @DPTR,A
+     52          
+     53              output(Year,      YY);
+   \   00A6  EC                MOV     A,R4
+   \   00A7  908009            MOV     DPTR,#32777
+   \   00AA  F0                MOVX    @DPTR,A
+   \   00AB  900000            MOV     DPTR,#$LOCBX RTC_Set
+   \   00AE  F0                MOVX    @DPTR,A
+     54              output(Month,     MM);
+   \   00AF  ED                MOV     A,R5
+   \   00B0  908008            MOV     DPTR,#32776
+   \   00B3  F0                MOVX    @DPTR,A
+   \   00B4  900000            MOV     DPTR,#$LOCBX RTC_Set+1
+   \   00B7  F0                MOVX    @DPTR,A
+     55              output(Day_Month, DM);
+   \   00B8  EE                MOV     A,R6
+   \   00B9  908007            MOV     DPTR,#32775
+   \   00BC  F0                MOVX    @DPTR,A
+   \   00BD  900000            MOV     DPTR,#$LOCBX RTC_Set+2
+   \   00C0  F0                MOVX    @DPTR,A
+     56              output(Day_Week,  DW);
+   \   00C1  EF                MOV     A,R7
+   \   00C2  908006            MOV     DPTR,#32774
+   \   00C5  F0                MOVX    @DPTR,A
+   \   00C6  900000            MOV     DPTR,#$LOCBX RTC_Set+3
+   \   00C9  F0                MOVX    @DPTR,A
+     57          
+     58              output(REG_B, (REG_B_SET | Config) & Run);
+   \   00CA  900000            MOV     DPTR,#Config
+   \   00CD  E0                MOVX    A,@DPTR
+   \   00CE  449E              ORL     A,#158
+   \   00D0  547F              ANL     A,#127
+   \   00D2  90800B            MOV     DPTR,#32779
+   \   00D5  F0                MOVX    @DPTR,A
+     59          }
+   \   00D6  22                RET
+     60          
+     61          void Time_Set(Byte H_Time, Byte M_Time, Byte S_Time)
+     62          {
+   \   00D7            Time_Set:
+     63              output(REG_B, REG_B_SET | Config | Stop);
+   \   00D7  900000            MOV     DPTR,#Config
+   \   00DA  E0                MOVX    A,@DPTR
+   \   00DB  449E              ORL     A,#158
+   \   00DD  4480              ORL     A,#128
+   \   00DF  90800B            MOV     DPTR,#32779
+   \   00E2  F0                MOVX    @DPTR,A
+     64          
+     65              output(Hour, H_Time);
+   \   00E3  EC                MOV     A,R4
+   \   00E4  908004            MOV     DPTR,#32772
+   \   00E7  F0                MOVX    @DPTR,A
+   \   00E8  900000            MOV     DPTR,#$LOCBX Time_Set
+   \   00EB  F0                MOVX    @DPTR,A
+     66              output(Min,  M_Time);
+   \   00EC  ED                MOV     A,R5
+   \   00ED  908002            MOV     DPTR,#32770
+   \   00F0  F0                MOVX    @DPTR,A
+   \   00F1  900000            MOV     DPTR,#$LOCBX Time_Set+1
+   \   00F4  F0                MOVX    @DPTR,A
+     67              output(Sec,  S_Time);
+   \   00F5  EE                MOV     A,R6
+   \   00F6  908000            MOV     DPTR,#32768
+   \   00F9  F0                MOVX    @DPTR,A
+   \   00FA  900000            MOV     DPTR,#$LOCBX Time_Set+2
+   \   00FD  F0                MOVX    @DPTR,A
+     68          
+     69              output(REG_B, (REG_B_SET | Config) & Run);
+   \   00FE  900000            MOV     DPTR,#Config
+   \   0101  E0                MOVX    A,@DPTR
+   \   0102  449E              ORL     A,#158
+   \   0104  547F              ANL     A,#127
+   \   0106  90800B            MOV     DPTR,#32779
+   \   0109  F0                MOVX    @DPTR,A
+     70          }
+   \   010A  22                RET
+     71          
+     72          Byte Ret_data(Byte view)
+     73          {
+   \   010B            Ret_data:
+     74              Byte ret_value=0;
+   \   010B  E4                CLR     A
+   \   010C  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   010F  F0                MOVX    @DPTR,A
+     75          
+     76              switch(view)
+   \   0110  EC                MOV     A,R4
+   \   0111  A3                INC     DPTR
+   \   0112  F0                MOVX    @DPTR,A
+   \   0113  120000            LCALL   ?A_S_SWITCH_L05
+   \   0116  01                DB      1
+   \   0117  06                DB      6
+   \   0118  016E              DW      ?0013
+   \   011A  0128              DW      ?0006
+   \   011C  0132              DW      ?0007
+   \   011E  013C              DW      ?0008
+   \   0120  0146              DW      ?0009
+   \   0122  0150              DW      ?0010
+   \   0124  015A              DW      ?0011
+   \   0126  0164              DW      ?0012
+   \   0128            ?0006:
+     77              {
+     78                  case    RTC_YY:
+     79                          ret_value = input(Year);
+   \   0128  908009            MOV     DPTR,#32777
+   \   012B  E0                MOVX    A,@DPTR
+   \   012C  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   012F  F0                MOVX    @DPTR,A
+     80                          break;
+   \   0130  8043              SJMP    ?0005
+   \   0132            ?0007:
+     81          
+     82                  case    RTC_MM:
+     83                          ret_value = input(Month);
+   \   0132  908008            MOV     DPTR,#32776
+   \   0135  E0                MOVX    A,@DPTR
+   \   0136  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   0139  F0                MOVX    @DPTR,A
+     84                          break;
+   \   013A  8039              SJMP    ?0005
+   \   013C            ?0008:
+     85          
+     86                  case    RTC_DM:
+     87                          ret_value = input(Day_Month);
+   \   013C  908007            MOV     DPTR,#32775
+   \   013F  E0                MOVX    A,@DPTR
+   \   0140  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   0143  F0                MOVX    @DPTR,A
+     88                          break;
+   \   0144  802F              SJMP    ?0005
+   \   0146            ?0009:
+     89          
+     90                  case    RTC_DW:
+     91                          ret_value = input(Day_Week);
+   \   0146  908006            MOV     DPTR,#32774
+   \   0149  E0                MOVX    A,@DPTR
+   \   014A  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   014D  F0                MOVX    @DPTR,A
+     92                          break;
+   \   014E  8025              SJMP    ?0005
+   \   0150            ?0010:
+     93          
+     94                  case    RTC_H:
+     95                          ret_value = input(Hour);
+   \   0150  908004            MOV     DPTR,#32772
+   \   0153  E0                MOVX    A,@DPTR
+   \   0154  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   0157  F0                MOVX    @DPTR,A
+     96                          break;
+   \   0158  801B              SJMP    ?0005
+   \   015A            ?0011:
+     97          
+     98                  case    RTC_M:
+     99                          ret_value = input(Min);
+   \   015A  908002            MOV     DPTR,#32770
+   \   015D  E0                MOVX    A,@DPTR
+   \   015E  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   0161  F0                MOVX    @DPTR,A
+    100                          break;
+   \   0162  8011              SJMP    ?0005
+   \   0164            ?0012:
+    101          
+    102                  case    RTC_S:
+    103                          ret_value = input(Sec);
+   \   0164  908000            MOV     DPTR,#32768
+   \   0167  E0                MOVX    A,@DPTR
+   \   0168  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   016B  F0                MOVX    @DPTR,A
+    104                          break;
+   \   016C  8007              SJMP    ?0005
+   \   016E            ?0013:
+    105          
+    106                  default:
+    107                          ret_value = 0;;
+   \   016E  E4                CLR     A
+   \   016F  900000            MOV     DPTR,#$LOCBX Ret_data
+   \   0172  F0                MOVX    @DPTR,A
+    108                          break;
+   \   0173  8000              SJMP    ?0005
+   \   0175            ?0005:
+    109              }
+    110              return  ret_value;
+   \   0175  E0                MOVX    A,@DPTR
+   \   0176  FC                MOV     R4,A
+    111          }
+   \   0177  22                RET
+   \   0000                    RSEG    X_IDATA
+   \   0000            Config:
+   \   0001                    DS      1
+   \   0000                    RSEG    X_CDATA
+   \   0000  10                DB      16
+   \   0001                    END
+
+Errors: none
+Warnings: none
+Code size: 376
+Constant size: 1
+Static variable size: Data(0) Idata(0) Bit(0) Xdata(1)
+

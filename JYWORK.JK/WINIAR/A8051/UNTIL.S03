@@ -1,0 +1,5 @@
+        MACRO   %until
+; Syntax: %until {A | Rn | @Ri},=,#data
+        CJNE    \0,\2,L_\<
+        ENDMAC
+

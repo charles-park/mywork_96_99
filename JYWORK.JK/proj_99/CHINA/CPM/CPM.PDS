@@ -1,0 +1,48 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    CPM [Communication Processing Module]
+PATTERN  
+REVISION 1.0
+AUTHOR   M.J.M
+COMPANY  JINYANG
+DATE     11/11/95
+
+CHIP  GATE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A12                  COMBINATORIAL ; INPUT
+PIN  2          A13                  COMBINATORIAL ; INPUT
+PIN  3          A14                  COMBINATORIAL ; INPUT
+PIN  4          A15                  COMBINATORIAL ; INPUT
+PIN  5          WR                   COMBINATORIAL ; INPUT 
+PIN  7          SINT2                COMBINATORIAL ; INPUT
+PIN  8          SINT1                COMBINATORIAL ; INPUT
+PIN  9          SINT0                COMBINATORIAL ; INPUT
+PIN  10         GND                                ;
+PIN  11         KINT                 COMBINATORIAL ; INPUT
+PIN  12         INT1                 COMBINATORIAL ; OUTPUT
+PIN  13         INT0                 COMBINATORIAL ; OUTPUT
+PIN  14         CS5                  COMBINATORIAL ; OUTPUT
+PIN  15         CS4                  COMBINATORIAL ; OUTPUT
+PIN  16         CS3                  COMBINATORIAL ; OUTPUT
+PIN  17         CS2                  COMBINATORIAL ; OUTPUT
+PIN  18         CS1                  COMBINATORIAL ; OUTPUT
+PIN  19         CS0                  COMBINATORIAL ; OUTPUT
+PIN  20         VCC                                ;
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/CS0  = A15 * /A14 * /A13 * /A12
+/CS1  = A15 * /A14 * /A13 *  A12
+/CS2  = A15 * /A14 *  A13 * /A12
+/CS3  = A15 * /A14 *  A13 *  A12
+ CS4  = A15 *  A14 * /A13 * /A12 * /WR
+ CS5  = A15 *  A14 * /A13 *  A12 * /WR
+/INT0 = SINT0 + SINT1
+/INT1 = SINT2 + /KINT
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+;-------------------------------------------------------------------
+

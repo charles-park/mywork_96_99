@@ -1,0 +1,43 @@
+-!                 -LNK8096.XCL-
+
+    XLINK 4.xx command file to be used with the 8096 C-compiler V3.xx
+    using the (default) -ml option (large memory model).
+    Usage: xlink your_file(s) -f lnk8096 -o your_output_file
+
+    First define CPU  -!
+
+-c8096
+
+-!  Allocate segments which should be loaded -!
+
+-!  First allocate the read only segments .
+    2080 was here supposed to be start of PROM -!
+
+-! -Z(CODE)CSTART,CODE,RCODE,CDATA,ZVECT,CONST,CSTR,CCSTR=2080 -!
+-Z(CODE)CSTART,CODE,RCODE,CDATA,ZVECT,CONST,CSTR,CCSTR=2000
+
+-!  Then the writeable segments which must be mapped to a RAM area
+    6000 was here supposed to be start of RAM -!
+
+-Z(DATA)DATA,IDATA,UDATA,ECSTR,WCSTR,TEMP,CSTACK=C000
+
+-!  NOTE: In case of a RAM-only system, the two segment lists may be
+    connected to allocate a contigious memory space. I.e. :
+	    -Z...CCSTR,DATA...=start_of_RAM                        -!
+
+-! See configuration section concerning printf/sprintf -!
+-!  -e_small_write=_formatted_write    -!
+
+-! See configuration section concerning scanf/sscanf -!
+-e_medium_read=_formatted_read
+
+-!  Now load the 'C' library -!
+cl8096
+link
+test
+
+-x
+-l test.map
+-! Code will now reside in file aout.a15 in Intel Hex format -!
+-o test.hex
+

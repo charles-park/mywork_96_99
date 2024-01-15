@@ -1,0 +1,1448 @@
+	NAME	awsj(17)
+	RSEG	CODE(0)
+	RSEG	CONST(0)
+	COMMON	INTVEC(0)
+	RSEG	X_UDATA(0)
+	RSEG	X_IDATA(0)
+	RSEG	X_CDATA(0)
+	PUBLIC	Check_receive
+	$DEFFN	Check_receive(0,15,0,0,0,0,0,0),main
+	PUBLIC	EX0_int
+	$DEFFN	EX0_int(512,0,0,0,0,0,0,0)
+	PUBLIC	Loop
+	PUBLIC	Point
+	$DEFFN	Point(0,0,0,0,0,6,0,0),Check_receive
+	PUBLIC	SAM_struct_init
+	$DEFFN	SAM_struct_init(0,4,0,0,0,6,0,0),initiliaze
+	PUBLIC	SCON_int
+	$DEFFN	SCON_int(512,0,0,0,0,0,0,0)
+	PUBLIC	Send_to_Mpm
+	$DEFFN	Send_to_Mpm(0,1,0,0,0,3,0,0),Check_receive
+	PUBLIC	Wd_Read
+	$DEFFN	Wd_Read(0,2,0,0,0,0,0,0)
+	PUBLIC	Ws_Read
+	$DEFFN	Ws_Read(0,0,0,0,0,0,0,0)
+	PUBLIC	Ws_Wd_cal
+	$DEFFN	Ws_Wd_cal(0,0,0,0,0,0,0,0)
+	PUBLIC	id_jumper_read
+	$DEFFN	id_jumper_read(0,3,0,0,0,0,0,0),initiliaze
+	PUBLIC	initiliaze
+	$DEFFN	initiliaze(0,1,0,0,0,0,0,0),main
+	PUBLIC	inter_initiliaze
+	$DEFFN	inter_initiliaze(0,0,0,0,0,0,0,0),initiliaze
+	PUBLIC	jumper_check
+	$DEFFN	jumper_check(0,0,0,0,0,1,0,0),id_jumper_read
+	PUBLIC	main
+	$DEFFN	main(256,0,0,0,0,0,0,0)
+	EXTERN	?XOR_ASG_R567_A_DISP_L00
+	EXTERN	?F_MUL_L02
+	EXTERN	?R4567_FLT_TO_LONG_L02
+	EXTERN	?R4567_ULONG_TO_FLT_L02
+	EXTERN	?ST_AR3_R567_L17
+	EXTERN	?LD_A_R567_DISP_L17
+	EXTERN	?ST_A_R567_DISP_L17
+	EXTERN	?ST_AR3_R567_DISP_L17
+	EXTERN	?A_V_SWITCH_L05
+	EXTERN	?STO_R4567_DPTR_L20
+	EXTERN	?LD_R0123_CDPTR_L20
+	EXTERN	?STO_RA123_IR0_L20
+	EXTERN	?LOAD_IND_DPTR2_L20
+	EXTERN	?LCALL_IND_L20
+	EXTERN	?CL8051M_5_12_L17
+	RSEG	CODE
+; 1.	#include <io51.h>
+; 2.	#include <math.h>
+; 3.	#include <awsj.h>
+; 4.	//[*]컴컴컴� START FUNCTION 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]
+; 5.	void SAM_struct_init(Sensor_u *sensor, Byte cd, Byte id, Byte command)
+; 6.	{
+SAM_struct_init:
+; 7.	        Byte cmd[4]             =  "MtOT";
+	MOV	DPTR,#?0000
+	LCALL	?LD_R0123_CDPTR_L20
+	MOV	A,R0
+	MOV	R0,#$LOCBI SAM_struct_init
+	LCALL	?STO_RA123_IR0_L20
+; 8.	        sensor->Sam.Header          =   0xFFFF;
+	MOV	A,#255
+	MOV	R3,A
+	LCALL	?ST_AR3_R567_L17
+; 9.	        sensor->Sam.Command         =   cmd[command];
+	MOV	R0,#$LOCBI SAM_struct_init+9
+	MOV	A,@R0
+	ADD	A,#$LOCBI SAM_struct_init
+	MOV	R0,A
+	MOV	A,@R0
+	MOV	R0,#$LOCBI SAM_struct_init+4
+	XCH	A,R7
+	MOV	@R0,A
+	XCH	A,R7
+	INC	R0
+	XCH	A,R6
+	MOV	@R0,A
+	XCH	A,R6
+	INC	R0
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	MOV	DPTR,#2
+	LCALL	?ST_A_R567_DISP_L17
+; 10.	        sensor->Sam.Status          =   0;
+	CLR	A
+	MOV	DPTR,#3
+	LCALL	?ST_A_R567_DISP_L17
+; 11.	        sensor->Sam.Scode       =       cd;             // Fixed ID Number
+	MOV	A,R4
+	MOV	DPTR,#4
+	LCALL	?ST_A_R567_DISP_L17
+	MOV	R0,#$LOCBI SAM_struct_init+7
+	MOV	@R0,A
+; 12.	        sensor->Sam.Sid         =       id;         // Hardware Jumper Setting
+	INC	R0
+	MOV	A,@R0
+	MOV	DPTR,#5
+	LCALL	?ST_A_R567_DISP_L17
+; 13.	        sensor->Sam.Avr         =       0;
+	CLR	A
+	INC	R3
+	MOV	DPTR,#6
+	LCALL	?ST_AR3_R567_DISP_L17
+; 14.	        sensor->Sam.Spc         =       0;
+	MOV	DPTR,#8
+	LCALL	?ST_AR3_R567_DISP_L17
+; 15.	        sensor->Sam.Max         =       0;
+	MOV	DPTR,#12
+	LCALL	?ST_AR3_R567_DISP_L17
+; 16.	        sensor->Sam.Min         =       0;
+	MOV	DPTR,#10
+	LCALL	?ST_AR3_R567_DISP_L17
+; 17.	        sensor->Sam.Check_sum   =       0;
+	MOV	DPTR,#14
+	LCALL	?ST_A_R567_DISP_L17
+; 18.	        sensor->Sam.Tail                =   0xFFFE;
+	DEC	A
+	DEC	R3
+	DEC	A
+	MOV	DPTR,#15
+	LCALL	?ST_AR3_R567_DISP_L17
+; 19.	}
+	RET
+; 20.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 21.	void inter_initiliaze(void)
+; 22.	{
+inter_initiliaze:
+; 23.	        // Serial Interrupt initiliaze
+; 24.	        IE   = 0x80;    // EA Bit Enable
+	MOV	IE,#128
+; 25.	        PCON = 0x80;    // SMOD = 1  SET , Double Baudrate
+	MOV	PCON,#128
+; 26.	        TH1  = 0xf4;    // Reload Value ( Timer 1 Overflow Value )
+	MOV	TH1,#244
+; 27.	        TL1  = 0xf4;    // 22.1184Mhz, SMOD=1 ==> 9600bps
+	MOV	TL1,#244
+; 28.	        TH0  =    0;    // Wind Speed Check (MSB)
+	MOV	TH0,#0
+; 29.	        TL0  =    0;    // Wind Speed Check (LSB)
+	MOV	TL0,#0
+; 30.	        TMOD = 0x25;    // Timer 1==> mode2, Timer 0 ==> mode 1
+	MOV	TMOD,#37
+; 31.	        SCON = 0x50;    // serial port mode 1, ren(receieve enable)==>1, RB8(STOP bit)==>0
+	MOV	SCON,#80
+; 32.	        enable(TR1);    // serial Run
+	SETB	TCON.6
+; 33.	}
+	RET
+; 34.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 35.	Byte jumper_check(Byte ID_CON)
+; 36.	{
+jumper_check:
+; 37.	        // if Jumper Check Roution insert(Knot or m/s or Vector Function)
+; 38.	        ID_CON &= 0x0f;
+	MOV	A,R4
+	ANL	A,#15
+; 39.	        ID_CON = ~ID_CON;
+	CPL	A
+; 40.	        return  ID_CON;
+	MOV	R0,#$LOCBI jumper_check
+	MOV	@R0,A
+	MOV	R4,A
+; 41.	}
+	RET
+; 42.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 43.	Byte id_jumper_read(void)
+; 44.	{
+id_jumper_read:
+?0002:
+; 45.	        Byte i, ID_comp, ID_ORG;
+; 46.	
+; 47.	        while(1)
+; 48.	        {
+; 49.	                Watch(WDT);
+	CLR	A
+	MOV	C,P1.5
+	MOV	ACC.0,C
+	CPL	A
+	INC	A
+	INC	A
+	MOV	C,ACC.0
+	MOV	P1.5,C
+; 50.	                ID_ORG = input(JUMPER);
+	MOV	DPTR,#32768
+	MOVX	A,@DPTR
+	MOV	R0,#$LOCBI id_jumper_read+2
+	MOV	@R0,A
+; 51.	
+; 52.	                for( i=0 ; i<10 ;i++ )          ID_comp = input(JUMPER);
+	DEC	R0
+	DEC	R0
+	MOV	@R0,#0
+?0005:
+	MOV	R0,#$LOCBI id_jumper_read
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#10
+	JNC	?0004
+?0006:
+	MOV	DPTR,#32768
+	MOVX	A,@DPTR
+	INC	R0
+	MOV	@R0,A
+	DEC	R0
+	INC	@R0
+	SJMP	?0005
+?0004:
+; 53.	                if(ID_ORG == ID_comp)                                             break;
+	INC	R0
+	INC	R0
+	MOV	A,@R0
+	DEC	R0
+	XRL	A,@R0
+	JNZ	?0009
+?0008:
+	SJMP	?0001
+?0009:
+	SJMP	?0002
+?0001:
+; 54.	        }
+; 55.	        return jumper_check(ID_ORG);
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+	LCALL	$REFFN jumper_check
+; 56.	}
+	RET
+; 57.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 58.	
+; 59.	void initiliaze(void)
+; 60.	{
+initiliaze:
+; 61.	        Byte i;
+; 62.	
+; 63.	        inter_initiliaze();
+	LCALL	$REFFN inter_initiliaze
+; 64.	        ID = id_jumper_read();
+	LCALL	$REFFN id_jumper_read
+	MOV	A,R4
+	MOV	DPTR,#ID
+	MOVX	@DPTR,A
+; 65.	
+; 66.	        Sbuf.Rx_sp = Sbuf.Tx_sp = Sbuf.Rx_ep = Sbuf.Tx_ep = 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+203
+	MOVX	@DPTR,A
+	MOV	DPTR,#Sbuf+201
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#Sbuf+200
+	MOVX	@DPTR,A
+; 67.	        EVENT.Flag = EVENT.TimeCount = 0;
+	MOV	DPTR,#EVENT+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 68.	
+; 69.	        for(i=0;i<4;i++)        {
+	MOV	R0,#$LOCBI initiliaze
+	MOV	@R0,#0
+?0011:
+	MOV	R0,#$LOCBI initiliaze
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#4
+	JNC	?0010
+?0012:
+; 70.	                SAM_struct_init(&Sensor[i][WD],WD,ID+WD,i);
+	MOV	A,@R0
+	MOV	R1,#$PRMBI SAM_struct_init+5
+	MOV	@R1,A
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	DEC	R1
+	MOV	@R1,A
+	MOV	A,@R0
+	MOV	B,#34
+	MUL	AB
+	ADD	A,#LOW(Sensor)
+	MOV	R4,A
+	CLR	A
+	ADDC	A,#HIGH(Sensor)
+	MOV	R5,A
+	MOV	R6,A
+	MOV	A,R4
+	MOV	R5,A
+	MOV	R7,#1
+	MOV	R4,#0
+	LCALL	$REFFN SAM_struct_init
+; 71.	                SAM_struct_init(&Sensor[i][WS],WS,ID+WS,i);             Watch(WDT);
+	MOV	R0,#$LOCBI initiliaze
+	MOV	A,@R0
+	MOV	R1,#$PRMBI SAM_struct_init+5
+	MOV	@R1,A
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	INC	A
+	DEC	R1
+	MOV	@R1,A
+	MOV	A,@R0
+	MOV	B,#34
+	MUL	AB
+	ADD	A,#LOW(Sensor+17)
+	MOV	R4,A
+	CLR	A
+	ADDC	A,#HIGH(Sensor+17)
+	MOV	R5,A
+	MOV	R6,A
+	MOV	A,R4
+	MOV	R5,A
+	MOV	R7,#1
+	MOV	R4,#1
+	LCALL	$REFFN SAM_struct_init
+	CLR	A
+	MOV	C,P1.5
+	MOV	ACC.0,C
+	CPL	A
+	INC	A
+	INC	A
+	MOV	C,ACC.0
+	MOV	P1.5,C
+	MOV	R0,#$LOCBI initiliaze
+	INC	@R0
+	SJMP	?0011
+?0010:
+; 72.	        }
+; 73.	
+; 74.	        enable(TR0);    enable(EX0);    enable(ES);         Watch(WDT);
+	SETB	TCON.4
+	SETB	IE.0
+	SETB	IE.4
+	CLR	A
+	MOV	C,P1.5
+	MOV	ACC.0,C
+	CPL	A
+	INC	A
+	INC	A
+	MOV	C,ACC.0
+	MOV	P1.5,C
+; 75.	}
+	RET
+; 76.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 77.	int Point(int Bufsize, int Now, int Step)
+; 78.	{
+Point:
+; 79.	        Now += Step;
+	MOV	R0,#$LOCBI Point+5
+	MOV	A,R6
+	ADD	A,@R0
+	MOV	R6,A
+	DEC	R0
+	MOV	A,R7
+	ADDC	A,@R0
+; 80.	        if(Now >  Bufsize)      Now -= Bufsize;
+	DEC	R0
+	DEC	R0
+	MOV	@R0,A
+	INC	R0
+	XCH	A,R6
+	MOV	@R0,A
+	XCH	A,R6
+	MOV	R0,#$LOCBI Point
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	XCH	A,R4
+	MOV	@R0,A
+	XCH	A,R4
+	MOV	R7,A
+	MOV	A,R6
+	SETB	C
+	SUBB	A,R4
+	MOV	A,R5
+	XRL	A,#128
+	XCH	A,R7
+	XRL	A,#128
+	SUBB	A,R7
+	JC	?0015
+?0014:
+	INC	R0
+	INC	R0
+	CLR	C
+	MOV	A,@R0
+	SUBB	A,R4
+	MOV	@R0,A
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,R5
+	MOV	@R0,A
+?0015:
+; 81.	        if(Now <= Bufsize)  Now += Bufsize;
+	MOV	R0,#$LOCBI Point+3
+	MOV	A,R4
+	CLR	C
+	SUBB	A,@R0
+	DEC	R0
+	MOV	A,@R0
+	XRL	A,#128
+	XCH	A,R5
+	XRL	A,#128
+	SUBB	A,R5
+	JC	?0017
+?0016:
+	DEC	R0
+	DEC	R0
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	INC	R0
+	INC	R0
+	MOV	A,@R0
+	ADD	A,R4
+	MOV	@R0,A
+	DEC	R0
+	MOV	A,@R0
+	ADDC	A,R5
+	MOV	@R0,A
+?0017:
+; 82.	        return  Now;
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+; 83.	}
+	RET
+; 84.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 85.	void Check_receive(void)
+; 86.	{
+Check_receive:
+; 87.	        Byte         CHECK_XOR=0, count=0, WD_WS=0, i;
+	MOV	R0,#$LOCBI Check_receive
+	MOV	@R0,#0
+	INC	R0
+	MOV	@R0,#0
+	INC	R0
+	MOV	@R0,#0
+; 88.	        Command_u        Cmd                 ;   // MPM -> SAM Board Protocol Checking Struct
+; 89.	
+; 90.	        if(Sbuf.Rx_sp == Sbuf.Rx_ep)                                            return; Serial_Get();
+	MOV	DPTR,#Sbuf+200
+	MOVX	A,@DPTR
+	MOV	R4,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0019
+?0018:
+	RET
+?0019:
+	INC	R4
+	MOV	A,R4
+	MOV	DPTR,#Sbuf+200
+	MOVX	@DPTR,A
+	CLR	C
+	SUBB	A,#100
+	JC	?0021
+?0020:
+	MOV	R4,#0
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0021:
+; 91.	        if(Sbuf.Rx_buf[Point(MAX,Sbuf.Rx_sp,-1)]  != 0xfe)      return;
+	MOV	R0,#$PRMBI Point+4
+	MOV	A,#255
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+	MOV	A,R4
+	MOV	R5,#0
+	MOV	R6,A
+	XCH	A,R5
+	MOV	R7,A
+	XCH	A,R5
+	MOV	R4,#100
+	LCALL	$REFFN Point
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	XRL	A,#254
+	JZ	?0023
+?0022:
+	RET
+?0023:
+; 92.	        if(Sbuf.Rx_buf[Point(MAX,Sbuf.Rx_sp,-2)]  != 0xff)      return;
+	MOV	R0,#$PRMBI Point+4
+	MOV	@R0,#255
+	INC	R0
+	MOV	@R0,#254
+	MOV	DPTR,#Sbuf+200
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R6,A
+	XCH	A,R5
+	MOV	R7,A
+	XCH	A,R5
+	MOV	R4,#100
+	LCALL	$REFFN Point
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	?0025
+?0024:
+	RET
+?0025:
+; 93.	        if(Sbuf.Rx_buf[Point(MAX,Sbuf.Rx_sp,-10)] != 0xff)      return;
+	MOV	R0,#$PRMBI Point+4
+	MOV	@R0,#255
+	INC	R0
+	MOV	@R0,#246
+	MOV	DPTR,#Sbuf+200
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R6,A
+	XCH	A,R5
+	MOV	R7,A
+	XCH	A,R5
+	MOV	R4,#100
+	LCALL	$REFFN Point
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	?0027
+?0026:
+	RET
+?0027:
+; 94.	        if(Sbuf.Rx_buf[Point(MAX,Sbuf.Rx_sp,-11)] != 0xff)      return; disable(BULEL);
+	MOV	R0,#$PRMBI Point+4
+	MOV	@R0,#255
+	INC	R0
+	MOV	@R0,#245
+	MOV	DPTR,#Sbuf+200
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R6,A
+	XCH	A,R5
+	MOV	R7,A
+	XCH	A,R5
+	MOV	R4,#100
+	LCALL	$REFFN Point
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	?0029
+?0028:
+	RET
+?0029:
+	CLR	P1.6
+; 95.	
+; 96.	        if(Sbuf.Rx_buf[Point(MAX,Sbuf.Rx_sp,-8)] == ID ||
+; 97.	           Sbuf.Rx_buf[Point(MAX,Sbuf.Rx_sp,-8)] == (ID+1))
+	MOV	R0,#$PRMBI Point+4
+	MOV	@R0,#255
+	INC	R0
+	MOV	@R0,#248
+	MOV	DPTR,#Sbuf+200
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R6,A
+	XCH	A,R5
+	MOV	R7,A
+	XCH	A,R5
+	MOV	R4,#100
+	LCALL	$REFFN Point
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JZ	?0030
+	MOV	R0,#$PRMBI Point+4
+	MOV	@R0,#255
+	INC	R0
+	MOV	@R0,#248
+	MOV	DPTR,#Sbuf+200
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R6,A
+	XCH	A,R5
+	MOV	R7,A
+	XCH	A,R5
+	MOV	R4,#100
+	LCALL	$REFFN Point
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,A
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	MOV	R7,#0
+	INC	A
+	MOV	R6,A
+	JNZ	?0091
+	INC	R7
+?0091:
+	MOV	A,R4
+	XRL	A,R6
+	JNZ	?0092
+	MOV	A,R5
+	XRL	A,R7
+?0092:
+	JZ	$+5
+	LJMP	?0031
+?0032:
+?0033:
+?0030:
+; 98.	        {
+; 99.	                for(count = 0; count < 11 ; count++)    {
+	MOV	R0,#$LOCBI Check_receive+1
+	MOV	@R0,#0
+?0035:
+	MOV	R0,#$LOCBI Check_receive+1
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#11
+	JC	$+5
+	LJMP	?0034
+?0036:
+; 100.	                        Cmd.Bytes[count] = Sbuf.Rx_buf[Point(MAX, Sbuf.Rx_sp, -(11-count))];
+	MOV	A,@R0
+	MOV	R5,#0
+	MOV	R4,A
+	CLR	A
+	MOV	R7,A
+	MOV	A,#11
+	CLR	C
+	SUBB	A,R4
+	MOV	R6,A
+	MOV	A,R7
+	SUBB	A,R5
+	MOV	R7,A
+	CLR	C
+	CLR	A
+	SUBB	A,R6
+	MOV	R6,A
+	CLR	A
+	SUBB	A,R7
+	MOV	R7,A
+	MOV	R0,#$PRMBI Point+4
+	MOV	A,R7
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R6
+	MOV	@R0,A
+	MOV	DPTR,#Sbuf+200
+	MOVX	A,@DPTR
+	MOV	R6,A
+	XCH	A,R5
+	MOV	R7,A
+	XCH	A,R5
+	MOV	R4,#100
+	LCALL	$REFFN Point
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R0,#$LOCBI Check_receive+1
+	MOV	A,@R0
+	ADD	A,#$LOCBI Check_receive+4
+	MOV	R0,A
+	MOV	A,R4
+	MOV	@R0,A
+; 101.	                        if(count > 1 && count < 9)
+	MOV	R0,#$LOCBI Check_receive+1
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#2
+	JC	?0039
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#9
+	JNC	?0039
+?0041:
+?0040:
+?0038:
+; 102.	                                  CHECK_XOR ^= Sbuf.Rx_buf[Point(MAX, Sbuf.Rx_sp, -(11-count))];
+	MOV	A,@R0
+	MOV	R5,#0
+	MOV	R4,A
+	CLR	A
+	MOV	R7,A
+	MOV	A,#11
+	CLR	C
+	SUBB	A,R4
+	MOV	R6,A
+	MOV	A,R7
+	SUBB	A,R5
+	MOV	R7,A
+	CLR	C
+	CLR	A
+	SUBB	A,R6
+	MOV	R6,A
+	CLR	A
+	SUBB	A,R7
+	MOV	R7,A
+	MOV	R0,#$PRMBI Point+4
+	MOV	A,R7
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R6
+	MOV	@R0,A
+	MOV	DPTR,#Sbuf+200
+	MOVX	A,@DPTR
+	MOV	R6,A
+	XCH	A,R5
+	MOV	R7,A
+	XCH	A,R5
+	MOV	R4,#100
+	LCALL	$REFFN Point
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R0,#$LOCBI Check_receive
+	MOV	R4,A
+	MOV	A,@R0
+	XRL	A,R4
+	MOV	R1,#$LOCBI Check_receive
+	MOV	@R1,A
+?0039:
+	MOV	R0,#$LOCBI Check_receive+1
+	INC	@R0
+	LJMP	?0035
+?0034:
+; 103.	                }    Watch(WDT);
+	CLR	A
+	MOV	C,P1.5
+	MOV	ACC.0,C
+	CPL	A
+	INC	A
+	INC	A
+	MOV	C,ACC.0
+	MOV	P1.5,C
+; 104.	
+; 105.	                WD_WS = (Cmd.Mpm.Sid == ID) ? WD : WS;
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	MOV	R0,#$LOCBI Check_receive+7
+	XRL	A,@R0
+	SETB	C
+	JZ	$+3
+	CLR	C
+	JNC	?0093
+	CLR	A
+	SJMP	?0094
+?0093:
+	MOV	A,#1
+?0094:
+	MOV	R0,#$LOCBI Check_receive+2
+	MOV	@R0,A
+; 106.	
+; 107.	                if(CHECK_XOR == Cmd.Mpm.Check_sum)      {
+	DEC	R0
+	DEC	R0
+	MOV	A,@R0
+	MOV	R0,#$LOCBI Check_receive+12
+	XRL	A,@R0
+	JZ	$+5
+	LJMP	?0046
+?0045:
+; 108.	                        switch(Cmd.Mpm.Command) {
+	MOV	R0,#$LOCBI Check_receive+6
+	MOV	A,@R0
+	LCALL	?A_V_SWITCH_L05
+	DW	?0054
+	DB	0
+	DW	?0055
+	DB	1
+	DW	?0056
+	DB	2
+	DW	?0057
+	DB	3
+	DW	?0048
+	DB	'@'
+	DW	?0053
+	DB	'I'
+	DW	0
+	DW	?0047
+?0048:
+; 109.	                                case    RST  :
+; 110.	                                        for(i=0;i<4;i++)        {
+	MOV	R0,#$LOCBI Check_receive+3
+	MOV	@R0,#0
+?0050:
+	MOV	R0,#$LOCBI Check_receive+3
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#4
+	JNC	?0049
+?0051:
+; 111.	                                                Sensor[i][WD_WS].Sam.Max  = Cmd.Mpm.Max;
+	MOV	R0,#$LOCBI Check_receive+10
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+	MOV	R0,#$LOCBI Check_receive+3
+	MOV	A,@R0
+	MOV	B,#34
+	MUL	AB
+	MOV	R6,A
+	DEC	R0
+	MOV	A,@R0
+	MOV	B,#17
+	MUL	AB
+	ADD	A,R6
+	ADD	A,#LOW(Sensor+12)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sensor+12)
+	MOV	DPH,A
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 112.	                                                Sensor[i][WD_WS].Sam.Min  = Cmd.Mpm.Min;
+	MOV	R0,#$LOCBI Check_receive+8
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+	MOV	R0,#$LOCBI Check_receive+3
+	MOV	A,@R0
+	MOV	B,#34
+	MUL	AB
+	MOV	R6,A
+	DEC	R0
+	MOV	A,@R0
+	MOV	B,#17
+	MUL	AB
+	ADD	A,R6
+	ADD	A,#LOW(Sensor+10)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sensor+10)
+	MOV	DPH,A
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	INC	R0
+	INC	@R0
+	SJMP	?0050
+?0049:
+; 113.	                                        }
+; 114.	                                        Watch(WDT);
+	CLR	A
+	MOV	C,P1.5
+	MOV	ACC.0,C
+	CPL	A
+	INC	A
+	INC	A
+	MOV	C,ACC.0
+	MOV	P1.5,C
+; 115.	                                        break;
+	SJMP	?0047
+?0053:
+; 116.	                                case    INIT :                                                                  break;
+	SJMP	?0047
+?0054:
+; 117.	                                case    REAL :  Send_to_Mpm(&Sensor[REAL ][WD_WS]);     break;
+	MOV	R0,#$LOCBI Check_receive+2
+	MOV	A,@R0
+	MOV	B,#17
+	MUL	AB
+	ADD	A,#LOW(Sensor)
+	MOV	R4,A
+	CLR	A
+	ADDC	A,#HIGH(Sensor)
+	MOV	R5,A
+	MOV	R6,A
+	MOV	A,R4
+	MOV	R5,A
+	MOV	R7,#1
+	LCALL	$REFFN Send_to_Mpm
+	SJMP	?0047
+?0055:
+; 118.	                                case    SEC10:  Send_to_Mpm(&Sensor[SEC10][WD_WS]);     break;
+	MOV	R0,#$LOCBI Check_receive+2
+	MOV	A,@R0
+	MOV	B,#17
+	MUL	AB
+	ADD	A,#LOW(Sensor+34)
+	MOV	R4,A
+	CLR	A
+	ADDC	A,#HIGH(Sensor+34)
+	MOV	R5,A
+	MOV	R6,A
+	MOV	A,R4
+	MOV	R5,A
+	MOV	R7,#1
+	LCALL	$REFFN Send_to_Mpm
+	SJMP	?0047
+?0056:
+; 119.	                                case    MIN1 :  Send_to_Mpm(&Sensor[MIN1 ][WD_WS]);     break;
+	MOV	R0,#$LOCBI Check_receive+2
+	MOV	A,@R0
+	MOV	B,#17
+	MUL	AB
+	ADD	A,#LOW(Sensor+68)
+	MOV	R4,A
+	CLR	A
+	ADDC	A,#HIGH(Sensor+68)
+	MOV	R5,A
+	MOV	R6,A
+	MOV	A,R4
+	MOV	R5,A
+	MOV	R7,#1
+	LCALL	$REFFN Send_to_Mpm
+	SJMP	?0047
+?0057:
+; 120.	                                case    MIN10:  Send_to_Mpm(&Sensor[MIN10][WD_WS]);     break;
+	MOV	R0,#$LOCBI Check_receive+2
+	MOV	A,@R0
+	MOV	B,#17
+	MUL	AB
+	ADD	A,#LOW(Sensor+102)
+	MOV	R4,A
+	CLR	A
+	ADDC	A,#HIGH(Sensor+102)
+	MOV	R5,A
+	MOV	R6,A
+	MOV	A,R4
+	MOV	R5,A
+	MOV	R7,#1
+	LCALL	$REFFN Send_to_Mpm
+	SJMP	?0047
+?0047:
+?0046:
+?0031:
+; 121.	                        }
+; 122.	                }
+; 123.	        }
+; 124.	}
+?0058:
+	RET
+; 125.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 126.	void Send_to_Mpm(Sensor_u *Send)     // Check Porgram.... 97.2.11
+; 127.	{
+Send_to_Mpm:
+; 128.	        Byte    i;
+; 129.	        Send->Sam.Check_sum = 0;
+	MOV	R0,#$LOCBI Send_to_Mpm+1
+	MOV	A,R7
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R6
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R5
+	MOV	@R0,A
+	CLR	A
+	MOV	DPTR,#14
+	LCALL	?ST_A_R567_DISP_L17
+; 130.	        for(i=0;i<sizeof(Sensor_u);i++) {
+	MOV	R0,#$LOCBI Send_to_Mpm
+	MOV	@R0,#0
+?0060:
+	MOV	R0,#$LOCBI Send_to_Mpm
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#17
+	JNC	?0059
+?0061:
+; 131.	                if(i>1 && i<14)         Send->Sam.Check_sum ^= Send->Bytes[i];
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#2
+	JC	?0064
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#14
+	JNC	?0064
+?0066:
+?0065:
+?0063:
+	INC	R0
+	MOV	A,@R0
+	MOV	R7,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R6,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R5,A
+	MOV	R0,#$LOCBI Send_to_Mpm
+	MOV	A,@R0
+	MOV	DPL,A
+	MOV	DPH,#0
+	LCALL	?LD_A_R567_DISP_L17
+	MOV	DPTR,#14
+	LCALL	?XOR_ASG_R567_A_DISP_L00
+?0064:
+; 132.	                Sbuf.Tx_buf[Sbuf.Tx_ep++] = Send->Bytes[i];
+	MOV	R0,#$LOCBI Send_to_Mpm+1
+	MOV	A,@R0
+	MOV	R7,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R6,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R5,A
+	MOV	R0,#$LOCBI Send_to_Mpm
+	MOV	A,@R0
+	MOV	DPL,A
+	MOV	DPH,#0
+	LCALL	?LD_A_R567_DISP_L17
+	MOV	DPTR,#Sbuf+203
+	MOV	R4,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	A
+	MOVX	@DPTR,A
+	MOV	A,R5
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 133.	                if(Sbuf.Tx_ep >= MAX)   Sbuf.Tx_ep = 0;
+	MOV	DPTR,#Sbuf+203
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,#100
+	JC	?0068
+?0067:
+	CLR	A
+	MOVX	@DPTR,A
+?0068:
+	MOV	R0,#$LOCBI Send_to_Mpm
+	INC	@R0
+	SJMP	?0060
+?0059:
+; 134.	        }
+; 135.	        enable(REDL);     Watch(WDT);
+	SETB	P1.7
+	CLR	A
+	MOV	C,P1.5
+	MOV	ACC.0,C
+	CPL	A
+	INC	A
+	INC	A
+	MOV	C,ACC.0
+	MOV	P1.5,C
+; 136.	        SBUF = Sbuf.Tx_buf[Sbuf.Tx_sp++];
+	MOV	DPTR,#Sbuf+202
+	MOVX	A,@DPTR
+	MOV	R4,A
+	INC	A
+	MOVX	@DPTR,A
+	MOV	A,R4
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 137.	}
+	RET
+; 138.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 139.	void main(void)
+; 140.	{
+main:
+; 141.	        initiliaze();           // Serial & Struct Initiliaze
+	LCALL	$REFFN initiliaze
+?0070:
+; 142.	        while(1)        {
+; 143.	                Check_receive();                Watch(WDT);
+	LCALL	$REFFN Check_receive
+	CLR	A
+	MOV	C,P1.5
+	MOV	ACC.0,C
+	CPL	A
+	INC	A
+	INC	A
+	MOV	C,ACC.0
+	MOV	P1.5,C
+; 144.	                if(EVENT.Flag == 1)             Loop.Select();          Watch(WDT);
+	MOV	DPTR,#EVENT+23
+	MOVX	A,@DPTR
+	DEC	A
+	JNZ	?0073
+?0072:
+	MOV	DPTR,#Loop
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPL,A
+	MOV	DPH,R7
+	LCALL	?LOAD_IND_DPTR2_L20
+	LCALL	?LCALL_IND_L20
+?0073:
+	CLR	A
+	MOV	C,P1.5
+	MOV	ACC.0,C
+	CPL	A
+	INC	A
+	INC	A
+	MOV	C,ACC.0
+	MOV	P1.5,C
+; 145.	        }
+; 146.	}
+	SJMP	?0070
+; 147.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 148.	void Ws_Read(void)
+; 149.	{
+Ws_Read:
+; 150.	        disable(TR0);
+	CLR	TCON.4
+; 151.	        EVENT.WsMax  = (Word)(TL0)      ;
+	MOV	A,TL0
+	MOV	R5,#0
+	MOV	DPTR,#EVENT
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 152.	        EVENT.WsMax |= (Word)(TH0 << 8) ;
+	MOV	A,TH0
+	MOV	R4,#0
+	MOV	R5,A
+	MOVX	A,@DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#EVENT
+	MOVX	A,@DPTR
+	ORL	A,R5
+	MOVX	@DPTR,A
+; 153.	        enable(TR0);
+	SETB	TCON.4
+; 154.	        EVENT.WsSum = 0.065 * EVENT.WsMax; // Wind/Speed K value
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R1,#30
+	MOV	R3,#61
+	MOV	R2,#133
+	MOV	R0,#184
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#EVENT+4
+	LCALL	?STO_R4567_DPTR_L20
+; 155.	        //if(Real[WS].
+; 156.	
+; 157.	        EVENT.Flag = 0;
+	CLR	A
+	MOV	DPTR,#EVENT+23
+	MOVX	@DPTR,A
+; 158.	}
+	RET
+; 159.	
+; 160.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 161.	void Wd_Read(void)
+; 162.	{
+Wd_Read:
+; 163.	        Word    Sum = 0;
+	MOV	R0,#$LOCBI Wd_Read
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+; 164.	        // Sum = Value * 0.222; // Wind Direction K Value
+; 165.	}
+	RET
+; 166.	void Ws_Wd_cal(void)
+; 167.	{
+Ws_Wd_cal:
+; 168.	}
+	RET
+; 169.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 170.	// if Function is Error ==> #define Function change.(External interrupt0)
+; 171.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 172.	interrupt   void    EX0_int(void)                       // 4 Hz (Time Process)
+; 173.	{
+EX0_int:
+	PUSH	ACC
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+; 174.	        switch(EVENT.TimeCount)
+	MOV	DPTR,#EVENT+22
+	MOVX	A,@DPTR
+	JNZ	?0076
+?0075:
+; 175.	        {
+; 176.	                case    0:      Loop.Select     = Ws_Read   ;   EVENT.Flag = 1;         break;
+	MOV	A,#LOW $IFREF Ws_Read
+	MOV	R5,#HIGH $IFREF Ws_Read
+	MOV	DPTR,#Loop
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	A,#1
+	MOV	DPTR,#EVENT+23
+	MOVX	@DPTR,A
+	SJMP	?0074
+?0076:
+	CJNE	A,#1,?0077
+; 177.	                case    1:      Loop.Select     = Wd_Read   ;   EVENT.Flag = 1;         break;
+	MOV	A,#LOW $IFREF Wd_Read
+	MOV	R5,#HIGH $IFREF Wd_Read
+	MOV	DPTR,#Loop
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	A,#1
+	MOV	DPTR,#EVENT+23
+	MOVX	@DPTR,A
+	SJMP	?0074
+?0077:
+	CJNE	A,#2,?0078
+; 178.	                case    2:  Loop.Select     = Ws_Wd_cal ;       EVENT.Flag = 1;         break;
+	MOV	A,#LOW $IFREF Ws_Wd_cal
+	MOV	R5,#HIGH $IFREF Ws_Wd_cal
+	MOV	DPTR,#Loop
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	A,#1
+	MOV	DPTR,#EVENT+23
+	MOVX	@DPTR,A
+	SJMP	?0074
+?0078:
+	CJNE	A,#3,?0079
+; 179.	                case    3:  EVENT.TimeCount = 0         ;       EVENT.Flag = 0;         break;
+	CLR	A
+	MOV	DPTR,#EVENT+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	SJMP	?0074
+?0079:
+; 180.	                default  :                                                              EVENT.Flag = 0;         break;
+	CLR	A
+	MOV	DPTR,#EVENT+23
+	MOVX	@DPTR,A
+	SJMP	?0074
+?0074:
+; 181.	        }
+; 182.	}
+	POP	ACC
+	MOV	R5,A
+	POP	ACC
+	MOV	R4,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	ACC
+	RETI
+; 183.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 184.	interrupt   void    SCON_int(void)                      // Internal Serial Communication
+; 185.	{
+SCON_int:
+	PUSH	ACC
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+; 186.	        if(RI)  {
+	JNB	SCON.0,?0081
+?0080:
+; 187.	                disable(RI);                                    enable(BULEL);
+	CLR	SCON.0
+	SETB	P1.6
+; 188.	                Sbuf.Rx_buf[Sbuf.Rx_ep++] = SBUF;
+	MOV	A,SBUF
+	MOV	DPTR,#Sbuf+201
+	MOV	R4,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	A
+	MOVX	@DPTR,A
+	MOV	A,R5
+	ADD	A,#LOW(Sbuf+100)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf+100)
+	MOV	DPH,A
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 189.	                if(Sbuf.Rx_ep >= MAX)                   Sbuf.Rx_ep = 0;
+	MOV	DPTR,#Sbuf+201
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,#100
+	JC	?0083
+?0082:
+	CLR	A
+	MOVX	@DPTR,A
+?0083:
+?0081:
+; 190.	        }
+; 191.	        if(TI)  {
+	JNB	SCON.1,?0085
+?0084:
+; 192.	                disable(TI);
+	CLR	SCON.1
+; 193.	                if(Sbuf.Tx_sp != Sbuf.Tx_ep)    SBUF = Sbuf.Tx_buf[Sbuf.Tx_sp++];
+	MOV	DPTR,#Sbuf+202
+	MOVX	A,@DPTR
+	MOV	R4,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JZ	?0087
+?0086:
+	MOV	A,R4
+	ADD	A,#1
+	XCH	A,R4
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+	MOV	A,R4
+	MOV	DPTR,#Sbuf+202
+	MOVX	@DPTR,A
+	SJMP	?0088
+?0087:
+; 194.	                else                                                    disable(REDL);
+	CLR	P1.7
+?0088:
+; 195.	                if(Sbuf.Tx_sp >= MAX)                   Sbuf.Tx_sp = 0;
+	MOV	A,R4
+	CLR	C
+	SUBB	A,#100
+	JC	?0090
+?0089:
+	MOV	R4,#0
+	MOV	A,R4
+	MOV	DPTR,#Sbuf+202
+	MOVX	@DPTR,A
+?0090:
+?0085:
+; 196.	        }
+; 197.	}
+	POP	ACC
+	MOV	R5,A
+	POP	ACC
+	MOV	R4,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	ACC
+	RETI
+; 198.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+	RSEG	CONST
+?0000:
+	DB	'MtOT
+	COMMON	INTVEC
+	DS	3
+	DB	2
+	DB	HIGH(EX0_int),LOW(EX0_int)
+	DS	29
+	DB	2
+	DB	HIGH(SCON_int),LOW(SCON_int)
+	RSEG	X_UDATA
+Loop:
+	DS	2
+Sensor:
+	DS	136
+Sbuf:
+	DS	204
+EVENT:
+	DS	24
+	RSEG	X_IDATA
+ID:
+	DS	1
+	RSEG	X_CDATA
+	DB	0
+	END

@@ -1,0 +1,61 @@
+U4.pds
+
+PALASM90  PARSER   - MARKET RELEASE (2-14-90)
+ (C) - COPYRIGHT ADVANCED MICRO DEVICES INC., 1990
+
+
+                    ***********************************
+                    *     PALASM PARSER LISTING       *
+                    ***********************************
+
+LINE #   |----+----1----+----2----+----3----+----4----+----5----+----6----+
+   1     |;PALASM Design Description
+   2     |
+   3     |;---------------------------------- Declaration Segment ------------
+   4     |TITLE    W/S W/D TEMP BOARD
+   5     |PATTERN  
+   6     |REVISION 
+   7     |AUTHOR   PARK WOONG
+   8     |COMPANY  JINYANG INC.
+   9     |DATE     96/10/15
+  10     |
+  11     |CHIP  DECOD  PALCE16V8
+  12     |
+  13     |;---------------------------------- PIN Declarations ---------------
+  14     |PIN  1          A12                  COMBINATORIAL ; INPUT
+  15     |PIN  2          A13                  COMBINATORIAL ; INPUT
+  16     |PIN  3          A14                  COMBINATORIAL ; INPUT
+  17     |PIN  4          A15                  COMBINATORIAL ; INPUT
+  18     |PIN  5          RD                   COMBINATORIAL ; INPUT
+  19     |PIN  6          WR                   COMBINATORIAL ; INPUT
+  20     |PIN  10         GND     ; INPUT
+  21     |PIN  12         ADC                  COMBINATORIAL ; OUTPUT
+  22     |PIN  13         RAM                  COMBINATORIAL ; OUTPUT
+  23     |PIN  14         LEDH                 COMBINATORIAL ; OUTPUT
+  24     |PIN  15         CS0                  COMBINATORIAL ; OUTPUT
+  25     |PIN  16         CS1                  COMBINATORIAL ; OUTPUT
+  26     |PIN  17         LEDL                 COMBINATORIAL ; OUTPUT
+  27     |PIN  18         CS3                  COMBINATORIAL ; OUTPUT
+  28     |PIN  20         VCC     ; INPUT
+  29     |
+  30     |;----------------------------------- Boolean Equation Segment ------
+  31     |
+  32     |EQUATIONS
+  33     |/ADC  =  (/RD + /WR) *  A15 *  A14 * /A13 * /A12         ; C000h
+  34     |/RAM  =                /A15
+  35     | LEDH =   /WR *  A15 *  A14 * /A13 *  A12                ; D000h ; IDV
+  36     |/CS0  =                 A15 * /A14 * /A13 * /A12         ; 8000h ; 8250
+  37     |/CS1  =                 A15 * /A14 * /A13 *  A12         ; 9000h ; RTCC
+  38     | LEDL =         /WR  *  A15 * /A14 *  A13 * /A12         ; A000h
+  39     |/CS3  =  (/RD + /WR) *  A15 * /A14 *  A13 *  A12         ; B000h ; Read id
+  40     |
+  41     |;----------------------------------- Simulation Segment ------------
+  42     |SIMULATION
+  43     |;/CS0 = (/RD + /WR) *  A15 * /A14 * /A13 * /A12         ; 8000h ; 8250
+  44     |;/CS1 = (/RD + /WR) *  A15 * /A14 * /A13 *  A12         ; 9000h ; RTCC
+  45     |
+  46     |;-------------------------------------------------------------------
+
+ %% PARSE %%    No errors.  No warnings.
+
+ %% PARSE %%    File processed successfully.    File:  U4.pds

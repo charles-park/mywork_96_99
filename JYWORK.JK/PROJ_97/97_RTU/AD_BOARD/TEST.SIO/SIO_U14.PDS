@@ -1,0 +1,49 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    SIO_97 BOARD CONTROL GAL
+PATTERN  
+REVISION 1.0
+AUTHOR   JK. PARK
+COMPANY  JINYANG
+DATE     8/16/97
+
+CHIP  DECODE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A12                  COMBINATORIAL ; INPUT
+PIN  2          A13                  COMBINATORIAL ; INPUT
+PIN  3          A14                  COMBINATORIAL ; INPUT
+PIN  4          A15                  COMBINATORIAL ; INPUT
+PIN  5          T0                   COMBINATORIAL ; INPUT
+PIN  6          SINT0                COMBINATORIAL ; INPUT
+PIN  7          SINT1                COMBINATORIAL ; INPUT
+PIN  8          SINT2                COMBINATORIAL ; INPUT
+PIN  9          SINT3                COMBINATORIAL ; INPUT
+PIN  10         GND                                ; INPUT
+PIN  11         SINT4                COMBINATORIAL ; INPUT
+PIN  12         INT0                 COMBINATORIAL ; OUTPUT
+PIN  13         INT1                 COMBINATORIAL ; OUTPUT
+PIN  14         CS_SW                COMBINATORIAL ; OUTPUT
+PIN  15         CS_S2                COMBINATORIAL ; OUTPUT
+PIN  16         CS_S3                COMBINATORIAL ; OUTPUT
+PIN  17         CS_S4                COMBINATORIAL ; OUTPUT
+PIN  18         CS_S5                COMBINATORIAL ; OUTPUT
+PIN  19         CS_S6                COMBINATORIAL ; OUTPUT
+PIN  20         VCC                                ; INPUT
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+/INT0      = SINT0 + SINT1                               ;
+/INT1      = SINT2 + SINT3 + SINT4                       ;
+/CS_S2     = A15 * /A14 * /A13 *  A12                    ; 0x9000
+/CS_S3     = A15 * /A14 *  A13 * /A12                    ; 0xA000
+/CS_S4     = A15 * /A14 *  A13 *  A12                    ; 0xB000
+/CS_S5     = A15 *  A14 * /A13 * /A12                    ; 0xC000
+/CS_S6     = A15 *  A14 * /A13 *  A12                    ; 0xD000
+/CS_SW     = A15 *  A14 *  A13 * /A12                    ; 0xE000
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

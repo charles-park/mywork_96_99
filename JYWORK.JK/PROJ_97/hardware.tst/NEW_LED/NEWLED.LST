@@ -1,0 +1,1274 @@
+  Mon Sep 23 1996 15:24                                                                                                  Page    1
+
+
+
+
+
+
+
+               2500 A.D. 8051 Macro Assembler  -  Version 4.03c
+               ------------------------------------------------
+
+                       Input  Filename : NEWLED.A51
+                       Output Filename : NEWLED.obj
+
+
+    1                          	;/ /// /////////////////////////////////////////////// /// /;
+    2                          	;/ /// /////////////////////////////////////////////// /// /;
+    3                          	;/ /// ///            New_LED Displayer            /// /// /;
+    4                          	;/ /// ///                                         /// /// /;
+    5                          	;/ /// ///       Program By  Hae-suk. Jin          /// /// /;
+    6                          	;/ /// ///                  1996.  9. 04 At start  /// /// /;
+    7                          	;/ /// ///                  1996.   .    at Ver    /// /// /;
+    8                          	;/ /// /////////////////////////////////////////////// /// /;
+    9                          	;/ /// /////////////////////////////////////////////// /// /;
+   10                          	
+   11   0000                   	.INCLUDE NEWLED.H
+   12                          	;       =========================
+   13                          	;          DATA CONSTANT SET
+   14                          	;       =========================
+   15          0060            	STACK       EQU     60H
+   16          007F            	BLBUF1C     EQU     7FH
+   17          00FF            	BLBUF2C     EQU     FFH
+   18          0006            	RESET1C     EQU     06H
+   19          0064            	RESET2C     EQU     64H
+   20                          	
+   21                          	;       ==========================
+   22                          	;         DATA MEMORY PARTITION
+   23                          	;       ==========================
+   24          0008            	ID          EQU     08H
+   25          0009            	CCOUNT      EQU     09H         ; 0 - 0FH  COLUME COUNT
+   26          000A            	CLIMIT      EQU     0AH         ; MAX 0FH
+   27          000B            	DPOINT      EQU     0BH         ; DOT POINT
+   28          000C            	BLBUF1      EQU     0CH         ; DISPLAY BLINK BUFFER
+   29          000D            	BLBUF2      EQU     0DH         ;
+   30          000E            	SRDATA      EQU     0EH         ; -1FH 18 BYTE  'SERIAL DATA BUFFER
+   31          0022            	PERH        EQU     22H         ; DISPLAY PERIOD
+   32          0023            	PERL        EQU     23H
+   33          0024            	BAUD        EQU     24H
+   34          0025            	JMPID       EQU     25H         ; REAL JUMPER ID
+   35          0026            	DKUBUN      EQU     26H         ; DISPLAY KUBUN
+   36          0027            	DSKIND      EQU     27H         ; DISPLAY SENSOR CODE
+   37          0028            	DSID        EQU     28H         ; DISPLAY SENSOR ID
+   38          0029            	DSCODE      EQU     29H         ; DISPLAY SENSOR ID
+   39          002A            	DVALH       EQU     2AH         ; DISPLAY VALUE HIGH     BINARY
+   40          002B            	DVALL       EQU     2BH         ; DISPLAY VALUE LOW       ~
+   41          002C            	SSTATUS     EQU     2CH         ; SENSOR STATUS VALUE
+   42          002D            	BDPOINT     EQU     2DH         ; DECIMAL POINT VALUE / BACKUP
+   43          002E            	RESETH      EQU     2EH         ; RESET BUFFER
+   44          002F            	RESETL      EQU     2FH
+   45                          	
+   46          004E            	TESTBF1     EQU     4EH
+   47          004F            	TESTBF2     EQU     4FH
+  Mon Sep 23 1996 15:24                                                                                                  Page    2
+
+
+
+
+   48                          	
+   49          0050            	DISPBF      EQU     50H         ; -5FH 15 BYTE  'DISPLAY BUFFER
+   50                          	
+   51                          	;       ========================
+   52                          	;         BIT MAP ( 20H - 21H )
+   53                          	;       ========================
+   54          0000            	BLINK       EQU     00H         ; VIBRATION BIT
+   55          0001            	BLKON       EQU     01H         ; DISPLAY BLINK 1 = ON, 0 = OFF
+   56          0002            	DPDOT       EQU     02H         ;
+   57          0003            	SIGN        EQU     03H         ; 1 = '-'
+   58          0004            	DISPON      EQU     04H
+   59          0005            	RBIT        EQU     05H         ; FREE BIT
+   60          0006            	INITBIT     EQU     06H
+   61                          	
+   62                          	;       =============       INTH 5,6,7,8        ; INT 0
+   63                          	;          I/O MAPs         INTL 1,2,3,4        ; INT 1
+   64                          	;       =============
+   65          00B3            	LT0         .REG    P3.3        ; DATA PORT
+   66          00B4            	LT1         .REG    P3.4        ; COLUME SELECT PORT 1
+   67          00B5            	LT2         .REG    P3.5        ; COLUME SELECT PORT 2
+   68          00B2            	LT3         .REG    P3.2        ; VIEW JUMER            ' ACTIVE
+   69                          	; --
+   70          00B1            	WDT         .REG    P3.1        ; WATCH DOG PIN
+   71                          	
+   72          00B7            	CS          .REG    P3.7
+   73          0097            	CLK         .REG    P1.7
+   74          0096            	DI          .REG    P1.6
+   75          0095            	DO          .REG    P1.5
+   76   0000                   	            END
+   77                          	
+   78   0000                   	        ORG     0000H
+   79   0000   80 24           	        SJMP    START
+   80                          	
+   81   0003                   	        ORG     0003H
+   82   0003   80 21           	        SJMP    START
+   83                          	
+   84   000B                   	        ORG     000BH           ; TIMER 0
+   85   000B   81 85           	        AJMP    T0INT
+   86                          	
+   87   0013                   	        ORG     0013H
+   88   0013   80 11           	        SJMP    START
+   89                          	
+   90   001B                   	        ORG     001BH           ; TIMER 1
+   91   001B   80 09           	        SJMP    START           ; SERIAL ROUTINE USING
+   92                          	
+   93   0023                   	        ORG     0023H
+   94   0023   02 04 E8        	        LJMP    SINT
+   95   0026                   	START:
+   96   0026   75 A8 80        	        MOV     IE,#80H                 ; INTERRUPT ALL DISABLE
+   97   0029   75 81 60        	        MOV     SP,#STACK
+   98   002C   75 D0 00        	        MOV     PSW,#00H
+   99   002F   75 87 80        	        MOV     PCON,#80H
+  100                          	;      =============================
+  101                          	;        INTERNAL MEMORY ALL CLEAR
+  102                          	;      =============================
+  103   0032   74 00           	        MOV     A,#00H
+  104   0034   78 08           	        MOV     R0,#8H
+  Mon Sep 23 1996 15:24                                                                                                  Page    3
+
+
+
+
+  105   0036                   	MCLRL:
+  106   0036   F6              	        MOV     @R0,A
+  107   0037   08              	        INC     R0
+  108   0038   B8 60 FB        	        CJNE    R0,#STACK,MCLRL
+  109                          	;     =========================
+  110                          	;       EXTERNAL I/O's SETTING
+  111                          	;     =========================
+  112   003B   C2 B7           	        CLR     CS              ; DISABLE CHIP
+  113   003D   C2 97           	        CLR     CLK             ; DISABLE CHIP
+  114   003F   C2 96           	        CLR     DI              ; DISABLE CHIP
+  115                          	
+  116   0041   C2 B3           	        CLR     LT0
+  117   0043   C2 B4           	        CLR     LT1
+  118   0045   C2 B5           	        CLR     LT2             ; CHIP's DISABLE
+  119   0047   C2 B2           	        CLR     LT3             ; ID ACTIVE
+  120   0049   75 90 FF        	        MOV     P1,#FFH
+  121   004C   00              	        NOP
+  122   004D   E5 90           	        MOV     A,P1
+  123   004F   F4              	        CPL     A
+  124   0050   03              	        RR      A
+  125   0051   54 7F           	        ANL     A,#7FH
+  126   0053   F5 25           	        MOV     JMPID,A
+  127   0055   D2 B2           	        SETB    LT3             ; CHIP's DISABLE
+  128                          	;      ===============================
+  129                          	;        INTERNAL MEMORY DEFAULT SET
+  130                          	;      ===============================
+  131   0057   7A 0E           	        MOV     R2,#SRDATA
+  132   0059   7B 09           	        MOV     R3,#09H
+  133   005B                   	SEPLOAD:
+  134   005B   EB              	        MOV     A,R3
+  135   005C   12 03 65        	        CALL    READR
+  136   005F   E8              	        MOV     A,R0
+  137   0060   85 01 04        	        MOV     4,1
+  138                          	
+  139   0063   85 02 00        	        MOV     0,2
+  140   0066   F6              	        MOV     @R0,A
+  141   0067   08              	        INC     R0
+  142   0068   EC              	        MOV     A,R4
+  143   0069   F6              	        MOV     @R0,A
+  144   006A   08              	        INC     R0
+  145                          	
+  146   006B   85 00 02        	        MOV     2,0
+  147   006E   1B              	        DEC     R3
+  148   006F   BB 00 E9        	        CJNE    R3,#00H,SEPLOAD
+  149                          	
+  150   0072   12 05 83        	        CALL    CHKSUM
+  151   0075   70 13           	        JNZ     CHKLOAD
+  152   0077                   	CHKBAD:
+  153   0077   75 0A 04        	        MOV     CLIMIT,#04
+  154   007A   75 0B 00        	        MOV     DPOINT,#0H
+  155   007D   75 22 FA        	        MOV     PERH,#FAH                   ; INTERNAL TIMER
+  156   0080   75 23 FF        	        MOV     PERL,#FFH
+  157   0083   75 24 E8        	        MOV     BAUD,#E8H
+  158   0086   D2 01           	        SETB    BLKON
+  159   0088   80 3E           	        SJMP    FINIT
+  160   008A                   	CHKLOAD:
+  161   008A   E5 1A           	        MOV     A,SRDATA+CH
+  Mon Sep 23 1996 15:24                                                                                                  Page    4
+
+
+
+
+  162   008C   54 07           	        ANL     A,#07H
+  163   008E   90 06 5F        	        MOV     DPTR,#TBLBAUD
+  164   0091   93              	        MOVC    A,@A+DPTR
+  165   0092   F5 24           	        MOV     BAUD,A
+  166                          	
+  167   0094   E5 18           	        MOV     A,SRDATA+AH
+  168   0096   F5 22           	        MOV     PERH,A
+  169   0098   24 02           	        ADD     A,#02H
+  170   009A   50 03           	        JNC     VSETCON
+  171   009C   75 22 FD        	        MOV     PERH,#FDH
+  172   009F                   	VSETCON:
+  173   009F   85 12 26        	        MOV     DKUBUN,SRDATA+4
+  174   00A2   85 17 27        	        MOV     DSKIND,SRDATA+9H
+  175   00A5   E5 15           	        MOV     A,SRDATA+7          ; CLIMIT VALUE
+  176   00A7   54 0F           	        ANL     A,#0FH
+  177   00A9   60 DF           	        JZ      CHKLOAD             ; IF CLIMIT IS LOW THEN GOTO DEFAULT
+  178   00AB   F5 0A           	        MOV     CLIMIT,A
+  179   00AD   85 13 28        	        MOV     DSID,SRDATA+5
+  180   00B0   85 19 23        	        MOV     PERL,SRDATA+BH
+  181   00B3   C2 01           	        CLR     BLKON
+  182                          	
+  183   00B5   E5 16           	        MOV     A,SRDATA+8
+  184   00B7   30 E7 08        	        JNB     A.7,FNDON
+  185                          	
+  186   00BA   D2 02           	        SETB    DPDOT
+  187   00BC   75 0B 00        	        MOV     DPOINT,#0
+  188   00BF   02 00 F2        	        JMP     DINIT
+  189   00C2                   	FNDON:
+  190   00C2   F5 0B           	        MOV     DPOINT,A
+  191   00C4   F5 2D           	        MOV     BDPOINT,A
+  192   00C6   C2 02           	        CLR     DPDOT
+  193                          	; ----
+  194   00C8                   	FINIT:
+  195   00C8   78 50           	        MOV     R0,#DISPBF
+  196   00CA   79 07           	        MOV     R1,#07H
+  197   00CC   7A 01           	        MOV     R2,#1H      ; COUNT VALUE
+  198   00CE   C2 05           	        CLR     RBIT
+  199   00D0                   	MINIT:
+  200   00D0   EA              	        MOV     A,R2
+  201   00D1   B5 0B 06        	        CJNE    A,DPOINT,INIT01
+  202   00D4   74 BF           	        MOV     A,#BFH
+  203   00D6   D2 05           	        SETB    RBIT
+  204   00D8   80 11           	        SJMP    INIT03
+  205   00DA                   	INIT01:
+  206   00DA   B5 0A 06        	        CJNE    A,CLIMIT,INIT04
+  207   00DD   74 3F           	        MOV     A,#3FH
+  208   00DF   D2 05           	        SETB    RBIT
+  209   00E1   80 08           	        SJMP    INIT03
+  210   00E3                   	INIT04:
+  211   00E3   30 05 04        	        JNB     RBIT,INIT02
+  212   00E6   74 3F           	        MOV     A,#3FH
+  213   00E8   80 01           	        SJMP    INIT03
+  214   00EA                   	INIT02:
+  215   00EA   E4              	        CLR     A
+  216   00EB                   	INIT03:
+  217   00EB   F6              	        MOV     @R0,A
+  218   00EC   08              	        INC     R0
+  Mon Sep 23 1996 15:24                                                                                                  Page    5
+
+
+
+
+  219   00ED   0A              	        INC     R2
+  220   00EE   D9 E0           	        DJNZ    R1,MINIT
+  221   00F0   80 0E           	        SJMP    MNCONT
+  222                          	; ----
+  223   00F2                   	DINIT:
+  224   00F2   90 06 18        	        MOV     DPTR,#D_FONTO
+  225   00F5   78 05           	        MOV     R0,#05H
+  226   00F7   79 5A           	        MOV     R1,#DISPBF+0AH
+  227   00F9                   	DINIT01:
+  228   00F9   E4              	        CLR     A
+  229   00FA   93              	        MOVC    A,@A+DPTR
+  230   00FB   F7              	        MOV     @R1,A
+  231   00FC   A3              	        INC     DPTR
+  232   00FD   09              	        INC     R1
+  233   00FE   D8 F9           	        DJNZ    R0,DINIT01
+  234   0100                   	MNCONT:
+  235   0100   75 2E 06        	        MOV     RESETH,#RESET1C
+  236   0103   75 2F 64        	        MOV     RESETL,#RESET2C
+  237                          	
+  238                          	;    ==========================
+  239                          	;      INTERNAL INTERRUPT SET
+  240                          	;    ==========================
+  241                          	; TIMER 0
+  242   0106   75 89 21        	        MOV     TMOD,#21H               ; T0, 16BIT NO PRESCALER TIMER
+  243   0109   75 98 50        	        MOV     SCON,#50H
+  244   010C   85 22 8C        	        MOV     TH0,PERH                ; INTERNAL TIMER
+  245   010F   85 23 8A        	        MOV     TL0,PERL
+  246   0112   85 24 8D        	        MOV     TH1,BAUD                ; 2400 BPS SET
+  247   0115   85 24 8B        	        MOV     TL1,BAUD
+  248                          	
+  249   0118   D2 8C           	        SETB    TR0
+  250   011A   D2 8E           	        SETB    TR1
+  251                          	
+  252   011C   D2 A9           	        SETB    ET0
+  253   011E   D2 AC           	        SETB    ES
+  254   0120   D2 BC           	        SETB    PS
+  255   0122   D2 AF           	        SETB    EA
+  256                          	; ===
+  257   0124                   	ROTATE:
+  258   0124   B2 B1           	        CPL     WDT
+  259   0126   12 02 7B        	        CALL    BLINKP
+  260   0129   12 01 2E        	        CALL    DREADY
+  261   012C   80 F6           	        SJMP    ROTATE
+  262                          	; =============================================
+  263   012E                   	DREADY:
+  264   012E   20 04 01        	        JB      DISPON,DRCONT
+  265   0131   22              	        RET
+  266   0132                   	DRCONT:
+  267   0132   75 2E 06        	        MOV     RESETH,#RESET1C
+  268   0135   75 2F 64        	        MOV     RESETL,#RESET2C
+  269   0138   D2 06           	        SETB    INITBIT
+  270                          	
+  271   013A   C2 04           	        CLR     DISPON
+  272   013C   E5 29           	        MOV     A,DSCODE
+  273   013E   B4 02 03        	        CJNE    A,#02H,DRCONT01
+  274   0141   02 01 7B        	        JMP     CALFTEMP
+  275   0144                   	DRCONT01:
+  Mon Sep 23 1996 15:24                                                                                                  Page    6
+
+
+
+
+  276   0144   B4 07 03        	        CJNE    A,#07H,DRCONT02
+  277   0147   02 01 7B        	        JMP     CALFTEMP
+  278   014A                   	DRCONT02:
+  279   014A   30 02 0C        	        JNB     DPDOT,CALFNORM
+  280   014D   B4 00 03        	        CJNE    A,#00H,DRCONT03
+  281   0150   02 01 C0        	        JMP     CALDWIND
+  282   0153                   	DRCONT03:
+  283   0153   B4 04 03        	        CJNE    A,#04H,CALFNORM
+  284   0156   02 02 0A        	        JMP     CALDPRED
+  285                          	; ===
+  286   0159                   	CALFNORM:
+  287   0159   A8 2A           	        MOV     R0,DVALH
+  288   015B   A9 2B           	        MOV     R1,DVALL
+  289                          	
+  290   015D   12 03 BC        	        CALL    HEX2BCD
+  291                          	
+  292   0160   78 4F           	        MOV     R0,#DISPBF-1
+  293   0162   E5 0A           	        MOV     A,CLIMIT
+  294   0164   28              	        ADD     A,R0
+  295   0165   F8              	        MOV     R0,A            ; DISPLAY START ADDRESS
+  296   0166   79 07           	        MOV     R1,#7H
+  297   0168                   	FNORM02:
+  298   0168   C2 A9           	        CLR     ET0             ; TIMER 0 INTERRUPT DISABLE
+  299   016A   B8 4F 02        	        CJNE    R0,#DISPBF-1,FNORM01
+  300   016D   80 09           	        SJMP    FNORM03
+  301   016F                   	FNORM01:
+  302   016F   E7              	        MOV     A,@R1
+  303   0170   12 05 D2        	        CALL    FNTLOAD
+  304   0173   F6              	        MOV     @R0,A
+  305   0174   18              	        DEC     R0
+  306   0175   19              	        DEC     R1
+  307   0176   80 F0           	        SJMP    FNORM02
+  308   0178                   	FNORM03:
+  309   0178   02 02 32        	        JMP     DRDY
+  310                          	; ===
+  311   017B                   	CALFTEMP:
+  312   017B   AA 2A           	        MOV     R2,DVALH
+  313   017D   AB 2B           	        MOV     R3,DVALL
+  314                          	
+  315   017F   C2 03           	        CLR     SIGN
+  316   0181   85 02 00        	        MOV     0,2                     ; Load Temp Average data High
+  317   0184   EB              	        MOV     A,R3                    ; Load Temp Average data LOW
+  318   0185   C3              	        CLR     C
+  319   0186   94 E8           	        SUBB    A,#E8H
+  320   0188   F9              	        MOV     R1,A
+  321   0189   E8              	        MOV     A,R0
+  322   018A   94 03           	        SUBB    A,#03H
+  323   018C   F8              	        MOV     R0,A
+  324   018D   50 0B           	        JNC     TBHA_0
+  325   018F   74 00           	        MOV     A,#0
+  326   0191   C3              	        CLR     C
+  327   0192   99              	        SUBB    A,R1
+  328   0193   F9              	        MOV     R1,A
+  329   0194   74 00           	        MOV     A,#0
+  330   0196   98              	        SUBB    A,R0
+  331   0197   F8              	        MOV     R0,A
+  332   0198   D2 03           	        SETB    SIGN
+  Mon Sep 23 1996 15:24                                                                                                  Page    7
+
+
+
+
+  333   019A                   	TBHA_0:
+  334   019A   12 03 BC        	        CALL    HEX2BCD                  ; Hex To BCD
+  335                          	
+  336   019D   78 4F           	        MOV     R0,#DISPBF-1
+  337   019F   E5 0A           	        MOV     A,CLIMIT
+  338   01A1   28              	        ADD     A,R0
+  339   01A2   F8              	        MOV     R0,A            ; DISPLAY START ADDRESS
+  340   01A3   79 07           	        MOV     R1,#7H
+  341   01A5                   	FTEMP02:
+  342   01A5   C2 A9           	        CLR     ET0             ; TIMER0 INTERRUPT DISABLE
+  343   01A7   B8 4F 02        	        CJNE    R0,#DISPBF-1,FTEMP01
+  344   01AA   80 09           	        SJMP    FTEMP03
+  345   01AC                   	FTEMP01:
+  346   01AC   E7              	        MOV     A,@R1
+  347   01AD   12 05 D2        	        CALL    FNTLOAD
+  348   01B0   F6              	        MOV     @R0,A
+  349   01B1   18              	        DEC     R0
+  350   01B2   19              	        DEC     R1
+  351   01B3   80 F0           	        SJMP    FTEMP02
+  352   01B5                   	FTEMP03:
+  353   01B5   D2 A9           	        SETB    ET0             ; TIMER0 INTERRUPT DISABLE
+  354   01B7   30 03 03        	        JNB     SIGN,FTEMP04
+  355   01BA   75 50 40        	        MOV     DISPBF,#40H     ; MINUS CODE SET
+  356                          	
+  357   01BD                   	FTEMP04:
+  358   01BD   02 02 32        	        JMP     DRDY
+  359                          	; ===
+  360   01C0                   	CALDWIND:
+  361   01C0   A8 2A           	        MOV     R0,DVALH
+  362   01C2   A9 2B           	        MOV     R1,DVALL
+  363                          	
+  364   01C4   7A 00           	        MOV     R2,#00H
+  365   01C6   7B 71           	        MOV     R3,#113
+  366   01C8   7C 00           	        MOV     R4,#0H
+  367   01CA                   	DWIND01:
+  368   01CA   E9              	        MOV     A,R1
+  369   01CB   C3              	        CLR     C
+  370   01CC   9B              	        SUBB    A,R3
+  371   01CD   E8              	        MOV     A,R0
+  372   01CE   9A              	        SUBB    A,R2
+  373   01CF   40 0B           	        JC      DWIND02
+  374                          	
+  375   01D1   EB              	        MOV     A,R3
+  376   01D2   24 E1           	        ADD     A,#225
+  377   01D4   FB              	        MOV     R3,A
+  378   01D5   EA              	        MOV     A,R2
+  379   01D6   34 00           	        ADDC    A,#0H
+  380   01D8   FA              	        MOV     R2,A
+  381   01D9   0C              	        INC     R4
+  382   01DA   80 EE           	        SJMP    DWIND01
+  383   01DC                   	DWIND02:
+  384   01DC   EC              	        MOV     A,R4            ; DISPLY TABLE NO LOAD
+  385   01DD   75 F0 03        	        MOV     B,#03H
+  386   01E0   A4              	        MUL     AB              ; DISPLAY TABLE CALC
+  387   01E1   90 06 2C        	        MOV     DPTR,#WD_FNT
+  388   01E4   25 82           	        ADD     A,DPL
+  389   01E6   F5 82           	        MOV     DPL,A
+  Mon Sep 23 1996 15:24                                                                                                  Page    8
+
+
+
+
+  390   01E8   E5 83           	        MOV     A,DPH
+  391   01EA   34 00           	        ADDC    A,#00H
+  392   01EC   F5 83           	        MOV     DPH,A           ;
+  393                          	
+  394   01EE   E4              	        CLR     A
+  395   01EF   93              	        MOVC    A,@A+DPTR
+  396   01F0   FD              	        MOV     R5,A            ; FIRST DOT CODE LOAD
+  397                          	
+  398   01F1   A3              	        INC     DPTR
+  399   01F2   E4              	        CLR     A
+  400   01F3   93              	        MOVC    A,@A+DPTR
+  401   01F4   FE              	        MOV     R6,A            ; SECOND DOT CODE LOAD
+  402                          	
+  403   01F5   A3              	        INC     DPTR
+  404   01F6   E4              	        CLR     A
+  405   01F7   93              	        MOVC    A,@A+DPTR
+  406   01F8   FF              	        MOV     R7,A            ; THERD DOT CODE LOAD
+  407                          	
+  408   01F9   78 50           	        MOV     R0,#DISPBF
+  409                          	
+  410   01FB   ED              	        MOV     A,R5
+  411   01FC   12 05 D9        	        CALL    DOTLOAD
+  412   01FF   EE              	        MOV     A,R6
+  413   0200   12 05 D9        	        CALL    DOTLOAD
+  414   0203   EF              	        MOV     A,R7
+  415   0204   12 05 D9        	        CALL    DOTLOAD
+  416   0207   02 02 32        	        JMP     DRDY
+  417                          	; ===
+  418   020A                   	CALDPRED:
+  419   020A   A8 2A           	        MOV     R0,DVALH
+  420   020C   A9 2B           	        MOV     R1,DVALL
+  421                          	
+  422   020E   E4              	        CLR     A
+  423   020F   48              	        ORL     A,R0
+  424   0210   49              	        ORL     A,R1
+  425                          	
+  426   0211   70 08           	        JNZ     DPRED01
+  427   0213   7D 04           	        MOV     R5,#4H
+  428   0215   7E 05           	        MOV     R6,#5H
+  429   0217   7F 05           	        MOV     R7,#5H
+  430   0219   80 06           	        SJMP    DPRED02
+  431   021B                   	DPRED01:
+  432   021B   7D 06           	        MOV     R5,#6H
+  433   021D   7E 04           	        MOV     R6,#4H
+  434   021F   7F 00           	        MOV     R7,#0H
+  435   0221                   	DPRED02:
+  436   0221   78 50           	        MOV     R0,#DISPBF
+  437                          	
+  438   0223   ED              	        MOV     A,R5
+  439   0224   12 05 D9        	        CALL    DOTLOAD
+  440   0227   EE              	        MOV     A,R6
+  441   0228   12 05 D9        	        CALL    DOTLOAD
+  442   022B   EF              	        MOV     A,R7
+  443   022C   12 05 D9        	        CALL    DOTLOAD
+  444                          	
+  445   022F   02 02 32        	        JMP     DRDY
+  446                          	; ===========
+  Mon Sep 23 1996 15:24                                                                                                  Page    9
+
+
+
+
+  447   0232                   	DRDY:
+  448   0232   E5 2C           	        MOV     A,SSTATUS
+  449   0234   30 E7 05        	        JNB     A.7,DRDY03
+  450   0237   75 0B 00        	        MOV     DPOINT,#0H
+  451   023A   80 03           	        SJMP    DRDY04
+  452   023C                   	DRDY03:
+  453   023C   85 2D 0B        	        MOV     DPOINT,BDPOINT
+  454   023F                   	DRDY04:
+  455   023F   54 7F           	        ANL     A,#7FH
+  456   0241   60 04           	        JZ      DRDY05
+  457   0243   D2 01           	        SETB    BLKON
+  458   0245   80 02           	        SJMP    DRDY06
+  459   0247                   	DRDY05:
+  460   0247   C2 01           	        CLR     BLKON
+  461   0249                   	DRDY06:
+  462   0249   20 02 2C        	        JB      DPDOT,DRDYOUT
+  463                          	; --
+  464   024C   78 01           	        MOV     R0,#1H              ; USING IN DOT POINT FIND
+  465   024E   79 50           	        MOV     R1,#DISPBF
+  466   0250                   	DRDYLOP:
+  467   0250   E5 0B           	        MOV     A,DPOINT
+  468   0252   B5 00 02        	        CJNE    A,0,DRAY01
+  469   0255   80 18           	        SJMP    DRDYDOT
+  470   0257                   	DRAY01:
+  471   0257   E5 0A           	        MOV     A,CLIMIT
+  472   0259   B5 00 02        	        CJNE    A,0,DRDY02
+  473   025C   80 11           	        SJMP    DRDYDOT
+  474   025E                   	DRDY02:
+  475   025E   E7              	        MOV     A,@R1
+  476   025F   B4 3F 06        	        CJNE    A,#3FH,BLANK01      ; ZERO
+  477   0262   E4              	        CLR     A
+  478   0263   F7              	        MOV     @R1,A
+  479   0264   09              	        INC     R1
+  480   0265   08              	        INC     R0
+  481   0266   80 E8           	        SJMP    DRDYLOP
+  482   0268                   	BLANK01:
+  483   0268   B4 40 04        	        CJNE    A,#40H,DRDYDOT      ; MINUS
+  484   026B   09              	        INC     R1
+  485   026C   08              	        INC     R0
+  486   026D   80 E1           	        SJMP    DRDYLOP
+  487   026F                   	DRDYDOT:
+  488   026F   74 4F           	        MOV     A,#DISPBF-1
+  489   0271   25 0B           	        ADD     A,DPOINT
+  490   0273   F8              	        MOV     R0,A
+  491   0274   E6              	        MOV     A,@R0
+  492   0275   44 80           	        ORL     A,#80H              ; DOT SET
+  493   0277   F6              	        MOV     @R0,A
+  494                          	;        SJMP    DRDYOUT
+  495   0278                   	DRDYOUT:
+  496   0278   D2 A9           	        SETB    ET0             ; TIMER 0 INTERRUPT DISABLE
+  497   027A   22              	        RET
+  498                          	; =============================================
+  499   027B                   	BLINKP:
+  500   027B   15 0D           	        DEC     BLBUF2
+  501   027D   E5 0D           	        MOV     A,BLBUF2
+  502   027F   70 21           	        JNZ     BLOUT
+  503   0281   15 0C           	        DEC     BLBUF1
+  Mon Sep 23 1996 15:24                                                                                                  Page   10
+
+
+
+
+  504   0283   E5 0C           	        MOV     A,BLBUF1
+  505   0285   70 1B           	        JNZ     BLOUT
+  506   0287   75 0C 7F        	        MOV     BLBUF1,#BLBUF1C
+  507   028A   75 0D FF        	        MOV     BLBUF2,#BLBUF2C
+  508                          	
+  509   028D   B2 00           	        CPL     BLINK
+  510                          	
+  511   028F   15 2F           	        DEC     RESETL
+  512   0291   E5 2F           	        MOV     A,RESETL
+  513   0293   70 0D           	        JNZ     BLOUT
+  514                          	
+  515   0295   15 2E           	        DEC     RESETH
+  516   0297   E5 2E           	        MOV     A,RESETH
+  517   0299   70 07           	        JNZ     BLOUT
+  518   029B   30 06 04        	        JNB     INITBIT,BLOUT
+  519                          	
+  520   029E   C2 AF           	        CLR     EA              ; RESET
+  521   02A0   41 A0           	        JMP     $
+  522   02A2                   	BLOUT:
+  523   02A2   22              	        RET
+  524                          	; =============================================
+  525   02A3                   	WRITER:
+  526   02A3   C2 B7           	        CLR     CS
+  527   02A5   00              	        NOP
+  528   02A6   C2 97           	        CLR     CLK
+  529   02A8   00              	        NOP
+  530   02A9   C2 96           	        CLR     DI
+  531   02AB   00              	        NOP
+  532   02AC   D2 B7           	        SETB    CS              ; ENABLE CHIP
+  533                          	
+  534   02AE   C0 00           	        PUSH    0
+  535   02B0   78 00           	        MOV     R0,#00H
+  536   02B2                   	WDLOOP:
+  537   02B2   D8 FE           	        DJNZ    R0,WDLOOP
+  538   02B4                   	WDLOOP2:
+  539   02B4   D8 FE           	        DJNZ    R0,WDLOOP2
+  540   02B6                   	WDLOOP3:
+  541   02B6   D8 FE           	        DJNZ    R0,WDLOOP3
+  542   02B8   D0 00           	        POP     0
+  543                          	
+  544   02BA   12 03 B6        	        CALL    SCLOCK          ; SETUP CLOCK
+  545                          	
+  546   02BD   D2 96           	        SETB    DI
+  547   02BF   12 03 B6        	        CALL    SCLOCK          ; START BIT
+  548   02C2   C2 96           	        CLR     DI
+  549   02C4   12 03 B6        	        CALL    SCLOCK
+  550   02C7   12 03 B6        	        CALL    SCLOCK          ; OPCODE SET
+  551   02CA   D2 96           	        SETB    DI
+  552   02CC   12 03 B6        	        CALL    SCLOCK
+  553   02CF   12 03 B6        	        CALL    SCLOCK          ; WRITE ENABLE SET
+  554   02D2   C2 96           	        CLR     DI
+  555   02D4   12 03 B6        	        CALL    SCLOCK
+  556   02D7   12 03 B6        	        CALL    SCLOCK
+  557   02DA   12 03 B6        	        CALL    SCLOCK
+  558   02DD   12 03 B6        	        CALL    SCLOCK          ; END
+  559   02E0   00              	        NOP
+  560   02E1   C2 B7           	        CLR     CS              ; UNLOCKING
+  Mon Sep 23 1996 15:24                                                                                                  Page   11
+
+
+
+
+  561   02E3   00              	        NOP
+  562   02E4   00              	        NOP
+  563   02E5   C2 97           	        CLR     CLK
+  564   02E7   C2 96           	        CLR     DI
+  565   02E9   D2 B7           	        SETB    CS              ; ENABLE CHIP
+  566                          	
+  567   02EB   12 03 B6        	        CALL    SCLOCK          ; SETUP CLOCK
+  568   02EE   D2 96           	        SETB    DI              ; START BIT
+  569   02F0   12 03 B6        	        CALL    SCLOCK
+  570   02F3   C2 96           	        CLR     DI              ; OP1 SET ERASE DATA SET
+  571   02F5   12 03 B6        	        CALL    SCLOCK
+  572   02F8   D2 96           	        SETB    DI              ; OP2 SET
+  573   02FA   12 03 B6        	        CALL    SCLOCK
+  574   02FD   33              	        RLC     A
+  575   02FE   33              	        RLC     A
+  576                          	
+  577   02FF   C0 00           	        PUSH    0               ; ADDRESS SET
+  578   0301   78 06           	        MOV     R0,#6H
+  579   0303                   	WRADD:
+  580   0303   33              	        RLC     A
+  581   0304   92 96           	        MOV     DI,C
+  582   0306   12 03 B6        	        CALL    SCLOCK
+  583   0309   D8 F8           	        DJNZ    R0,WRADD
+  584   030B   D0 00           	        POP     0
+  585                          	
+  586   030D   E9              	        MOV     A,R1
+  587   030E   79 08           	        MOV     R1,#8
+  588   0310                   	WRDAT1:
+  589   0310   33              	        RLC     A
+  590   0311   92 96           	        MOV     DI,C
+  591   0313   12 03 B6        	        CALL    SCLOCK
+  592   0316   D9 F8           	        DJNZ    R1,WRDAT1
+  593                          	
+  594   0318   E8              	        MOV     A,R0
+  595   0319   78 08           	        MOV     R0,#8
+  596   031B                   	WRDAT2:
+  597   031B   33              	        RLC     A
+  598   031C   92 96           	        MOV     DI,C
+  599   031E   12 03 B6        	        CALL    SCLOCK
+  600   0321   D8 F8           	        DJNZ    R0,WRDAT2
+  601   0323   00              	        NOP
+  602   0324   C2 B7           	        CLR     CS              ; DISABLE CHIP
+  603   0326   00              	        NOP
+  604   0327   D2 B7           	        SETB    CS
+  605   0329   00              	        NOP
+  606   032A   D2 95           	        SETB    DO
+  607   032C   00              	        NOP
+  608   032D                   	WRCHK:
+  609   032D   30 95 FD        	        JNB     DO,WRCHK
+  610   0330   00              	        NOP
+  611   0331   C2 B7           	        CLR     CS
+  612   0333   00              	        NOP
+  613   0334   C2 97           	        CLR     CLK
+  614   0336   C2 96           	        CLR     DI
+  615   0338   D2 B7           	        SETB    CS              ; ENABLE CHIP
+  616                          	
+  617   033A   12 03 B6        	        CALL    SCLOCK          ; SETUP CLOCK
+  Mon Sep 23 1996 15:24                                                                                                  Page   12
+
+
+
+
+  618                          	
+  619   033D   D2 96           	        SETB    DI
+  620   033F   12 03 B6        	        CALL    SCLOCK          ; START BIT
+  621   0342   C2 96           	        CLR     DI
+  622   0344   12 03 B6        	        CALL    SCLOCK
+  623   0347   12 03 B6        	        CALL    SCLOCK          ; OPCODE SET
+  624   034A   C2 96           	        CLR     DI
+  625   034C   12 03 B6        	        CALL    SCLOCK
+  626   034F   12 03 B6        	        CALL    SCLOCK          ; WRITE DISABLE SET
+  627   0352   C2 96           	        CLR     DI
+  628   0354   12 03 B6        	        CALL    SCLOCK
+  629   0357   12 03 B6        	        CALL    SCLOCK
+  630   035A   12 03 B6        	        CALL    SCLOCK
+  631   035D   12 03 B6        	        CALL    SCLOCK          ; END
+  632   0360   00              	        NOP
+  633   0361   C2 B7           	        CLR     CS              ; UNLOCKING
+  634   0363   00              	        NOP
+  635   0364   22              	        RET
+  636                          	; =============================================
+  637                          	READR:                          ; ADDRESS = A, AD0=R0, AD1=R1,..AD2=R0,AD3=R1
+  638   0365   C2 B7           	        CLR     CS              ; DISABLE CHIP
+  639   0367   C2 96           	        CLR     DI
+  640   0369   C2 97           	        CLR     CLK
+  641   036B   00              	        NOP
+  642   036C   D2 B7           	        SETB    CS              ; ENABLE CHIP
+  643   036E   12 03 B6        	        CALL    SCLOCK
+  644   0371   D2 96           	        SETB    DI
+  645   0373   12 03 B6        	        CALL    SCLOCK          ; START BIT
+  646   0376   D2 96           	        SETB    DI
+  647   0378   12 03 B6        	        CALL    SCLOCK          ; OP1 SET  READ MODE
+  648   037B   C2 96           	        CLR     DI
+  649   037D   12 03 B6        	        CALL    SCLOCK          ; OP2 CLEAR
+  650   0380   33              	        RLC     A
+  651   0381   33              	        RLC     A
+  652   0382   78 06           	        MOV     R0,#6H
+  653   0384                   	READD:
+  654   0384   33              	        RLC     A
+  655   0385   92 96           	        MOV     DI,C
+  656   0387   12 03 B6        	        CALL    SCLOCK
+  657   038A   D8 F8           	        DJNZ    R0,READD        ; ADDRESS SET
+  658                          	
+  659   038C   79 08           	        MOV     R1,#8
+  660   038E                   	REDAT1:
+  661   038E   12 03 B6        	        CALL    SCLOCK
+  662   0391   D2 95           	        SETB    DO
+  663   0393   00              	        NOP
+  664   0394   A2 95           	        MOV     C,DO
+  665   0396   33              	        RLC     A
+  666   0397   D9 F5           	        DJNZ    R1,REDAT1
+  667   0399   F9              	        MOV     R1,A
+  668                          	
+  669   039A   78 08           	        MOV     R0,#8
+  670   039C                   	REDAT2:
+  671   039C   12 03 B6        	        CALL    SCLOCK
+  672   039F   D2 95           	        SETB    DO
+  673   03A1   00              	        NOP
+  674   03A2   A2 95           	        MOV     C,DO
+  Mon Sep 23 1996 15:24                                                                                                  Page   13
+
+
+
+
+  675   03A4   33              	        RLC     A
+  676   03A5   D8 F5           	        DJNZ    R0,REDAT2
+  677                          	
+  678   03A7   F8              	        MOV     R0,A
+  679                          	
+  680   03A8   C2 B7           	        CLR     CS              ; DISABLE CHIP
+  681                          	
+  682   03AA   90 FF 00        	        MOV     DPTR,#FF00H
+  683   03AD                   	RDLOOP:
+  684   03AD   A3              	        INC     DPTR
+  685   03AE   E5 83           	        MOV     A,DPH
+  686   03B0   45 82           	        ORL     A,DPL
+  687   03B2   B4 00 F8        	        CJNE    A,#00H,RDLOOP
+  688   03B5   22              	        RET
+  689                          	; ===
+  690   03B6                   	SCLOCK:
+  691   03B6   D2 97           	        SETB    CLK
+  692   03B8   00              	        NOP
+  693   03B9   C2 97           	        CLR     CLK
+  694   03BB   22              	        RET
+  695                          	; ===============================================================
+  696   03BC                   	HEX2BCD:
+  697   03BC   E4              	        CLR     A
+  698   03BD   FF              	        MOV     R7,A
+  699   03BE   FE              	        MOV     R6,A
+  700   03BF   FD              	        MOV     R5,A
+  701   03C0   FC              	        MOV     R4,A
+  702   03C1   FB              	        MOV     R3,A
+  703   03C2   FA              	        MOV     R2,A
+  704                          	
+  705   03C3   E9              	        MOV     A,R1
+  706   03C4   75 F0 64        	        MOV     B,#100
+  707   03C7   84              	        DIV     AB
+  708   03C8   FD              	        MOV     R5,A
+  709   03C9   C5 F0           	        XCH     A,B
+  710   03CB   75 F0 0A        	        MOV     B,#10
+  711   03CE   84              	        DIV     AB
+  712   03CF   FE              	        MOV     R6,A
+  713   03D0   AF F0           	        MOV     R7,B
+  714                          	
+  715   03D2   E8              	        MOV     A,R0
+  716   03D3   70 02           	        JNZ     HBC_GO
+  717   03D5   81 72           	        AJMP     HTOA_EXIT
+  718   03D7                   	HBC_GO:
+  719   03D7   54 01           	        ANL     A,#00000001B
+  720   03D9   60 0C           	        JZ      HBC_0
+  721   03DB   ED              	        MOV     A,R5
+  722   03DC   24 02           	        ADD     A,#2
+  723   03DE   FD              	        MOV     R5,A
+  724   03DF   EE              	        MOV     A,R6
+  725   03E0   24 05           	        ADD     A,#5
+  726   03E2   FE              	        MOV     R6,A
+  727   03E3   EF              	        MOV     A,R7
+  728   03E4   24 06           	        ADD     A,#6
+  729   03E6   FF              	        MOV     R7,A
+  730   03E7                   	HBC_0:
+  731   03E7   E8              	        MOV     A,R0
+  Mon Sep 23 1996 15:24                                                                                                  Page   14
+
+
+
+
+  732   03E8   54 02           	        ANL     A,#00000010B
+  733   03EA   60 0C           	        JZ      HBC_1
+  734   03EC   ED              	        MOV     A,R5
+  735   03ED   24 05           	        ADD     A,#5
+  736   03EF   FD              	        MOV     R5,A
+  737   03F0   EE              	        MOV     A,R6
+  738   03F1   24 01           	        ADD     A,#1
+  739   03F3   FE              	        MOV     R6,A
+  740   03F4   EF              	        MOV     A,R7
+  741   03F5   24 02           	        ADD     A,#2
+  742   03F7   FF              	        MOV     R7,A
+  743   03F8                   	HBC_1:
+  744   03F8   E8              	        MOV     A,R0
+  745   03F9   54 04           	        ANL     A,#00000100B
+  746   03FB   60 0C           	        JZ      HBC_2
+  747   03FD   EC              	        MOV     A,R4
+  748   03FE   24 01           	        ADD     A,#1
+  749   0400   FC              	        MOV     R4,A
+  750   0401   EE              	        MOV     A,R6
+  751   0402   24 02           	        ADD     A,#2
+  752   0404   FE              	        MOV     R6,A
+  753   0405   EF              	        MOV     A,R7
+  754   0406   24 04           	        ADD     A,#4
+  755   0408   FF              	        MOV     R7,A
+  756   0409                   	HBC_2:
+  757   0409   E8              	        MOV     A,R0
+  758   040A   54 08           	        ANL     A,#00001000B
+  759   040C   60 0C           	        JZ      HBC_3
+  760   040E   EC              	        MOV     A,R4
+  761   040F   24 02           	        ADD     A,#2
+  762   0411   FC              	        MOV     R4,A
+  763   0412   EE              	        MOV     A,R6
+  764   0413   24 04           	        ADD     A,#4
+  765   0415   FE              	        MOV     R6,A
+  766   0416   EF              	        MOV     A,R7
+  767   0417   24 08           	        ADD     A,#8
+  768   0419   FF              	        MOV     R7,A
+  769   041A                   	HBC_3:
+  770   041A   E8              	        MOV     A,R0
+  771   041B   54 10           	        ANL     A,#00010000B
+  772   041D   60 0C           	        JZ      HBC_4
+  773   041F   EC              	        MOV     A,R4
+  774   0420   24 04           	        ADD     A,#4
+  775   0422   FC              	        MOV     R4,A
+  776   0423   EE              	        MOV     A,R6
+  777   0424   24 09           	        ADD     A,#9
+  778   0426   FE              	        MOV     R6,A
+  779   0427   EF              	        MOV     A,R7
+  780   0428   24 06           	        ADD     A,#6
+  781   042A   FF              	        MOV     R7,A
+  782   042B                   	HBC_4:
+  783   042B   E8              	        MOV     A,R0
+  784   042C   54 20           	        ANL     A,#00100000B
+  785   042E   60 10           	        JZ      HBC_5
+  786   0430   EC              	        MOV     A,R4
+  787   0431   24 08           	        ADD     A,#8
+  788   0433   FC              	        MOV     R4,A
+  Mon Sep 23 1996 15:24                                                                                                  Page   15
+
+
+
+
+  789   0434   ED              	        MOV     A,R5
+  790   0435   24 01           	        ADD     A,#1
+  791   0437   FD              	        MOV     R5,A
+  792   0438   EE              	        MOV     A,R6
+  793   0439   24 09           	        ADD     A,#9
+  794   043B   FE              	        MOV     R6,A
+  795   043C   EF              	        MOV     A,R7
+  796   043D   24 02           	        ADD     A,#2
+  797   043F   FF              	        MOV     R7,A
+  798   0440                   	HBC_5:
+  799   0440   E8              	        MOV     A,R0
+  800   0441   54 40           	        ANL     A,#01000000B
+  801   0443   60 14           	        JZ      HBC_6
+  802   0445   EB              	        MOV     A,R3
+  803   0446   24 01           	        ADD     A,#1
+  804   0448   FB              	        MOV     R3,A
+  805   0449   EC              	        MOV     A,R4
+  806   044A   24 06           	        ADD     A,#6
+  807   044C   FC              	        MOV     R4,A
+  808   044D   ED              	        MOV     A,R5
+  809   044E   24 03           	        ADD     A,#3
+  810   0450   FD              	        MOV     R5,A
+  811   0451   EE              	        MOV     A,R6
+  812   0452   24 08           	        ADD     A,#8
+  813   0454   FE              	        MOV     R6,A
+  814   0455   EF              	        MOV     A,R7
+  815   0456   24 04           	        ADD     A,#4
+  816   0458   FF              	        MOV     R7,A
+  817   0459                   	HBC_6:
+  818   0459   E8              	        MOV     A,R0
+  819   045A   54 80           	        ANL     A,#10000000B
+  820   045C   60 14           	        JZ      HTOA_EXIT
+  821   045E   EB              	        MOV     A,R3
+  822   045F   24 03           	        ADD     A,#3
+  823   0461   FB              	        MOV     R3,A
+  824   0462   EC              	        MOV     A,R4
+  825   0463   24 02           	        ADD     A,#2
+  826   0465   FC              	        MOV     R4,A
+  827   0466   ED              	        MOV     A,R5
+  828   0467   24 07           	        ADD     A,#7
+  829   0469   FD              	        MOV     R5,A
+  830   046A   EE              	        MOV     A,R6
+  831   046B   24 06           	        ADD     A,#6
+  832   046D   FE              	        MOV     R6,A
+  833   046E   EF              	        MOV     A,R7
+  834   046F   24 08           	        ADD     A,#8
+  835   0471   FF              	        MOV     R7,A
+  836                          	
+  837   0472                   	HTOA_EXIT:
+  838   0472   78 07           	        MOV     R0,#7
+  839   0474   79 06           	        MOV     R1,#6
+  840   0476   E6              	        MOV     A,@R0
+  841                          	HBC_LOP:                                ; Make ASCII
+  842   0477   75 F0 0A        	        MOV     B,#10
+  843   047A   84              	        DIV     AB
+  844   047B   C5 F0           	        XCH     A,B
+  845   047D   F6              	        MOV     @R0,A
+  Mon Sep 23 1996 15:24                                                                                                  Page   16
+
+
+
+
+  846   047E   18              	        DEC     R0
+  847   047F   E6              	        MOV     A,@R0
+  848   0480   25 F0           	        ADD     A,B
+  849   0482   D9 F3           	        DJNZ    R1,HBC_LOP
+  850   0484   22              	        RET
+  851                          	; =======================================
+  852   0485                   	T0INT:
+  853   0485   C0 D0           	        PUSH    PSW
+  854   0487   C0 E0           	        PUSH    A
+  855   0489   C0 00           	        PUSH    0
+  856                          	
+  857   048B   74 00           	        MOV     A,#00H
+  858   048D   12 05 AB        	        CALL    DLATCH          ; SET BLANK
+  859                          	
+  860   0490   05 09           	        INC     CCOUNT
+  861   0492   E5 0A           	        MOV     A,CLIMIT
+  862   0494   B5 09 03        	        CJNE    A,CCOUNT,COLUP
+  863   0497   75 09 00        	        MOV     CCOUNT,#00H     ; ZERO SET
+  864                          	; -
+  865   049A                   	COLUP:
+  866   049A   C3              	        CLR     C
+  867   049B   A8 09           	        MOV     R0,CCOUNT
+  868   049D   53 00 07        	        ANL     0,#07H
+  869   04A0   74 FF           	        MOV     A,#FFH
+  870   04A2                   	COLC:
+  871   04A2   33              	        RLC     A
+  872   04A3   B8 00 02        	        CJNE    R0,#00H,COLD
+  873   04A6   80 04           	        SJMP    COLOUT
+  874   04A8                   	COLD:
+  875   04A8   18              	        DEC     R0
+  876   04A9   D3              	        SETB    C
+  877   04AA   80 F6           	        SJMP    COLC
+  878   04AC                   	COLOUT:
+  879   04AC   F8              	        MOV     R0,A
+  880                          	
+  881   04AD   E5 09           	        MOV     A,CCOUNT
+  882   04AF   20 E3 0B        	        JB      A.3,NLATUP
+  883                          	
+  884   04B2   E8              	        MOV     A,R0
+  885   04B3   12 05 B8        	        CALL    C1LATCH
+  886   04B6   74 FF           	        MOV     A,#FFH
+  887   04B8   12 05 C5        	        CALL    C2LATCH
+  888   04BB   80 09           	        SJMP     DOUT
+  889   04BD                   	NLATUP:
+  890   04BD   E8              	        MOV     A,R0
+  891   04BE   12 05 C5        	        CALL    C2LATCH
+  892   04C1   74 FF           	        MOV     A,#FFH
+  893   04C3   12 05 B8        	        CALL    C1LATCH
+  894                          	; ---
+  895   04C6                   	DOUT:
+  896   04C6   E5 09           	        MOV     A,CCOUNT
+  897   04C8   24 50           	        ADD     A,#DISPBF
+  898   04CA   F8              	        MOV     R0,A
+  899   04CB   E6              	        MOV     A,@R0
+  900   04CC   30 01 05        	        JNB     BLKON,DOUTT
+  901   04CF   30 00 02        	        JNB     BLINK,DOUTT
+  902   04D2   54 80           	        ANL     A,#80H
+  Mon Sep 23 1996 15:24                                                                                                  Page   17
+
+
+
+
+  903   04D4                   	DOUTT:
+  904   04D4   12 05 AB        	        CALL    DLATCH
+  905                          	
+  906   04D7   C2 8C           	        CLR     TR0
+  907   04D9   85 22 8C        	        MOV     TH0,PERH
+  908   04DC   85 23 8A        	        MOV     TL0,PERL
+  909   04DF   D2 8C           	        SETB    TR0
+  910                          	
+  911   04E1   D0 00           	        POP     0
+  912   04E3   D0 E0           	        POP     A
+  913   04E5   D0 D0           	        POP     PSW
+  914   04E7   32              	        RETI
+  915                          	; =======================================
+  916   04E8                   	SINT:
+  917   04E8   C0 D0           	        PUSH    PSW
+  918   04EA   C0 E0           	        PUSH    A
+  919   04EC   C0 00           	        PUSH    0
+  920   04EE   C0 01           	        PUSH    1
+  921   04F0   C0 02           	        PUSH    2
+  922   04F2   C0 03           	        PUSH    3
+  923   04F4   C0 F0           	        PUSH    B
+  924                          	
+  925   04F6   10 98 11        	        JBC     RI,RXINT
+  926   04F9   C2 99           	        CLR     TI
+  927   04FB                   	SREND:
+  928   04FB   D0 F0           	        POP     B
+  929   04FD   D0 03           	        POP     3
+  930   04FF   D0 02           	        POP     2
+  931   0501   D0 01           	        POP     1
+  932   0503   D0 00           	        POP     0
+  933   0505   D0 E0           	        POP     A
+  934   0507   D0 D0           	        POP     PSW
+  935   0509   32              	        RETI
+  936                          	; ----------
+  937   050A                   	RXINT:
+  938   050A   78 0F           	        MOV     R0,#SRDATA+1
+  939   050C   79 11           	        MOV     R1,#11H
+  940   050E                   	DMOVEL:
+  941   050E   E6              	        MOV     A,@R0
+  942   050F   18              	        DEC     R0
+  943   0510   F6              	        MOV     @R0,A
+  944   0511   08              	        INC     R0
+  945   0512   08              	        INC     R0
+  946   0513   D9 F9           	        DJNZ    R1,DMOVEL
+  947   0515   E5 99           	        MOV     A,SBUF
+  948   0517   18              	        DEC     R0
+  949   0518   F6              	        MOV     @R0,A
+  950                          	
+  951   0519   12 05 83        	        CALL    CHKSUM
+  952   051C   60 DD           	        JZ      SREND       ; CHECKSUM WRONG
+  953                          	
+  954   051E   12 05 55        	        CALL    DISPLAYP    ; DISPLAY DATA COMPARE
+  955                          	
+  956   0521   12 05 26        	        CALL    PROGRAM     ; PROGRAM PROTOCOL COMPARE
+  957                          	
+  958                          	
+  959   0524   80 D5           	        SJMP    SREND
+  Mon Sep 23 1996 15:24                                                                                                  Page   18
+
+
+
+
+  960                          	; ===========================
+  961   0526                   	PROGRAM:
+  962   0526   E5 11           	        MOV     A,SRDATA+3
+  963   0528   B4 50 29        	        CJNE    A,#'P',PROOUT
+  964   052B   E5 14           	        MOV     A,SRDATA+6
+  965   052D   B5 25 24        	        CJNE    A,JMPID,PROOUT
+  966                          	
+  967   0530   7A 0E           	        MOV     R2,#SRDATA
+  968   0532   7B 09           	        MOV     R3,#09H
+  969   0534                   	PROLOP:
+  970   0534   85 02 00        	        MOV     0,2
+  971   0537   85 03 01        	        MOV     1,3
+  972                          	
+  973   053A   E6              	        MOV     A,@R0
+  974   053B   FA              	        MOV     R2,A
+  975   053C   08              	        INC     R0
+  976   053D   E6              	        MOV     A,@R0
+  977   053E   FB              	        MOV     R3,A
+  978   053F   08              	        INC     R0
+  979                          	
+  980   0540   EA              	        MOV     A,R2        ; R2 <---> R0
+  981   0541   C8              	        XCH     A,R0        ; R3 <---> R1
+  982   0542   FA              	        MOV     R2,A
+  983   0543   EB              	        MOV     A,R3
+  984   0544   C9              	        XCH     A,R1
+  985   0545   FB              	        MOV     R3,A
+  986                          	
+  987   0546   C2 AF           	        CLR     EA
+  988   0548   51 A3           	        CALL    WRITER
+  989   054A   D2 AF           	        SETB    EA
+  990   054C   1B              	        DEC     R3
+  991   054D   BB 00 E4        	        CJNE    R3,#00H,PROLOP
+  992   0550   C2 AF           	        CLR     EA
+  993   0552   80 FE           	        SJMP    $
+  994   0554                   	PROOUT:
+  995   0554   22              	        RET
+  996                          	; ===========================
+  997   0555                   	DISPLAYP:
+  998   0555   E5 11           	        MOV     A,SRDATA+3
+  999   0557   B5 26 28        	        CJNE    A,DKUBUN,DPROOUT    ; DATA KUBUN
+ 1000                          	
+ 1001   055A   B4 50 02        	        CJNE    A,#'P',DISPCON
+ 1002   055D   80 23           	        SJMP    DPROOUT
+ 1003   055F                   	DISPCON:
+ 1004   055F   E5 14           	        MOV     A,SRDATA+6
+ 1005   0561   B5 28 1E        	        CJNE    A,DSID,DPROOUT      ; SENSOR ID
+ 1006   0564   85 13 29        	        MOV     DSCODE,SRDATA+5     ; SENSOR CODE LOAD
+ 1007                          	
+ 1008   0567   75 F0 02        	        MOV     B,#02H
+ 1009   056A   E5 27           	        MOV     A,DSKIND
+ 1010   056C   54 03           	        ANL     A,#03H
+ 1011   056E   A4              	        MUL     AB
+ 1012   056F   24 15           	        ADD     A,#SRDATA+7
+ 1013   0571   F8              	        MOV     R0,A
+ 1014   0572   E6              	        MOV     A,@R0
+ 1015   0573   FA              	        MOV     R2,A
+ 1016   0574   08              	        INC     R0
+  Mon Sep 23 1996 15:24                                                                                                  Page   19
+
+
+
+
+ 1017   0575   E6              	        MOV     A,@R0
+ 1018   0576   FB              	        MOV     R3,A
+ 1019                          	
+ 1020   0577   85 02 2A        	        MOV     DVALH,2
+ 1021   057A   85 03 2B        	        MOV     DVALL,3
+ 1022   057D   85 12 2C        	        MOV     SSTATUS,SRDATA+4        ; STATUS STORE
+ 1023                          	
+ 1024   0580   D2 04           	        SETB    DISPON
+ 1025   0582                   	DPROOUT:
+ 1026   0582   22              	        RET
+ 1027                          	; ===========================
+ 1028   0583                   	CHKSUM:
+ 1029   0583   E5 1F           	        MOV     A,SRDATA+11H
+ 1030   0585   B4 FE 20        	        CJNE    A,#FEH,CHKOUT
+ 1031   0588   E5 1E           	        MOV     A,SRDATA+10H        ;  END FRAME
+ 1032   058A   B4 FF 1B        	        CJNE    A,#FFH,CHKOUT
+ 1033   058D   E5 0F           	        MOV     A,SRDATA+1
+ 1034   058F   B4 FF 16        	        CJNE    A,#FFH,CHKOUT       ; HEAD FRAME
+ 1035   0592   E5 10           	        MOV     A,SRDATA+2
+ 1036   0594   B4 FF 11        	        CJNE    A,#FFH,CHKOUT
+ 1037                          	
+ 1038   0597   E4              	        CLR     A
+ 1039   0598   78 11           	        MOV     R0,#SRDATA+3
+ 1040   059A   79 0C           	        MOV     R1,#12
+ 1041   059C                   	CHKSL:
+ 1042   059C   66              	        XRL     A,@R0
+ 1043   059D   08              	        INC     R0
+ 1044   059E   D9 FC           	        DJNZ    R1,CHKSL
+ 1045                          	
+ 1046   05A0   F9              	        MOV     R1,A
+ 1047   05A1   E6              	        MOV     A,@R0
+ 1048   05A2   B5 01 03        	        CJNE    A,1,CHKOUT
+ 1049   05A5   74 FF           	        MOV     A,#FFH              ; PROTOCOL GOOD
+ 1050   05A7   22              	        RET
+ 1051   05A8                   	CHKOUT:
+ 1052   05A8   74 00           	        MOV     A,#00H
+ 1053   05AA   22              	        RET
+ 1054                          	; =======================================
+ 1055   05AB                   	DLATCH:
+ 1056   05AB   30 02 01        	        JNB     DPDOT,DLAT01
+ 1057   05AE   F4              	        CPL     A
+ 1058   05AF                   	DLAT01:
+ 1059   05AF   F5 90           	        MOV     P1,A
+ 1060   05B1   D2 B3           	        SETB    LT0
+ 1061   05B3   00              	        NOP
+ 1062   05B4   00              	        NOP
+ 1063   05B5   C2 B3           	        CLR     LT0
+ 1064   05B7   22              	        RET
+ 1065                          	; =======================================
+ 1066   05B8                   	C1LATCH:
+ 1067   05B8   30 02 01        	        JNB     DPDOT,C1LAT01
+ 1068   05BB   F4              	        CPL     A
+ 1069   05BC                   	C1LAT01:
+ 1070   05BC   F5 90           	        MOV     P1,A
+ 1071   05BE   D2 B4           	        SETB    LT1
+ 1072   05C0   00              	        NOP
+ 1073   05C1   00              	        NOP
+  Mon Sep 23 1996 15:24                                                                                                  Page   20
+
+
+
+
+ 1074   05C2   C2 B4           	        CLR     LT1
+ 1075   05C4   22              	        RET
+ 1076                          	; =======================================
+ 1077   05C5                   	C2LATCH:
+ 1078   05C5   30 02 01        	        JNB     DPDOT,C2LAT01
+ 1079   05C8   F4              	        CPL     A
+ 1080   05C9                   	C2LAT01:
+ 1081   05C9   F5 90           	        MOV     P1,A
+ 1082   05CB   D2 B5           	        SETB    LT2
+ 1083   05CD   00              	        NOP
+ 1084   05CE   00              	        NOP
+ 1085   05CF   C2 B5           	        CLR     LT2
+ 1086   05D1   22              	        RET
+ 1087                          	; =======================================
+ 1088   05D2                   	FNTLOAD:
+ 1089   05D2   54 0F           	        ANL     A,#0FH
+ 1090   05D4   90 05 F4        	        MOV     DPTR,#F_FONT
+ 1091   05D7   93              	        MOVC    A,@A+DPTR
+ 1092   05D8   22              	        RET
+ 1093                          	; =======================================
+ 1094   05D9                   	DOTLOAD:
+ 1095   05D9   75 F0 05        	        MOV     B,#05H
+ 1096   05DC   A4              	        MUL     AB
+ 1097   05DD   90 06 04        	        MOV     DPTR,#D_FONTN
+ 1098   05E0   25 82           	        ADD     A,DPL
+ 1099   05E2   F5 82           	        MOV     DPL,A
+ 1100   05E4   E5 83           	        MOV     A,DPH
+ 1101   05E6   34 00           	        ADDC    A,#0H
+ 1102   05E8   F5 83           	        MOV     DPH,A
+ 1103                          	
+ 1104   05EA   79 05           	        MOV     R1,#05H
+ 1105   05EC                   	DLOAD01:
+ 1106   05EC   E4              	        CLR     A
+ 1107   05ED   93              	        MOVC    A,@A+DPTR
+ 1108   05EE   F6              	        MOV     @R0,A
+ 1109   05EF   08              	        INC     R0
+ 1110   05F0   A3              	        INC     DPTR
+ 1111   05F1   D9 F9           	        DJNZ    R1,DLOAD01
+ 1112                          	
+ 1113   05F3   22              	        RET
+ 1114                          	; =======================================
+ 1115                          	;            0   1   2   3   4   5   6   7   8   9   -   B   C   D   E   F
+ 1116   05F4   3F 06 5B 4F 66  	F_FONT  DB  3FH,06H,5BH,4FH,66H,6DH,7DH,07H,7FH,6FH,40H,7CH,39H,5EH,79H,71H
+        05F9   6D 7D 07 7F 6F 
+        05FE   40 7C 39 5E 79 
+        0603   71 
+ 1117                          	
+ 1118   0604   7F 04 08 10 7F  	D_FONTN DB  7FH,04H,08H,10H,7FH     ; DISPLAY CODE 0
+ 1119   0609   7F 49 49 49 41  	D_FONTE DB  7FH,49H,49H,49H,41H     ; DISPLAY CODE 1
+ 1120   060E   3F 40 3E 40 3F  	D_FONTW DB  3FH,40H,3EH,40H,3FH     ; DISPLAY CODE 2
+ 1121   0613   26 49 49 49 32  	D_FONTS DB  26H,49H,49H,49H,32H     ; DISPLAY CODE 3
+ 1122   0618   3E 41 41 41 3E  	D_FONTO DB  3EH,41H,41H,41H,3EH     ; DISPLAY CODE 4
+ 1123   061D   7F 09 09 09 01  	D_FONTF DB  7FH,09H,09H,09H,01H     ; DISPLAY CODE 5
+ 1124   0622   00 00 00 00 00  	D_FONT0 DB  00H,00H,00H,00H,00H     ; DISPLAY CODE 6
+ 1125   0627   00 00 00 00 00  	        DB  00H,00H,00H,00H,00H     ; DISPLAY CODE 7
+ 1126                          	
+ 1127   062C   06 06 00        	WD_FNT  DB  6,6,0       ; "  N" 660  0
+  Mon Sep 23 1996 15:24                                                                                                  Page   21
+
+
+
+
+ 1128   062F   00 00 01        	        DB  0,0,1       ; "NNE" 001  1
+ 1129   0632   06 00 01        	        DB  6,0,1       ; " NE" 601  2
+ 1130   0635   01 00 01        	        DB  1,0,1       ; "ENE" 101  3
+ 1131   0638   06 06 01        	        DB  6,6,1       ; "  E" 661  4
+ 1132   063B   01 03 01        	        DB  1,3,1       ; "ESE" 131  5
+ 1133   063E   06 03 01        	        DB  6,3,1       ; " SE" 631  6
+ 1134   0641   03 03 01        	        DB  3,3,1       ; "SSE" 331  7
+ 1135   0644   06 06 03        	        DB  6,6,3       ; "  S" 663  8
+ 1136   0647   03 03 02        	        DB  3,3,2       ; "SSW" 332  9
+ 1137   064A   06 03 02        	        DB  6,3,2       ; " SW" 632  A
+ 1138   064D   02 03 02        	        DB  2,3,2       ; "WSW" 232  B
+ 1139   0650   06 06 02        	        DB  6,6,2       ; "  W" 662  C
+ 1140   0653   02 00 02        	        DB  2,0,2       ; "WNW" 202  D
+ 1141   0656   06 00 02        	        DB  6,0,2       ; " NW" 602  E
+ 1142   0659   00 00 02        	        DB  0,0,2       ; "NNW" 002  F
+ 1143   065C   06 06 00        	        DB  6,6,0       ; "  N" 660  10
+ 1144                          	
+ 1145   065F   40 A0 D0 E8 F4  	TBLBAUD DB  40H,A0H,D0H, E8H, F4H, FDH,  E8H, E8H
+        0664   FD E8 E8 
+ 1146                          	;           300 600 1200 2400 4800 19200 2400 BPS
+ 1147                          	
+ 1148   0667                   	        END
+
+
+
+           Lines Assembled :  1148             Assembly Errors :  0
+
+
+

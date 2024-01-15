@@ -1,0 +1,9 @@
+[ Pin discription 98.09.15 ]
+
+1 -> TXD - A
+2 -> TXD - B
+3 -> RXD - A
+4 -> RXD - B
+5 -> AC    120V
+6 -> AC
+

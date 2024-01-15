@@ -1,0 +1,152 @@
+	Congratulations on your purchase of a Trimble OEM GPS Starter Kit.
+
+This toolkit disk contains 5 executable programs:
+
+1) CFGPS - This program allows you to configure your receiver to output either
+TSIP, TAIP or NMEA and to switch back and forth at will.  A resource file
+(CFGPSRES.DAT) is included to enable a windows like interface.  
+Typing   CFGPS -text    on the DOS command line will put the
+program in a text mode if your display does not support graphics.
+This release supports only starter kit modules with 4.06 code.
+
+2) GPSSK - This program is a TAIP monitor program with graphics.  It can also
+be used to communicate with the receiver using NMEA.  A complete description
+is at the end of this file.
+
+3) TSIPCHAT - This program is a simple TSIP monitor which allows you to exercise
+the range commands in the TSIP protocol.  Source code is included to allow you
+to build your own application.
+
+> Version 1.13: Fixed an error in packet 35 (ctrl-O) I/O options which did not 
+allow the input of hex numbers properly.
+
+4) TSIPPRNT - This program will enable you to create ASCII file output of TSIP
+messages for printing.  The input is a binary TSIP file saved using TSIPCHAT.
+
+5) RTCM_MON - This program is a simple monitor program for RTCM SC-104 differntial
+correction messages.   The program prints them in ASCII form on the screen.
+
+There is also a TSR (Terminat and Stay Resident) DOS utility
+
+1) SPDRIVE - a serial port driver to be used in conjuction with TSIPCHAT
+
+
+        Trimble Navigation
+        645 N. Mary Ave
+        Sunnyvale, CA 94088
+        Copyright 1993
+
+
+        GPSSK is a software package provided to aid users of Trimble GPS
+        receivers that use the "TAIP" communication protocol.  TAIP is an
+        acronym for "Trimble ASCII Interface Protocol".  GPSSK can be used
+        to setup, diagnose, and monitor TAIP GPS receivers.
+
+
+        GPSSK allows the user to perform the following operations:
+
+           o   Program the GPS receiver for automatic message reporting
+               and verify the success of the programming.
+
+           o   Log the GPSSK session with the GPS receiver to disk and
+               replay this data.
+
+           o   Plot the GPS position from the receiver on an X-Y grid.
+
+           o   Poll for and view any combination of TAIP messages.
+               Polling intervals may be different for each message type.
+
+           o   Hold an interactive terminal session with the GPS receiver.
+
+
+        GPSSK Hardware And Software Checklist 
+        ----------------------------------------------------------------
+        GPSSK requires PC-DOS or MS-DOS version 2.0 or greater and runs
+        on all 286 (minimum) based IBM-compatible personal computers and
+        most near-compatibles.  The program may be executed from a hard
+        disk or a diskette and requires the following minimum hardware: 
+ 
+           o    80286 processor
+           o    256 kilobytes of available RAM
+           o    VGA Graphics adapter (required only for plot screen)
+ 
+        In addition to the required computer configuration, the following
+        hardware options are strongly recommended for GPSSK operations:
+
+           o    Hard disk drive
+           o    80287/80387 Math Co-processor
+           o    512 to 640 kilobytes of RAM
+ 
+
+        Printer Interface/PRINTING PLOTS
+        ----------------------------------------------------------------
+        GPSSK does not contain any internal printer support.
+
+
+        Installing and Operating GPSSK
+        ----------------------------------------------------------------
+        For hard disk operation, copy the files "GPSSK.EXE" and "GPSSK.HLP"
+        to a hard disk directory.  From the directory containing GPSSK,
+        or from any directory if the directory containing GPSSK is part of
+        the current system path, enter the command:
+
+                  gpssk
+
+        For an explanation of the "path" environment variable, see your DOS
+        manual.  Program loading ends with the display of the GPSSK program
+        title page.  After the display of the title page, pressing <Any Key>
+        (or waiting 10 seconds) will begin GPSSK operations.  To terminate
+        GPSSK, simply "back out" of the menu hierarchy "tree" by continually
+        pressing <F9> until GPSSK prompts for exit confirmation.
+
+        On startup, GPSSK will attempt to initialize itself by querying
+        the GPS receiver for some basic information.  If you wish to
+        abort the initialization process (GPSSK just being used for rerun
+        so no GPS receiver attached) press <Ctrl>X (hold down the control
+        key and press x).  Note that after the initialization process is
+        aborted, GPSSK must be restarted in order to run with an attached
+        GPS receiver.
+
+        Once GPSSK is running, on-line help is available to aid the user
+        with all GPSSK operations.  The help is context sensitive and will
+        display information regarding the current display/menu.  A brief
+        overview of GPSSK is available in the main menu's help screen.
+        GPSSK's start-up default display will be a few selected TAIP
+        messages.  Note that one of these default messages (LN) is not
+        available in our "Placer" product (Trimble part #18700-00) and
+        therefore will not be displayed.  The LN message is available
+        in our Placer 300, Placer 400, etc. products.
+
+        There are several command line options available.  For help with
+        command line options, run GPSSK with a /help argument:
+
+                  gpssk /help
+
+        The help available on GPSSK's main menu will explain GPSSK menu
+        operation and menu hierarchy.
+
+
+        Connection of the GPS Receiver to the Computer
+        ----------------------------------------------------------------
+        Connect the serial port of the GPS receiver to the computer's
+        COM1 or COM2 port.  The default serial port settings for GPSSK
+        are 4800 baud, 8 data bits, no parity, and 1 stop bit.  This is
+        the power on default for Trimble's Placer 400 GPS receiver.  If
+        the GPS receiver is connected to the COM2 port, run GPSSK with
+        the /2 option.  (Run "gpssk /help" for more information on
+        command line options.)
+
+
+        TAIP Message Encoding/Decoding Source Code
+        ----------------------------------------------------------------
+        TAIP.C contains 'C' source code for encoding and decoding TAIP
+        messages.  There is no warranty of any kind on this software.
+        It is provided only as an example of TAIP message processing.
+        Use it at your own risk.  Note that TAIP.C cannot be built
+        into a .EXE without the user providing their own serial port
+        handling software.
+
+
+        New in Version 1.20 - Release
+           TDR programming
+           STM support

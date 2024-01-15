@@ -1,0 +1,368 @@
+################################################################################
+#                                                                              #
+#      IAR Universal Linker V4.48F/386                                         #
+#                                                                              #
+#           Link time     =  23/May/99  17:08:53                               #
+#           Target CPU    =  8051                                              #
+#           List file     =  led.map                                           #
+#           Output file 1 =  led.hex                                           #
+#           Output format =  intel-standard                                    #
+#           Command line  =  -f LED (-c8051 -D_R=0                             #
+#                            -Z(XDATA)C_ARGX,X_UDATA,X_IDATA,NO_INIT,ECSTR=0   #
+#                            -Z(CODE)INTVEC=0                                  #
+#                            -Z(CODE)RCODE,D_CDATA,I_CDATA,X_CDATA=80          #
+#                            -Z(CODE)C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST     #
+#                            -Z(DATA)C_ARGD,D_UDATA,D_IDATA=30                 #
+#                            -Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK            #
+#                            -Z(BIT)C_ARGB,BITVARS=0                           #
+#                            -e_small_write=_formatted_write                   #
+#                            -e_medium_read=_formatted_read led cl8051l        #
+#                            -Fintel-standard -o led.hex -x -l led.map)        #
+#                                                                              #
+#                                               (c) Copyright IAR Systems 1996 #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+       Program entry at : 0000  Relocatable, from module : CSTARTUP
+
+
+
+                ****************************************
+                *                                      *
+                *             MODULE MAP               *
+                *                                      *
+                ****************************************
+
+  DEFINED ABSOLUTE ENTRIES
+  PROGRAM MODULE, NAME : ?ABS_ENTRY_MOD
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           _R                      0000            CSTARTUP
+
+
+  SEGMENTS IN THE MODULE
+  ======================
+C_ARGX
+  Relative segment, address : 0000 - 001F
+
+    *************************************************************************
+
+  FILE NAME : led.r03
+  PROGRAM MODULE, NAME : led
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 0339 - 0E9A
+           ENTRIES                ADDRESS          REF BY MODULE
+           T0_int                  0B41            Not referred to
+               interrupt function
+           complete_hangul         06D8            Not referred to
+               xdata = 0000 ( 0002 , 0008 )
+           interrupt_init          03BD            Not referred to
+           main                    0C01            CSTARTUP
+               xdata = 001C ( 0004 , 0000 )
+           putch_engfont           03DB            Not referred to
+               xdata = 0000 ( 0007 , 0004 )
+           putch_hanfont           086C            Not referred to
+               xdata = 000B ( 000D , 0004 )
+           variable_init           0339            Not referred to
+               xdata = 0000 ( 0002 , 0000 )
+    -------------------------------------------------------------------------
+CSTR
+  Relative segment, address : 0306 - 0338
+    -------------------------------------------------------------------------
+CONST
+  Relative segment, address : 0E9B - 4C67
+           ENTRIES                ADDRESS          REF BY MODULE
+           Dfm                     4C14            Not referred to
+           Dmf                     4C3C            Not referred to
+           Dml                     4BFE            Not referred to
+           ENGFONT                 3B9B            Not referred to
+           HANSOFT_1               0E9B            Not referred to
+           HANSOFT_2               229B            Not referred to
+           HANSOFT_3               2D9B            Not referred to
+           sangyongtable           4B9B            Not referred to
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 000D
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : 0020 - 008E
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : 008F - 009E
+           ENTRIES                ADDRESS          REF BY MODULE
+           Eng_Font                0098            Not referred to
+           Font_Addr1              008F            Not referred to
+           Font_Addr2              0092            Not referred to
+           Font_Addr3              0095            Not referred to
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : 02F6 - 0305
+
+    *************************************************************************
+
+  FILE NAME : d:\lang\cci_hdsl\lib\cl8051l.r03
+  PROGRAM MODULE, NAME : CSTARTUP
+
+  SEGMENTS IN THE MODULE
+  ======================
+CSTACK
+  Relative segment, address : 0030 - 004D
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 0002
+    -------------------------------------------------------------------------
+RCODE
+  Relative segment, address : 0080 - 012F
+    -------------------------------------------------------------------------
+D_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+ECSTR
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+CCSTR
+  Relative segment, address : Not in use    
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : exit
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0130 - 0131
+           ENTRIES                ADDRESS          REF BY MODULE
+           exit                    0130            Not referred to
+           ?C_EXIT                 0130            CSTARTUP
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?AND_ASG_R123_A_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0132 - 013B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?AND_ASG_R123_A_L00     0132            led
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?IOR_ASG_R123_A_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 013C - 0145
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?IOR_ASG_R123_A_L00     013C            led
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETDOWN_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0146 - 0168
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETDOWN_L00            0148            ?AND_ASG_R123_A_L00
+                                                   ?IOR_ASG_R123_A_L00
+           ?SETDOWN2_L00           0146            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_L00
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0169 - 0181
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_L00         0169            ?AND_ASG_R123_A_L00
+                                                   ?IOR_ASG_R123_A_L00
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SC_SWITCH_L05
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0182 - 01B7
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?AR1_SC_SWITCH_L05      0182            Not referred to
+           ?AR3_SC_SWITCH_L05      0187            Not referred to
+           ?AR5_SC_SWITCH_L05      018C            led
+           ?AR7_SC_SWITCH_L05      0191            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?C_SWITCH_L05
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01B8 - 01ED
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?A_S_SWITCH_L05         01B8            Not referred to
+           ?C_SWITCH               01C8            ?SC_SWITCH_L05
+           ?C_SWITCH_D             01E4            ?SC_SWITCH_L05
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01EE - 021B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_A_L17             0200            Not referred to
+           ?LD_A_R123_L17          01EE            Not referred to
+           ?LD_A_R567_L17          01F8            led
+           ?LD_A_R123_DISP_L17     01F3            led
+           ?LD_A_R567_DISP_L17     01FD            led
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 021C - 0238
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_L17         021C            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0239 - 0269
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_DISP_L17    0239            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 026A - 028A
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_L17         026A            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 028B - 02BB
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_DISP_L17    028B            ?LOAD_A_L17
+                                                   ?STORE_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?STORE_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 02BC - 02F5
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?STORE_A_L17            02D6            Not referred to
+           ?ST_A_R123_L17          02BC            Not referred to
+           ?ST_A_R567_L17          02CA            Not referred to
+           ?ST_A_R123_DISP_L17     02C3            Not referred to
+           ?ST_A_R567_DISP_L17     02D1            led
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?VERSION_L17
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           ?CL8051L_5_12_L17       C893            led
+
+    -------------------------------------------------------------------------
+                ****************************************
+                *                                      *
+                *        SEGMENTS IN DUMP ORDER        *
+                *                                      *
+                ****************************************
+
+ SEGMENT               START ADDRESS    END ADDRESS  TYPE  ORG  P/N  ALIGN
+ =======               =============    ===========  ====  ===  ===  =====
+C_ARGB                          Not in use            dse  stc  pos   0     
+BITVARS                         Not in use            dse  flt  pos   0     
+C_ARGX                      0000     -     001F       rel  stc  pos   0     
+X_UDATA                     0020     -     008E       rel  flt  pos   0     
+X_IDATA                     008F     -     009E       rel  flt  pos   0     
+NO_INIT                         Not in use            dse  flt  pos   0     
+ECSTR                           Not in use            rel  flt  pos   0     
+INTVEC                      0000     -     000D       com  stc  pos   0     
+RCODE                       0080     -     02F5       rel  stc  pos   0     
+D_CDATA                         Not in use            rel  flt  pos   0     
+I_CDATA                         Not in use            rel  flt  pos   0     
+X_CDATA                     02F6     -     0305       rel  flt  pos   0     
+C_ICALL                         Not in use            dse  flt  pos   0     
+C_RECFN                         Not in use            dse  flt  pos   0     
+CSTR                        0306     -     0338       rel  flt  pos   0     
+CCSTR                           Not in use            rel  flt  pos   0     
+CODE                        0339     -     0E9A       rel  flt  pos   0     
+CONST                       0E9B     -     4C67       rel  flt  pos   0     
+C_ARGD                          Not in use            dse  stc  pos   0     
+D_UDATA                         Not in use            rel  flt  pos   0     
+D_IDATA                         Not in use            rel  flt  pos   0     
+C_ARGI                          Not in use            dse  flt  pos   0     
+I_UDATA                         Not in use            rel  flt  pos   0     
+I_IDATA                         Not in use            rel  flt  pos   0     
+CSTACK                      0030     -     004D       rel  flt  pos   0     
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+Memory type       Used
+-----------       ----
+CODE             19446 bytes
+XDATA              159 bytes
+IDATA               30 bytes
+
+Errors: none
+Warnings: none
+

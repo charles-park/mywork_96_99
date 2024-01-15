@@ -1,0 +1,46 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12K/DXT                              12/Apr/99  09:22:17     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  large                                                                 #
+#           Source file   =  led.c                                                                 #
+#           List file     =  led.lst                                                               #
+#           Object file   =  led.r03                                                               #
+#           Command line  =  -ml -e -s LED -K -gO -L -q                                            #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+
+{
+^
+"led.c",53  Error[136]: Redeclaration error
+
+}
+^
+"led.c",94  Warning[33]: Local or formal 'k' was never referenced
+"led.c",94  Warning[33]: Local or formal 'j' was never referenced
+"led.c",94  Warning[33]: Local or formal 'i' was never referenced
+
+}
+^
+"led.c",111  Warning[33]: Local or formal 'index' was never referenced
+
+        Putch_HanFont("ˆa");    getch();
+-------------------------------------^
+"led.c",121  Warning[23]: Undeclared function 'getch'; assumed "extern" "int"
+
+                output(0xA000, ~disp_buf[k  ]); output(0x8000, ~disp_buf[k+1]);
+---------------------------------------------^
+"led.c",123  Error[100]: Undeclared identifier: 'disp_buf'
+
+                output(0xC000, i   );                   delay(10);
+-------------------------------------------------------------^
+"led.c",124  Warning[23]: Undeclared function 'delay'; assumed "extern" "int"
+
+Errors: 2
+Warnings: 6
+

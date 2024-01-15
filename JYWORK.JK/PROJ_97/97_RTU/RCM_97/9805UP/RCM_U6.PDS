@@ -1,0 +1,49 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    ADDERSS DECODER
+PATTERN  
+REVISION 1.0
+AUTHOR   JK, PARK
+COMPANY  JINYANG
+DATE     3/27/97
+
+CHIP  DECOD  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A12          COMBINATORIAL ; INPUT
+PIN  2          A13          COMBINATORIAL ; INPUT
+PIN  3          A14          COMBINATORIAL ; INPUT
+PIN  4          A15          COMBINATORIAL ; INPUT
+PIN  5          RD           COMBINATORIAL ; INPUT
+PIN  6          WR           COMBINATORIAL ; INPUT
+PIN  7          SINT0        COMBINATORIAL ; INPUT (Serial Interrupt)
+PIN  8          SINT1        COMBINATORIAL ; INPUT (Serial Interrupt)
+PIN  9          EOC          COMBINATORIAL ; INPUT (End of Converter)
+PIN  10         GND                        ; INPUT
+PIN  11         HZ4          COMBINATORIAL ; INPUT
+PIN  12         CS0          COMBINATORIAL ; OUTPUT (RAM 0 - 7FFFH)
+PIN  13         CS1          COMBINATORIAL ; OUTPUT (SIO 0 CS : 16C550)
+PIN  14         CS2          COMBINATORIAL ; OUTPUT (SIO 1 CS : 16C550)
+PIN  15         CS3          COMBINATORIAL ; OUTPUT (ADC Convert CS)
+PIN  16         INT0         COMBINATORIAL ; OUTPUT (INPUT 8051 INT0)
+PIN  17         INT1         COMBINATORIAL ; OUTPUT (INPUT 8051 INT1)
+PIN  18         STA          COMBINATORIAL ; OUTPUT (ADC Convert START))
+PIN  19         CS4          COMBINATORIAL ; OUTPUT (EXT SIGNAL : 0xB000)
+PIN  20         VCC                        ; INPUT
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/CS0  = /A15                      * (/RD + /WR)      ; RAM DECODER
+/CS1  =  A15 * /A14 * /A13 * /A12 * (/RD + /WR)      ; 16C550 Com2(0x8000)
+/CS2  =  A15 * /A14 * /A13 *  A12 * (/RD + /WR)      ; 16C550 Com3(0x9000)
+ CS3  =  A15 * /A14 *  A13 * /A12 *  /RD             ; AD Convert(0xA000)
+ CS4  =  A15 * /A14 *  A13 *  A12 *  /WR             ; (EXT SIGNAL : 0xB000)
+/INT0 =  SINT0 + SINT1                               ; EXT Serial Interrupt
+ INT1 =  EOC                                         ; AD End of Conversion
+ STA  =  A15 * /A14 *  A13 * /A12 *  /WR             ; AD Convert Start(0xA000)
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------
+

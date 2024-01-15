@@ -1,0 +1,46 @@
+
+;PALASM Design Description
+;----------------------------------- Declaration Segment -----------
+
+TITLE    MAIN PROCESSER MODULE U28
+PATTERN  
+REVISION 2.0
+AUTHOR   M.J.M
+COMPANY  JINYANG
+DATE     03/22/97
+
+CHIP  GATE  PALCE16V8
+;----------------------------------- PIN Declarations --------------
+
+PIN  1          P11                  COMBINATORIAL ; INPUT
+PIN  2          P12                  COMBINATORIAL ; INPUT
+PIN  3          P13                  COMBINATORIAL ; INPUT
+PIN  4          P14                  COMBINATORIAL ; INPUT
+PIN  5          P15                  COMBINATORIAL ; INPUT
+PIN  6          RD                   COMBINATORIAL ; INPUT
+PIN  7          WR                   COMBINATORIAL ; INPUT
+PIN  12         RCS0                 COMBINATORIAL ; OUTPUT
+PIN  13         RCS1                 COMBINATORIAL ; OUTPUT
+PIN  14         RCS2                 COMBINATORIAL ; OUTPUT
+PIN  15         RCS3                 COMBINATORIAL ; OUTPUT
+PIN  16         RCS4                 COMBINATORIAL ; OUTPUT
+PIN  17         RCS5                 COMBINATORIAL ; OUTPUT
+PIN  18         RCS6                 COMBINATORIAL ; OUTPUT
+PIN  19         RCS7                 COMBINATORIAL ; OUTPUT
+PIN  10         GND                                ;
+PIN  20         VCC                                ;
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+/RCS0 =  P15 * /P14 * /P13 * /P12 * /P11           ; --10000-
+/RCS1 =  P15 * /P14 * /P13 * /P12 *  P11           ; --10001-
+/RCS2 =  P15 * /P14 * /P13 *  P12 * /P11           ; --10010-
+/RCS3 =  P15 * /P14 * /P13 *  P12 *  P11           ; --10011-
+/RCS4 =  P15 * /P14 *  P13 * /P12 * /P11           ; --10100-
+/RCS5 =  P15 * /P14 *  P13 * /P12 *  P11           ; --10101-
+/RCS6 =  P15 * /P14 *  P13 *  P12 * /P11           ; --10110-
+/RCS7 =  P15 * /P14 *  P13 *  P12 *  P11           ; --10111-
+
+;----------------------------------- End ---------------------------
+

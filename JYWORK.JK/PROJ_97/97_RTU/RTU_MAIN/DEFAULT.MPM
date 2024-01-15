@@ -1,0 +1,64 @@
+//[*]ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ[*]
+//[*]            '95 & '96 RTU(Remote Terminal Unit) Upgrade              [*]
+//[*]                       factory setup program                         [*]
+//[*]                Copyright Jinyang industrial co.,ltd                 [*]
+//[*]                      Program by Jinmin - Mok                        [*]
+//[*]ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ[*]
+//[*] Sensor code list...												  [*]
+//[*]ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ[*]
+#define	Wind_Direc		 0
+#define	Wind_Speed		 1
+#define	Temper			 2
+#define	Precipi			 3
+#define	Prec_Detect		 4
+#define	Pressure		 5
+#define	Humidity		 6
+#define	Dew_Temp		 7
+#define	Sun_Rada		 8
+#define	Sun_Detect		 9
+#define	Evaporation		10
+#define	Gnd_Humidit		11
+#define	Snow			12
+#define	Dewdrop			13
+#define Fog				14
+#define	Cloud			15
+#define	Visibility		16
+#define	Bak_Lumi		17
+#define	Sigma			18
+#define	Sky_Emiss		19
+#define	Gnd_Emiss		20
+#define	Ph				21
+#define	Conducte		22
+#define	Hyunchun		23
+#define	Toyang_hm		24
+#define	GPS				25
+//[*]ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ[*]
+void factory_set(void);
+//[*]ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ[*]
+void factory_set(void)
+{
+	idata word i;
+
+	CFG_RAM(MPM_CFG);
+	 for(i=0; i<200; i++)		output(ID_CODE +  i, 0xFD       );
+	 output(ID_CODE +  0,  0);	output(ID_CODE +  1, Wind_Direc );
+	 output(ID_CODE +  2,  1);	output(ID_CODE +  3, Wind_Speed );
+	 output(ID_CODE +  4,  2);	output(ID_CODE +  5, Temper     );
+	 output(ID_CODE +  6,  3);	output(ID_CODE +  7, Temper     );
+	 output(ID_CODE +  8,  4);	output(ID_CODE +  9, Temper     );
+	 output(ID_CODE + 10,  5);	output(ID_CODE + 11, Precipi    );
+	 output(ID_CODE + 12,  6);	output(ID_CODE + 13, Precipi    );
+	 output(ID_CODE + 14,  7);	output(ID_CODE + 15, Prec_Detect);
+	 output(ID_CODE + 16,  8);	output(ID_CODE + 17, Humidity   );
+	 output(ID_CODE + 18,  9);	output(ID_CODE + 19, Pressure   );
+	 output(ID_CODE + 20, 10);	output(ID_CODE + 21, Sun_Rada   );
+	 output(ID_CODE + 22, 11);	output(ID_CODE + 23, Sun_Detect );
+	 output(ID_CODE + 24, 12);	output(ID_CODE + 25, Visibility );
+	 output(ID_CODE + 26, 13);	output(ID_CODE + 27, Hyunchun   );
+	RAM_CS();
+	i_data.sensor_su  =    14;	mpm_cfg_save(SENSOR_SU );
+	i_data.password   = SUPER;	mpm_cfg_save(PASSWORD  );
+	i_data.call_time  =     0;	mpm_cfg_save(CALL_TIME );
+	i_data.save_time  =    60;	mpm_cfg_save(SAVE_TIME );
+}
+//[*]ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ[*]

@@ -1,0 +1,326 @@
+  Fri Sep  6 1996 11:11                                                                                                  Page    1
+
+
+
+
+
+
+
+               2500 A.D. 8051 Macro Assembler  -  Version 4.03c
+               ------------------------------------------------
+
+                       Input  Filename : RTEST.A51
+                       Output Filename : RTEST.obj
+
+
+    1                          	;------------------------------------------------------------------------------
+    2                          	; 2 Byte Hex to Ascii conversion procedure.
+    3                          	; Input   : R0,R1                       ; Hex data
+    4                          	; Output  : R2, R3, R4, R5, R6, R7
+    5                          	;------------------------------------------------------------------------------
+    6   0000                   	.INCLUDE RTEST.H
+    7                          	;       =========================
+    8                          	;          DATA CONSTANT SET
+    9                          	;       =========================
+   10          0060            	STACK       EQU     60H
+   11                          	
+   12                          	;       ==========================
+   13                          	;         DATA MEMORY PARTITION
+   14                          	;       ==========================
+   15          0008            	ID          EQU     08H
+   16          0009            	DCOUNT      EQU     09H         ;    0 - 0FH
+   17          000A            	CAPID       EQU     0AH         ; CAPTURE ID
+   18          000B            	CAPKD       EQU     0BH         ; CAPTURE KIND = CHARACTER
+   19                          	                                ;               IF 'FFH' THEN EVERY ONE
+   20                          	
+   21          000B            	CAPNO       EQU     0BH         ; CAPTURE NUMBER    0 : AVERAGE
+   22                          	                                ;                   1 : SPECIAL
+   23                          	                                ;                   2 : MAXIMUM
+   24                          	                                ;                   3 : MINIMUM
+   25                          	
+   26          000C            	DISCL       EQU     0CH         ; COLUME METHODE    4  : FND 4
+   27                          	                                ;                   5  : FND 5
+   28                          	                                ;                  15  : DOT 3
+   29                          	
+   30          000D            	DISCNT      EQU     0DH         ; COLUME DISPLAY COUNTE BUFFER
+   31                          	
+   32                          	
+   33                          	
+   34          000E            	SRDATA      EQU     0EH         ; -1FH 18 BYTE  'SERIAL DATA BUFFER
+   35          0030            	DISPBF      EQU     30H         ; -40H 16 BYTE  'DISPLAY BUFFER
+   36                          	
+   37                          	;       ========================
+   38                          	;         BIT MAP ( 20H - XXH )
+   39                          	;       ========================
+   40          0000            	VIBIT       EQU     00H         ; VIBRATION BIT
+   41                          	
+   42                          	;       =============       INTH 5,6,7,8        ; INT 0
+   43                          	;          I/O MAPs         INTL 1,2,3,4        ; INT 1
+   44                          	;       =============
+   45          00B2            	LT3         .REG    P3.2        ; VIEW JUMER
+   46          00B3            	LT0         .REG    P3.3        ; DATA PORT
+   47          00B4            	LT1         .REG    P3.4        ; COLUME SELECT PORT 1
+  Fri Sep  6 1996 11:11                                                                                                  Page    2
+
+
+
+
+   48          00B5            	LT2         .REG    P3.5        ; COLUME SELECT PORT 2
+   49                          	; --
+   50          00B1            	WDT         .REG    P3.1        ; WATCH DOG PIN
+   51                          	
+   52          00B7            	CS          .REG    P3.7
+   53          0097            	CLK         .REG    P1.7
+   54          0096            	DI          .REG    P1.6
+   55          0095            	DO          .REG    P1.5
+   56   0000                   	            END
+   57                          	
+   58   0000                   	        ORG     00H
+   59                          	
+   60   0030                   	        ORG     30H
+   61   0030   75 81 60        	        MOV     SP,#STACK
+   62   0033   78 FF           	        MOV     R0,#FFH
+   63   0035   79 FF           	        MOV     R1,#FFH
+   64   0037   75 B0 FF        	        MOV     P3,#FFH
+   65   003A   75 90 FF        	        MOV     P1,#FFH
+   66   003D   78 FE           	        MOV     R0,#FEH
+   67   003F                   	MLOOP:
+   68                          	; --
+   69   003F   C2 B2           	        CLR     LT3
+   70   0041   75 90 FF        	        MOV     P1,#FFH
+   71   0044   00              	        NOP
+   72   0045   E5 90           	        MOV     A,P1        ; JUMPER READ
+   73   0047   D2 B2           	        SETB    LT3         ; DISABLE
+   74                          	
+   75   0049   F5 90           	        MOV     P1,A        ; DATA OUT
+   76   004B   D2 B3           	        SETB    LT0
+   77   004D   00              	        NOP
+   78   004E   00              	        NOP
+   79   004F   00              	        NOP
+   80   0050   00              	        NOP
+   81   0051   C2 B3           	        CLR     LT0
+   82                          	
+   83   0053   88 90           	        MOV     P1,R0       ; COLUME OUT
+   84   0055   D2 B4           	        SETB    LT1
+   85   0057   00              	        NOP
+   86   0058   00              	        NOP
+   87   0059   00              	        NOP
+   88   005A   00              	        NOP
+   89   005B   C2 B4           	        CLR     LT1
+   90                          	
+   91   005D   E8              	        MOV     A,R0
+   92   005E   23              	        RL      A
+   93   005F   F8              	        MOV     R0,A
+   94                          	
+   95   0060   B2 B1           	        CPL     WDT
+   96   0062   12 00 67        	        CALL    DELAY
+   97                          	
+   98   0065   01 3F           	        JMP     MLOOP
+   99                          	; =======
+  100   0067                   	DELAY:
+  101   0067   90 FE 7F        	        MOV     DPTR,#FE7FH
+  102   006A                   	DLOOP:
+  103   006A   A3              	        INC     DPTR
+  104   006B   E5 83           	        MOV     A,DPH
+  Fri Sep  6 1996 11:11                                                                                                  Page    3
+
+
+
+
+  105   006D   45 82           	        ORL     A,DPL
+  106   006F   70 F9           	        JNZ     DLOOP
+  107   0071   22              	        RET
+  108                          	; =======
+  109                          	
+  110                          	
+  111   0072   12 00 77        	        CALL    HTOA_2
+  112                          	
+  113                          	
+  114                          	
+  115                          	
+  116   0075   01 75           	        JMP     $
+  117                          	; =======================================
+  118                          	
+  119                          	; =======================================
+  120   0077                   	HTOA_2:
+  121   0077   E4              	        CLR     A
+  122   0078   FF              	        MOV     R7,A
+  123   0079   FE              	        MOV     R6,A
+  124   007A   FD              	        MOV     R5,A
+  125   007B   FC              	        MOV     R4,A
+  126   007C   FB              	        MOV     R3,A
+  127   007D   FA              	        MOV     R2,A
+  128                          	
+  129   007E   E9              	        MOV     A,R1
+  130   007F   75 F0 64        	        MOV     B,#100
+  131   0082   84              	        DIV     AB
+  132   0083   FD              	        MOV     R5,A
+  133   0084   C5 F0           	        XCH     A,B
+  134   0086   75 F0 0A        	        MOV     B,#10
+  135   0089   84              	        DIV     AB
+  136   008A   FE              	        MOV     R6,A
+  137   008B   AF F0           	        MOV     R7,B
+  138                          	
+  139   008D   E8              	        MOV     A,R0
+  140   008E   70 03           	        JNZ     HBC_GO
+  141   0090   02 01 2E        	        JMP     HTOA_EXIT
+  142   0093                   	HBC_GO:
+  143   0093   54 01           	        ANL     A,#00000001B
+  144   0095   60 0C           	        JZ      HBC_0
+  145   0097   ED              	        MOV     A,R5
+  146   0098   24 02           	        ADD     A,#2
+  147   009A   FD              	        MOV     R5,A
+  148   009B   EE              	        MOV     A,R6
+  149   009C   24 05           	        ADD     A,#5
+  150   009E   FE              	        MOV     R6,A
+  151   009F   EF              	        MOV     A,R7
+  152   00A0   24 06           	        ADD     A,#6
+  153   00A2   FF              	        MOV     R7,A
+  154   00A3                   	HBC_0:
+  155   00A3   E8              	        MOV     A,R0
+  156   00A4   54 02           	        ANL     A,#00000010B
+  157   00A6   60 0C           	        JZ      HBC_1
+  158   00A8   ED              	        MOV     A,R5
+  159   00A9   24 05           	        ADD     A,#5
+  160   00AB   FD              	        MOV     R5,A
+  161   00AC   EE              	        MOV     A,R6
+  Fri Sep  6 1996 11:11                                                                                                  Page    4
+
+
+
+
+  162   00AD   24 01           	        ADD     A,#1
+  163   00AF   FE              	        MOV     R6,A
+  164   00B0   EF              	        MOV     A,R7
+  165   00B1   24 02           	        ADD     A,#2
+  166   00B3   FF              	        MOV     R7,A
+  167   00B4                   	HBC_1:
+  168   00B4   E8              	        MOV     A,R0
+  169   00B5   54 04           	        ANL     A,#00000100B
+  170   00B7   60 0C           	        JZ      HBC_2
+  171   00B9   EC              	        MOV     A,R4
+  172   00BA   24 01           	        ADD     A,#1
+  173   00BC   FC              	        MOV     R4,A
+  174   00BD   EE              	        MOV     A,R6
+  175   00BE   24 02           	        ADD     A,#2
+  176   00C0   FE              	        MOV     R6,A
+  177   00C1   EF              	        MOV     A,R7
+  178   00C2   24 04           	        ADD     A,#4
+  179   00C4   FF              	        MOV     R7,A
+  180   00C5                   	HBC_2:
+  181   00C5   E8              	        MOV     A,R0
+  182   00C6   54 08           	        ANL     A,#00001000B
+  183   00C8   60 0C           	        JZ      HBC_3
+  184   00CA   EC              	        MOV     A,R4
+  185   00CB   24 02           	        ADD     A,#2
+  186   00CD   FC              	        MOV     R4,A
+  187   00CE   EE              	        MOV     A,R6
+  188   00CF   24 04           	        ADD     A,#4
+  189   00D1   FE              	        MOV     R6,A
+  190   00D2   EF              	        MOV     A,R7
+  191   00D3   24 08           	        ADD     A,#8
+  192   00D5   FF              	        MOV     R7,A
+  193   00D6                   	HBC_3:
+  194   00D6   E8              	        MOV     A,R0
+  195   00D7   54 10           	        ANL     A,#00010000B
+  196   00D9   60 0C           	        JZ      HBC_4
+  197   00DB   EC              	        MOV     A,R4
+  198   00DC   24 04           	        ADD     A,#4
+  199   00DE   FC              	        MOV     R4,A
+  200   00DF   EE              	        MOV     A,R6
+  201   00E0   24 09           	        ADD     A,#9
+  202   00E2   FE              	        MOV     R6,A
+  203   00E3   EF              	        MOV     A,R7
+  204   00E4   24 06           	        ADD     A,#6
+  205   00E6   FF              	        MOV     R7,A
+  206   00E7                   	HBC_4:
+  207   00E7   E8              	        MOV     A,R0
+  208   00E8   54 20           	        ANL     A,#00100000B
+  209   00EA   60 10           	        JZ      HBC_5
+  210   00EC   EC              	        MOV     A,R4
+  211   00ED   24 08           	        ADD     A,#8
+  212   00EF   FC              	        MOV     R4,A
+  213   00F0   ED              	        MOV     A,R5
+  214   00F1   24 01           	        ADD     A,#1
+  215   00F3   FD              	        MOV     R5,A
+  216   00F4   EE              	        MOV     A,R6
+  217   00F5   24 09           	        ADD     A,#9
+  218   00F7   FE              	        MOV     R6,A
+  Fri Sep  6 1996 11:11                                                                                                  Page    5
+
+
+
+
+  219   00F8   EF              	        MOV     A,R7
+  220   00F9   24 02           	        ADD     A,#2
+  221   00FB   FF              	        MOV     R7,A
+  222   00FC                   	HBC_5:
+  223   00FC   E8              	        MOV     A,R0
+  224   00FD   54 40           	        ANL     A,#01000000B
+  225   00FF   60 14           	        JZ      HBC_6
+  226   0101   EB              	        MOV     A,R3
+  227   0102   24 01           	        ADD     A,#1
+  228   0104   FB              	        MOV     R3,A
+  229   0105   EC              	        MOV     A,R4
+  230   0106   24 06           	        ADD     A,#6
+  231   0108   FC              	        MOV     R4,A
+  232   0109   ED              	        MOV     A,R5
+  233   010A   24 03           	        ADD     A,#3
+  234   010C   FD              	        MOV     R5,A
+  235   010D   EE              	        MOV     A,R6
+  236   010E   24 08           	        ADD     A,#8
+  237   0110   FE              	        MOV     R6,A
+  238   0111   EF              	        MOV     A,R7
+  239   0112   24 04           	        ADD     A,#4
+  240   0114   FF              	        MOV     R7,A
+  241   0115                   	HBC_6:
+  242   0115   E8              	        MOV     A,R0
+  243   0116   54 80           	        ANL     A,#10000000B
+  244   0118   60 14           	        JZ      HTOA_EXIT
+  245   011A   EB              	        MOV     A,R3
+  246   011B   24 03           	        ADD     A,#3
+  247   011D   FB              	        MOV     R3,A
+  248   011E   EC              	        MOV     A,R4
+  249   011F   24 02           	        ADD     A,#2
+  250   0121   FC              	        MOV     R4,A
+  251   0122   ED              	        MOV     A,R5
+  252   0123   24 07           	        ADD     A,#7
+  253   0125   FD              	        MOV     R5,A
+  254   0126   EE              	        MOV     A,R6
+  255   0127   24 06           	        ADD     A,#6
+  256   0129   FE              	        MOV     R6,A
+  257   012A   EF              	        MOV     A,R7
+  258   012B   24 08           	        ADD     A,#8
+  259   012D   FF              	        MOV     R7,A
+  260                          	
+  261   012E                   	HTOA_EXIT:
+  262   012E   78 07           	        MOV     R0,#7
+  263   0130   79 06           	        MOV     R1,#6
+  264   0132   E6              	        MOV     A,@R0
+  265                          	HBC_LOP:                                ; Make ASCII
+  266   0133   75 F0 0A        	        MOV     B,#10
+  267   0136   84              	        DIV     AB
+  268   0137   C5 F0           	        XCH     A,B
+  269   0139   F6              	        MOV     @R0,A
+  270   013A   18              	        DEC     R0
+  271   013B   E6              	        MOV     A,@R0
+  272   013C   25 F0           	        ADD     A,B
+  273   013E   D9 F3           	        DJNZ    R1,HBC_LOP
+  274   0140   22              	        RET
+  275                          	
+  Fri Sep  6 1996 11:11                                                                                                  Page    6
+
+
+
+
+  276                          	
+  277   0141   3F 06 5B 4F 66  	F_FONT  DB  3FH,06H,5BH,4FH,66H,6DH,7DH,07H,7FH,6FH
+        0146   6D 7D 07 7F 6F 
+  278                          	
+
+
+
+           Lines Assembled :  278             Assembly Errors :  0
+
+
+

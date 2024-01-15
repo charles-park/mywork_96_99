@@ -1,0 +1,32 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    DOT LED
+PATTERN  
+REVISION 1.0
+AUTHOR   JK. PARK
+COMPANY  JINYANG
+DATE     3/10/98
+
+CHIP  DECODE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          CS0                  COMBINATORIAL ; INPUT
+PIN  2          CS1                  COMBINATORIAL ; INPUT
+PIN  3          CS2                  COMBINATORIAL ; INPUT
+PIN  4          WR                   COMBINATORIAL ; INPUT
+PIN  10         GND                                ; INPUT
+PIN  12         WR1                  COMBINATORIAL ; OUTPUT
+PIN  13         WR2                  COMBINATORIAL ; OUTPUT
+PIN  14         WR3                  COMBINATORIAL ; OUTPUT
+PIN  20         VCC                                ; INPUT
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+WR1       = /CS0 * /WR                         ; 0x8000
+WR2       = /CS1 * /WR                         ; 0xA000
+WR3       = /CS2 * /WR                         ; 0xC000
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

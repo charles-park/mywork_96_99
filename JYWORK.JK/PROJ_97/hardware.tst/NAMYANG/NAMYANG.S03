@@ -1,0 +1,4862 @@
+	NAME	namyang(17)
+	RSEG	CODE(0)
+	RSEG	CONST(0)
+	COMMON	INTVEC(0)
+	RSEG	X_UDATA(0)
+	RSEG	BITVARS(0)
+	PUBLIC	AD_read
+	$DEFFN	AD_read(0,0,0,0,0,0,0,0),Humi_cal,Sun_cal,Temp_cal
+	PUBLIC	EX0_int
+	$DEFFN	EX0_int(512,0,0,0,0,0,0,0)
+	PUBLIC	EX1_int
+	$DEFFN	EX1_int(512,0,0,0,0,0,0,0)
+	PUBLIC	Humi_cal
+	$DEFFN	Humi_cal(0,0,0,0,0,0,0,0)
+	PUBLIC	Loc
+	$DEFFN	Loc(0,0,0,0,0,4,0,0),check_mpm
+	PUBLIC	Loop
+	PUBLIC	NAME
+	PUBLIC	SCON_int
+	$DEFFN	SCON_int(512,0,0,0,0,0,0,0)
+	PUBLIC	Sun_cal
+	$DEFFN	Sun_cal(0,0,0,0,0,0,0,0)
+	PUBLIC	Temp_cal
+	$DEFFN	Temp_cal(0,0,0,0,0,0,0,0)
+	PUBLIC	check_mpm
+	$DEFFN	check_mpm(0,2,0,0,0,0,0,0),SCON_int
+	PUBLIC	init_serial
+	$DEFFN	init_serial(0,0,0,0,0,0,0,0),initiliaze
+	PUBLIC	init_struct
+	$DEFFN	init_struct(0,0,0,0,0,6,0,0),initiliaze
+	PUBLIC	init_variable
+	$DEFFN	init_variable(0,0,0,0,0,0,0,0),initiliaze
+	PUBLIC	initiliaze
+	$DEFFN	initiliaze(0,0,0,0,0,0,0,0),main
+	PUBLIC	main
+	$DEFFN	main(256,0,0,0,0,0,0,0)
+	PUBLIC	send_struct
+	$DEFFN	send_struct(0,2,0,0,0,3,0,0),check_mpm
+	EXTERN	?XOR_ASG_R567_A_DISP_L00
+	EXTERN	?UI_DIV_L00
+	EXTERN	?F_ADD_L02
+	EXTERN	?F_MUL_L02
+	EXTERN	?F_DIV_L02
+	EXTERN	?F_DIV_R_L02
+	EXTERN	?F_CMP_L02
+	EXTERN	?R4567_FLT_TO_LONG_L02
+	EXTERN	?R4567_ULONG_TO_FLT_L02
+	EXTERN	?ST_AR3_R567_L17
+	EXTERN	?LD_A_R567_DISP_L17
+	EXTERN	?ST_A_R567_DISP_L17
+	EXTERN	?ST_AR3_R567_DISP_L17
+	EXTERN	?A_V_SWITCH_L05
+	EXTERN	?STO_R4567_DPTR_L20
+	EXTERN	?LOAD_IND_DPTR2_L20
+	EXTERN	?LCALL_IND_L20
+	EXTERN	?CL8051M_5_12_L17
+	RSEG	CODE
+; 1.	#include <io51.h>
+; 2.	#include <math.h>
+; 3.	#include <namyang.h>
+; 4.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 5.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 6.	#pragma memory=code
+; 7.	Byte    NAME[20][60] = {
+; 8.	   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+; 9.	   "[*]  JIN-YANG  INDUSTRIAL.,CO LTD                       [*]",
+; 10.	   "[*]  Program : PARK. JongKil    Date : 1997. 3. 5~      [*]",
+; 11.	   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+; 12.	   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+; 13.	   "[*]  Sensor : TEMPERLATURE 1 EA  Analog CH : 0, ID : 2  [*]",
+; 14.	   "[*]           SUN          1 EA  Analog CH : 2, ID : 5  [*]",
+; 15.	   "[*]           HUMIDUTIY    1 EA  Analog CH : 7, ID : 3  [*]",
+; 16.	   "[*]           PRECIPI      1 EA  EXT INT1     , ID : 4  [*]",
+; 17.	   "[*]           SUN/D        1 EA  P1.6 (On/Off), ID : 6  [*]",
+; 18.	   "[*]  Sensor Code :                                      [*]",
+; 19.	   "[*]    TEMP 2, SUN 8, HUMI 6 , PREC 3, SUND 9           [*]",
+; 20.	   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+; 21.	   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+; 22.	   "[*]  Used Board : SAM2 Board(Designed PARKIK)           [*]",
+; 23.	   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+; 24.	   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+; 25.	   "[*]  VERSION : Test Ver 1.0  First TEST : 97. 3.  7     [*]",
+; 26.	   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]"
+; 27.	};
+; 28.	#pragma memory=default
+; 29.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 30.	//[*]  Program Start......                                                 [*]
+; 31.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 32.	void init_variable(void)
+; 33.	{
+init_variable:
+; 34.	        // Sensor Old Value Register Clear (Variable initliaze)
+; 35.	//[*]컴컴 Temp 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 36.	        TEMP_OLD.Maxt    = TEMP_OLD.Sumt    = TEMP_OLD.Mint    = 0 ;
+	MOV	DPTR,#TEMP_OLD+4
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+2
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 37.	        TEMP_OLD.MaxO    = TEMP_OLD.SumO    = TEMP_OLD.MinO    = 0 ;
+	MOV	DPTR,#TEMP_OLD+10
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+8
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+6
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 38.	        TEMP_OLD.MaxT    = TEMP_OLD.SumT    = TEMP_OLD.MinT    = 0 ;
+	MOV	DPTR,#TEMP_OLD+16
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+14
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+12
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 39.	        TEMP_OLD.Count_t = TEMP_OLD.Count_O = TEMP_OLD.Count_T = 0 ;
+	MOV	DPTR,#TEMP_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+20
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+18
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 40.	//[*]컴컴 Humi 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 41.	        HUMI_OLD.Maxt    = HUMI_OLD.Sumt    = HUMI_OLD.Mint    = 0 ;
+	MOV	DPTR,#HUMI_OLD+4
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+2
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 42.	        HUMI_OLD.MaxO    = HUMI_OLD.SumO    = HUMI_OLD.MinO    = 0 ;
+	MOV	DPTR,#HUMI_OLD+10
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+8
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+6
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 43.	        HUMI_OLD.MaxT    = HUMI_OLD.SumT    = HUMI_OLD.MinT    = 0 ;
+	MOV	DPTR,#HUMI_OLD+16
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+14
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+12
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 44.	        HUMI_OLD.Count_t = HUMI_OLD.Count_O = HUMI_OLD.Count_T = 0 ;
+	MOV	DPTR,#HUMI_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+20
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+18
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 45.	//[*]컴컴 Prec 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 46.	        PREC_OLD.Maxt    = PREC_OLD.Sumt    = PREC_OLD.Mint    = 0 ;
+	MOV	DPTR,#PREC_OLD+4
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+2
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 47.	        PREC_OLD.MaxO    = PREC_OLD.SumO    = PREC_OLD.MinO    = 0 ;
+	MOV	DPTR,#PREC_OLD+10
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+8
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+6
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 48.	        PREC_OLD.MaxT    = PREC_OLD.SumT    = PREC_OLD.MinT    = 0 ;
+	MOV	DPTR,#PREC_OLD+16
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+14
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+12
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 49.	        PREC_OLD.Count_t = PREC_OLD.Count_O = PREC_OLD.Count_T = 0 ;
+	MOV	DPTR,#PREC_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+20
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+18
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 50.	//[*]컴컴 Sun 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]
+; 51.	        SUN_OLD.Maxt     = SUN_OLD.Sumt     = SUN_OLD.Mint     = 0 ;
+	MOV	DPTR,#SUN_OLD+4
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+2
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 52.	        SUN_OLD.MaxO     = SUN_OLD.SumO     = SUN_OLD.MinO     = 0 ;
+	MOV	DPTR,#SUN_OLD+10
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+8
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+6
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 53.	        SUN_OLD.MaxT     = SUN_OLD.SumT     = SUN_OLD.MinT     = 0 ;
+	MOV	DPTR,#SUN_OLD+16
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+14
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+12
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 54.	        SUN_OLD.Count_t  = SUN_OLD.Count_O  = SUN_OLD.Count_T  = 0 ;
+	MOV	DPTR,#SUN_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+20
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+18
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 55.	//[*]컴컴 Sun/D 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]
+; 56.	        SUND_OLD.Maxt    = SUND_OLD.Sumt    = SUND_OLD.Mint    = 0 ;
+	MOV	DPTR,#SUND_OLD+4
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_OLD+2
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_OLD
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 57.	        SUND_OLD.MaxO    = SUND_OLD.SumO    = SUND_OLD.MinO    = 0 ;
+	MOV	DPTR,#SUND_OLD+10
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_OLD+8
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_OLD+6
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 58.	        SUND_OLD.MaxT    = SUND_OLD.SumT    = SUND_OLD.MinT    = 0 ;
+	MOV	DPTR,#SUND_OLD+16
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_OLD+14
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_OLD+12
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 59.	        SUND_OLD.Count_t = SUND_OLD.Count_O = SUND_OLD.Count_T = 0 ;
+	MOV	DPTR,#SUND_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_OLD+20
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_OLD+18
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 60.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 61.	        ERcount   = 0;          // A/D Error Count
+	MOV	DPTR,#ERcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 62.	        ERROR     = 0;          // Error Status Register
+	MOV	DPTR,#ERROR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 63.	        DLYcount  = 0;          // A/D Delay Count Value
+	MOV	DPTR,#DLYcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 64.	        ADValue   = 0;          // Read A/D Converter Value (Value type is int)
+	MOV	DPTR,#ADValue
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 65.	        Event     = 0;          // 4 Hz Counter Value(Used interrupt EX0)
+	MOV	DPTR,#Event
+	MOVX	@DPTR,A
+; 66.	        Init      = 1;          // Initiliaze Min & Max Value Initiliaze
+	INC	A
+	MOV	DPTR,#Init
+	MOVX	@DPTR,A
+; 67.	        Flag      = OFF;        // Select Loop Run & Stop Flag (Used interrupt EX0)
+	CLR	Flag
+; 68.	
+; 69.	        TEMP_R.Sam.Avr = 500;   // Temperature Default Value Setting
+	MOV	DPTR,#TEMP_R+6
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 70.	
+; 71.	        MUX0 = OFF;             MUX1 = OFF;             MUX2 = OFF;  // A/D Convert Select(First Temperature)
+	CLR	P1.3
+	CLR	P1.4
+	CLR	P1.5
+; 72.	}
+	RET
+; 73.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 74.	void init_struct(Sensor_u *Sen, Byte Cmd, Byte Sid, Byte Scode)
+; 75.	{
+init_struct:
+; 76.	        Sen->Sam.Head   = 0xFFFF;   // 0,1   Header Value.
+	MOV	A,#255
+	MOV	R3,A
+	LCALL	?ST_AR3_R567_L17
+; 77.	        Sen->Sam.Cmd    = Cmd   ;   // 2     'M','t','O','T' Command.
+	MOV	R0,#$LOCBI init_struct
+	MOV	A,R7
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R6
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R5
+	MOV	@R0,A
+	MOV	A,R4
+	MOV	DPTR,#2
+	LCALL	?ST_A_R567_DISP_L17
+	MOV	R0,#$LOCBI init_struct+3
+	MOV	@R0,A
+; 78.	        Sen->Sam.Sta    = 0     ;   // 3     Sensor Status Value
+	CLR	A
+	MOV	DPTR,#3
+	LCALL	?ST_A_R567_DISP_L17
+; 79.	        Sen->Sam.Scode  = Scode ;   // 4     Sensor Code
+	MOV	R0,#$LOCBI init_struct+5
+	MOV	A,@R0
+	MOV	DPTR,#4
+	LCALL	?ST_A_R567_DISP_L17
+; 80.	        Sen->Sam.Sid    = Sid   ;   // 5     This Porgram Sid is Fixed.(Jumper ID)
+	MOV	R0,#$LOCBI init_struct+4
+	MOV	A,@R0
+	MOV	DPTR,#5
+	LCALL	?ST_A_R567_DISP_L17
+; 81.	        Sen->Sam.Avr    = 0     ;   // 6,7   Average Value
+	CLR	A
+	INC	R3
+	MOV	DPTR,#6
+	LCALL	?ST_AR3_R567_DISP_L17
+; 82.	        Sen->Sam.Spc    = 0     ;   // 8,9
+	MOV	DPTR,#8
+	LCALL	?ST_AR3_R567_DISP_L17
+; 83.	        Sen->Sam.Max    = 0     ;   // 10,11 Maximum Value.
+	MOV	DPTR,#10
+	LCALL	?ST_AR3_R567_DISP_L17
+; 84.	        Sen->Sam.Min    = 0     ;   // 12,13 Minimum Value.
+	MOV	DPTR,#12
+	LCALL	?ST_AR3_R567_DISP_L17
+; 85.	        Sen->Sam.Cks    = 0     ;   // 14    Check Sum Value.
+	MOV	DPTR,#14
+	LCALL	?ST_A_R567_DISP_L17
+; 86.	        Sen->Sam.Tail   = 0xFFFE;   // 15,16 Tail.                   Total = 17 Bytes
+	DEC	A
+	DEC	R3
+	DEC	A
+	MOV	DPTR,#15
+	LCALL	?ST_AR3_R567_DISP_L17
+; 87.	}
+	RET
+; 88.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 89.	void init_serial(void)
+; 90.	{
+init_serial:
+; 91.	        Com.TxSp = Com.TxEp = Com.RxSp = Com.RxEp = 0;
+	MOV	DPTR,#Com+1002
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#Com+1000
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#Com+1006
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#Com+1004
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 92.	
+; 93.	        disable(EA);
+	CLR	IE.7
+; 94.	        PCON = 0x80;      // Baudrate Double set
+	MOV	PCON,#128
+; 95.	        SCON = 0x50;      // Serial Config Register
+	MOV	SCON,#80
+; 96.	        TMOD = 0x21;      // T0 = Internal Timer 16Bit no,Prescaler,
+	MOV	TMOD,#33
+; 97.	                                          // T1 = Using to Serial
+; 98.	        TH1  = 0xfa;
+	MOV	TH1,#250
+; 99.	        TL1  = 0xfa;      // 23Mhz = F3, 22Mhz = F4,18Mhz = F6, 11Mhz = fa Set
+	MOV	TL1,#250
+; 100.	        TR1  = 1   ;      // Serial Timer Run
+	SETB	TCON.6
+; 101.	        PS   = 1   ;      // Serial Interrupt First.
+	SETB	IP.4
+; 102.	
+; 103.	        IT0  = 1   ;      // Edge Trigger
+	SETB	TCON.0
+; 104.	        IT1  = 1   ;      // Edge Trigger(Precipi)
+	SETB	TCON.2
+; 105.	        EX0  = 1   ;      // 4 Hz Clock Enalble
+	SETB	IE.0
+; 106.	        EX1  = 1   ;      // Precipi
+	SETB	IE.2
+; 107.	        ES   = 1   ;      // Serial Interrupt Enable
+	SETB	IE.4
+; 108.	        enable(EA);       // Interrupt All enable
+	SETB	IE.7
+; 109.	}
+	RET
+; 110.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 111.	void initiliaze(void)
+; 112.	{
+initiliaze:
+; 113.	        // Jumper_Read(); Jumper Read Function
+; 114.	        disable(GREENL);        disable(REDL);          // LED Clear (TXD & RXD)
+	CLR	P1.1
+	CLR	P1.0
+; 115.	
+; 116.	        // Temp Struct Initiliaze
+; 117.	        init_struct(&TEMP_R, REAL , SID0, SCODE0);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#2
+	DEC	R0
+	MOV	@R0,#0
+	MOV	R4,#77
+	MOV	R5,#LOW(TEMP_R)
+	MOV	R6,#HIGH(TEMP_R)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 118.	        init_struct(&TEMP_t, SEC10, SID0, SCODE0);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#2
+	DEC	R0
+	MOV	@R0,#0
+	MOV	R4,#116
+	MOV	R5,#LOW(TEMP_t)
+	MOV	R6,#HIGH(TEMP_t)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 119.	        init_struct(&TEMP_O, MIN1 , SID0, SCODE0);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#2
+	DEC	R0
+	MOV	@R0,#0
+	MOV	R4,#79
+	MOV	R5,#LOW(TEMP_O)
+	MOV	R6,#HIGH(TEMP_O)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 120.	        init_struct(&TEMP_T, MIN10, SID0, SCODE0);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#2
+	DEC	R0
+	MOV	@R0,#0
+	MOV	R4,#84
+	MOV	R5,#LOW(TEMP_T)
+	MOV	R6,#HIGH(TEMP_T)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 121.	        // Humi Struct Initiliaze
+; 122.	        init_struct(&HUMI_R, REAL , SID1, SCODE1);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#6
+	DEC	R0
+	MOV	@R0,#1
+	MOV	R4,#77
+	MOV	R5,#LOW(HUMI_R)
+	MOV	R6,#HIGH(HUMI_R)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 123.	        init_struct(&HUMI_t, SEC10, SID1, SCODE1);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#6
+	DEC	R0
+	MOV	@R0,#1
+	MOV	R4,#116
+	MOV	R5,#LOW(HUMI_t)
+	MOV	R6,#HIGH(HUMI_t)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 124.	        init_struct(&HUMI_O, MIN1 , SID1, SCODE1);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#6
+	DEC	R0
+	MOV	@R0,#1
+	MOV	R4,#79
+	MOV	R5,#LOW(HUMI_O)
+	MOV	R6,#HIGH(HUMI_O)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 125.	        init_struct(&HUMI_T, MIN10, SID1, SCODE1);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#6
+	DEC	R0
+	MOV	@R0,#1
+	MOV	R4,#84
+	MOV	R5,#LOW(HUMI_T)
+	MOV	R6,#HIGH(HUMI_T)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 126.	        // Precipi Struct Initiliaze
+; 127.	        init_struct(&PREC_R, REAL , SID2, SCODE2);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#3
+	DEC	R0
+	MOV	@R0,#3
+	MOV	R4,#77
+	MOV	R5,#LOW(PREC_R)
+	MOV	R6,#HIGH(PREC_R)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 128.	        init_struct(&PREC_t, SEC10, SID2, SCODE2);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#3
+	DEC	R0
+	MOV	@R0,#3
+	MOV	R4,#116
+	MOV	R5,#LOW(PREC_t)
+	MOV	R6,#HIGH(PREC_t)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 129.	        init_struct(&PREC_O, MIN1 , SID2, SCODE2);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#3
+	DEC	R0
+	MOV	@R0,#3
+	MOV	R4,#79
+	MOV	R5,#LOW(PREC_O)
+	MOV	R6,#HIGH(PREC_O)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 130.	        init_struct(&PREC_T, MIN10, SID2, SCODE2);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#3
+	DEC	R0
+	MOV	@R0,#3
+	MOV	R4,#84
+	MOV	R5,#LOW(PREC_T)
+	MOV	R6,#HIGH(PREC_T)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 131.	        // SUN Struct Initiliaze
+; 132.	        init_struct(&SUN_R , REAL , SID3, SCODE3);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#8
+	DEC	R0
+	MOV	@R0,#4
+	MOV	R4,#77
+	MOV	R5,#LOW(SUN_R)
+	MOV	R6,#HIGH(SUN_R)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 133.	        init_struct(&SUN_t , SEC10, SID3, SCODE3);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#8
+	DEC	R0
+	MOV	@R0,#4
+	MOV	R4,#116
+	MOV	R5,#LOW(SUN_t)
+	MOV	R6,#HIGH(SUN_t)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 134.	        init_struct(&SUN_O , MIN1 , SID3, SCODE3);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#8
+	DEC	R0
+	MOV	@R0,#4
+	MOV	R4,#79
+	MOV	R5,#LOW(SUN_O)
+	MOV	R6,#HIGH(SUN_O)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 135.	        init_struct(&SUN_T , MIN10, SID3, SCODE3);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#8
+	DEC	R0
+	MOV	@R0,#4
+	MOV	R4,#84
+	MOV	R5,#LOW(SUN_T)
+	MOV	R6,#HIGH(SUN_T)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 136.	        // SUN/D Struct Initiliaze
+; 137.	        init_struct(&SUND_R, REAL , SID4, SCODE4);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#9
+	DEC	R0
+	MOV	@R0,#6
+	MOV	R4,#77
+	MOV	R5,#LOW(SUND_R)
+	MOV	R6,#HIGH(SUND_R)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 138.	        init_struct(&SUND_t, SEC10, SID4, SCODE4);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#9
+	DEC	R0
+	MOV	@R0,#6
+	MOV	R4,#116
+	MOV	R5,#LOW(SUND_t)
+	MOV	R6,#HIGH(SUND_t)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 139.	        init_struct(&SUND_O, MIN1 , SID4, SCODE4);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#9
+	DEC	R0
+	MOV	@R0,#6
+	MOV	R4,#79
+	MOV	R5,#LOW(SUND_O)
+	MOV	R6,#HIGH(SUND_O)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 140.	        init_struct(&SUND_T, MIN10, SID4, SCODE4);
+	MOV	R0,#$PRMBI init_struct+5
+	MOV	@R0,#9
+	DEC	R0
+	MOV	@R0,#6
+	MOV	R4,#84
+	MOV	R5,#LOW(SUND_T)
+	MOV	R6,#HIGH(SUND_T)
+	MOV	R7,#1
+	LCALL	$REFFN init_struct
+; 141.	
+; 142.	        init_variable();                // Variable All initiliaze
+	LCALL	$REFFN init_variable
+; 143.	        init_serial();                  // Serial Port initiliaze
+	LCALL	$REFFN init_serial
+; 144.	}
+	RET
+; 145.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 146.	void check_mpm(void)    // Protocol Check MPM -> SAM Board
+; 147.	{
+check_mpm:
+; 148.	        Byte    CK=0, Count= 0;
+	MOV	R0,#$LOCBI check_mpm
+	MOV	@R0,#0
+	INC	R0
+	MOV	@R0,#0
+; 149.	
+; 150.	        // RxSp is Point(Center), RxEp increment is interrupt.
+; 151.	
+; 152.	        if(Com.RxSp == Com.RxEp)                        return; get_serial();
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	INC	DPTR
+	INC	DPTR
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0197
+	MOV	DPTR,#Com+1002
+	MOVX	A,@DPTR
+	XRL	A,R5
+?0197:
+	JNZ	?0001
+?0000:
+	RET
+?0001:
+	INC	R4
+	MOV	A,R4
+	JNZ	?0198
+	INC	R5
+?0198:
+	MOV	DPTR,#Com+1000
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	CLR	C
+	SUBB	A,#244
+	MOV	A,R5
+	SUBB	A,#1
+	JC	?0003
+?0002:
+	CLR	A
+	MOV	R4,A
+	MOV	R5,A
+	MOV	DPTR,#Com+1000
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0003:
+; 153.	        if(Com.RxBuf[Loc(Com.RxSp,-1) ] != 0xfe)        return; disable(GREENL);
+	MOV	A,#255
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	XRL	A,#254
+	JZ	?0005
+?0004:
+	RET
+?0005:
+	CLR	P1.1
+; 154.	        if(Com.RxBuf[Loc(Com.RxSp,-2) ] != 0xff)        return;
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,#254
+	MOV	R6,A
+	INC	A
+	MOV	R7,A
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	?0007
+?0006:
+	RET
+?0007:
+; 155.	        if(Com.RxBuf[Loc(Com.RxSp,-10)] != 0xff)        return;
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R6,#246
+	MOV	R7,#255
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	?0009
+?0008:
+	RET
+?0009:
+; 156.	        if(Com.RxBuf[Loc(Com.RxSp,-11)] != 0xff)        return;
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R6,#245
+	MOV	R7,#255
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	?0011
+?0010:
+	RET
+?0011:
+; 157.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 158.	        if(Com.RxBuf[Loc(Com.RxSp,-8)] != SID0 && Com.RxBuf[Loc(Com.RxSp,-8)] != SID1 &&
+; 159.	           Com.RxBuf[Loc(Com.RxSp,-8)] != SID2 && Com.RxBuf[Loc(Com.RxSp,-8)] != SID3 &&
+; 160.	           Com.RxBuf[Loc(Com.RxSp,-8)] != SID4)                 return;
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R6,#248
+	MOV	R7,#255
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	JNZ	$+5
+	LJMP	?0013
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R6,#248
+	MOV	R7,#255
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	DEC	A
+	JZ	?0013
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R6,#248
+	MOV	R7,#255
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	XRL	A,#3
+	JZ	?0013
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R6,#248
+	MOV	R7,#255
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	XRL	A,#4
+	JZ	?0013
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R6,#248
+	MOV	R7,#255
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	XRL	A,#6
+	JZ	?0013
+?0015:
+?0014:
+?0012:
+	RET
+?0013:
+; 161.	
+; 162.	        for(Count=0; Count<sizeof(Command_t); Count++)  {
+	MOV	R0,#$LOCBI check_mpm+1
+	MOV	@R0,#0
+?0017:
+	MOV	R0,#$LOCBI check_mpm+1
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#11
+	JC	$+5
+	LJMP	?0016
+?0018:
+; 163.	                if(Count>1 && Count < 8)
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#2
+	JC	?0021
+	MOV	A,@R0
+	CLR	C
+	SUBB	A,#8
+	JNC	?0021
+?0023:
+?0022:
+?0020:
+; 164.	                         CK ^= Com.RxBuf[Loc(Com.RxSp,-(11-Count))];
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,@R0
+	MOV	R7,#0
+	MOV	R6,A
+	CLR	A
+	MOV	R3,A
+	MOV	A,#11
+	CLR	C
+	SUBB	A,R6
+	MOV	R2,A
+	MOV	A,R3
+	SUBB	A,R7
+	MOV	R3,A
+	CLR	C
+	CLR	A
+	SUBB	A,R2
+	MOV	R2,A
+	CLR	A
+	SUBB	A,R3
+	MOV	R3,A
+	MOV	A,R2
+	MOV	R6,A
+	MOV	A,R3
+	MOV	R7,A
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R0,#$LOCBI check_mpm
+	MOV	R4,A
+	MOV	A,@R0
+	XRL	A,R4
+	MOV	R1,#$LOCBI check_mpm
+	MOV	@R1,A
+?0021:
+; 165.	                Mpm.Bytes[Count] = Com.RxBuf[Loc(Com.RxSp,-(11-Count))];
+	MOV	DPTR,#Com+1000
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R0,#$LOCBI check_mpm+1
+	MOV	A,@R0
+	MOV	R7,#0
+	MOV	R6,A
+	CLR	A
+	MOV	R3,A
+	MOV	A,#11
+	CLR	C
+	SUBB	A,R6
+	MOV	R2,A
+	MOV	A,R3
+	SUBB	A,R7
+	MOV	R3,A
+	CLR	C
+	CLR	A
+	SUBB	A,R2
+	MOV	R2,A
+	CLR	A
+	SUBB	A,R3
+	MOV	R3,A
+	MOV	A,R2
+	MOV	R6,A
+	MOV	A,R3
+	MOV	R7,A
+	LCALL	$REFFN Loc
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R0,#$LOCBI check_mpm+1
+	MOV	A,@R0
+	ADD	A,#LOW(Mpm)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Mpm)
+	MOV	DPH,A
+	MOV	A,R4
+	MOVX	@DPTR,A
+	INC	@R0
+	LJMP	?0017
+?0016:
+; 166.	        }
+; 167.	        if(Mpm.Mpm.Cks != CK)                           return;
+	MOV	DPTR,#Mpm+8
+	MOVX	A,@DPTR
+	DEC	R0
+	XRL	A,@R0
+	JZ	?0025
+?0024:
+	RET
+?0025:
+; 168.	
+; 169.	        switch(Mpm.Mpm.Cmd)     {
+	MOV	DPTR,#Mpm+2
+	MOVX	A,@DPTR
+	LCALL	?A_V_SWITCH_L05
+	DW	?0059
+	DB	'@'
+	DW	?0067
+	DB	'I'
+	DW	?0027
+	DB	'M'
+	DW	?0043
+	DB	'O'
+	DW	?0051
+	DB	'T'
+	DW	?0035
+	DB	't'
+	DW	0
+	DW	?0068
+?0027:
+; 170.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 171.	                case    REAL :
+; 172.	                        switch(Mpm.Mpm.Sid)     {
+	MOV	DPTR,#Mpm+3
+	MOVX	A,@DPTR
+	JNZ	?0030
+?0029:
+; 173.	                                case    SID0:   send_struct(&TEMP_R);   break;
+	MOV	R5,#LOW(TEMP_R)
+	MOV	R6,#HIGH(TEMP_R)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0028
+?0030:
+	CJNE	A,#1,?0031
+; 174.	                                case    SID1:   send_struct(&HUMI_R);   break;
+	MOV	R5,#LOW(HUMI_R)
+	MOV	R6,#HIGH(HUMI_R)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0028
+?0031:
+	CJNE	A,#3,?0032
+; 175.	                                case    SID2:   send_struct(&PREC_R);   break;
+	MOV	R5,#LOW(PREC_R)
+	MOV	R6,#HIGH(PREC_R)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0028
+?0032:
+	CJNE	A,#4,?0033
+; 176.	                                case    SID3:   send_struct(&SUN_R) ;   break;
+	MOV	R5,#LOW(SUN_R)
+	MOV	R6,#HIGH(SUN_R)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0028
+?0033:
+	CJNE	A,#6,?0034
+; 177.	                                case    SID4:   send_struct(&SUND_R);   break;
+	MOV	R5,#LOW(SUND_R)
+	MOV	R6,#HIGH(SUND_R)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0028
+?0034:
+; 178.	                                default     :                           break;
+	SJMP	?0028
+?0028:
+; 179.	                                }                                                               break;
+	LJMP	?0026
+?0035:
+; 180.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 181.	                case    SEC10:
+; 182.	                        switch(Mpm.Mpm.Sid)     {
+	MOV	DPTR,#Mpm+3
+	MOVX	A,@DPTR
+	JNZ	?0038
+?0037:
+; 183.	                                case    SID0:   send_struct(&TEMP_t);   break;
+	MOV	R5,#LOW(TEMP_t)
+	MOV	R6,#HIGH(TEMP_t)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0036
+?0038:
+	CJNE	A,#1,?0039
+; 184.	                                case    SID1:   send_struct(&HUMI_t);   break;
+	MOV	R5,#LOW(HUMI_t)
+	MOV	R6,#HIGH(HUMI_t)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0036
+?0039:
+	CJNE	A,#3,?0040
+; 185.	                                case    SID2:   send_struct(&PREC_t);   break;
+	MOV	R5,#LOW(PREC_t)
+	MOV	R6,#HIGH(PREC_t)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0036
+?0040:
+	CJNE	A,#4,?0041
+; 186.	                                case    SID3:   send_struct(&SUN_t) ;   break;
+	MOV	R5,#LOW(SUN_t)
+	MOV	R6,#HIGH(SUN_t)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0036
+?0041:
+	CJNE	A,#6,?0042
+; 187.	                                case    SID4:   send_struct(&SUND_t);   break;
+	MOV	R5,#LOW(SUND_t)
+	MOV	R6,#HIGH(SUND_t)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0036
+?0042:
+; 188.	                                default     :                           break;
+	SJMP	?0036
+?0036:
+; 189.	                                }                                                               break;
+	LJMP	?0026
+?0043:
+; 190.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 191.	                case    MIN1 :
+; 192.	                        switch(Mpm.Mpm.Sid)     {
+	MOV	DPTR,#Mpm+3
+	MOVX	A,@DPTR
+	JNZ	?0046
+?0045:
+; 193.	                                case    SID0:   send_struct(&TEMP_O);   break;
+	MOV	R5,#LOW(TEMP_O)
+	MOV	R6,#HIGH(TEMP_O)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0044
+?0046:
+	CJNE	A,#1,?0047
+; 194.	                                case    SID1:   send_struct(&HUMI_O);   break;
+	MOV	R5,#LOW(HUMI_O)
+	MOV	R6,#HIGH(HUMI_O)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0044
+?0047:
+	CJNE	A,#3,?0048
+; 195.	                                case    SID2:   send_struct(&PREC_O);   break;
+	MOV	R5,#LOW(PREC_O)
+	MOV	R6,#HIGH(PREC_O)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0044
+?0048:
+	CJNE	A,#4,?0049
+; 196.	                                case    SID3:   send_struct(&SUN_O) ;   break;
+	MOV	R5,#LOW(SUN_O)
+	MOV	R6,#HIGH(SUN_O)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0044
+?0049:
+	CJNE	A,#6,?0050
+; 197.	                                case    SID4:   send_struct(&SUND_O);   break;
+	MOV	R5,#LOW(SUND_O)
+	MOV	R6,#HIGH(SUND_O)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0044
+?0050:
+; 198.	                                default     :                           break;
+	SJMP	?0044
+?0044:
+; 199.	                        }                                                                       break;
+	LJMP	?0026
+?0051:
+; 200.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 201.	                case    MIN10:
+; 202.	                        switch(Mpm.Mpm.Sid)     {
+	MOV	DPTR,#Mpm+3
+	MOVX	A,@DPTR
+	JNZ	?0054
+?0053:
+; 203.	                                case    SID0:   send_struct(&TEMP_T);   break;
+	MOV	R5,#LOW(TEMP_T)
+	MOV	R6,#HIGH(TEMP_T)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0052
+?0054:
+	CJNE	A,#1,?0055
+; 204.	                                case    SID1:   send_struct(&HUMI_T);   break;
+	MOV	R5,#LOW(HUMI_T)
+	MOV	R6,#HIGH(HUMI_T)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0052
+?0055:
+	CJNE	A,#3,?0056
+; 205.	                                case    SID2:   send_struct(&PREC_T);   break;
+	MOV	R5,#LOW(PREC_T)
+	MOV	R6,#HIGH(PREC_T)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0052
+?0056:
+	CJNE	A,#4,?0057
+; 206.	                                case    SID3:   send_struct(&SUN_T) ;   break;
+	MOV	R5,#LOW(SUN_T)
+	MOV	R6,#HIGH(SUN_T)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0052
+?0057:
+	CJNE	A,#6,?0058
+; 207.	                                case    SID4:   send_struct(&SUND_T);   break;
+	MOV	R5,#LOW(SUND_T)
+	MOV	R6,#HIGH(SUND_T)
+	MOV	R7,#1
+	LCALL	$REFFN send_struct
+	SJMP	?0052
+?0058:
+; 208.	                                default     :                           break;
+	SJMP	?0052
+?0052:
+; 209.	                        }                                                                               break;
+	LJMP	?0026
+?0059:
+; 210.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 211.	                case    RST      :
+; 212.	                        switch(Mpm.Mpm.Sid)     {
+	MOV	DPTR,#Mpm+3
+	MOVX	A,@DPTR
+	JNZ	?0062
+?0061:
+; 213.	                                case    SID0:
+; 214.	                                        TEMP_t.Sam.Max = Mpm.Mpm.Max;   TEMP_t.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 215.	                                        TEMP_O.Sam.Max = Mpm.Mpm.Max;   TEMP_O.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 216.	                                        TEMP_T.Sam.Max = Mpm.Mpm.Max;   TEMP_T.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 217.	                                        break;
+	LJMP	?0060
+?0062:
+	CJNE	A,#1,?0063
+; 218.	                                case    SID1:
+; 219.	                                        HUMI_t.Sam.Max = Mpm.Mpm.Max;   HUMI_t.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 220.	                                        HUMI_O.Sam.Max = Mpm.Mpm.Max;   HUMI_O.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 221.	                                        HUMI_T.Sam.Max = Mpm.Mpm.Max;   HUMI_T.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 222.	                                        break;
+	LJMP	?0060
+?0063:
+	CJNE	A,#3,?0064
+; 223.	                                case    SID2:
+; 224.	                                        PREC_t.Sam.Max = Mpm.Mpm.Max;   PREC_t.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 225.	                                        PREC_O.Sam.Max = Mpm.Mpm.Max;   PREC_O.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 226.	                                        PREC_T.Sam.Max = Mpm.Mpm.Max;   PREC_T.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 227.	                                        break;
+	LJMP	?0060
+?0064:
+	CJNE	A,#4,?0065
+; 228.	                                case    SID3:
+; 229.	                                        SUN_t.Sam.Max = Mpm.Mpm.Max;    SUN_t.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 230.	                                        SUN_O.Sam.Max = Mpm.Mpm.Max;    SUN_O.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 231.	                                        SUN_T.Sam.Max = Mpm.Mpm.Max;    SUN_T.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 232.	                                        break;
+	SJMP	?0060
+?0065:
+	CJNE	A,#6,?0066
+; 233.	                                case    SID4:
+; 234.	                                        SUND_t.Sam.Max = Mpm.Mpm.Max;   SUND_t.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUND_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUND_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 235.	                                        SUND_O.Sam.Max = Mpm.Mpm.Max;   SUND_O.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUND_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUND_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 236.	                                        SUND_T.Sam.Max = Mpm.Mpm.Max;   SUND_T.Sam.Min = Mpm.Mpm.Min;
+	MOV	DPTR,#Mpm+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUND_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#Mpm+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUND_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 237.	                                        break;
+	SJMP	?0060
+?0066:
+; 238.	                                default:                                break;
+	SJMP	?0060
+?0060:
+; 239.	                }                                                                       break;
+	SJMP	?0026
+?0067:
+; 240.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 241.	                case    INIT :      Init = 1;                   break;
+	MOV	A,#1
+	MOV	DPTR,#Init
+	MOVX	@DPTR,A
+	SJMP	?0026
+?0068:
+; 242.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 243.	                default      :                                  break;
+	SJMP	?0026
+?0026:
+; 244.	        }
+; 245.	}
+?0069:
+	RET
+; 246.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 247.	void send_struct(Sensor_u *Send)   // SAM -> MPM DATA Transmit
+; 248.	{
+send_struct:
+; 249.	        Word    Count;
+; 250.	
+; 251.	        Send->Sam.Sta = ERROR;          // Error Flag Setting
+	MOV	DPTR,#ERROR+1
+	MOVX	A,@DPTR
+	MOV	R0,#$LOCBI send_struct+2
+	XCH	A,R7
+	MOV	@R0,A
+	XCH	A,R7
+	INC	R0
+	XCH	A,R6
+	MOV	@R0,A
+	XCH	A,R6
+	INC	R0
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	MOV	DPTR,#3
+	LCALL	?ST_A_R567_DISP_L17
+; 252.	        for(Count=0; Count<sizeof(Sensor_t); Count++)   {
+	MOV	R0,#$LOCBI send_struct
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0071:
+	CLR	C
+	MOV	R0,#$LOCBI send_struct+1
+	MOV	A,@R0
+	SUBB	A,#17
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,#0
+	JC	$+5
+	LJMP	?0070
+?0072:
+; 253.	                if(Count>1 && Count <14)        Send->Sam.Cks ^= Send->Bytes[Count];
+	SETB	C
+	INC	R0
+	MOV	A,@R0
+	SUBB	A,#1
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,#0
+	JC	?0075
+	CLR	C
+	INC	R0
+	MOV	A,@R0
+	SUBB	A,#14
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,#0
+	JNC	?0075
+?0077:
+?0076:
+?0074:
+	INC	R0
+	INC	R0
+	MOV	A,@R0
+	MOV	R7,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R6,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R5,A
+	MOV	R0,#$LOCBI send_struct
+	MOV	DPH,@R0
+	INC	R0
+	MOV	DPL,@R0
+	LCALL	?LD_A_R567_DISP_L17
+	MOV	DPTR,#14
+	LCALL	?XOR_ASG_R567_A_DISP_L00
+?0075:
+; 254.	                Com.TxBuf[Com.TxEp++] = Send->Bytes[Count];
+	MOV	R0,#$LOCBI send_struct+2
+	MOV	A,@R0
+	MOV	R7,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R6,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R5,A
+	MOV	R0,#$LOCBI send_struct
+	MOV	DPH,@R0
+	INC	R0
+	MOV	DPL,@R0
+	LCALL	?LD_A_R567_DISP_L17
+	MOV	DPTR,#Com+1006
+	MOV	R6,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#Com+1006
+	JNZ	?0199
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0199:
+	MOV	A,R4
+	ADD	A,#LOW(Com+500)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com+500)
+	MOV	DPH,A
+	MOV	A,R6
+	MOVX	@DPTR,A
+; 255.	                if(Com.TxEp >= MAX)             Com.TxEp = 0;
+	CLR	C
+	MOV	DPTR,#Com+1007
+	MOVX	A,@DPTR
+	SUBB	A,#244
+	MOV	DPTR,#Com+1006
+	MOVX	A,@DPTR
+	SUBB	A,#1
+	JC	?0079
+?0078:
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0079:
+	MOV	R0,#$LOCBI send_struct+1
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	LJMP	?0071
+?0070:
+; 256.	        }
+; 257.	        enable(REDL);
+	SETB	P1.0
+; 258.	        SBUF = Com.TxBuf[Com.TxSp++];
+	MOV	DPTR,#Com+1004
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#Com+1004
+	JNZ	?0200
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0200:
+	MOV	A,R4
+	ADD	A,#LOW(Com+500)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com+500)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 259.	}
+	RET
+; 260.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 261.	signed int Loc(signed int Comp, signed int Step)    // Q Buffer Point Set
+; 262.	{
+Loc:
+; 263.	        Comp += Step;
+	MOV	A,R4
+	ADD	A,R6
+	MOV	R4,A
+	MOV	A,R5
+	ADDC	A,R7
+	MOV	R0,#$LOCBI Loc+2
+	XCH	A,R7
+	MOV	@R0,A
+	XCH	A,R7
+	INC	R0
+	XCH	A,R6
+	MOV	@R0,A
+	XCH	A,R6
+; 264.	        if(Comp < 0)    Comp += MAX;
+	MOV	R0,#$LOCBI Loc
+	MOV	@R0,A
+	INC	R0
+	XCH	A,R4
+	MOV	@R0,A
+	XCH	A,R4
+	RLC	A
+	JNC	?0081
+?0080:
+	MOV	A,@R0
+	ADD	A,#244
+	MOV	@R0,A
+	DEC	R0
+	MOV	A,@R0
+	ADDC	A,#1
+	MOV	@R0,A
+?0081:
+; 265.	        return  Comp;
+	MOV	R0,#$LOCBI Loc
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+; 266.	}
+	RET
+; 267.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 268.	void AD_read(void)          // A/D Convert DATA Read Function
+; 269.	{
+AD_read:
+; 270.	        ADCENB = HOLD;          // Voltage is Holding
+	CLR	P1.2
+; 271.	        for(DLYcount=0; DLYcount < DLY; DLYcount++) { DLYcount++; DLYcount--;}
+	MOV	DPTR,#DLYcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0083:
+	CLR	C
+	MOV	DPTR,#DLYcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#15
+	MOV	DPTR,#DLYcount
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JNC	?0082
+?0084:
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#DLYcount
+	JNZ	?0201
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0201:
+	INC	DPTR
+	MOVX	A,@DPTR
+	ADD	A,#255
+	MOVX	@DPTR,A
+	MOV	DPTR,#DLYcount
+	MOVX	A,@DPTR
+	ADDC	A,#255
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#DLYcount
+	JNZ	?0202
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0202:
+	SJMP	?0083
+?0082:
+; 272.	
+; 273.	        output(ADMSB, 0xff);    // A/D Convert Start Command
+	MOV	A,#255
+	MOV	DPTR,#32768
+	MOVX	@DPTR,A
+; 274.	
+; 275.	        for(DLYcount=0; DLYcount < DLY; DLYcount++) { DLYcount++; DLYcount--;}
+	MOV	DPTR,#DLYcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0087:
+	CLR	C
+	MOV	DPTR,#DLYcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#15
+	MOV	DPTR,#DLYcount
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JNC	?0086
+?0088:
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#DLYcount
+	JNZ	?0203
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0203:
+	INC	DPTR
+	MOVX	A,@DPTR
+	ADD	A,#255
+	MOVX	@DPTR,A
+	MOV	DPTR,#DLYcount
+	MOVX	A,@DPTR
+	ADDC	A,#255
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#DLYcount
+	JNZ	?0204
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0204:
+	SJMP	?0087
+?0086:
+; 276.	        ERcount=0;              // Error Count Value Clear
+	MOV	DPTR,#ERcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0091:
+; 277.	        while(STATUS)           {       if(ERcount++>100)       break;  }
+	JNB	P1.7,?0090
+?0092:
+	MOV	DPTR,#ERcount
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#ERcount
+	JNZ	?0205
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0205:
+	SETB	C
+	MOV	A,R4
+	SUBB	A,#100
+	MOV	A,R5
+	SUBB	A,#0
+	JC	?0094
+?0093:
+	SJMP	?0090
+?0094:
+	SJMP	?0091
+?0090:
+; 278.	        if(ERcount>100)         ERROR |= ADERR  ;
+	SETB	C
+	MOV	DPTR,#ERcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#100
+	MOV	DPTR,#ERcount
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0096
+?0095:
+	MOV	DPTR,#ERROR+1
+	MOVX	A,@DPTR
+	ORL	A,#4
+	MOVX	@DPTR,A
+	SJMP	?0097
+?0096:
+; 279.	        else                    ERROR = 0       ;
+	MOV	DPTR,#ERROR
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0097:
+; 280.	
+; 281.	        disable(ES);
+	CLR	IE.4
+; 282.	        ADValue = input(ADLSB);         ADValue |= (input(ADMSB)<<8);
+	MOV	DPTR,#32769
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,A
+	MOV	DPL,R5
+	MOVX	A,@DPTR
+	MOV	R7,#0
+	MOV	R6,#0
+	MOV	R7,A
+	MOV	A,R4
+	MOV	A,R5
+	ORL	A,R7
+	MOV	DPTR,#ADValue
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 283.	        enable(ES);
+	SETB	IE.4
+; 284.	        ADCENB  = SAMPLE;
+	SETB	P1.2
+; 285.	        Flag = OFF;             // Disable Flag . (Select.Loop Used. Flag Off)
+	CLR	Flag
+; 286.	}
+	RET
+; 287.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 288.	void Temp_cal(void)        // TEMP Calculation Function
+; 289.	{
+Temp_cal:
+; 290.	        AD_read();
+	LCALL	$REFFN AD_read
+; 291.	        disable(ES);
+	CLR	IE.4
+; 292.	        TEMP_R.Sam.Avr =  ( ADValue / 4.095) + 500.;   // Temp Cal.
+	MOV	DPTR,#ADValue
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R1,#10
+	MOV	R0,#61
+	MOV	R3,#64
+	MOV	R2,#131
+	LCALL	?F_DIV_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#67
+	MOV	R2,#250
+	LCALL	?F_ADD_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#TEMP_R+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 293.	        enable(ES);
+	SETB	IE.4
+; 294.	
+; 295.	        TEMP_OLD.Sumt += TEMP_R.Sam.Avr;                // Average Value 10 sec         TEMP_OLD.SumO += TEMP_R.Sam.Avr;                // Average Value 1  min
+	MOV	R4,A
+	MOV	DPTR,#TEMP_OLD+3
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+2
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 296.	        TEMP_OLD.SumT += TEMP_R.Sam.Avr;                // Average Value 10 min
+	MOV	DPTR,#TEMP_OLD+15
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+14
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 297.	        // One Day Max, Min processing
+; 298.	        if(TEMP_R.Sam.Avr > TEMP_R.Sam.Max)     TEMP_R.Sam.Max = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+11
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#TEMP_R+10
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0099
+?0098:
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0099:
+; 299.	        if(TEMP_R.Sam.Avr < TEMP_R.Sam.Min)     TEMP_R.Sam.Min = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#TEMP_R+13
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#TEMP_R+12
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0101
+?0100:
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0101:
+; 300.	        // 10 sec, 1 min, 10 min MAX & MIN proc...
+; 301.	        if(TEMP_R.Sam.Avr > TEMP_OLD.Maxt )     TEMP_OLD.Maxt  = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#TEMP_OLD+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#TEMP_OLD
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0103
+?0102:
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0103:
+; 302.	        if(TEMP_R.Sam.Avr < TEMP_OLD.Mint )     TEMP_OLD.Maxt  = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#TEMP_OLD+5
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#TEMP_OLD+4
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0105
+?0104:
+	MOV	DPTR,#TEMP_OLD
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0105:
+; 303.	        if(TEMP_R.Sam.Avr > TEMP_OLD.MaxO )     TEMP_OLD.MaxO  = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#TEMP_OLD+7
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#TEMP_OLD+6
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0107
+?0106:
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0107:
+; 304.	        if(TEMP_R.Sam.Avr < TEMP_OLD.MinO )     TEMP_OLD.MaxO  = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#TEMP_OLD+11
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#TEMP_OLD+10
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0109
+?0108:
+	MOV	DPTR,#TEMP_OLD+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0109:
+; 305.	        if(TEMP_R.Sam.Avr > TEMP_OLD.MaxO )     TEMP_OLD.MaxT  = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#TEMP_OLD+7
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#TEMP_OLD+6
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0111
+?0110:
+	MOV	DPTR,#TEMP_OLD+12
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0111:
+; 306.	        if(TEMP_R.Sam.Avr < TEMP_OLD.MinO )     TEMP_OLD.MaxT  = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#TEMP_OLD+11
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#TEMP_OLD+10
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0113
+?0112:
+	INC	DPTR
+	INC	DPTR
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0113:
+; 307.	        // 10 sec proc...
+; 308.	        if(TEMP_OLD.Count_t >= 10.)      {
+	MOV	DPTR,#TEMP_OLD+18
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	MOV	A,#3
+	LCALL	?F_CMP_L02
+	JNZ	?0115
+?0114:
+; 309.	                TEMP_t.Sam.Avr   = TEMP_OLD.Sumt/10.                  ;
+	MOV	DPTR,#TEMP_OLD+2
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#TEMP_t+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 310.	                TEMP_t.Sam.Max   = TEMP_OLD.Maxt                      ;
+	MOV	DPTR,#TEMP_OLD
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 311.	                TEMP_t.Sam.Min   = TEMP_OLD.Mint                      ;
+	MOV	DPTR,#TEMP_OLD+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 312.	                TEMP_OLD.Maxt    = TEMP_OLD.Mint = TEMP_OLD.Sumt = 0. ;
+	MOV	DPTR,#TEMP_OLD+2
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 313.	                TEMP_OLD.Count_t = 0.;             TEMP_OLD.Count_O++ ;
+	MOV	DPTR,#TEMP_OLD+18
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+20
+	JNZ	?0206
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0206:
+?0115:
+; 314.	        }
+; 315.	        // 1 min proc...
+; 316.	        if(TEMP_OLD.Count_O >= 6.)       {
+	MOV	DPTR,#TEMP_OLD+20
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#64
+	MOV	R2,#192
+	MOV	A,#3
+	LCALL	?F_CMP_L02
+	JNZ	?0117
+?0116:
+; 317.	                TEMP_O.Sam.Avr   = TEMP_OLD.SumO/60.                  ;
+	MOV	DPTR,#TEMP_OLD+8
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#66
+	MOV	R2,#112
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#TEMP_O+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 318.	                TEMP_O.Sam.Max   = TEMP_OLD.MaxO                      ;
+	MOV	DPTR,#TEMP_OLD+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 319.	                TEMP_O.Sam.Min   = TEMP_OLD.MinO                      ;
+	MOV	DPTR,#TEMP_OLD+10
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 320.	                TEMP_OLD.MaxO    = TEMP_OLD.MinO = TEMP_OLD.SumO = 0. ;
+	MOV	DPTR,#TEMP_OLD+8
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+6
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 321.	                TEMP_OLD.Count_O = 0.;             TEMP_OLD.Count_T++ ;
+	MOV	DPTR,#TEMP_OLD+20
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+22
+	JNZ	?0207
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0207:
+?0117:
+; 322.	        }
+; 323.	        // 10 min proc...
+; 324.	        if(TEMP_OLD.Count_T >= 10.)      {
+	MOV	DPTR,#TEMP_OLD+22
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	MOV	A,#3
+	LCALL	?F_CMP_L02
+	JNZ	?0119
+?0118:
+; 325.	                TEMP_T.Sam.Avr   = TEMP_OLD.SumT/600.                 ;
+	MOV	DPTR,#TEMP_OLD+14
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#22
+	MOV	R3,#68
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#TEMP_T+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 326.	                TEMP_T.Sam.Max   = TEMP_OLD.MaxT                      ;
+	MOV	DPTR,#TEMP_OLD+12
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 327.	                TEMP_T.Sam.Min   = TEMP_OLD.MinT                      ;
+	MOV	DPTR,#TEMP_OLD+16
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 328.	                TEMP_OLD.MaxT    = TEMP_OLD.MinT = TEMP_OLD.SumT = 0. ;
+	MOV	DPTR,#TEMP_OLD+14
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+12
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 329.	                TEMP_OLD.Count_T = 0.;
+	MOV	DPTR,#TEMP_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0119:
+; 330.	        }
+; 331.	}
+	RET
+; 332.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 333.	void Sun_cal(void)              // Sun Calculate
+; 334.	{
+Sun_cal:
+; 335.	        // Sun_Day Day of Max
+; 336.	        AD_read();
+	LCALL	$REFFN AD_read
+; 337.	        disable(ES);
+	CLR	IE.4
+; 338.	        // Unit = Sensor Spc  * (A/D read)/Div   *  Volt Range / Op-Amp Range
+; 339.	        //  W   = (10e6/9.06) * (AD_read  /4096) *    10       /    100
+; 340.	        Sun_Value = (10000./9.06) * (ADValue / 4096.) * 10.;
+	MOV	DPTR,#ADValue
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#69
+	MOV	R2,#128
+	LCALL	?F_DIV_L02
+	MOV	R0,#23
+	MOV	R3,#68
+	MOV	R2,#137
+	MOV	R1,#248
+	LCALL	?F_MUL_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+; 341.	        SUN_R.Sam.Avr = (Word)Sun_Value;
+	MOV	DPTR,#Sun_Value
+	LCALL	?STO_R4567_DPTR_L20
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#SUN_R+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 342.	        enable(ES);
+	SETB	IE.4
+; 343.	
+; 344.	        SUN_OLD.Sumt += SUN_R.Sam.Avr;          // Average Value 10 sec
+	MOV	R4,A
+	MOV	DPTR,#SUN_OLD+3
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+2
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 345.	        SUN_OLD.SumO += SUN_R.Sam.Avr;          // Average Value 1  min
+	MOV	DPTR,#SUN_OLD+9
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+8
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 346.	        SUN_OLD.SumT += SUN_R.Sam.Avr;          // Average Value 10 min
+	MOV	DPTR,#SUN_OLD+15
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+14
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 347.	        // 10 sec proc...
+; 348.	        if(SUN_OLD.Count_t >= 10)       {
+	CLR	C
+	MOV	DPTR,#SUN_OLD+19
+	MOVX	A,@DPTR
+	SUBB	A,#10
+	MOV	DPTR,#SUN_OLD+18
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0121
+?0120:
+; 349.	                SUN_t.Sam.Avr   = SUN_OLD.Sumt/10.                   ;
+	MOV	DPTR,#SUN_OLD+2
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#SUN_t+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 350.	                SUN_t.Sam.Max   = SUN_T.Sam.Max                      ;
+	MOV	DPTR,#SUN_T+10
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 351.	                SUN_OLD.Sumt    = 0;
+	MOV	DPTR,#SUN_OLD+2
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 352.	                SUN_OLD.Count_t = 0;               SUN_OLD.Count_O++ ;
+	MOV	DPTR,#SUN_OLD+18
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+20
+	JNZ	?0208
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0208:
+?0121:
+; 353.	        }
+; 354.	        // 1 min proc...
+; 355.	        if(SUN_OLD.Count_O >= 6)        {
+	CLR	C
+	MOV	DPTR,#SUN_OLD+21
+	MOVX	A,@DPTR
+	SUBB	A,#6
+	MOV	DPTR,#SUN_OLD+20
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0123
+?0122:
+; 356.	                SUN_O.Sam.Avr   = SUN_OLD.SumO/60.                   ;
+	MOV	DPTR,#SUN_OLD+8
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#66
+	MOV	R2,#112
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#SUN_O+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 357.	                SUN_O.Sam.Max   = SUN_T.Sam.Max                      ;
+	MOV	DPTR,#SUN_T+10
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 358.	                SUN_OLD.SumO    = 0;
+	MOV	DPTR,#SUN_OLD+8
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 359.	                SUN_OLD.Count_O = 0;               SUN_OLD.Count_T++ ;
+	MOV	DPTR,#SUN_OLD+20
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+22
+	JNZ	?0209
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0209:
+?0123:
+; 360.	        }
+; 361.	        // 10 min proc...
+; 362.	        if(SUN_OLD.Count_T >= 10)       {
+	CLR	C
+	MOV	DPTR,#SUN_OLD+23
+	MOVX	A,@DPTR
+	SUBB	A,#10
+	MOV	DPTR,#SUN_OLD+22
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0125
+?0124:
+; 363.	                SUN_T.Sam.Avr   = SUN_OLD.SumT/600.                  ;
+	MOV	DPTR,#SUN_OLD+14
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#22
+	MOV	R3,#68
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#SUN_T+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 364.	                SUN_T.Sam.Max  += SUN_T.Sam.Avr                      ;
+	MOV	R4,A
+	MOV	DPTR,#SUN_T+11
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_T+10
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 365.	                SUN_OLD.SumT    = 0;              SUN_OLD.Count_T = 0;
+	MOV	DPTR,#SUN_OLD+14
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0125:
+; 366.	        }
+; 367.	}
+	RET
+; 368.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 369.	void Humi_cal(void)        // HUMI Calculation Function
+; 370.	{
+Humi_cal:
+; 371.	        AD_read();
+	LCALL	$REFFN AD_read
+; 372.	        disable(ES);
+	CLR	IE.4
+; 373.	        HUMI_R.Sam.Avr = ADValue / 4.095;      // HUMI Cal.
+	MOV	DPTR,#ADValue
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R1,#10
+	MOV	R0,#61
+	MOV	R3,#64
+	MOV	R2,#131
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#HUMI_R+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 374.	        enable(ES);
+	SETB	IE.4
+; 375.	        if(HUMI_R.Sam.Avr > 999)        HUMI_R.Sam.Avr = 999;   // HUMI MAX SETTING
+	SETB	C
+	MOV	R4,A
+	SUBB	A,#231
+	MOV	A,R5
+	SUBB	A,#3
+	JC	?0127
+?0126:
+	MOV	R5,#3
+	MOV	R4,#231
+	MOV	DPTR,#HUMI_R+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0127:
+; 376.	
+; 377.	        HUMI_OLD.Sumt += HUMI_R.Sam.Avr;        // Average Value 10 sec
+	MOV	DPTR,#HUMI_OLD+3
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+2
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 378.	        HUMI_OLD.SumO += HUMI_R.Sam.Avr;        // Average Value 1  min
+	MOV	DPTR,#HUMI_OLD+9
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+8
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 379.	        HUMI_OLD.SumT += HUMI_R.Sam.Avr;        // Average Value 10 min
+	MOV	DPTR,#HUMI_OLD+15
+	MOVX	A,@DPTR
+	ADD	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+14
+	MOVX	A,@DPTR
+	ADDC	A,R5
+	MOVX	@DPTR,A
+; 380.	        // One Day Max, Min processing
+; 381.	        if(HUMI_R.Sam.Avr > HUMI_R.Sam.Max)     HUMI_R.Sam.Max = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+11
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#HUMI_R+10
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0129
+?0128:
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0129:
+; 382.	        if(HUMI_R.Sam.Avr < HUMI_R.Sam.Min)     HUMI_R.Sam.Min = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#HUMI_R+13
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#HUMI_R+12
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0131
+?0130:
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0131:
+; 383.	        // 10 sec, 1 min, 10 min MAX & MIN proc...
+; 384.	        if(HUMI_R.Sam.Avr > HUMI_OLD.Maxt )     HUMI_OLD.Maxt  = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#HUMI_OLD+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#HUMI_OLD
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0133
+?0132:
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0133:
+; 385.	        if(HUMI_R.Sam.Avr < HUMI_OLD.Mint )     HUMI_OLD.Maxt  = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#HUMI_OLD+5
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#HUMI_OLD+4
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0135
+?0134:
+	MOV	DPTR,#HUMI_OLD
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0135:
+; 386.	        if(HUMI_R.Sam.Avr > HUMI_OLD.MaxO )     HUMI_OLD.MaxO  = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#HUMI_OLD+7
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#HUMI_OLD+6
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0137
+?0136:
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0137:
+; 387.	        if(HUMI_R.Sam.Avr < HUMI_OLD.MinO )     HUMI_OLD.MaxO  = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#HUMI_OLD+11
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#HUMI_OLD+10
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0139
+?0138:
+	MOV	DPTR,#HUMI_OLD+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0139:
+; 388.	        if(HUMI_R.Sam.Avr > HUMI_OLD.MaxO )     HUMI_OLD.MaxT  = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#HUMI_OLD+7
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#HUMI_OLD+6
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0141
+?0140:
+	MOV	DPTR,#HUMI_OLD+12
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0141:
+; 389.	        if(HUMI_R.Sam.Avr < HUMI_OLD.MinO )     HUMI_OLD.MaxT  = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#HUMI_OLD+11
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#HUMI_OLD+10
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0143
+?0142:
+	INC	DPTR
+	INC	DPTR
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0143:
+; 390.	        // 10 sec proc...
+; 391.	        if(HUMI_OLD.Count_t >= 10)      {
+	CLR	C
+	MOV	DPTR,#HUMI_OLD+19
+	MOVX	A,@DPTR
+	SUBB	A,#10
+	MOV	DPTR,#HUMI_OLD+18
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0145
+?0144:
+; 392.	                HUMI_t.Sam.Avr   = HUMI_OLD.Sumt/10.                  ;
+	MOV	DPTR,#HUMI_OLD+2
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#HUMI_t+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 393.	                HUMI_t.Sam.Max   = HUMI_OLD.Maxt                      ;
+	MOV	DPTR,#HUMI_OLD
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 394.	                HUMI_t.Sam.Min   = HUMI_OLD.Mint                      ;
+	MOV	DPTR,#HUMI_OLD+4
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 395.	                HUMI_OLD.Maxt    = HUMI_OLD.Mint = HUMI_OLD.Sumt = 0  ;
+	MOV	DPTR,#HUMI_OLD+2
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 396.	                HUMI_OLD.Count_t = 0;              HUMI_OLD.Count_O++ ;
+	MOV	DPTR,#HUMI_OLD+18
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+20
+	JNZ	?0210
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0210:
+?0145:
+; 397.	        }
+; 398.	        // 1 min proc...
+; 399.	        if(HUMI_OLD.Count_O >= 6)       {
+	CLR	C
+	MOV	DPTR,#HUMI_OLD+21
+	MOVX	A,@DPTR
+	SUBB	A,#6
+	MOV	DPTR,#HUMI_OLD+20
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0147
+?0146:
+; 400.	                HUMI_O.Sam.Avr   = HUMI_OLD.SumO/60.                  ;
+	MOV	DPTR,#HUMI_OLD+8
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#66
+	MOV	R2,#112
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#HUMI_O+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 401.	                HUMI_O.Sam.Max   = HUMI_OLD.MaxO                      ;
+	MOV	DPTR,#HUMI_OLD+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 402.	                HUMI_O.Sam.Min   = HUMI_OLD.MinO                      ;
+	MOV	DPTR,#HUMI_OLD+10
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 403.	                HUMI_OLD.MaxO    = HUMI_OLD.MinO = HUMI_OLD.SumO = 0  ;
+	MOV	DPTR,#HUMI_OLD+8
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+6
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 404.	                HUMI_OLD.Count_O = 0;              HUMI_OLD.Count_T++ ;
+	MOV	DPTR,#HUMI_OLD+20
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+22
+	JNZ	?0211
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0211:
+?0147:
+; 405.	        }
+; 406.	        // 10 min proc...
+; 407.	        if(HUMI_OLD.Count_T >= 10)      {
+	CLR	C
+	MOV	DPTR,#HUMI_OLD+23
+	MOVX	A,@DPTR
+	SUBB	A,#10
+	MOV	DPTR,#HUMI_OLD+22
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0149
+?0148:
+; 408.	                HUMI_T.Sam.Avr   = HUMI_OLD.SumT/600.                 ;
+	MOV	DPTR,#HUMI_OLD+14
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#22
+	MOV	R3,#68
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#HUMI_T+6
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 409.	                HUMI_T.Sam.Max   = HUMI_OLD.MaxT                      ;
+	MOV	DPTR,#HUMI_OLD+12
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 410.	                HUMI_T.Sam.Min   = HUMI_OLD.MinT                      ;
+	MOV	DPTR,#HUMI_OLD+16
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 411.	                HUMI_OLD.MaxT    = HUMI_OLD.MinT = HUMI_OLD.SumT = 0  ;
+	MOV	DPTR,#HUMI_OLD+14
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+12
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 412.	                HUMI_OLD.Count_T = 0;
+	MOV	DPTR,#HUMI_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0149:
+; 413.	        }
+; 414.	}
+	RET
+; 415.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 416.	//[*]  Interrupt Function Start....                                        [*]
+; 417.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 418.	interrupt void SCON_int(void)   // Serial Interrupt Function
+; 419.	{
+SCON_int:
+	PUSH	ACC
+	PUSH	B
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R0
+	PUSH	ACC
+	MOV	A,R1
+	PUSH	ACC
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R7
+	PUSH	ACC
+; 420.	        disable(EA);
+	CLR	IE.7
+; 421.	        if(RI)  {
+	JNB	SCON.0,?0151
+?0150:
+; 422.	                disable(RI);                    disable(GREENL);
+	CLR	SCON.0
+	CLR	P1.1
+; 423.	                Com.RxBuf[Com.RxEp++] = SBUF;    enable(GREENL);
+	MOV	A,SBUF
+	MOV	DPTR,#Com+1002
+	MOV	R6,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#Com+1002
+	JNZ	?0212
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0212:
+	MOV	A,R4
+	ADD	A,#LOW(Com)
+	MOV	DPL,A
+	MOV	A,R5
+	ADDC	A,#HIGH(Com)
+	MOV	DPH,A
+	MOV	A,R6
+	MOVX	@DPTR,A
+	SETB	P1.1
+; 424.	                if(Com.RxEp >= MAX)              Com.RxEp = 0  ;
+	CLR	C
+	MOV	DPTR,#Com+1003
+	MOVX	A,@DPTR
+	SUBB	A,#244
+	MOV	DPTR,#Com+1002
+	MOVX	A,@DPTR
+	SUBB	A,#1
+	JC	?0153
+?0152:
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0153:
+; 425.	                // Portocol Check. ( MPM -> SAM )
+; 426.	                check_mpm();
+	LCALL	$REFFN check_mpm
+	SJMP	?0154
+?0151:
+; 427.	        }
+; 428.	        else if(TI)     {
+	JNB	SCON.1,?0156
+?0155:
+; 429.	                disable(TI);                                      disable(REDL);
+	CLR	SCON.1
+	CLR	P1.0
+; 430.	                if(Com.TxSp != Com.TxEp)        {
+	MOV	DPTR,#Com+1004
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	INC	DPTR
+	INC	DPTR
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0213
+	MOV	DPTR,#Com+1006
+	MOVX	A,@DPTR
+	XRL	A,R5
+	JZ	?0158
+?0213:
+?0157:
+; 431.	                        SBUF = Com.TxBuf[Com.TxSp++];  enable(REDL);
+	MOV	A,R4
+	MOV	R6,A
+	MOV	A,R5
+	MOV	R7,A
+	XCH	A,R4
+	ADD	A,#1
+	XCH	A,R4
+	XCH	A,R5
+	ADDC	A,#0
+	XCH	A,R5
+	MOV	DPTR,#Com+1004
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	MOV	A,R6
+	ADD	A,#LOW(Com+500)
+	MOV	DPL,A
+	MOV	A,R7
+	ADDC	A,#HIGH(Com+500)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+	SETB	P1.0
+	SJMP	?0159
+?0158:
+; 432.	                }
+; 433.	                else                              disable(REDL);
+	CLR	P1.0
+?0159:
+; 434.	                if(Com.TxSp >= MAX)               Com.TxSp = 0 ;
+	CLR	C
+	MOV	A,R4
+	SUBB	A,#244
+	MOV	A,R5
+	SUBB	A,#1
+	JC	?0161
+?0160:
+	CLR	A
+	MOV	R4,A
+	MOV	R5,A
+	MOV	DPTR,#Com+1004
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0161:
+?0156:
+?0154:
+; 435.	        }
+; 436.	        enable(EA);
+	SETB	IE.7
+; 437.	}
+	POP	ACC
+	MOV	R7,A
+	POP	ACC
+	MOV	R6,A
+	POP	ACC
+	MOV	R5,A
+	POP	ACC
+	MOV	R4,A
+	POP	ACC
+	MOV	R3,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R0,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	B
+	POP	ACC
+	RETI
+; 438.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 439.	interrupt void EX0_int(void)    // External Interrupt Function
+; 440.	{
+EX0_int:
+	PUSH	ACC
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+; 441.	        disable(ES);
+	CLR	IE.4
+; 442.	
+; 443.	        if(PREC_Flag == ON)             PREC_Count++;
+	JNB	PREC_Flag,?0163
+?0162:
+	MOV	DPTR,#PREC_Count+1
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_Count
+	JNZ	?0214
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0214:
+?0163:
+; 444.	
+; 445.	        switch(Event)
+	MOV	DPTR,#Event
+	MOVX	A,@DPTR
+	JNZ	?0174
+?0165:
+; 446.	        {
+; 447.	                case    0:  if(TEMP_OLD.Count_t >= 10)  TEMP_OLD.Count_t= 0 ;
+	CLR	C
+	MOV	DPTR,#TEMP_OLD+19
+	MOVX	A,@DPTR
+	SUBB	A,#10
+	MOV	DPTR,#TEMP_OLD+18
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0167
+?0166:
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0167:
+; 448.	                                        if(HUMI_OLD.Count_t >= 10)  HUMI_OLD.Count_t= 0 ;
+	CLR	C
+	MOV	DPTR,#HUMI_OLD+19
+	MOVX	A,@DPTR
+	SUBB	A,#10
+	MOV	DPTR,#HUMI_OLD+18
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0169
+?0168:
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0169:
+; 449.	                                        if(SUN_OLD.Count_t  >= 10)  SUN_OLD.Count_t = 0 ;
+	CLR	C
+	MOV	DPTR,#SUN_OLD+19
+	MOVX	A,@DPTR
+	SUBB	A,#10
+	MOV	DPTR,#SUN_OLD+18
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0171
+?0170:
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0171:
+; 450.	                                        if(PREC_OLD.Count_t >= 10)  PREC_OLD.Count_t= 0 ;
+	CLR	C
+	MOV	DPTR,#PREC_OLD+19
+	MOVX	A,@DPTR
+	SUBB	A,#10
+	MOV	DPTR,#PREC_OLD+18
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0173
+?0172:
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0173:
+; 451.	                                        Event++;                                  break ;
+	MOV	DPTR,#Event
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	LJMP	?0164
+?0174:
+	CJNE	A,#1,?0175
+; 452.	                                        // Temp cal MUX CH:1  0 0 0
+; 453.	                case    1:  MUX0 = 1;     MUX1 = 0;     MUX2 = 0 ;  Event++ ;
+	SETB	P1.3
+	CLR	P1.4
+	CLR	P1.5
+	MOV	DPTR,#Event
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+; 454.	                                        Loop.Select = Temp_cal;         Flag = ON;        break ;
+	MOV	A,#LOW $IFREF Temp_cal
+	MOV	R5,#HIGH $IFREF Temp_cal
+	MOV	DPTR,#Loop
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	SETB	Flag
+	LJMP	?0164
+?0175:
+	CJNE	A,#2,?0176
+; 455.	                                        // Sun cal  MUX CH:2  0 0 1
+; 456.	                case    2:  MUX0 = 1;     MUX1 = 1;     MUX2 = 1 ;  Event++ ;
+	SETB	P1.3
+	SETB	P1.4
+	SETB	P1.5
+	MOV	DPTR,#Event
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+; 457.	                                        Loop.Select = Sun_cal ;     Flag = ON;    break ;
+	MOV	A,#LOW $IFREF Sun_cal
+	MOV	R5,#HIGH $IFREF Sun_cal
+	MOV	DPTR,#Loop
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	SETB	Flag
+	SJMP	?0164
+?0176:
+	CJNE	A,#3,?0177
+; 458.	                                        // Humi cal MUX CH:8  1 1 1
+; 459.	                case    3:  MUX0 = 0;     MUX1 = 0;     MUX2 = 0 ;      Event= 0;
+	CLR	P1.3
+	CLR	P1.4
+	CLR	P1.5
+	CLR	A
+	MOV	DPTR,#Event
+	MOVX	@DPTR,A
+; 460.	                                        TEMP_OLD.Count_t++;             HUMI_OLD.Count_t++  ;
+	MOV	DPTR,#TEMP_OLD+19
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_OLD+18
+	JNZ	?0215
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0215:
+	MOV	DPTR,#HUMI_OLD+19
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_OLD+18
+	JNZ	?0216
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0216:
+; 461.	                                        SUN_OLD.Count_t++;              PREC_OLD.Count_t++  ;
+	MOV	DPTR,#SUN_OLD+19
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_OLD+18
+	JNZ	?0217
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0217:
+	MOV	DPTR,#PREC_OLD+19
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+18
+	JNZ	?0218
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0218:
+; 462.	                                        Loop.Select = Humi_cal;     Flag = ON;    break ;
+	MOV	A,#LOW $IFREF Humi_cal
+	MOV	R5,#HIGH $IFREF Humi_cal
+	MOV	DPTR,#Loop
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	SETB	Flag
+	SJMP	?0164
+?0177:
+; 463.	                default  :                                            break ;
+	SJMP	?0164
+?0164:
+; 464.	        }
+; 465.	        enable(ES);
+	SETB	IE.4
+; 466.	}
+	POP	ACC
+	MOV	R5,A
+	POP	ACC
+	MOV	R4,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	ACC
+	RETI
+; 467.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 468.	interrupt       void EX1_int(void)              // Precipi cal
+; 469.	{
+EX1_int:
+	PUSH	ACC
+	PUSH	B
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R0
+	PUSH	ACC
+	MOV	A,R1
+	PUSH	ACC
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R7
+	PUSH	ACC
+; 470.	        disable(ES);
+	CLR	IE.4
+; 471.	
+; 472.	        PREC_Flag      = ON;
+	SETB	PREC_Flag
+; 473.	        PREC_OLD.Sumt  = PREC_OLD.SumO   = PREC_OLD.SumT += 5.;
+	MOV	DPTR,#PREC_OLD+15
+	MOVX	A,@DPTR
+	ADD	A,#5
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+14
+	MOVX	A,@DPTR
+	ADDC	A,#0
+	MOVX	@DPTR,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_OLD+2
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+8
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 474.	        PREC_R.Sam.Max = PREC_R.Sam.Avr += 5.;
+	MOV	DPTR,#PREC_R+7
+	MOVX	A,@DPTR
+	ADD	A,#5
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_R+6
+	MOVX	A,@DPTR
+	ADDC	A,#0
+	MOVX	@DPTR,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_R+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 475.	        // Sec * 10Min * 4Hz = 14400 ( Wait Time overflow )
+; 476.	        if(PREC_Count > 14400.) {
+	MOV	DPTR,#PREC_Count
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#70
+	MOV	R2,#97
+	MOV	A,#7
+	LCALL	?F_CMP_L02
+	JNZ	?0179
+?0178:
+; 477.	                PREC_Flag = OFF;        PREC_Count = 0.;
+	CLR	PREC_Flag
+	MOV	DPTR,#PREC_Count
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0179:
+; 478.	        }
+; 479.	        if(PREC_OLD.Count_t >= 10.)     {
+	MOV	DPTR,#PREC_OLD+18
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	MOV	A,#3
+	LCALL	?F_CMP_L02
+	JNZ	?0181
+?0180:
+; 480.	                PREC_t.Sam.Avr = PREC_OLD.Sumt/PREC_OLD.Count_t;
+	MOV	DPTR,#PREC_OLD+2
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_OLD+18
+	MOV	R4,A
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R2,A
+	MOV	A,R4
+	MOV	R0,A
+	MOV	A,R5
+	MOV	R1,A
+	LCALL	?UI_DIV_L00
+	MOV	DPTR,#PREC_t+6
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 481.	                PREC_t.Sam.Max = PREC_OLD.Sumt;
+	MOV	DPTR,#PREC_OLD+2
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 482.	                PREC_OLD.Sumt  = PREC_OLD.Count_t = 0.;
+	MOV	DPTR,#PREC_OLD+18
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+2
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 483.	                PREC_OLD.Count_O++;
+	MOV	DPTR,#PREC_OLD+21
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+20
+	JNZ	?0219
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0219:
+?0181:
+; 484.	        }
+; 485.	        if(PREC_OLD.Count_O >= 6.)      {
+	MOV	DPTR,#PREC_OLD+20
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#64
+	MOV	R2,#192
+	MOV	A,#3
+	LCALL	?F_CMP_L02
+	JNZ	?0183
+?0182:
+; 486.	                PREC_O.Sam.Avr = PREC_OLD.SumO/PREC_OLD.Count_O;
+	MOV	DPTR,#PREC_OLD+8
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_OLD+20
+	MOV	R4,A
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R2,A
+	MOV	A,R4
+	MOV	R0,A
+	MOV	A,R5
+	MOV	R1,A
+	LCALL	?UI_DIV_L00
+	MOV	DPTR,#PREC_O+6
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 487.	                PREC_O.Sam.Max = PREC_OLD.SumO;
+	MOV	DPTR,#PREC_OLD+8
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 488.	                PREC_OLD.SumO  = PREC_OLD.Count_O = 0.;
+	MOV	DPTR,#PREC_OLD+20
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+8
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 489.	                PREC_OLD.Count_T++;
+	MOV	DPTR,#PREC_OLD+23
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+22
+	JNZ	?0220
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0220:
+?0183:
+; 490.	        }
+; 491.	        if(PREC_OLD.Count_T >= 10.)     {
+	MOV	DPTR,#PREC_OLD+22
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	MOV	A,#3
+	LCALL	?F_CMP_L02
+	JNZ	?0185
+?0184:
+; 492.	                PREC_T.Sam.Avr = PREC_OLD.SumT/PREC_OLD.Count_t;
+	MOV	DPTR,#PREC_OLD+14
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_OLD+18
+	MOV	R4,A
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R2,A
+	MOV	A,R4
+	MOV	R0,A
+	MOV	A,R5
+	MOV	R1,A
+	LCALL	?UI_DIV_L00
+	MOV	DPTR,#PREC_T+6
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 493.	                PREC_T.Sam.Max = PREC_OLD.SumT;
+	MOV	DPTR,#PREC_OLD+14
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 494.	                PREC_OLD.SumT  = PREC_OLD.Count_T = 0.;
+	MOV	DPTR,#PREC_OLD+22
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_OLD+14
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 495.	                PREC_OLD.Count_T = 0.;
+	MOV	DPTR,#PREC_OLD+22
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0185:
+; 496.	        }
+; 497.	        if(PREC_Flag == ON && PREC_Count != 0.) {
+	JB	PREC_Flag,$+6
+	LJMP	?0187
+	MOV	DPTR,#PREC_Count+1
+	MOVX	A,@DPTR
+	JZ	?0187
+?0189:
+?0188:
+?0186:
+; 498.	                PREC_R.Sam.Spc = PREC_t.Sam.Spc = 18000./(PREC_Count / 4.);
+	MOV	DPTR,#PREC_Count
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#64
+	MOV	R2,#128
+	LCALL	?F_DIV_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R3,#70
+	MOV	R2,#140
+	MOV	R1,#160
+	LCALL	?F_DIV_R_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#PREC_R+8
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_t+8
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 499.	                PREC_O.Sam.Spc = PREC_T.Sam.Spc = 18000./(PREC_Count / 4.);
+	MOV	DPTR,#PREC_Count
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#64
+	MOV	R2,#128
+	LCALL	?F_DIV_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R3,#70
+	MOV	R2,#140
+	MOV	R1,#160
+	LCALL	?F_DIV_R_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#PREC_O+8
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_T+8
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 500.	                PREC_Count = 0.;
+	MOV	DPTR,#PREC_Count
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0187:
+; 501.	        }
+; 502.	        enable(ES);
+	SETB	IE.4
+; 503.	}
+	POP	ACC
+	MOV	R7,A
+	POP	ACC
+	MOV	R6,A
+	POP	ACC
+	MOV	R5,A
+	POP	ACC
+	MOV	R4,A
+	POP	ACC
+	MOV	R3,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R0,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	B
+	POP	ACC
+	RETI
+; 504.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 505.	//[*]    Main Program Start...                                             [*]
+; 506.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+; 507.	void main(void)
+; 508.	{
+main:
+; 509.	        initiliaze();              // Initiliaze Serial & Variable & Structs.
+	LCALL	$REFFN initiliaze
+?0191:
+; 510.	
+; 511.	        while(1)        {
+; 512.	                if(Init == 1)   {      // Min & Max Value Initiliaze
+	MOV	DPTR,#Init
+	MOVX	A,@DPTR
+	DEC	A
+	JZ	$+5
+	LJMP	?0194
+?0193:
+; 513.	                        TEMP_t.Sam.Max = TEMP_R.Sam.Avr;  TEMP_t.Sam.Min = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 514.	                        TEMP_O.Sam.Max = TEMP_R.Sam.Avr;  TEMP_O.Sam.Min = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 515.	                        TEMP_T.Sam.Max = TEMP_R.Sam.Avr;  TEMP_T.Sam.Min = TEMP_R.Sam.Avr;
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEMP_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TEMP_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 516.	
+; 517.	                        HUMI_t.Sam.Max = HUMI_R.Sam.Avr;  HUMI_t.Sam.Min = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 518.	                        HUMI_O.Sam.Max = HUMI_R.Sam.Avr;  HUMI_O.Sam.Min = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 519.	                        HUMI_T.Sam.Max = HUMI_R.Sam.Avr;  HUMI_T.Sam.Min = HUMI_R.Sam.Avr;
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#HUMI_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HUMI_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 520.	
+; 521.	                        PREC_R.Sam.Avr = 0;
+	MOV	DPTR,#PREC_R+6
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 522.	                        PREC_t.Sam.Max = PREC_R.Sam.Avr;  PREC_t.Sam.Min = PREC_R.Sam.Avr;
+	MOV	DPTR,#PREC_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 523.	                        PREC_O.Sam.Max = PREC_R.Sam.Avr;  PREC_O.Sam.Min = PREC_R.Sam.Avr;
+	MOV	DPTR,#PREC_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 524.	                        PREC_T.Sam.Max = PREC_R.Sam.Avr;  PREC_T.Sam.Min = PREC_R.Sam.Avr;
+	MOV	DPTR,#PREC_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#PREC_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#PREC_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 525.	
+; 526.	                        SUN_R.Sam.Avr  = 0;
+	MOV	DPTR,#SUN_R+6
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 527.	                        SUN_t.Sam.Max  = SUN_R.Sam.Avr;   SUN_t.Sam.Min = SUN_R.Sam.Avr;
+	MOV	DPTR,#SUN_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_t+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_t+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 528.	                        SUN_O.Sam.Max  = SUN_R.Sam.Avr;   SUN_O.Sam.Min = SUN_R.Sam.Avr;
+	MOV	DPTR,#SUN_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_O+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_O+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 529.	                        SUN_T.Sam.Max  = SUN_R.Sam.Avr;   SUN_T.Sam.Min = SUN_R.Sam.Avr;
+	MOV	DPTR,#SUN_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_T+10
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUN_R+6
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#SUN_T+12
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 530.	                        Init = 0;
+	CLR	A
+	MOV	DPTR,#Init
+	MOVX	@DPTR,A
+?0194:
+; 531.	                }
+; 532.	                // Sun  dectect
+; 533.	                SUND_R.Sam.Avr = SUND_t.Sam.Avr = SUND_CHECK;
+	CLR	A
+	MOV	C,P1.6
+	MOV	ACC.0,C
+	MOV	R5,#0
+	MOV	DPTR,#SUND_R+6
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_t+6
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 534.	                SUND_O.Sam.Avr = SUND_T.Sam.Avr = SUND_CHECK;
+	CLR	A
+	MOV	C,P1.6
+	MOV	ACC.0,C
+	MOV	DPTR,#SUND_O+6
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	MOV	DPTR,#SUND_T+6
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 535.	
+; 536.	                if(Flag == ON)          Loop.Select();   // Run Function (Select Function)
+	JNB	Flag,?0196
+?0195:
+	MOV	DPTR,#Loop
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPL,A
+	MOV	DPH,R7
+	LCALL	?LOAD_IND_DPTR2_L20
+	LCALL	?LCALL_IND_L20
+?0196:
+; 537.	        }
+; 538.	}
+	LJMP	?0191
+; 539.	//[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+	RSEG	CONST
+NAME:
+	DB	'[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,'[*]',0
+	DB	'[*]  JIN-YANG  INDUSTRIAL.,CO LTD                       [*]',0
+	DB	'[*]  Program : PARK. JongKil    Date : 1997. 3. 5~      [*]',0
+	DB	'[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,'[*]',0
+	DB	'[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,'[*]',0
+	DB	'[*]  Sensor : TEMPERLATURE 1 EA  Analog CH : 0, ID : 2  [*]',0
+	DB	'[*]           SUN          1 EA  Analog CH : 2, ID : 5  [*]',0
+	DB	'[*]           HUMIDUTIY    1 EA  Analog CH : 7, ID : 3  [*]',0
+	DB	'[*]           PRECIPI      1 EA  EXT INT1     , ID : 4  [*]',0
+	DB	'[*]           SUN/D        1 EA  P1.6 (On/Off), ID : 6  [*]',0
+	DB	'[*]  Sensor Code :                                      [*]',0
+	DB	'[*]    TEMP 2, SUN 8, HUMI 6 , PREC 3, SUND 9           [*]',0
+	DB	'[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,'[*]',0
+	DB	'[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,'[*]',0
+	DB	'[*]  Used Board : SAM2 Board(Designed PARKIK)           [*]',0
+	DB	'[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,'[*]',0
+	DB	'[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,'[*]',0
+	DB	'[*]  VERSION : Test Ver 1.0  First TEST : 97. 3.  7     [*]',0
+	DB	'[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+	DB	-60,-60,-60,-60,'[*]',0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	COMMON	INTVEC
+	DS	3
+	DB	2
+	DB	HIGH(EX0_int),LOW(EX0_int)
+	DS	13
+	DB	2
+	DB	HIGH(EX1_int),LOW(EX1_int)
+	DS	13
+	DB	2
+	DB	HIGH(SCON_int),LOW(SCON_int)
+	RSEG	X_UDATA
+Loop:
+	DS	2
+TEMP_R:
+	DS	17
+TEMP_t:
+	DS	17
+TEMP_O:
+	DS	17
+TEMP_T:
+	DS	17
+HUMI_R:
+	DS	17
+HUMI_t:
+	DS	17
+HUMI_O:
+	DS	17
+HUMI_T:
+	DS	17
+PREC_R:
+	DS	17
+PREC_t:
+	DS	17
+PREC_O:
+	DS	17
+PREC_T:
+	DS	17
+SUN_R:
+	DS	17
+SUN_t:
+	DS	17
+SUN_O:
+	DS	17
+SUN_T:
+	DS	17
+SUND_R:
+	DS	17
+SUND_t:
+	DS	17
+SUND_O:
+	DS	17
+SUND_T:
+	DS	17
+Mpm:
+	DS	11
+Com:
+	DS	1008
+TEMP_OLD:
+	DS	24
+HUMI_OLD:
+	DS	24
+PREC_OLD:
+	DS	24
+SUN_OLD:
+	DS	24
+SUND_OLD:
+	DS	24
+ERcount:
+	DS	2
+ERROR:
+	DS	2
+DLYcount:
+	DS	2
+ADValue:
+	DS	2
+Sun_Day:
+	DS	2
+Event:
+	DS	1
+Init:
+	DS	1
+PREC_Count:
+	DS	2
+Sun_Value:
+	DS	4
+	RSEG	BITVARS
+Flag:
+	DS	1
+PREC_Flag:
+	DS	1
+	END

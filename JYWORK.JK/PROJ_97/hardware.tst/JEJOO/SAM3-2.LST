@@ -1,0 +1,3559 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12K/DXT                              11/Mar/97  20:20:38     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  compact                                                               #
+#           Source file   =  sam3-2.c                                                              #
+#           List file     =  sam3-2.lst                                                            #
+#           Object file   =  sam3-2.r03                                                            #
+#           ASM file      =  sam3-2.s03                                                            #
+#           Command line  =  -mc -L -q -s -P -K -a SAM3-2 SAM3-2                                   #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+   \   0000                    NAME    sam3-2(16)
+   \   0000                    RSEG    CODE(0)
+   \   0000                    RSEG    CONST(0)
+   \   0000                    COMMON  INTVEC(0)
+   \   0000                    RSEG    X_UDATA(0)
+   \   0000                    RSEG    BITVARS(0)
+   \   0000                    PUBLIC  AD_read
+   \   0000                    $DEFFN  AD_read(0,0,0,0,0,0,0,0),Humi_cal,Temp_cal
+   \   0000                    PUBLIC  EX0_int
+   \   0000                    $DEFFN  EX0_int(512,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  Humi_cal
+   \   0000                    $DEFFN  Humi_cal(0,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  Loc
+   \   0000                    $DEFFN  Loc(0,0,0,0,4,0,0,0),send_struct,check_mpm
+   \   0000                    PUBLIC  Loop
+   \   0000                    PUBLIC  NAME
+   \   0000                    PUBLIC  SCON_int
+   \   0000                    $DEFFN  SCON_int(512,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  Temp_cal
+   \   0000                    $DEFFN  Temp_cal(0,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  check_mpm
+   \   0000                    $DEFFN  check_mpm(3,0,0,0,0,0,0,0),SCON_int
+   \   0000                    PUBLIC  init_serial
+   \   0000                    $DEFFN  init_serial(0,0,0,0,0,0,0,0),initiliaze
+   \   0000                    PUBLIC  init_struct
+   \   0000                    $DEFFN  init_struct(0,0,0,0,6,0,0,0),initiliaze
+   \   0000                    PUBLIC  init_variable
+   \   0000                    $DEFFN  init_variable(0,0,0,0,0,0,0,0),initiliaze
+   \   0000                    PUBLIC  initiliaze
+   \   0000                    $DEFFN  initiliaze(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  main
+   \   0000                    $DEFFN  main(256,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  send_struct
+   \   0000                    $DEFFN  send_struct(2,0,0,0,3,0,0,0),check_mpm
+   \   0000                    EXTERN  ?XOR_ASG_R567_A_DISP_L00
+   \   0000                    EXTERN  ?L_ADD_ASG_DPTR_R4567_L01
+   \   0000                    EXTERN  ?F_ADD_L02
+   \   0000                    EXTERN  ?F_DIV_L02
+   \   0000                    EXTERN  ?R4567_FLT_TO_LONG_L02
+   \   0000                    EXTERN  ?R4567_ULONG_TO_FLT_L02
+   \   0000                    EXTERN  ?ST_AR3_R567_L17
+   \   0000                    EXTERN  ?LD_A_R567_DISP_L17
+   \   0000                    EXTERN  ?ST_A_R567_DISP_L17
+   \   0000                    EXTERN  ?ST_AR3_R567_DISP_L17
+   \   0000                    EXTERN  ?A_V_SWITCH_L05
+   \   0000                    EXTERN  ?LD_R4567_XDPTR_L20
+   \   0000                    EXTERN  ?LOAD_IND_DPTR2_L20
+   \   0000                    EXTERN  ?LCALL_IND_L20
+   \   0000                    EXTERN  ?CL8051C_5_12_L17
+   \   0000                    RSEG    CODE
+      1          #include <io51.h>
+      2          #include <math.h>
+      3          #include <sam3-2.h>
+      4          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+      5          #pragma memory=code
+      6          Byte    NAME[20][60] = {
+      7             "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+      8             "[*]  JIN-YANG  INDUSTRIAL.,CO LTD                       [*]",
+      9             "[*]  Program : PARK. JongKil    Date : 1997. 2. 26~     [*]",
+     10             "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     11             "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     12             "[*]  Sensor : TEMPERLATURE 1 EA  Analog CH : 0, ID : 0  [*]",
+     13             "[*]           HUMIDUTIY    1 EA  Analog CH : 1, ID : 1  [*]",
+     14             "[*]  Sensor Code : TEMP = 2, HUMI = 6                   [*]",
+     15             "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     16             "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     17             "[*]  Used Board : SAM3 Board(Designed PARKIK)           [*]",
+     18             "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     19             "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     20             "[*]  VERSION : Test Ver 1.0  First TEST : 97. 3. 10     [*]",
+     21             "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]"
+     22          };
+     23          #pragma memory=default
+     24          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     25          //[*]  Program Start......                                                 [*]
+     26          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     27          void init_variable(void)
+     28          {
+   \   0000            init_variable:
+     29                  // TEMP & HUMI Old Value Register Clear (Variable initliaze)
+     30                  TEMP_OLD.Maxt    = TEMP_OLD.Sumt    = TEMP_OLD.Mint    = 0 ;
+   \   0000  900235            MOV     DPTR,#TEMP_OLD+8
+   \   0003  E4                CLR     A
+   \   0004  F0                MOVX    @DPTR,A
+   \   0005  A3                INC     DPTR
+   \   0006  F0                MOVX    @DPTR,A
+   \   0007  900231            MOV     DPTR,#TEMP_OLD+4
+   \   000A  F0                MOVX    @DPTR,A
+   \   000B  A3                INC     DPTR
+   \   000C  F0                MOVX    @DPTR,A
+   \   000D  A3                INC     DPTR
+   \   000E  F0                MOVX    @DPTR,A
+   \   000F  A3                INC     DPTR
+   \   0010  F0                MOVX    @DPTR,A
+   \   0011  90022F            MOV     DPTR,#TEMP_OLD+2
+   \   0014  F0                MOVX    @DPTR,A
+   \   0015  A3                INC     DPTR
+   \   0016  F0                MOVX    @DPTR,A
+     31                  TEMP_OLD.MaxO    = TEMP_OLD.SumO    = TEMP_OLD.MinO    = 0 ;
+   \   0017  90023D            MOV     DPTR,#TEMP_OLD+16
+   \   001A  F0                MOVX    @DPTR,A
+   \   001B  A3                INC     DPTR
+   \   001C  F0                MOVX    @DPTR,A
+   \   001D  900239            MOV     DPTR,#TEMP_OLD+12
+   \   0020  F0                MOVX    @DPTR,A
+   \   0021  A3                INC     DPTR
+   \   0022  F0                MOVX    @DPTR,A
+   \   0023  A3                INC     DPTR
+   \   0024  F0                MOVX    @DPTR,A
+   \   0025  A3                INC     DPTR
+   \   0026  F0                MOVX    @DPTR,A
+   \   0027  900237            MOV     DPTR,#TEMP_OLD+10
+   \   002A  F0                MOVX    @DPTR,A
+   \   002B  A3                INC     DPTR
+   \   002C  F0                MOVX    @DPTR,A
+     32                  TEMP_OLD.MaxT    = TEMP_OLD.SumT    = TEMP_OLD.MinT    = 0 ;
+   \   002D  900245            MOV     DPTR,#TEMP_OLD+24
+   \   0030  F0                MOVX    @DPTR,A
+   \   0031  A3                INC     DPTR
+   \   0032  F0                MOVX    @DPTR,A
+   \   0033  900241            MOV     DPTR,#TEMP_OLD+20
+   \   0036  F0                MOVX    @DPTR,A
+   \   0037  A3                INC     DPTR
+   \   0038  F0                MOVX    @DPTR,A
+   \   0039  A3                INC     DPTR
+   \   003A  F0                MOVX    @DPTR,A
+   \   003B  A3                INC     DPTR
+   \   003C  F0                MOVX    @DPTR,A
+   \   003D  90023F            MOV     DPTR,#TEMP_OLD+18
+   \   0040  F0                MOVX    @DPTR,A
+   \   0041  A3                INC     DPTR
+   \   0042  F0                MOVX    @DPTR,A
+     33                  TEMP_OLD.Count_t = TEMP_OLD.Count_O = TEMP_OLD.Count_T = 0 ;
+   \   0043  90024B            MOV     DPTR,#TEMP_OLD+30
+   \   0046  F0                MOVX    @DPTR,A
+   \   0047  A3                INC     DPTR
+   \   0048  F0                MOVX    @DPTR,A
+   \   0049  900249            MOV     DPTR,#TEMP_OLD+28
+   \   004C  F0                MOVX    @DPTR,A
+   \   004D  A3                INC     DPTR
+   \   004E  F0                MOVX    @DPTR,A
+   \   004F  900247            MOV     DPTR,#TEMP_OLD+26
+   \   0052  F0                MOVX    @DPTR,A
+   \   0053  A3                INC     DPTR
+   \   0054  F0                MOVX    @DPTR,A
+     34          
+     35                  HUMI_OLD.Maxt    = HUMI_OLD.Sumt    = HUMI_OLD.Mint    = 0 ;
+   \   0055  900255            MOV     DPTR,#HUMI_OLD+8
+   \   0058  F0                MOVX    @DPTR,A
+   \   0059  A3                INC     DPTR
+   \   005A  F0                MOVX    @DPTR,A
+   \   005B  900251            MOV     DPTR,#HUMI_OLD+4
+   \   005E  F0                MOVX    @DPTR,A
+   \   005F  A3                INC     DPTR
+   \   0060  F0                MOVX    @DPTR,A
+   \   0061  A3                INC     DPTR
+   \   0062  F0                MOVX    @DPTR,A
+   \   0063  A3                INC     DPTR
+   \   0064  F0                MOVX    @DPTR,A
+   \   0065  90024F            MOV     DPTR,#HUMI_OLD+2
+   \   0068  F0                MOVX    @DPTR,A
+   \   0069  A3                INC     DPTR
+   \   006A  F0                MOVX    @DPTR,A
+     36                  HUMI_OLD.MaxO    = HUMI_OLD.SumO    = HUMI_OLD.MinO    = 0 ;
+   \   006B  90025D            MOV     DPTR,#HUMI_OLD+16
+   \   006E  F0                MOVX    @DPTR,A
+   \   006F  A3                INC     DPTR
+   \   0070  F0                MOVX    @DPTR,A
+   \   0071  900259            MOV     DPTR,#HUMI_OLD+12
+   \   0074  F0                MOVX    @DPTR,A
+   \   0075  A3                INC     DPTR
+   \   0076  F0                MOVX    @DPTR,A
+   \   0077  A3                INC     DPTR
+   \   0078  F0                MOVX    @DPTR,A
+   \   0079  A3                INC     DPTR
+   \   007A  F0                MOVX    @DPTR,A
+   \   007B  900257            MOV     DPTR,#HUMI_OLD+10
+   \   007E  F0                MOVX    @DPTR,A
+   \   007F  A3                INC     DPTR
+   \   0080  F0                MOVX    @DPTR,A
+     37                  HUMI_OLD.MaxT    = HUMI_OLD.SumT    = HUMI_OLD.MinT    = 0 ;
+   \   0081  900265            MOV     DPTR,#HUMI_OLD+24
+   \   0084  F0                MOVX    @DPTR,A
+   \   0085  A3                INC     DPTR
+   \   0086  F0                MOVX    @DPTR,A
+   \   0087  900261            MOV     DPTR,#HUMI_OLD+20
+   \   008A  F0                MOVX    @DPTR,A
+   \   008B  A3                INC     DPTR
+   \   008C  F0                MOVX    @DPTR,A
+   \   008D  A3                INC     DPTR
+   \   008E  F0                MOVX    @DPTR,A
+   \   008F  A3                INC     DPTR
+   \   0090  F0                MOVX    @DPTR,A
+   \   0091  90025F            MOV     DPTR,#HUMI_OLD+18
+   \   0094  F0                MOVX    @DPTR,A
+   \   0095  A3                INC     DPTR
+   \   0096  F0                MOVX    @DPTR,A
+     38                  HUMI_OLD.Count_t = HUMI_OLD.Count_O = HUMI_OLD.Count_T = 0 ;
+   \   0097  90026B            MOV     DPTR,#HUMI_OLD+30
+   \   009A  F0                MOVX    @DPTR,A
+   \   009B  A3                INC     DPTR
+   \   009C  F0                MOVX    @DPTR,A
+   \   009D  900269            MOV     DPTR,#HUMI_OLD+28
+   \   00A0  F0                MOVX    @DPTR,A
+   \   00A1  A3                INC     DPTR
+   \   00A2  F0                MOVX    @DPTR,A
+   \   00A3  900267            MOV     DPTR,#HUMI_OLD+26
+   \   00A6  F0                MOVX    @DPTR,A
+   \   00A7  A3                INC     DPTR
+   \   00A8  F0                MOVX    @DPTR,A
+     39          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     40          //      for(MovCount = 0; MovCount<AvrCount; MovCount++)        {
+     41          //              TEMP_Move[MovCount] = HUMI_Move[MovCount] = 0;
+     42          //      }
+     43          
+     44          //      TEMP_Point = 0          ;
+     45          //      HUMI_Point = 0          ;
+     46          //      MovCount   = 0          ;
+     47          //      MovValue   = 0          ;
+     48          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     49                  ERcount   = 0;                  // A/D Error Count
+   \   00A9  90026D            MOV     DPTR,#ERcount
+   \   00AC  F0                MOVX    @DPTR,A
+   \   00AD  A3                INC     DPTR
+   \   00AE  F0                MOVX    @DPTR,A
+     50                  ERROR     = 0;          // Error Status Register
+   \   00AF  90026F            MOV     DPTR,#ERROR
+   \   00B2  F0                MOVX    @DPTR,A
+   \   00B3  A3                INC     DPTR
+   \   00B4  F0                MOVX    @DPTR,A
+     51                  DLYcount  = 0;          // A/D Delay Count Value
+   \   00B5  900271            MOV     DPTR,#DLYcount
+   \   00B8  F0                MOVX    @DPTR,A
+   \   00B9  A3                INC     DPTR
+   \   00BA  F0                MOVX    @DPTR,A
+     52                  ADValue   = 0;                  // Read A/D Converter Value (Value type is int)
+   \   00BB  900273            MOV     DPTR,#ADValue
+   \   00BE  F0                MOVX    @DPTR,A
+   \   00BF  A3                INC     DPTR
+   \   00C0  F0                MOVX    @DPTR,A
+     53                  Event     = 0;          // 4 Hz Counter Value(Used interrupt EX0)
+   \   00C1  900275            MOV     DPTR,#Event
+   \   00C4  F0                MOVX    @DPTR,A
+     54                  Init      = 1;                  // Initiliaze Min & Max Value Initiliaze
+   \   00C5  04                INC     A
+   \   00C6  900276            MOV     DPTR,#Init
+   \   00C9  F0                MOVX    @DPTR,A
+     55                  Flag      = OFF;                // Select Loop Run & Stop Flag (Used interrupt EX0)
+   \   00CA  C200              CLR     Flag
+     56          
+     57                  TEMP_R.Sam.Avr = 500;   // Temperature Default Value Setting
+   \   00CC  900008            MOV     DPTR,#TEMP_R+6
+   \   00CF  F0                MOVX    @DPTR,A
+   \   00D0  A3                INC     DPTR
+   \   00D1  74F4              MOV     A,#244
+   \   00D3  F0                MOVX    @DPTR,A
+     58          
+     59                  MUX0 = OFF;             MUX1 = OFF;             MUX2 = OFF;             // A/D Convert Select(First Temperature)
+   \   00D4  C293              CLR     P1.3
+   \   00D6  C294              CLR     P1.4
+   \   00D8  C295              CLR     P1.5
+     60          }
+   \   00DA  22                RET
+     61          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     62          void init_struct(Sensor_u *Sen, Byte Cmd, Byte Sid, Byte Scode)
+     63          {
+   \   00DB            init_struct:
+     64                  Sen->Sam.Head   = 0xFFFF;       // 0,1   Header Value.
+   \   00DB  74FF              MOV     A,#255
+   \   00DD  FB                MOV     R3,A
+   \   00DE  120000            LCALL   ?ST_AR3_R567_L17
+     65                  Sen->Sam.Cmd    = Cmd   ;   // 2         'M','t','O','T' Command.
+   \   00E1  8D00              MOV     $LOCBD init_struct+2,R5
+   \   00E3  8E00              MOV     $LOCBD init_struct+1,R6
+   \   00E5  8F00              MOV     $LOCBD init_struct,R7
+   \   00E7  EC                MOV     A,R4
+   \   00E8  900002            MOV     DPTR,#2
+   \   00EB  120000            LCALL   ?ST_A_R567_DISP_L17
+   \   00EE  F500              MOV     $LOCBD init_struct+3,A
+     66                  Sen->Sam.Sta    = 0     ;   // 3         Sensor Status Value
+   \   00F0  E4                CLR     A
+   \   00F1  900003            MOV     DPTR,#3
+   \   00F4  120000            LCALL   ?ST_A_R567_DISP_L17
+     67                  Sen->Sam.Scode  = Scode ;   // 4         Sensor Code
+   \   00F7  E500              MOV     A,$LOCBD init_struct+5
+   \   00F9  900004            MOV     DPTR,#4
+   \   00FC  120000            LCALL   ?ST_A_R567_DISP_L17
+     68                  Sen->Sam.Sid    = Sid   ;   // 5         This Porgram Sid is Fixed.(Jumper ID)
+   \   00FF  E500              MOV     A,$LOCBD init_struct+4
+   \   0101  900005            MOV     DPTR,#5
+   \   0104  120000            LCALL   ?ST_A_R567_DISP_L17
+     69                  Sen->Sam.Avr    = 0             ;   // 6,7   Average Value
+   \   0107  E4                CLR     A
+   \   0108  0B                INC     R3
+   \   0109  900006            MOV     DPTR,#6
+   \   010C  120000            LCALL   ?ST_AR3_R567_DISP_L17
+     70                  Sen->Sam.Spc    = 0             ;   // 8,9
+   \   010F  900008            MOV     DPTR,#8
+   \   0112  120000            LCALL   ?ST_AR3_R567_DISP_L17
+     71                  Sen->Sam.Max    = 0             ;   // 10,11 Maximum Value.
+   \   0115  90000A            MOV     DPTR,#10
+   \   0118  120000            LCALL   ?ST_AR3_R567_DISP_L17
+     72                  Sen->Sam.Min    = 0             ;   // 12,13 Minimum Value.
+   \   011B  90000C            MOV     DPTR,#12
+   \   011E  120000            LCALL   ?ST_AR3_R567_DISP_L17
+     73                  Sen->Sam.Cks    = 0             ;   // 14    Check Sum Value.
+   \   0121  90000E            MOV     DPTR,#14
+   \   0124  120000            LCALL   ?ST_A_R567_DISP_L17
+     74                  Sen->Sam.Tail   = 0xFFFE;   // 15,16 Tail.                   Total = 17 Bytes
+   \   0127  14                DEC     A
+   \   0128  1B                DEC     R3
+   \   0129  14                DEC     A
+   \   012A  90000F            MOV     DPTR,#15
+   \   012D  120000            LCALL   ?ST_AR3_R567_DISP_L17
+     75          }
+   \   0130  22                RET
+     76          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     77          void init_serial(void)
+     78          {
+   \   0131            init_serial:
+     79                  Com.TxSp = Com.TxEp = Com.RxSp = Com.RxEp = 0;
+   \   0131  900227            MOV     DPTR,#Com+402
+   \   0134  E4                CLR     A
+   \   0135  F0                MOVX    @DPTR,A
+   \   0136  A3                INC     DPTR
+   \   0137  F0                MOVX    @DPTR,A
+   \   0138  900225            MOV     DPTR,#Com+400
+   \   013B  F0                MOVX    @DPTR,A
+   \   013C  A3                INC     DPTR
+   \   013D  F0                MOVX    @DPTR,A
+   \   013E  90022B            MOV     DPTR,#Com+406
+   \   0141  F0                MOVX    @DPTR,A
+   \   0142  A3                INC     DPTR
+   \   0143  F0                MOVX    @DPTR,A
+   \   0144  900229            MOV     DPTR,#Com+404
+   \   0147  F0                MOVX    @DPTR,A
+   \   0148  A3                INC     DPTR
+   \   0149  F0                MOVX    @DPTR,A
+     80          
+     81                  disable(EA);
+   \   014A  C2AF              CLR     IE.7
+     82                  PCON = 0x80;      // Baudrate Double set
+   \   014C  758780            MOV     PCON,#128
+     83                  SCON = 0x50;      // Serial Config Register
+   \   014F  759850            MOV     SCON,#80
+     84                  TMOD = 0x25;      // T0 = Internal Timer 16Bit no,Prescaler,
+   \   0152  758925            MOV     TMOD,#37
+     85                                                    // T1 = Using to Serial
+     86                  TH1  = 0xfa;
+   \   0155  758DFA            MOV     TH1,#250
+     87                  TL1  = 0xfa;      // 23Mhz = F3, 22Mhz = F4,18Mhz = F6, 11Mhz = fa Set
+   \   0158  758BFA            MOV     TL1,#250
+     88                  TR1  = 1   ;      // Serial Timer Run
+   \   015B  D28E              SETB    TCON.6
+     89                  PS   = 1   ;      // Serial Interrupt First.
+   \   015D  D2BC              SETB    IP.4
+     90          
+     91                  IT0  = 1   ;      // Edge Trigger
+   \   015F  D288              SETB    TCON.0
+     92                  EX0  = 1   ;      // 4 Hz Clock Enalble
+   \   0161  D2A8              SETB    IE.0
+     93                  ES   = 1   ;      // Serial Interrupt Enable
+   \   0163  D2AC              SETB    IE.4
+     94                  enable(EA) ;       // Interrupt All enable
+   \   0165  D2AF              SETB    IE.7
+     95          }
+   \   0167  22                RET
+     96          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     97          void initiliaze(void)
+     98          {
+   \   0168            initiliaze:
+     99                  // Jumper_Read(); Jumper Read Function
+    100                  disable(GREENL);        disable(REDL);          // LED Clear (TXD & RXD)
+   \   0168  C290              CLR     P1.0
+   \   016A  C291              CLR     P1.1
+    101          
+    102                  // Temp Struct Initiliaze
+    103                  init_struct(&TEMP_R, REAL , SID0, SCODE0);
+   \   016C  750002            MOV     $PRMBD init_struct+5,#2
+   \   016F  750002            MOV     $PRMBD init_struct+4,#2
+   \   0172  7C4D              MOV     R4,#77
+   \   0174  7D02              MOV     R5,#LOW(TEMP_R)
+   \   0176  7E00              MOV     R6,#HIGH(TEMP_R)
+   \   0178  7F01              MOV     R7,#1
+   \   017A  120000            LCALL   $REFFN init_struct
+    104                  init_struct(&TEMP_t, SEC10, SID0, SCODE0);
+   \   017D  750002            MOV     $PRMBD init_struct+5,#2
+   \   0180  750002            MOV     $PRMBD init_struct+4,#2
+   \   0183  7C74              MOV     R4,#116
+   \   0185  7D13              MOV     R5,#LOW(TEMP_t)
+   \   0187  7E00              MOV     R6,#HIGH(TEMP_t)
+   \   0189  7F01              MOV     R7,#1
+   \   018B  120000            LCALL   $REFFN init_struct
+    105                  init_struct(&TEMP_O, MIN1 , SID0, SCODE0);
+   \   018E  750002            MOV     $PRMBD init_struct+5,#2
+   \   0191  750002            MOV     $PRMBD init_struct+4,#2
+   \   0194  7C4F              MOV     R4,#79
+   \   0196  7D24              MOV     R5,#LOW(TEMP_O)
+   \   0198  7E00              MOV     R6,#HIGH(TEMP_O)
+   \   019A  7F01              MOV     R7,#1
+   \   019C  120000            LCALL   $REFFN init_struct
+    106                  init_struct(&TEMP_T, MIN10, SID0, SCODE0);
+   \   019F  750002            MOV     $PRMBD init_struct+5,#2
+   \   01A2  750002            MOV     $PRMBD init_struct+4,#2
+   \   01A5  7C54              MOV     R4,#84
+   \   01A7  7D35              MOV     R5,#LOW(TEMP_T)
+   \   01A9  7E00              MOV     R6,#HIGH(TEMP_T)
+   \   01AB  7F01              MOV     R7,#1
+   \   01AD  120000            LCALL   $REFFN init_struct
+    107                  // Humi Struct Initiliaze
+    108                  init_struct(&HUMI_R, REAL , SID1, SCODE1);
+   \   01B0  750006            MOV     $PRMBD init_struct+5,#6
+   \   01B3  750005            MOV     $PRMBD init_struct+4,#5
+   \   01B6  7C4D              MOV     R4,#77
+   \   01B8  7D46              MOV     R5,#LOW(HUMI_R)
+   \   01BA  7E00              MOV     R6,#HIGH(HUMI_R)
+   \   01BC  7F01              MOV     R7,#1
+   \   01BE  120000            LCALL   $REFFN init_struct
+    109                  init_struct(&HUMI_t, SEC10, SID1, SCODE1);
+   \   01C1  750006            MOV     $PRMBD init_struct+5,#6
+   \   01C4  750005            MOV     $PRMBD init_struct+4,#5
+   \   01C7  7C74              MOV     R4,#116
+   \   01C9  7D57              MOV     R5,#LOW(HUMI_t)
+   \   01CB  7E00              MOV     R6,#HIGH(HUMI_t)
+   \   01CD  7F01              MOV     R7,#1
+   \   01CF  120000            LCALL   $REFFN init_struct
+    110                  init_struct(&HUMI_O, MIN1 , SID1, SCODE1);
+   \   01D2  750006            MOV     $PRMBD init_struct+5,#6
+   \   01D5  750005            MOV     $PRMBD init_struct+4,#5
+   \   01D8  7C4F              MOV     R4,#79
+   \   01DA  7D68              MOV     R5,#LOW(HUMI_O)
+   \   01DC  7E00              MOV     R6,#HIGH(HUMI_O)
+   \   01DE  7F01              MOV     R7,#1
+   \   01E0  120000            LCALL   $REFFN init_struct
+    111                  init_struct(&HUMI_T, MIN10, SID1, SCODE1);
+   \   01E3  750006            MOV     $PRMBD init_struct+5,#6
+   \   01E6  750005            MOV     $PRMBD init_struct+4,#5
+   \   01E9  7C54              MOV     R4,#84
+   \   01EB  7D79              MOV     R5,#LOW(HUMI_T)
+   \   01ED  7E00              MOV     R6,#HIGH(HUMI_T)
+   \   01EF  7F01              MOV     R7,#1
+   \   01F1  120000            LCALL   $REFFN init_struct
+    112          
+    113                  init_variable();                // Variable All initiliaze
+   \   01F4  120000            LCALL   $REFFN init_variable
+    114                  init_serial();                  // Serial Port initiliaze
+   \   01F7  120000            LCALL   $REFFN init_serial
+    115          }
+   \   01FA  22                RET
+    116          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    117          void check_mpm(void)    // Protocol Check MPM -> SAM Board
+    118          {
+   \   01FB            check_mpm:
+    119                  Byte       CK             =     0;
+   \   01FB  750000            MOV     $LOCBD check_mpm,#0
+    120                  Word       Count          =     0;
+   \   01FE  E4                CLR     A
+   \   01FF  F500              MOV     $LOCBD check_mpm+2,A
+   \   0201  F500              MOV     $LOCBD check_mpm+1,A
+    121                  bit        TEMP_HUMI  = 0;
+    122          
+    123                  // RxSp is Point(Center), RxEp increment is interrupt.
+    124          
+    125                  if(Com.RxSp == Com.RxEp)                                        return; get_serial();
+   \   0203  900225            MOV     DPTR,#Com+400
+   \   0206  E0                MOVX    A,@DPTR
+   \   0207  FD                MOV     R5,A
+   \   0208  A3                INC     DPTR
+   \   0209  E0                MOVX    A,@DPTR
+   \   020A  FC                MOV     R4,A
+   \   020B  A3                INC     DPTR
+   \   020C  A3                INC     DPTR
+   \   020D  E0                MOVX    A,@DPTR
+   \   020E  6C                XRL     A,R4
+   \   020F  7005              JNZ     ?0174
+   \   0211  900227            MOV     DPTR,#Com+402
+   \   0214  E0                MOVX    A,@DPTR
+   \   0215  6D                XRL     A,R5
+   \   0216            ?0174:
+   \   0216  7001              JNZ     ?0001
+   \   0218            ?0000:
+   \   0218  22                RET
+   \   0219            ?0001:
+   \   0219  0C                INC     R4
+   \   021A  EC                MOV     A,R4
+   \   021B  7001              JNZ     ?0175
+   \   021D  0D                INC     R5
+   \   021E            ?0175:
+   \   021E  900225            MOV     DPTR,#Com+400
+   \   0221  ED                MOV     A,R5
+   \   0222  F0                MOVX    @DPTR,A
+   \   0223  A3                INC     DPTR
+   \   0224  EC                MOV     A,R4
+   \   0225  F0                MOVX    @DPTR,A
+   \   0226  C3                CLR     C
+   \   0227  94C8              SUBB    A,#200
+   \   0229  ED                MOV     A,R5
+   \   022A  6480              XRL     A,#128
+   \   022C  9480              SUBB    A,#128
+   \   022E  400B              JC      ?0003
+   \   0230            ?0002:
+   \   0230  E4                CLR     A
+   \   0231  FC                MOV     R4,A
+   \   0232  FD                MOV     R5,A
+   \   0233  900225            MOV     DPTR,#Com+400
+   \   0236  ED                MOV     A,R5
+   \   0237  F0                MOVX    @DPTR,A
+   \   0238  A3                INC     DPTR
+   \   0239  EC                MOV     A,R4
+   \   023A  F0                MOVX    @DPTR,A
+   \   023B            ?0003:
+    126                  if(Com.RxBuf[Loc(Com.RxSp,-1) ] != 0xfe)        return; disable(GREENL);
+   \   023B  74FF              MOV     A,#255
+   \   023D  FE                MOV     R6,A
+   \   023E  FF                MOV     R7,A
+   \   023F  120000            LCALL   $REFFN Loc
+   \   0242  EC                MOV     A,R4
+   \   0243  2495              ADD     A,#LOW(Com)
+   \   0245  F582              MOV     DPL,A
+   \   0247  ED                MOV     A,R5
+   \   0248  3400              ADDC    A,#HIGH(Com)
+   \   024A  F583              MOV     DPH,A
+   \   024C  E0                MOVX    A,@DPTR
+   \   024D  64FE              XRL     A,#254
+   \   024F  6001              JZ      ?0005
+   \   0251            ?0004:
+   \   0251  22                RET
+   \   0252            ?0005:
+   \   0252  C290              CLR     P1.0
+    127                  if(Com.RxBuf[Loc(Com.RxSp,-2) ] != 0xff)        return;
+   \   0254  900225            MOV     DPTR,#Com+400
+   \   0257  E0                MOVX    A,@DPTR
+   \   0258  FD                MOV     R5,A
+   \   0259  A3                INC     DPTR
+   \   025A  E0                MOVX    A,@DPTR
+   \   025B  FC                MOV     R4,A
+   \   025C  74FE              MOV     A,#254
+   \   025E  FE                MOV     R6,A
+   \   025F  04                INC     A
+   \   0260  FF                MOV     R7,A
+   \   0261  120000            LCALL   $REFFN Loc
+   \   0264  EC                MOV     A,R4
+   \   0265  2495              ADD     A,#LOW(Com)
+   \   0267  F582              MOV     DPL,A
+   \   0269  ED                MOV     A,R5
+   \   026A  3400              ADDC    A,#HIGH(Com)
+   \   026C  F583              MOV     DPH,A
+   \   026E  E0                MOVX    A,@DPTR
+   \   026F  04                INC     A
+   \   0270  6001              JZ      ?0007
+   \   0272            ?0006:
+   \   0272  22                RET
+   \   0273            ?0007:
+    128                  if(Com.RxBuf[Loc(Com.RxSp,-10)] != 0xff)        return;
+   \   0273  900225            MOV     DPTR,#Com+400
+   \   0276  E0                MOVX    A,@DPTR
+   \   0277  FD                MOV     R5,A
+   \   0278  A3                INC     DPTR
+   \   0279  E0                MOVX    A,@DPTR
+   \   027A  FC                MOV     R4,A
+   \   027B  7EF6              MOV     R6,#246
+   \   027D  7FFF              MOV     R7,#255
+   \   027F  120000            LCALL   $REFFN Loc
+   \   0282  EC                MOV     A,R4
+   \   0283  2495              ADD     A,#LOW(Com)
+   \   0285  F582              MOV     DPL,A
+   \   0287  ED                MOV     A,R5
+   \   0288  3400              ADDC    A,#HIGH(Com)
+   \   028A  F583              MOV     DPH,A
+   \   028C  E0                MOVX    A,@DPTR
+   \   028D  04                INC     A
+   \   028E  6001              JZ      ?0009
+   \   0290            ?0008:
+   \   0290  22                RET
+   \   0291            ?0009:
+    129                  if(Com.RxBuf[Loc(Com.RxSp,-11)] != 0xff)        return;
+   \   0291  900225            MOV     DPTR,#Com+400
+   \   0294  E0                MOVX    A,@DPTR
+   \   0295  FD                MOV     R5,A
+   \   0296  A3                INC     DPTR
+   \   0297  E0                MOVX    A,@DPTR
+   \   0298  FC                MOV     R4,A
+   \   0299  7EF5              MOV     R6,#245
+   \   029B  7FFF              MOV     R7,#255
+   \   029D  120000            LCALL   $REFFN Loc
+   \   02A0  EC                MOV     A,R4
+   \   02A1  2495              ADD     A,#LOW(Com)
+   \   02A3  F582              MOV     DPL,A
+   \   02A5  ED                MOV     A,R5
+   \   02A6  3400              ADDC    A,#HIGH(Com)
+   \   02A8  F583              MOV     DPH,A
+   \   02AA  E0                MOVX    A,@DPTR
+   \   02AB  04                INC     A
+   \   02AC  6001              JZ      ?0011
+   \   02AE            ?0010:
+   \   02AE  22                RET
+   \   02AF            ?0011:
+    130                  if(Com.RxBuf[Loc(Com.RxSp,-8) ] != SID0 &&
+    131                     Com.RxBuf[Loc(Com.RxSp,-8) ] != SID1)        return;
+   \   02AF  900225            MOV     DPTR,#Com+400
+   \   02B2  E0                MOVX    A,@DPTR
+   \   02B3  FD                MOV     R5,A
+   \   02B4  A3                INC     DPTR
+   \   02B5  E0                MOVX    A,@DPTR
+   \   02B6  FC                MOV     R4,A
+   \   02B7  7EF8              MOV     R6,#248
+   \   02B9  7FFF              MOV     R7,#255
+   \   02BB  120000            LCALL   $REFFN Loc
+   \   02BE  EC                MOV     A,R4
+   \   02BF  2495              ADD     A,#LOW(Com)
+   \   02C1  F582              MOV     DPL,A
+   \   02C3  ED                MOV     A,R5
+   \   02C4  3400              ADDC    A,#HIGH(Com)
+   \   02C6  F583              MOV     DPH,A
+   \   02C8  E0                MOVX    A,@DPTR
+   \   02C9  6402              XRL     A,#2
+   \   02CB  601F              JZ      ?0013
+   \   02CD  900225            MOV     DPTR,#Com+400
+   \   02D0  E0                MOVX    A,@DPTR
+   \   02D1  FD                MOV     R5,A
+   \   02D2  A3                INC     DPTR
+   \   02D3  E0                MOVX    A,@DPTR
+   \   02D4  FC                MOV     R4,A
+   \   02D5  7EF8              MOV     R6,#248
+   \   02D7  7FFF              MOV     R7,#255
+   \   02D9  120000            LCALL   $REFFN Loc
+   \   02DC  EC                MOV     A,R4
+   \   02DD  2495              ADD     A,#LOW(Com)
+   \   02DF  F582              MOV     DPL,A
+   \   02E1  ED                MOV     A,R5
+   \   02E2  3400              ADDC    A,#HIGH(Com)
+   \   02E4  F583              MOV     DPH,A
+   \   02E6  E0                MOVX    A,@DPTR
+   \   02E7  6405              XRL     A,#5
+   \   02E9  6001              JZ      ?0013
+   \   02EB            ?0015:
+   \   02EB            ?0014:
+   \   02EB            ?0012:
+   \   02EB  22                RET
+   \   02EC            ?0013:
+    132          
+    133                  for(Count=0; Count<sizeof(Command_t); Count++)  {
+   \   02EC  E4                CLR     A
+   \   02ED  F500              MOV     $LOCBD check_mpm+2,A
+   \   02EF  F500              MOV     $LOCBD check_mpm+1,A
+   \   02F1            ?0017:
+   \   02F1  C3                CLR     C
+   \   02F2  E500              MOV     A,$LOCBD check_mpm+2
+   \   02F4  940B              SUBB    A,#11
+   \   02F6  E500              MOV     A,$LOCBD check_mpm+1
+   \   02F8  9400              SUBB    A,#0
+   \   02FA  4003              JC      $+5
+   \   02FC  02038A            LJMP    ?0016
+   \   02FF            ?0018:
+    134                          if(Count>1 && Count<8)   CK ^= Com.RxBuf[Loc(Com.RxSp,-(11-Count))];
+   \   02FF  D3                SETB    C
+   \   0300  E500              MOV     A,$LOCBD check_mpm+2
+   \   0302  9401              SUBB    A,#1
+   \   0304  E500              MOV     A,$LOCBD check_mpm+1
+   \   0306  9400              SUBB    A,#0
+   \   0308  403A              JC      ?0021
+   \   030A  C3                CLR     C
+   \   030B  E500              MOV     A,$LOCBD check_mpm+2
+   \   030D  9408              SUBB    A,#8
+   \   030F  E500              MOV     A,$LOCBD check_mpm+1
+   \   0311  9400              SUBB    A,#0
+   \   0313  502F              JNC     ?0021
+   \   0315            ?0023:
+   \   0315            ?0022:
+   \   0315            ?0020:
+   \   0315  E4                CLR     A
+   \   0316  FD                MOV     R5,A
+   \   0317  740B              MOV     A,#11
+   \   0319  C3                CLR     C
+   \   031A  9500              SUBB    A,$LOCBD check_mpm+2
+   \   031C  FC                MOV     R4,A
+   \   031D  ED                MOV     A,R5
+   \   031E  9500              SUBB    A,$LOCBD check_mpm+1
+   \   0320  FD                MOV     R5,A
+   \   0321  C3                CLR     C
+   \   0322  E4                CLR     A
+   \   0323  9C                SUBB    A,R4
+   \   0324  FC                MOV     R4,A
+   \   0325  E4                CLR     A
+   \   0326  9D                SUBB    A,R5
+   \   0327  FD                MOV     R5,A
+   \   0328  EC                MOV     A,R4
+   \   0329  FE                MOV     R6,A
+   \   032A  ED                MOV     A,R5
+   \   032B  FF                MOV     R7,A
+   \   032C  900225            MOV     DPTR,#Com+400
+   \   032F  E0                MOVX    A,@DPTR
+   \   0330  FD                MOV     R5,A
+   \   0331  A3                INC     DPTR
+   \   0332  E0                MOVX    A,@DPTR
+   \   0333  FC                MOV     R4,A
+   \   0334  120000            LCALL   $REFFN Loc
+   \   0337  EC                MOV     A,R4
+   \   0338  2495              ADD     A,#LOW(Com)
+   \   033A  F582              MOV     DPL,A
+   \   033C  ED                MOV     A,R5
+   \   033D  3400              ADDC    A,#HIGH(Com)
+   \   033F  F583              MOV     DPH,A
+   \   0341  E0                MOVX    A,@DPTR
+   \   0342  6200              XRL     $LOCBD check_mpm,A
+   \   0344            ?0021:
+    135                          Mpm.Bytes[Count]                     = Com.RxBuf[Loc(Com.RxSp,-(11-Count))];
+   \   0344  E4                CLR     A
+   \   0345  FD                MOV     R5,A
+   \   0346  740B              MOV     A,#11
+   \   0348  C3                CLR     C
+   \   0349  9500              SUBB    A,$LOCBD check_mpm+2
+   \   034B  FC                MOV     R4,A
+   \   034C  ED                MOV     A,R5
+   \   034D  9500              SUBB    A,$LOCBD check_mpm+1
+   \   034F  FD                MOV     R5,A
+   \   0350  C3                CLR     C
+   \   0351  E4                CLR     A
+   \   0352  9C                SUBB    A,R4
+   \   0353  FC                MOV     R4,A
+   \   0354  E4                CLR     A
+   \   0355  9D                SUBB    A,R5
+   \   0356  FD                MOV     R5,A
+   \   0357  EC                MOV     A,R4
+   \   0358  FE                MOV     R6,A
+   \   0359  ED                MOV     A,R5
+   \   035A  FF                MOV     R7,A
+   \   035B  900225            MOV     DPTR,#Com+400
+   \   035E  E0                MOVX    A,@DPTR
+   \   035F  FD                MOV     R5,A
+   \   0360  A3                INC     DPTR
+   \   0361  E0                MOVX    A,@DPTR
+   \   0362  FC                MOV     R4,A
+   \   0363  120000            LCALL   $REFFN Loc
+   \   0366  EC                MOV     A,R4
+   \   0367  2495              ADD     A,#LOW(Com)
+   \   0369  F582              MOV     DPL,A
+   \   036B  ED                MOV     A,R5
+   \   036C  3400              ADDC    A,#HIGH(Com)
+   \   036E  F583              MOV     DPH,A
+   \   0370  E0                MOVX    A,@DPTR
+   \   0371  FC                MOV     R4,A
+   \   0372  E500              MOV     A,$LOCBD check_mpm+2
+   \   0374  248A              ADD     A,#LOW(Mpm)
+   \   0376  F582              MOV     DPL,A
+   \   0378  E4                CLR     A
+   \   0379  3400              ADDC    A,#HIGH(Mpm)
+   \   037B  F583              MOV     DPH,A
+   \   037D  EC                MOV     A,R4
+   \   037E  F0                MOVX    @DPTR,A
+   \   037F  0500              INC     $LOCBD check_mpm+2
+   \   0381  E500              MOV     A,$LOCBD check_mpm+2
+   \   0383  7002              JNZ     $+4
+   \   0385  0500              INC     $LOCBD check_mpm+1
+   \   0387  0202F1            LJMP    ?0017
+   \   038A            ?0016:
+    136                  }
+    137                  if(Mpm.Mpm.Cks != CK)                                           return;
+   \   038A  900092            MOV     DPTR,#Mpm+8
+   \   038D  E0                MOVX    A,@DPTR
+   \   038E  6500              XRL     A,$LOCBD check_mpm
+   \   0390  6001              JZ      ?0025
+   \   0392            ?0024:
+   \   0392  22                RET
+   \   0393            ?0025:
+    138          
+    139                  TEMP_HUMI = (Mpm.Mpm.Sid == SID0) ?     1 : 0;
+   \   0393  90008D            MOV     DPTR,#Mpm+3
+   \   0396  E0                MOVX    A,@DPTR
+   \   0397  6402              XRL     A,#2
+   \   0399  6002              JZ      $+4
+   \   039B  74FF              MOV     A,#255
+   \   039D  04                INC     A
+   \   039E  A2E0              MOV     C,ACC.0
+   \   03A0  9200              MOV     32.0,C
+    140          
+    141                  switch(Mpm.Mpm.Cmd)     {
+   \   03A2  90008C            MOV     DPTR,#Mpm+2
+   \   03A5  E0                MOVX    A,@DPTR
+   \   03A6  120000            LCALL   ?A_V_SWITCH_L05
+   \   03A9  0430              DW      ?0047
+   \   03AB  40                DB      '@'
+   \   03AC  0427              DW      ?0046
+   \   03AE  49                DB      'I'
+   \   03AF  03BF              DW      ?0030
+   \   03B1  4D                DB      'M'
+   \   03B2  03F3              DW      ?0038
+   \   03B4  4F                DB      'O'
+   \   03B5  040D              DW      ?0042
+   \   03B7  54                DB      'T'
+   \   03B8  03D9              DW      ?0034
+   \   03BA  74                DB      't'
+   \   03BB  0000              DW      0
+   \   03BD  04E6              DW      ?0048
+   \   03BF            ?0030:
+    142                          case    REAL :          if(TEMP_HUMI)   send_struct(&TEMP_R);
+   \   03BF  30000B            JNB     32.0,?0032
+   \   03C2            ?0031:
+   \   03C2  7D02              MOV     R5,#LOW(TEMP_R)
+   \   03C4  7E00              MOV     R6,#HIGH(TEMP_R)
+   \   03C6  7F01              MOV     R7,#1
+   \   03C8  120000            LCALL   $REFFN send_struct
+   \   03CB  8009              SJMP    ?0033
+   \   03CD            ?0032:
+    143                                                                  else                    send_struct(&HUMI_R);   break;
+   \   03CD  7D46              MOV     R5,#LOW(HUMI_R)
+   \   03CF  7E00              MOV     R6,#HIGH(HUMI_R)
+   \   03D1  7F01              MOV     R7,#1
+   \   03D3  120000            LCALL   $REFFN send_struct
+   \   03D6            ?0033:
+   \   03D6  0204E8            LJMP    ?0029
+   \   03D9            ?0034:
+    144                          case    SEC10:      if(TEMP_HUMI)       send_struct(&TEMP_t);
+   \   03D9  30000B            JNB     32.0,?0036
+   \   03DC            ?0035:
+   \   03DC  7D13              MOV     R5,#LOW(TEMP_t)
+   \   03DE  7E00              MOV     R6,#HIGH(TEMP_t)
+   \   03E0  7F01              MOV     R7,#1
+   \   03E2  120000            LCALL   $REFFN send_struct
+   \   03E5  8009              SJMP    ?0037
+   \   03E7            ?0036:
+    145                                                                  else                    send_struct(&HUMI_t);   break;
+   \   03E7  7D57              MOV     R5,#LOW(HUMI_t)
+   \   03E9  7E00              MOV     R6,#HIGH(HUMI_t)
+   \   03EB  7F01              MOV     R7,#1
+   \   03ED  120000            LCALL   $REFFN send_struct
+   \   03F0            ?0037:
+   \   03F0  0204E8            LJMP    ?0029
+   \   03F3            ?0038:
+    146                          case    MIN1 :      if(TEMP_HUMI)       send_struct(&TEMP_O);
+   \   03F3  30000B            JNB     32.0,?0040
+   \   03F6            ?0039:
+   \   03F6  7D24              MOV     R5,#LOW(TEMP_O)
+   \   03F8  7E00              MOV     R6,#HIGH(TEMP_O)
+   \   03FA  7F01              MOV     R7,#1
+   \   03FC  120000            LCALL   $REFFN send_struct
+   \   03FF  8009              SJMP    ?0041
+   \   0401            ?0040:
+    147                                                                  else                    send_struct(&HUMI_O);   break;
+   \   0401  7D68              MOV     R5,#LOW(HUMI_O)
+   \   0403  7E00              MOV     R6,#HIGH(HUMI_O)
+   \   0405  7F01              MOV     R7,#1
+   \   0407  120000            LCALL   $REFFN send_struct
+   \   040A            ?0041:
+   \   040A  0204E8            LJMP    ?0029
+   \   040D            ?0042:
+    148                          case    MIN10:      if(TEMP_HUMI)       send_struct(&TEMP_T);
+   \   040D  30000B            JNB     32.0,?0044
+   \   0410            ?0043:
+   \   0410  7D35              MOV     R5,#LOW(TEMP_T)
+   \   0412  7E00              MOV     R6,#HIGH(TEMP_T)
+   \   0414  7F01              MOV     R7,#1
+   \   0416  120000            LCALL   $REFFN send_struct
+   \   0419  8009              SJMP    ?0045
+   \   041B            ?0044:
+    149                                                                  else                    send_struct(&HUMI_T);   break;
+   \   041B  7D79              MOV     R5,#LOW(HUMI_T)
+   \   041D  7E00              MOV     R6,#HIGH(HUMI_T)
+   \   041F  7F01              MOV     R7,#1
+   \   0421  120000            LCALL   $REFFN send_struct
+   \   0424            ?0045:
+   \   0424  0204E8            LJMP    ?0029
+   \   0427            ?0046:
+    150                          case    INIT :      Init = 1;                                                           break;
+   \   0427  7401              MOV     A,#1
+   \   0429  900276            MOV     DPTR,#Init
+   \   042C  F0                MOVX    @DPTR,A
+   \   042D  0204E8            LJMP    ?0029
+   \   0430            ?0047:
+    151                          case    RST      :
+    152                                  TEMP_t.Sam.Max = Mpm.Mpm.Max;   TEMP_t.Sam.Min = Mpm.Mpm.Min;
+   \   0430  900090            MOV     DPTR,#Mpm+6
+   \   0433  E0                MOVX    A,@DPTR
+   \   0434  FD                MOV     R5,A
+   \   0435  A3                INC     DPTR
+   \   0436  E0                MOVX    A,@DPTR
+   \   0437  90001D            MOV     DPTR,#TEMP_t+10
+   \   043A  CD                XCH     A,R5
+   \   043B  F0                MOVX    @DPTR,A
+   \   043C  A3                INC     DPTR
+   \   043D  CD                XCH     A,R5
+   \   043E  F0                MOVX    @DPTR,A
+   \   043F  90008E            MOV     DPTR,#Mpm+4
+   \   0442  E0                MOVX    A,@DPTR
+   \   0443  FD                MOV     R5,A
+   \   0444  A3                INC     DPTR
+   \   0445  E0                MOVX    A,@DPTR
+   \   0446  90001F            MOV     DPTR,#TEMP_t+12
+   \   0449  CD                XCH     A,R5
+   \   044A  F0                MOVX    @DPTR,A
+   \   044B  A3                INC     DPTR
+   \   044C  CD                XCH     A,R5
+   \   044D  F0                MOVX    @DPTR,A
+    153                                  TEMP_O.Sam.Max = Mpm.Mpm.Max;   TEMP_O.Sam.Min = Mpm.Mpm.Min;
+   \   044E  900090            MOV     DPTR,#Mpm+6
+   \   0451  E0                MOVX    A,@DPTR
+   \   0452  FD                MOV     R5,A
+   \   0453  A3                INC     DPTR
+   \   0454  E0                MOVX    A,@DPTR
+   \   0455  90002E            MOV     DPTR,#TEMP_O+10
+   \   0458  CD                XCH     A,R5
+   \   0459  F0                MOVX    @DPTR,A
+   \   045A  A3                INC     DPTR
+   \   045B  CD                XCH     A,R5
+   \   045C  F0                MOVX    @DPTR,A
+   \   045D  90008E            MOV     DPTR,#Mpm+4
+   \   0460  E0                MOVX    A,@DPTR
+   \   0461  FD                MOV     R5,A
+   \   0462  A3                INC     DPTR
+   \   0463  E0                MOVX    A,@DPTR
+   \   0464  900030            MOV     DPTR,#TEMP_O+12
+   \   0467  CD                XCH     A,R5
+   \   0468  F0                MOVX    @DPTR,A
+   \   0469  A3                INC     DPTR
+   \   046A  CD                XCH     A,R5
+   \   046B  F0                MOVX    @DPTR,A
+    154                                  TEMP_T.Sam.Max = Mpm.Mpm.Max;   TEMP_T.Sam.Min = Mpm.Mpm.Min;
+   \   046C  900090            MOV     DPTR,#Mpm+6
+   \   046F  E0                MOVX    A,@DPTR
+   \   0470  FD                MOV     R5,A
+   \   0471  A3                INC     DPTR
+   \   0472  E0                MOVX    A,@DPTR
+   \   0473  90003F            MOV     DPTR,#TEMP_T+10
+   \   0476  CD                XCH     A,R5
+   \   0477  F0                MOVX    @DPTR,A
+   \   0478  A3                INC     DPTR
+   \   0479  CD                XCH     A,R5
+   \   047A  F0                MOVX    @DPTR,A
+   \   047B  90008E            MOV     DPTR,#Mpm+4
+   \   047E  E0                MOVX    A,@DPTR
+   \   047F  FD                MOV     R5,A
+   \   0480  A3                INC     DPTR
+   \   0481  E0                MOVX    A,@DPTR
+   \   0482  900041            MOV     DPTR,#TEMP_T+12
+   \   0485  CD                XCH     A,R5
+   \   0486  F0                MOVX    @DPTR,A
+   \   0487  A3                INC     DPTR
+   \   0488  CD                XCH     A,R5
+   \   0489  F0                MOVX    @DPTR,A
+    155                                  HUMI_t.Sam.Max = Mpm.Mpm.Max;   HUMI_t.Sam.Min = Mpm.Mpm.Min;
+   \   048A  900090            MOV     DPTR,#Mpm+6
+   \   048D  E0                MOVX    A,@DPTR
+   \   048E  FD                MOV     R5,A
+   \   048F  A3                INC     DPTR
+   \   0490  E0                MOVX    A,@DPTR
+   \   0491  900061            MOV     DPTR,#HUMI_t+10
+   \   0494  CD                XCH     A,R5
+   \   0495  F0                MOVX    @DPTR,A
+   \   0496  A3                INC     DPTR
+   \   0497  CD                XCH     A,R5
+   \   0498  F0                MOVX    @DPTR,A
+   \   0499  90008E            MOV     DPTR,#Mpm+4
+   \   049C  E0                MOVX    A,@DPTR
+   \   049D  FD                MOV     R5,A
+   \   049E  A3                INC     DPTR
+   \   049F  E0                MOVX    A,@DPTR
+   \   04A0  900063            MOV     DPTR,#HUMI_t+12
+   \   04A3  CD                XCH     A,R5
+   \   04A4  F0                MOVX    @DPTR,A
+   \   04A5  A3                INC     DPTR
+   \   04A6  CD                XCH     A,R5
+   \   04A7  F0                MOVX    @DPTR,A
+    156                                  HUMI_O.Sam.Max = Mpm.Mpm.Max;   HUMI_O.Sam.Min = Mpm.Mpm.Min;
+   \   04A8  900090            MOV     DPTR,#Mpm+6
+   \   04AB  E0                MOVX    A,@DPTR
+   \   04AC  FD                MOV     R5,A
+   \   04AD  A3                INC     DPTR
+   \   04AE  E0                MOVX    A,@DPTR
+   \   04AF  900072            MOV     DPTR,#HUMI_O+10
+   \   04B2  CD                XCH     A,R5
+   \   04B3  F0                MOVX    @DPTR,A
+   \   04B4  A3                INC     DPTR
+   \   04B5  CD                XCH     A,R5
+   \   04B6  F0                MOVX    @DPTR,A
+   \   04B7  90008E            MOV     DPTR,#Mpm+4
+   \   04BA  E0                MOVX    A,@DPTR
+   \   04BB  FD                MOV     R5,A
+   \   04BC  A3                INC     DPTR
+   \   04BD  E0                MOVX    A,@DPTR
+   \   04BE  900074            MOV     DPTR,#HUMI_O+12
+   \   04C1  CD                XCH     A,R5
+   \   04C2  F0                MOVX    @DPTR,A
+   \   04C3  A3                INC     DPTR
+   \   04C4  CD                XCH     A,R5
+   \   04C5  F0                MOVX    @DPTR,A
+    157                                  HUMI_T.Sam.Max = Mpm.Mpm.Max;   HUMI_T.Sam.Min = Mpm.Mpm.Min;
+   \   04C6  900090            MOV     DPTR,#Mpm+6
+   \   04C9  E0                MOVX    A,@DPTR
+   \   04CA  FD                MOV     R5,A
+   \   04CB  A3                INC     DPTR
+   \   04CC  E0                MOVX    A,@DPTR
+   \   04CD  900083            MOV     DPTR,#HUMI_T+10
+   \   04D0  CD                XCH     A,R5
+   \   04D1  F0                MOVX    @DPTR,A
+   \   04D2  A3                INC     DPTR
+   \   04D3  CD                XCH     A,R5
+   \   04D4  F0                MOVX    @DPTR,A
+   \   04D5  90008E            MOV     DPTR,#Mpm+4
+   \   04D8  E0                MOVX    A,@DPTR
+   \   04D9  FD                MOV     R5,A
+   \   04DA  A3                INC     DPTR
+   \   04DB  E0                MOVX    A,@DPTR
+   \   04DC  900085            MOV     DPTR,#HUMI_T+12
+   \   04DF  CD                XCH     A,R5
+   \   04E0  F0                MOVX    @DPTR,A
+   \   04E1  A3                INC     DPTR
+   \   04E2  CD                XCH     A,R5
+   \   04E3  F0                MOVX    @DPTR,A
+    158                                                                                                                                                  break;
+   \   04E4  8002              SJMP    ?0029
+   \   04E6            ?0048:
+    159                          default          :                                                                                              break;
+   \   04E6  8000              SJMP    ?0029
+   \   04E8            ?0029:
+    160                  }
+    161          }
+   \   04E8            ?0049:
+   \   04E8  22                RET
+    162          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    163          void send_struct(Sensor_u *Send)   // SAM -> MPM DATA Transmit
+    164          {
+   \   04E9            send_struct:
+    165                  Word    Count;
+    166          
+    167                  Send->Sam.Sta = ( ERROR & 0 );          // Error Flag Setting
+   \   04E9  900270            MOV     DPTR,#ERROR+1
+   \   04EC  E0                MOVX    A,@DPTR
+   \   04ED  E4                CLR     A
+   \   04EE  8D00              MOV     $LOCBD send_struct+4,R5
+   \   04F0  8E00              MOV     $LOCBD send_struct+3,R6
+   \   04F2  8F00              MOV     $LOCBD send_struct+2,R7
+   \   04F4  900003            MOV     DPTR,#3
+   \   04F7  120000            LCALL   ?ST_A_R567_DISP_L17
+    168                  for(Count=0; Count<sizeof(Sensor_t); Count++)   {
+   \   04FA  F500              MOV     $LOCBD send_struct+1,A
+   \   04FC  F500              MOV     $LOCBD send_struct,A
+   \   04FE            ?0051:
+   \   04FE  C3                CLR     C
+   \   04FF  E500              MOV     A,$LOCBD send_struct+1
+   \   0501  9411              SUBB    A,#17
+   \   0503  E500              MOV     A,$LOCBD send_struct
+   \   0505  9400              SUBB    A,#0
+   \   0507  4003              JC      $+5
+   \   0509  020586            LJMP    ?0050
+   \   050C            ?0052:
+    169                          if(Count>1 && Count <14)        Send->Sam.Cks ^= Send->Bytes[Count];
+   \   050C  D3                SETB    C
+   \   050D  E500              MOV     A,$LOCBD send_struct+1
+   \   050F  9401              SUBB    A,#1
+   \   0511  E500              MOV     A,$LOCBD send_struct
+   \   0513  9400              SUBB    A,#0
+   \   0515  4020              JC      ?0055
+   \   0517  C3                CLR     C
+   \   0518  E500              MOV     A,$LOCBD send_struct+1
+   \   051A  940E              SUBB    A,#14
+   \   051C  E500              MOV     A,$LOCBD send_struct
+   \   051E  9400              SUBB    A,#0
+   \   0520  5015              JNC     ?0055
+   \   0522            ?0057:
+   \   0522            ?0056:
+   \   0522            ?0054:
+   \   0522  AD00              MOV     R5,$LOCBD send_struct+4
+   \   0524  AE00              MOV     R6,$LOCBD send_struct+3
+   \   0526  AF00              MOV     R7,$LOCBD send_struct+2
+   \   0528  850082            MOV     DPL,$LOCBD send_struct+1
+   \   052B  850083            MOV     DPH,$LOCBD send_struct
+   \   052E  120000            LCALL   ?LD_A_R567_DISP_L17
+   \   0531  90000E            MOV     DPTR,#14
+   \   0534  120000            LCALL   ?XOR_ASG_R567_A_DISP_L00
+   \   0537            ?0055:
+    170                          Com.TxBuf[Com.TxEp++] = Send->Bytes[Count];
+   \   0537  AD00              MOV     R5,$LOCBD send_struct+4
+   \   0539  AE00              MOV     R6,$LOCBD send_struct+3
+   \   053B  AF00              MOV     R7,$LOCBD send_struct+2
+   \   053D  850082            MOV     DPL,$LOCBD send_struct+1
+   \   0540  850083            MOV     DPH,$LOCBD send_struct
+   \   0543  120000            LCALL   ?LD_A_R567_DISP_L17
+   \   0546  90022B            MOV     DPTR,#Com+406
+   \   0549  FE                MOV     R6,A
+   \   054A  E0                MOVX    A,@DPTR
+   \   054B  FD                MOV     R5,A
+   \   054C  A3                INC     DPTR
+   \   054D  E0                MOVX    A,@DPTR
+   \   054E  FC                MOV     R4,A
+   \   054F  E0                MOVX    A,@DPTR
+   \   0550  04                INC     A
+   \   0551  F0                MOVX    @DPTR,A
+   \   0552  90022B            MOV     DPTR,#Com+406
+   \   0555  7003              JNZ     ?0176
+   \   0557  E0                MOVX    A,@DPTR
+   \   0558  04                INC     A
+   \   0559  F0                MOVX    @DPTR,A
+   \   055A            ?0176:
+   \   055A  EC                MOV     A,R4
+   \   055B  245D              ADD     A,#LOW(Com+200)
+   \   055D  F582              MOV     DPL,A
+   \   055F  ED                MOV     A,R5
+   \   0560  3401              ADDC    A,#HIGH(Com+200)
+   \   0562  F583              MOV     DPH,A
+   \   0564  EE                MOV     A,R6
+   \   0565  F0                MOVX    @DPTR,A
+    171                          if(Com.TxEp >= MAX)             Com.TxEp = 0;
+   \   0566  C3                CLR     C
+   \   0567  90022C            MOV     DPTR,#Com+407
+   \   056A  E0                MOVX    A,@DPTR
+   \   056B  94C8              SUBB    A,#200
+   \   056D  90022B            MOV     DPTR,#Com+406
+   \   0570  E0                MOVX    A,@DPTR
+   \   0571  6480              XRL     A,#128
+   \   0573  9480              SUBB    A,#128
+   \   0575  4004              JC      ?0059
+   \   0577            ?0058:
+   \   0577  E4                CLR     A
+   \   0578  F0                MOVX    @DPTR,A
+   \   0579  A3                INC     DPTR
+   \   057A  F0                MOVX    @DPTR,A
+   \   057B            ?0059:
+   \   057B  0500              INC     $LOCBD send_struct+1
+   \   057D  E500              MOV     A,$LOCBD send_struct+1
+   \   057F  7002              JNZ     $+4
+   \   0581  0500              INC     $LOCBD send_struct
+   \   0583  0204FE            LJMP    ?0051
+   \   0586            ?0050:
+    172                  }
+    173                  enable(REDL);
+   \   0586  D291              SETB    P1.1
+    174                  SBUF = Com.TxBuf[Com.TxSp];
+   \   0588  90022A            MOV     DPTR,#Com+405
+   \   058B  E0                MOVX    A,@DPTR
+   \   058C  245D              ADD     A,#LOW(Com+200)
+   \   058E  FC                MOV     R4,A
+   \   058F  900229            MOV     DPTR,#Com+404
+   \   0592  E0                MOVX    A,@DPTR
+   \   0593  3401              ADDC    A,#HIGH(Com+200)
+   \   0595  8C82              MOV     DPL,R4
+   \   0597  F583              MOV     DPH,A
+   \   0599  E0                MOVX    A,@DPTR
+   \   059A  F599              MOV     SBUF,A
+    175                  Com.TxSp = Loc(Com.TxSp,+1);
+   \   059C  900229            MOV     DPTR,#Com+404
+   \   059F  E0                MOVX    A,@DPTR
+   \   05A0  FD                MOV     R5,A
+   \   05A1  A3                INC     DPTR
+   \   05A2  E0                MOVX    A,@DPTR
+   \   05A3  FC                MOV     R4,A
+   \   05A4  E4                CLR     A
+   \   05A5  FF                MOV     R7,A
+   \   05A6  04                INC     A
+   \   05A7  FE                MOV     R6,A
+   \   05A8  120000            LCALL   $REFFN Loc
+   \   05AB  900229            MOV     DPTR,#Com+404
+   \   05AE  ED                MOV     A,R5
+   \   05AF  F0                MOVX    @DPTR,A
+   \   05B0  A3                INC     DPTR
+   \   05B1  EC                MOV     A,R4
+   \   05B2  F0                MOVX    @DPTR,A
+    176          }
+   \   05B3  22                RET
+    177          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    178          signed int Loc(signed int Comp, signed int Step)    // Q Buffer Point Set
+    179          {
+   \   05B4            Loc:
+    180                  Comp += Step;
+   \   05B4  EC                MOV     A,R4
+   \   05B5  2E                ADD     A,R6
+   \   05B6  FC                MOV     R4,A
+   \   05B7  ED                MOV     A,R5
+   \   05B8  3F                ADDC    A,R7
+   \   05B9  8E00              MOV     $LOCBD Loc+3,R6
+   \   05BB  8F00              MOV     $LOCBD Loc+2,R7
+    181                  if(Comp >= MAX)         Comp -= MAX;
+   \   05BD  8C00              MOV     $LOCBD Loc+1,R4
+   \   05BF  F500              MOV     $LOCBD Loc,A
+   \   05C1  C3                CLR     C
+   \   05C2  FD                MOV     R5,A
+   \   05C3  EC                MOV     A,R4
+   \   05C4  94C8              SUBB    A,#200
+   \   05C6  ED                MOV     A,R5
+   \   05C7  6480              XRL     A,#128
+   \   05C9  9480              SUBB    A,#128
+   \   05CB  400B              JC      ?0061
+   \   05CD            ?0060:
+   \   05CD  EC                MOV     A,R4
+   \   05CE  2438              ADD     A,#56
+   \   05D0  FC                MOV     R4,A
+   \   05D1  ED                MOV     A,R5
+   \   05D2  34FF              ADDC    A,#255
+   \   05D4  8C00              MOV     $LOCBD Loc+1,R4
+   \   05D6  F500              MOV     $LOCBD Loc,A
+   \   05D8            ?0061:
+    182                  if(Comp < 0)            Comp += MAX;
+   \   05D8  E500              MOV     A,$LOCBD Loc
+   \   05DA  33                RLC     A
+   \   05DB  500C              JNC     ?0063
+   \   05DD            ?0062:
+   \   05DD  E500              MOV     A,$LOCBD Loc+1
+   \   05DF  24C8              ADD     A,#200
+   \   05E1  F500              MOV     $LOCBD Loc+1,A
+   \   05E3  E500              MOV     A,$LOCBD Loc
+   \   05E5  3400              ADDC    A,#0
+   \   05E7  F500              MOV     $LOCBD Loc,A
+   \   05E9            ?0063:
+    183                  return  Comp;
+   \   05E9  AC00              MOV     R4,$LOCBD Loc+1
+   \   05EB  AD00              MOV     R5,$LOCBD Loc
+    184          }
+   \   05ED  22                RET
+    185          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    186          void AD_read(void)              // A/D Convert DATA Read Function
+    187          {
+   \   05EE            AD_read:
+    188                  ADCENB = HOLD;                  // Voltage is Holding
+   \   05EE  C292              CLR     P1.2
+    189                  for(DLYcount=0; DLYcount < DLY; DLYcount++) { DLYcount++; DLYcount--;}
+   \   05F0  900271            MOV     DPTR,#DLYcount
+   \   05F3  E4                CLR     A
+   \   05F4  F0                MOVX    @DPTR,A
+   \   05F5  A3                INC     DPTR
+   \   05F6  F0                MOVX    @DPTR,A
+   \   05F7            ?0065:
+   \   05F7  C3                CLR     C
+   \   05F8  900272            MOV     DPTR,#DLYcount+1
+   \   05FB  E0                MOVX    A,@DPTR
+   \   05FC  940F              SUBB    A,#15
+   \   05FE  900271            MOV     DPTR,#DLYcount
+   \   0601  E0                MOVX    A,@DPTR
+   \   0602  9400              SUBB    A,#0
+   \   0604  5026              JNC     ?0064
+   \   0606            ?0066:
+   \   0606  A3                INC     DPTR
+   \   0607  E0                MOVX    A,@DPTR
+   \   0608  04                INC     A
+   \   0609  F0                MOVX    @DPTR,A
+   \   060A  900271            MOV     DPTR,#DLYcount
+   \   060D  7003              JNZ     ?0177
+   \   060F  E0                MOVX    A,@DPTR
+   \   0610  04                INC     A
+   \   0611  F0                MOVX    @DPTR,A
+   \   0612            ?0177:
+   \   0612  A3                INC     DPTR
+   \   0613  E0                MOVX    A,@DPTR
+   \   0614  24FF              ADD     A,#255
+   \   0616  F0                MOVX    @DPTR,A
+   \   0617  900271            MOV     DPTR,#DLYcount
+   \   061A  E0                MOVX    A,@DPTR
+   \   061B  34FF              ADDC    A,#255
+   \   061D  F0                MOVX    @DPTR,A
+   \   061E  A3                INC     DPTR
+   \   061F  E0                MOVX    A,@DPTR
+   \   0620  04                INC     A
+   \   0621  F0                MOVX    @DPTR,A
+   \   0622  900271            MOV     DPTR,#DLYcount
+   \   0625  7003              JNZ     ?0178
+   \   0627  E0                MOVX    A,@DPTR
+   \   0628  04                INC     A
+   \   0629  F0                MOVX    @DPTR,A
+   \   062A            ?0178:
+   \   062A  80CB              SJMP    ?0065
+   \   062C            ?0064:
+    190          
+    191                  output(ADMSB, 0xff);    // A/D Convert Start Command
+   \   062C  74FF              MOV     A,#255
+   \   062E  902000            MOV     DPTR,#8192
+   \   0631  F0                MOVX    @DPTR,A
+    192          
+    193                  for(DLYcount=0; DLYcount < DLY; DLYcount++) { DLYcount++; DLYcount--;}
+   \   0632  900271            MOV     DPTR,#DLYcount
+   \   0635  E4                CLR     A
+   \   0636  F0                MOVX    @DPTR,A
+   \   0637  A3                INC     DPTR
+   \   0638  F0                MOVX    @DPTR,A
+   \   0639            ?0069:
+   \   0639  C3                CLR     C
+   \   063A  900272            MOV     DPTR,#DLYcount+1
+   \   063D  E0                MOVX    A,@DPTR
+   \   063E  940F              SUBB    A,#15
+   \   0640  900271            MOV     DPTR,#DLYcount
+   \   0643  E0                MOVX    A,@DPTR
+   \   0644  9400              SUBB    A,#0
+   \   0646  5026              JNC     ?0068
+   \   0648            ?0070:
+   \   0648  A3                INC     DPTR
+   \   0649  E0                MOVX    A,@DPTR
+   \   064A  04                INC     A
+   \   064B  F0                MOVX    @DPTR,A
+   \   064C  900271            MOV     DPTR,#DLYcount
+   \   064F  7003              JNZ     ?0179
+   \   0651  E0                MOVX    A,@DPTR
+   \   0652  04                INC     A
+   \   0653  F0                MOVX    @DPTR,A
+   \   0654            ?0179:
+   \   0654  A3                INC     DPTR
+   \   0655  E0                MOVX    A,@DPTR
+   \   0656  24FF              ADD     A,#255
+   \   0658  F0                MOVX    @DPTR,A
+   \   0659  900271            MOV     DPTR,#DLYcount
+   \   065C  E0                MOVX    A,@DPTR
+   \   065D  34FF              ADDC    A,#255
+   \   065F  F0                MOVX    @DPTR,A
+   \   0660  A3                INC     DPTR
+   \   0661  E0                MOVX    A,@DPTR
+   \   0662  04                INC     A
+   \   0663  F0                MOVX    @DPTR,A
+   \   0664  900271            MOV     DPTR,#DLYcount
+   \   0667  7003              JNZ     ?0180
+   \   0669  E0                MOVX    A,@DPTR
+   \   066A  04                INC     A
+   \   066B  F0                MOVX    @DPTR,A
+   \   066C            ?0180:
+   \   066C  80CB              SJMP    ?0069
+   \   066E            ?0068:
+    194                  ERcount=0;                              // Error Count Value Clear
+   \   066E  90026D            MOV     DPTR,#ERcount
+   \   0671  E4                CLR     A
+   \   0672  F0                MOVX    @DPTR,A
+   \   0673  A3                INC     DPTR
+   \   0674  F0                MOVX    @DPTR,A
+   \   0675            ?0073:
+    195                  while(STATUS == ON)             {       if(ERcount++>100)       break;  }
+   \   0675  309720            JNB     P1.7,?0072
+   \   0678            ?0074:
+   \   0678  90026D            MOV     DPTR,#ERcount
+   \   067B  E0                MOVX    A,@DPTR
+   \   067C  FD                MOV     R5,A
+   \   067D  A3                INC     DPTR
+   \   067E  E0                MOVX    A,@DPTR
+   \   067F  FC                MOV     R4,A
+   \   0680  E0                MOVX    A,@DPTR
+   \   0681  04                INC     A
+   \   0682  F0                MOVX    @DPTR,A
+   \   0683  90026D            MOV     DPTR,#ERcount
+   \   0686  7003              JNZ     ?0181
+   \   0688  E0                MOVX    A,@DPTR
+   \   0689  04                INC     A
+   \   068A  F0                MOVX    @DPTR,A
+   \   068B            ?0181:
+   \   068B  D3                SETB    C
+   \   068C  EC                MOV     A,R4
+   \   068D  9464              SUBB    A,#100
+   \   068F  ED                MOV     A,R5
+   \   0690  9400              SUBB    A,#0
+   \   0692  4002              JC      ?0076
+   \   0694            ?0075:
+   \   0694  8002              SJMP    ?0072
+   \   0696            ?0076:
+   \   0696  80DD              SJMP    ?0073
+   \   0698            ?0072:
+    196          
+    197                  if(ERcount>100)         ERROR |= ADERR  ;
+   \   0698  D3                SETB    C
+   \   0699  90026E            MOV     DPTR,#ERcount+1
+   \   069C  E0                MOVX    A,@DPTR
+   \   069D  9464              SUBB    A,#100
+   \   069F  90026D            MOV     DPTR,#ERcount
+   \   06A2  E0                MOVX    A,@DPTR
+   \   06A3  9400              SUBB    A,#0
+   \   06A5  4009              JC      ?0078
+   \   06A7            ?0077:
+   \   06A7  900270            MOV     DPTR,#ERROR+1
+   \   06AA  E0                MOVX    A,@DPTR
+   \   06AB  4404              ORL     A,#4
+   \   06AD  F0                MOVX    @DPTR,A
+   \   06AE  8007              SJMP    ?0079
+   \   06B0            ?0078:
+    198                  else                            ERROR = 0               ;
+   \   06B0  90026F            MOV     DPTR,#ERROR
+   \   06B3  E4                CLR     A
+   \   06B4  F0                MOVX    @DPTR,A
+   \   06B5  A3                INC     DPTR
+   \   06B6  F0                MOVX    @DPTR,A
+   \   06B7            ?0079:
+    199          
+    200                  ADValue = 0;
+   \   06B7  900273            MOV     DPTR,#ADValue
+   \   06BA  E4                CLR     A
+   \   06BB  F0                MOVX    @DPTR,A
+   \   06BC  A3                INC     DPTR
+   \   06BD  F0                MOVX    @DPTR,A
+    201                  disable(ES);
+   \   06BE  C2AC              CLR     IE.4
+    202                  ADValue = (input(ADLSB) >> 4);          ADValue |= (input(ADMSB) << 4);
+   \   06C0  902001            MOV     DPTR,#8193
+   \   06C3  E0                MOVX    A,@DPTR
+   \   06C4  C4                SWAP    A
+   \   06C5  540F              ANL     A,#15
+   \   06C7  7D00              MOV     R5,#0
+   \   06C9  FC                MOV     R4,A
+   \   06CA  8D82              MOV     DPL,R5
+   \   06CC  E0                MOVX    A,@DPTR
+   \   06CD  7F00              MOV     R7,#0
+   \   06CF  7E04              MOV     R6,#4
+   \   06D1            ?0182:
+   \   06D1  25E0              ADD     A,ACC
+   \   06D3  CF                XCH     A,R7
+   \   06D4  33                RLC     A
+   \   06D5  CF                XCH     A,R7
+   \   06D6  DEF9              DJNZ    R6,?0182
+   \   06D8  FE                MOV     R6,A
+   \   06D9  EC                MOV     A,R4
+   \   06DA  4E                ORL     A,R6
+   \   06DB  FC                MOV     R4,A
+   \   06DC  ED                MOV     A,R5
+   \   06DD  4F                ORL     A,R7
+   \   06DE  900273            MOV     DPTR,#ADValue
+   \   06E1  F0                MOVX    @DPTR,A
+   \   06E2  A3                INC     DPTR
+   \   06E3  CC                XCH     A,R4
+   \   06E4  F0                MOVX    @DPTR,A
+   \   06E5  CC                XCH     A,R4
+    203                  enable(ES);
+   \   06E6  D2AC              SETB    IE.4
+    204                  ADCENB  = SAMPLE;
+   \   06E8  D292              SETB    P1.2
+    205          }
+   \   06EA  22                RET
+    206          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    207          void Temp_cal(void)        // TEMP Calculation Function
+    208          {
+   \   06EB            Temp_cal:
+    209                  AD_read();
+   \   06EB  120000            LCALL   $REFFN AD_read
+    210                  /////////////////
+    211          //      TEMP_Move[TEMP_Point++]         =        ADValue;
+    212          //      if(TEMP_Point >= AvrCount)               TEMP_Point = 0;
+    213          //      for(MovCount = 0; MovCount<AvrCount ; MovCount++)       MovValue += TEMP_Move[MovCount];
+    214          //      ADValue          = MovValue/AvrCount;
+    215          //      MovValue         = 0;
+    216                  /////////////////
+    217                  disable(ES);
+   \   06EE  C2AC              CLR     IE.4
+    218                  TEMP_OLD.Real  =  (ADValue / 4.095) + 500.;   // Temp Cal.
+   \   06F0  900273            MOV     DPTR,#ADValue
+   \   06F3  E0                MOVX    A,@DPTR
+   \   06F4  FD                MOV     R5,A
+   \   06F5  A3                INC     DPTR
+   \   06F6  E0                MOVX    A,@DPTR
+   \   06F7  FC                MOV     R4,A
+   \   06F8  ED                MOV     A,R5
+   \   06F9  E4                CLR     A
+   \   06FA  FE                MOV     R6,A
+   \   06FB  FF                MOV     R7,A
+   \   06FC  120000            LCALL   ?R4567_ULONG_TO_FLT_L02
+   \   06FF  790A              MOV     R1,#10
+   \   0701  783D              MOV     R0,#61
+   \   0703  7B40              MOV     R3,#64
+   \   0705  7A83              MOV     R2,#131
+   \   0707  120000            LCALL   ?F_DIV_L02
+   \   070A  E4                CLR     A
+   \   070B  F8                MOV     R0,A
+   \   070C  F9                MOV     R1,A
+   \   070D  7B43              MOV     R3,#67
+   \   070F  7AFA              MOV     R2,#250
+   \   0711  120000            LCALL   ?F_ADD_L02
+   \   0714  120000            LCALL   ?R4567_FLT_TO_LONG_L02
+   \   0717  90022D            MOV     DPTR,#TEMP_OLD
+   \   071A  ED                MOV     A,R5
+   \   071B  F0                MOVX    @DPTR,A
+   \   071C  A3                INC     DPTR
+   \   071D  EC                MOV     A,R4
+   \   071E  F0                MOVX    @DPTR,A
+    219                  if         (TEMP_OLD.Real > 1500)   TEMP_OLD.Real = 1500;
+   \   071F  D3                SETB    C
+   \   0720  FC                MOV     R4,A
+   \   0721  94DC              SUBB    A,#220
+   \   0723  ED                MOV     A,R5
+   \   0724  9405              SUBB    A,#5
+   \   0726  400E              JC      ?0081
+   \   0728            ?0080:
+   \   0728  7D05              MOV     R5,#5
+   \   072A  7CDC              MOV     R4,#220
+   \   072C  90022D            MOV     DPTR,#TEMP_OLD
+   \   072F  ED                MOV     A,R5
+   \   0730  F0                MOVX    @DPTR,A
+   \   0731  A3                INC     DPTR
+   \   0732  EC                MOV     A,R4
+   \   0733  F0                MOVX    @DPTR,A
+   \   0734  8015              SJMP    ?0082
+   \   0736            ?0081:
+    220                  else if(TEMP_OLD.Real < 500 )   TEMP_OLD.Real =  500;
+   \   0736  C3                CLR     C
+   \   0737  EC                MOV     A,R4
+   \   0738  94F4              SUBB    A,#244
+   \   073A  ED                MOV     A,R5
+   \   073B  9401              SUBB    A,#1
+   \   073D  500C              JNC     ?0084
+   \   073F            ?0083:
+   \   073F  7D01              MOV     R5,#1
+   \   0741  7CF4              MOV     R4,#244
+   \   0743  90022D            MOV     DPTR,#TEMP_OLD
+   \   0746  ED                MOV     A,R5
+   \   0747  F0                MOVX    @DPTR,A
+   \   0748  A3                INC     DPTR
+   \   0749  EC                MOV     A,R4
+   \   074A  F0                MOVX    @DPTR,A
+   \   074B            ?0084:
+   \   074B            ?0082:
+    221                  TEMP_R.Sam.Avr =  TEMP_OLD.Real           ;
+   \   074B  900008            MOV     DPTR,#TEMP_R+6
+   \   074E  ED                MOV     A,R5
+   \   074F  F0                MOVX    @DPTR,A
+   \   0750  A3                INC     DPTR
+   \   0751  EC                MOV     A,R4
+   \   0752  F0                MOVX    @DPTR,A
+    222                  // One Day Max, Min processing
+    223                  if(TEMP_OLD.Real > TEMP_R.Sam.Max)      TEMP_R.Sam.Max = TEMP_OLD.Real;
+   \   0753  90022D            MOV     DPTR,#TEMP_OLD
+   \   0756  E0                MOVX    A,@DPTR
+   \   0757  FD                MOV     R5,A
+   \   0758  A3                INC     DPTR
+   \   0759  E0                MOVX    A,@DPTR
+   \   075A  FC                MOV     R4,A
+   \   075B  90000D            MOV     DPTR,#TEMP_R+11
+   \   075E  E0                MOVX    A,@DPTR
+   \   075F  C3                CLR     C
+   \   0760  9C                SUBB    A,R4
+   \   0761  90000C            MOV     DPTR,#TEMP_R+10
+   \   0764  E0                MOVX    A,@DPTR
+   \   0765  9D                SUBB    A,R5
+   \   0766  5005              JNC     ?0086
+   \   0768            ?0085:
+   \   0768  ED                MOV     A,R5
+   \   0769  F0                MOVX    @DPTR,A
+   \   076A  A3                INC     DPTR
+   \   076B  EC                MOV     A,R4
+   \   076C  F0                MOVX    @DPTR,A
+   \   076D            ?0086:
+    224                  if(TEMP_OLD.Real < TEMP_R.Sam.Min)      TEMP_R.Sam.Min = TEMP_OLD.Real;
+   \   076D  90022D            MOV     DPTR,#TEMP_OLD
+   \   0770  E0                MOVX    A,@DPTR
+   \   0771  FD                MOV     R5,A
+   \   0772  A3                INC     DPTR
+   \   0773  E0                MOVX    A,@DPTR
+   \   0774  FC                MOV     R4,A
+   \   0775  90000F            MOV     DPTR,#TEMP_R+13
+   \   0778  E0                MOVX    A,@DPTR
+   \   0779  D3                SETB    C
+   \   077A  9C                SUBB    A,R4
+   \   077B  90000E            MOV     DPTR,#TEMP_R+12
+   \   077E  E0                MOVX    A,@DPTR
+   \   077F  9D                SUBB    A,R5
+   \   0780  4005              JC      ?0088
+   \   0782            ?0087:
+   \   0782  ED                MOV     A,R5
+   \   0783  F0                MOVX    @DPTR,A
+   \   0784  A3                INC     DPTR
+   \   0785  EC                MOV     A,R4
+   \   0786  F0                MOVX    @DPTR,A
+   \   0787            ?0088:
+    225                  enable(ES);
+   \   0787  D2AC              SETB    IE.4
+    226                                          ///
+    227                  TEMP_OLD.Sumt += TEMP_OLD.Real;         // Average Value 10 sec
+   \   0789  90022D            MOV     DPTR,#TEMP_OLD
+   \   078C  E0                MOVX    A,@DPTR
+   \   078D  FD                MOV     R5,A
+   \   078E  A3                INC     DPTR
+   \   078F  E0                MOVX    A,@DPTR
+   \   0790  FC                MOV     R4,A
+   \   0791  7E00              MOV     R6,#0
+   \   0793  7F00              MOV     R7,#0
+   \   0795  900231            MOV     DPTR,#TEMP_OLD+4
+   \   0798  120000            LCALL   ?L_ADD_ASG_DPTR_R4567_L01
+    228                  TEMP_OLD.SumO += TEMP_OLD.Real;         // Average Value 1  min
+   \   079B  90022D            MOV     DPTR,#TEMP_OLD
+   \   079E  E0                MOVX    A,@DPTR
+   \   079F  FD                MOV     R5,A
+   \   07A0  A3                INC     DPTR
+   \   07A1  E0                MOVX    A,@DPTR
+   \   07A2  FC                MOV     R4,A
+   \   07A3  7E00              MOV     R6,#0
+   \   07A5  7F00              MOV     R7,#0
+   \   07A7  900239            MOV     DPTR,#TEMP_OLD+12
+   \   07AA  120000            LCALL   ?L_ADD_ASG_DPTR_R4567_L01
+    229                  TEMP_OLD.SumT += TEMP_OLD.Real;         // Average Value 10 min
+   \   07AD  90022D            MOV     DPTR,#TEMP_OLD
+   \   07B0  E0                MOVX    A,@DPTR
+   \   07B1  FD                MOV     R5,A
+   \   07B2  A3                INC     DPTR
+   \   07B3  E0                MOVX    A,@DPTR
+   \   07B4  FC                MOV     R4,A
+   \   07B5  7E00              MOV     R6,#0
+   \   07B7  7F00              MOV     R7,#0
+   \   07B9  900241            MOV     DPTR,#TEMP_OLD+20
+   \   07BC  120000            LCALL   ?L_ADD_ASG_DPTR_R4567_L01
+    230                  // 10 sec, 1 min, 10 min MAX & MIN proc...
+    231                  if(TEMP_OLD.Real > TEMP_OLD.Maxt )      TEMP_OLD.Maxt  = TEMP_OLD.Real;
+   \   07BF  90022D            MOV     DPTR,#TEMP_OLD
+   \   07C2  E0                MOVX    A,@DPTR
+   \   07C3  FD                MOV     R5,A
+   \   07C4  A3                INC     DPTR
+   \   07C5  E0                MOVX    A,@DPTR
+   \   07C6  FC                MOV     R4,A
+   \   07C7  A3                INC     DPTR
+   \   07C8  A3                INC     DPTR
+   \   07C9  E0                MOVX    A,@DPTR
+   \   07CA  C3                CLR     C
+   \   07CB  9C                SUBB    A,R4
+   \   07CC  90022F            MOV     DPTR,#TEMP_OLD+2
+   \   07CF  E0                MOVX    A,@DPTR
+   \   07D0  9D                SUBB    A,R5
+   \   07D1  5005              JNC     ?0090
+   \   07D3            ?0089:
+   \   07D3  ED                MOV     A,R5
+   \   07D4  F0                MOVX    @DPTR,A
+   \   07D5  A3                INC     DPTR
+   \   07D6  EC                MOV     A,R4
+   \   07D7  F0                MOVX    @DPTR,A
+   \   07D8            ?0090:
+    232                  if(TEMP_OLD.Real < TEMP_OLD.Mint )  TEMP_OLD.Mint  = TEMP_OLD.Real;
+   \   07D8  90022D            MOV     DPTR,#TEMP_OLD
+   \   07DB  E0                MOVX    A,@DPTR
+   \   07DC  FD                MOV     R5,A
+   \   07DD  A3                INC     DPTR
+   \   07DE  E0                MOVX    A,@DPTR
+   \   07DF  FC                MOV     R4,A
+   \   07E0  900236            MOV     DPTR,#TEMP_OLD+9
+   \   07E3  E0                MOVX    A,@DPTR
+   \   07E4  D3                SETB    C
+   \   07E5  9C                SUBB    A,R4
+   \   07E6  900235            MOV     DPTR,#TEMP_OLD+8
+   \   07E9  E0                MOVX    A,@DPTR
+   \   07EA  9D                SUBB    A,R5
+   \   07EB  4005              JC      ?0092
+   \   07ED            ?0091:
+   \   07ED  ED                MOV     A,R5
+   \   07EE  F0                MOVX    @DPTR,A
+   \   07EF  A3                INC     DPTR
+   \   07F0  EC                MOV     A,R4
+   \   07F1  F0                MOVX    @DPTR,A
+   \   07F2            ?0092:
+    233                  if(TEMP_OLD.Real > TEMP_OLD.MaxO )  TEMP_OLD.MaxO  = TEMP_OLD.Real;
+   \   07F2  90022D            MOV     DPTR,#TEMP_OLD
+   \   07F5  E0                MOVX    A,@DPTR
+   \   07F6  FD                MOV     R5,A
+   \   07F7  A3                INC     DPTR
+   \   07F8  E0                MOVX    A,@DPTR
+   \   07F9  FC                MOV     R4,A
+   \   07FA  900238            MOV     DPTR,#TEMP_OLD+11
+   \   07FD  E0                MOVX    A,@DPTR
+   \   07FE  C3                CLR     C
+   \   07FF  9C                SUBB    A,R4
+   \   0800  900237            MOV     DPTR,#TEMP_OLD+10
+   \   0803  E0                MOVX    A,@DPTR
+   \   0804  9D                SUBB    A,R5
+   \   0805  5005              JNC     ?0094
+   \   0807            ?0093:
+   \   0807  ED                MOV     A,R5
+   \   0808  F0                MOVX    @DPTR,A
+   \   0809  A3                INC     DPTR
+   \   080A  EC                MOV     A,R4
+   \   080B  F0                MOVX    @DPTR,A
+   \   080C            ?0094:
+    234                  if(TEMP_OLD.Real < TEMP_OLD.MinO )      TEMP_OLD.MinO  = TEMP_OLD.Real;
+   \   080C  90022D            MOV     DPTR,#TEMP_OLD
+   \   080F  E0                MOVX    A,@DPTR
+   \   0810  FD                MOV     R5,A
+   \   0811  A3                INC     DPTR
+   \   0812  E0                MOVX    A,@DPTR
+   \   0813  FC                MOV     R4,A
+   \   0814  90023E            MOV     DPTR,#TEMP_OLD+17
+   \   0817  E0                MOVX    A,@DPTR
+   \   0818  D3                SETB    C
+   \   0819  9C                SUBB    A,R4
+   \   081A  90023D            MOV     DPTR,#TEMP_OLD+16
+   \   081D  E0                MOVX    A,@DPTR
+   \   081E  9D                SUBB    A,R5
+   \   081F  4005              JC      ?0096
+   \   0821            ?0095:
+   \   0821  ED                MOV     A,R5
+   \   0822  F0                MOVX    @DPTR,A
+   \   0823  A3                INC     DPTR
+   \   0824  EC                MOV     A,R4
+   \   0825  F0                MOVX    @DPTR,A
+   \   0826            ?0096:
+    235                  if(TEMP_OLD.Real > TEMP_OLD.MaxO )  TEMP_OLD.MaxT  = TEMP_OLD.Real;
+   \   0826  90022D            MOV     DPTR,#TEMP_OLD
+   \   0829  E0                MOVX    A,@DPTR
+   \   082A  FD                MOV     R5,A
+   \   082B  A3                INC     DPTR
+   \   082C  E0                MOVX    A,@DPTR
+   \   082D  FC                MOV     R4,A
+   \   082E  900238            MOV     DPTR,#TEMP_OLD+11
+   \   0831  E0                MOVX    A,@DPTR
+   \   0832  C3                CLR     C
+   \   0833  9C                SUBB    A,R4
+   \   0834  900237            MOV     DPTR,#TEMP_OLD+10
+   \   0837  E0                MOVX    A,@DPTR
+   \   0838  9D                SUBB    A,R5
+   \   0839  5008              JNC     ?0098
+   \   083B            ?0097:
+   \   083B  90023F            MOV     DPTR,#TEMP_OLD+18
+   \   083E  ED                MOV     A,R5
+   \   083F  F0                MOVX    @DPTR,A
+   \   0840  A3                INC     DPTR
+   \   0841  EC                MOV     A,R4
+   \   0842  F0                MOVX    @DPTR,A
+   \   0843            ?0098:
+    236                  if(TEMP_OLD.Real < TEMP_OLD.MinO )      TEMP_OLD.MinT  = TEMP_OLD.Real;
+   \   0843  90022D            MOV     DPTR,#TEMP_OLD
+   \   0846  E0                MOVX    A,@DPTR
+   \   0847  FD                MOV     R5,A
+   \   0848  A3                INC     DPTR
+   \   0849  E0                MOVX    A,@DPTR
+   \   084A  FC                MOV     R4,A
+   \   084B  90023E            MOV     DPTR,#TEMP_OLD+17
+   \   084E  E0                MOVX    A,@DPTR
+   \   084F  D3                SETB    C
+   \   0850  9C                SUBB    A,R4
+   \   0851  90023D            MOV     DPTR,#TEMP_OLD+16
+   \   0854  E0                MOVX    A,@DPTR
+   \   0855  9D                SUBB    A,R5
+   \   0856  4008              JC      ?0100
+   \   0858            ?0099:
+   \   0858  900245            MOV     DPTR,#TEMP_OLD+24
+   \   085B  ED                MOV     A,R5
+   \   085C  F0                MOVX    @DPTR,A
+   \   085D  A3                INC     DPTR
+   \   085E  EC                MOV     A,R4
+   \   085F  F0                MOVX    @DPTR,A
+   \   0860            ?0100:
+    237                  // 10 sec proc...
+    238                  if(TEMP_OLD.Count_t >= 10)      {
+   \   0860  C3                CLR     C
+   \   0861  900248            MOV     DPTR,#TEMP_OLD+27
+   \   0864  E0                MOVX    A,@DPTR
+   \   0865  940A              SUBB    A,#10
+   \   0867  900247            MOV     DPTR,#TEMP_OLD+26
+   \   086A  E0                MOVX    A,@DPTR
+   \   086B  9400              SUBB    A,#0
+   \   086D  4060              JC      ?0102
+   \   086F            ?0101:
+    239                          disable(ES);
+   \   086F  C2AC              CLR     IE.4
+    240                          TEMP_t.Sam.Avr   = (Word)(TEMP_OLD.Sumt/10.)          ;
+   \   0871  900231            MOV     DPTR,#TEMP_OLD+4
+   \   0874  120000            LCALL   ?LD_R4567_XDPTR_L20
+   \   0877  120000            LCALL   ?R4567_ULONG_TO_FLT_L02
+   \   087A  E4                CLR     A
+   \   087B  F8                MOV     R0,A
+   \   087C  F9                MOV     R1,A
+   \   087D  7A20              MOV     R2,#32
+   \   087F  7B41              MOV     R3,#65
+   \   0881  120000            LCALL   ?F_DIV_L02
+   \   0884  120000            LCALL   ?R4567_FLT_TO_LONG_L02
+   \   0887  900019            MOV     DPTR,#TEMP_t+6
+   \   088A  ED                MOV     A,R5
+   \   088B  F0                MOVX    @DPTR,A
+   \   088C  A3                INC     DPTR
+   \   088D  EC                MOV     A,R4
+   \   088E  F0                MOVX    @DPTR,A
+    241                          enable(ES);
+   \   088F  D2AC              SETB    IE.4
+    242                          TEMP_t.Sam.Max   = TEMP_OLD.Maxt                      ;
+   \   0891  90022F            MOV     DPTR,#TEMP_OLD+2
+   \   0894  E0                MOVX    A,@DPTR
+   \   0895  FD                MOV     R5,A
+   \   0896  A3                INC     DPTR
+   \   0897  E0                MOVX    A,@DPTR
+   \   0898  90001D            MOV     DPTR,#TEMP_t+10
+   \   089B  CD                XCH     A,R5
+   \   089C  F0                MOVX    @DPTR,A
+   \   089D  A3                INC     DPTR
+   \   089E  CD                XCH     A,R5
+   \   089F  F0                MOVX    @DPTR,A
+    243                          TEMP_t.Sam.Min   = TEMP_OLD.Mint                      ;
+   \   08A0  900235            MOV     DPTR,#TEMP_OLD+8
+   \   08A3  E0                MOVX    A,@DPTR
+   \   08A4  FD                MOV     R5,A
+   \   08A5  A3                INC     DPTR
+   \   08A6  E0                MOVX    A,@DPTR
+   \   08A7  90001F            MOV     DPTR,#TEMP_t+12
+   \   08AA  CD                XCH     A,R5
+   \   08AB  F0                MOVX    @DPTR,A
+   \   08AC  A3                INC     DPTR
+   \   08AD  CD                XCH     A,R5
+   \   08AE  F0                MOVX    @DPTR,A
+    244                          TEMP_OLD.Maxt    = TEMP_OLD.Mint = TEMP_OLD.Real          ;
+   \   08AF  90022D            MOV     DPTR,#TEMP_OLD
+   \   08B2  E0                MOVX    A,@DPTR
+   \   08B3  FD                MOV     R5,A
+   \   08B4  A3                INC     DPTR
+   \   08B5  E0                MOVX    A,@DPTR
+   \   08B6  A3                INC     DPTR
+   \   08B7  CD                XCH     A,R5
+   \   08B8  F0                MOVX    @DPTR,A
+   \   08B9  A3                INC     DPTR
+   \   08BA  CD                XCH     A,R5
+   \   08BB  F0                MOVX    @DPTR,A
+   \   08BC  900235            MOV     DPTR,#TEMP_OLD+8
+   \   08BF  CD                XCH     A,R5
+   \   08C0  F0                MOVX    @DPTR,A
+   \   08C1  A3                INC     DPTR
+   \   08C2  CD                XCH     A,R5
+   \   08C3  F0                MOVX    @DPTR,A
+    245                          TEMP_OLD.Sumt    = 0  ;
+   \   08C4  900231            MOV     DPTR,#TEMP_OLD+4
+   \   08C7  E4                CLR     A
+   \   08C8  F0                MOVX    @DPTR,A
+   \   08C9  A3                INC     DPTR
+   \   08CA  F0                MOVX    @DPTR,A
+   \   08CB  A3                INC     DPTR
+   \   08CC  F0                MOVX    @DPTR,A
+   \   08CD  A3                INC     DPTR
+   \   08CE  F0                MOVX    @DPTR,A
+   \   08CF            ?0102:
+    246                  }
+    247                  // 1 min proc...
+    248                  if(TEMP_OLD.Count_O >= 60)      {
+   \   08CF  C3                CLR     C
+   \   08D0  90024A            MOV     DPTR,#TEMP_OLD+29
+   \   08D3  E0                MOVX    A,@DPTR
+   \   08D4  943C              SUBB    A,#60
+   \   08D6  900249            MOV     DPTR,#TEMP_OLD+28
+   \   08D9  E0                MOVX    A,@DPTR
+   \   08DA  9400              SUBB    A,#0
+   \   08DC  4062              JC      ?0104
+   \   08DE            ?0103:
+    249                          disable(ES);
+   \   08DE  C2AC              CLR     IE.4
+    250                          TEMP_O.Sam.Avr   = (Word)(TEMP_OLD.SumO/60.)          ;
+   \   08E0  900239            MOV     DPTR,#TEMP_OLD+12
+   \   08E3  120000            LCALL   ?LD_R4567_XDPTR_L20
+   \   08E6  120000            LCALL   ?R4567_ULONG_TO_FLT_L02
+   \   08E9  E4                CLR     A
+   \   08EA  F8                MOV     R0,A
+   \   08EB  F9                MOV     R1,A
+   \   08EC  7B42              MOV     R3,#66
+   \   08EE  7A70              MOV     R2,#112
+   \   08F0  120000            LCALL   ?F_DIV_L02
+   \   08F3  120000            LCALL   ?R4567_FLT_TO_LONG_L02
+   \   08F6  90002A            MOV     DPTR,#TEMP_O+6
+   \   08F9  ED                MOV     A,R5
+   \   08FA  F0                MOVX    @DPTR,A
+   \   08FB  A3                INC     DPTR
+   \   08FC  EC                MOV     A,R4
+   \   08FD  F0                MOVX    @DPTR,A
+    251                          enable(ES);
+   \   08FE  D2AC              SETB    IE.4
+    252                          TEMP_O.Sam.Max   = TEMP_OLD.MaxO                      ;
+   \   0900  900237            MOV     DPTR,#TEMP_OLD+10
+   \   0903  E0                MOVX    A,@DPTR
+   \   0904  FD                MOV     R5,A
+   \   0905  A3                INC     DPTR
+   \   0906  E0                MOVX    A,@DPTR
+   \   0907  90002E            MOV     DPTR,#TEMP_O+10
+   \   090A  CD                XCH     A,R5
+   \   090B  F0                MOVX    @DPTR,A
+   \   090C  A3                INC     DPTR
+   \   090D  CD                XCH     A,R5
+   \   090E  F0                MOVX    @DPTR,A
+    253                          TEMP_O.Sam.Min   = TEMP_OLD.MinO                      ;
+   \   090F  90023D            MOV     DPTR,#TEMP_OLD+16
+   \   0912  E0                MOVX    A,@DPTR
+   \   0913  FD                MOV     R5,A
+   \   0914  A3                INC     DPTR
+   \   0915  E0                MOVX    A,@DPTR
+   \   0916  900030            MOV     DPTR,#TEMP_O+12
+   \   0919  CD                XCH     A,R5
+   \   091A  F0                MOVX    @DPTR,A
+   \   091B  A3                INC     DPTR
+   \   091C  CD                XCH     A,R5
+   \   091D  F0                MOVX    @DPTR,A
+    254                          TEMP_OLD.MaxO    = TEMP_OLD.MinO = TEMP_OLD.Real      ;
+   \   091E  90022D            MOV     DPTR,#TEMP_OLD
+   \   0921  E0                MOVX    A,@DPTR
+   \   0922  FD                MOV     R5,A
+   \   0923  A3                INC     DPTR
+   \   0924  E0                MOVX    A,@DPTR
+   \   0925  900237            MOV     DPTR,#TEMP_OLD+10
+   \   0928  CD                XCH     A,R5
+   \   0929  F0                MOVX    @DPTR,A
+   \   092A  A3                INC     DPTR
+   \   092B  CD                XCH     A,R5
+   \   092C  F0                MOVX    @DPTR,A
+   \   092D  90023D            MOV     DPTR,#TEMP_OLD+16
+   \   0930  CD                XCH     A,R5
+   \   0931  F0                MOVX    @DPTR,A
+   \   0932  A3                INC     DPTR
+   \   0933  CD                XCH     A,R5
+   \   0934  F0                MOVX    @DPTR,A
+    255                          TEMP_OLD.SumO    = 0  ;
+   \   0935  900239            MOV     DPTR,#TEMP_OLD+12
+   \   0938  E4                CLR     A
+   \   0939  F0                MOVX    @DPTR,A
+   \   093A  A3                INC     DPTR
+   \   093B  F0                MOVX    @DPTR,A
+   \   093C  A3                INC     DPTR
+   \   093D  F0                MOVX    @DPTR,A
+   \   093E  A3                INC     DPTR
+   \   093F  F0                MOVX    @DPTR,A
+   \   0940            ?0104:
+    256                  }
+    257                  // 10 min proc...
+    258                  if(TEMP_OLD.Count_T >= 600)     {
+   \   0940  C3                CLR     C
+   \   0941  90024C            MOV     DPTR,#TEMP_OLD+31
+   \   0944  E0                MOVX    A,@DPTR
+   \   0945  9458              SUBB    A,#88
+   \   0947  90024B            MOV     DPTR,#TEMP_OLD+30
+   \   094A  E0                MOVX    A,@DPTR
+   \   094B  9402              SUBB    A,#2
+   \   094D  4062              JC      ?0106
+   \   094F            ?0105:
+    259                          disable(ES);
+   \   094F  C2AC              CLR     IE.4
+    260                          TEMP_T.Sam.Avr   = (Word)(TEMP_OLD.SumT/600.)         ;
+   \   0951  900241            MOV     DPTR,#TEMP_OLD+20
+   \   0954  120000            LCALL   ?LD_R4567_XDPTR_L20
+   \   0957  120000            LCALL   ?R4567_ULONG_TO_FLT_L02
+   \   095A  E4                CLR     A
+   \   095B  F8                MOV     R0,A
+   \   095C  F9                MOV     R1,A
+   \   095D  7A16              MOV     R2,#22
+   \   095F  7B44              MOV     R3,#68
+   \   0961  120000            LCALL   ?F_DIV_L02
+   \   0964  120000            LCALL   ?R4567_FLT_TO_LONG_L02
+   \   0967  90003B            MOV     DPTR,#TEMP_T+6
+   \   096A  ED                MOV     A,R5
+   \   096B  F0                MOVX    @DPTR,A
+   \   096C  A3                INC     DPTR
+   \   096D  EC                MOV     A,R4
+   \   096E  F0                MOVX    @DPTR,A
+    261                          enable(ES);
+   \   096F  D2AC              SETB    IE.4
+    262                          TEMP_T.Sam.Max   = TEMP_OLD.MaxT                      ;
+   \   0971  90023F            MOV     DPTR,#TEMP_OLD+18
+   \   0974  E0                MOVX    A,@DPTR
+   \   0975  FD                MOV     R5,A
+   \   0976  A3                INC     DPTR
+   \   0977  E0                MOVX    A,@DPTR
+   \   0978  90003F            MOV     DPTR,#TEMP_T+10
+   \   097B  CD                XCH     A,R5
+   \   097C  F0                MOVX    @DPTR,A
+   \   097D  A3                INC     DPTR
+   \   097E  CD                XCH     A,R5
+   \   097F  F0                MOVX    @DPTR,A
+    263                          TEMP_T.Sam.Min   = TEMP_OLD.MinT                      ;
+   \   0980  900245            MOV     DPTR,#TEMP_OLD+24
+   \   0983  E0                MOVX    A,@DPTR
+   \   0984  FD                MOV     R5,A
+   \   0985  A3                INC     DPTR
+   \   0986  E0                MOVX    A,@DPTR
+   \   0987  900041            MOV     DPTR,#TEMP_T+12
+   \   098A  CD                XCH     A,R5
+   \   098B  F0                MOVX    @DPTR,A
+   \   098C  A3                INC     DPTR
+   \   098D  CD                XCH     A,R5
+   \   098E  F0                MOVX    @DPTR,A
+    264                          TEMP_OLD.MaxT    = TEMP_OLD.MinT = TEMP_OLD.Real      ;
+   \   098F  90022D            MOV     DPTR,#TEMP_OLD
+   \   0992  E0                MOVX    A,@DPTR
+   \   0993  FD                MOV     R5,A
+   \   0994  A3                INC     DPTR
+   \   0995  E0                MOVX    A,@DPTR
+   \   0996  90023F            MOV     DPTR,#TEMP_OLD+18
+   \   0999  CD                XCH     A,R5
+   \   099A  F0                MOVX    @DPTR,A
+   \   099B  A3                INC     DPTR
+   \   099C  CD                XCH     A,R5
+   \   099D  F0                MOVX    @DPTR,A
+   \   099E  900245            MOV     DPTR,#TEMP_OLD+24
+   \   09A1  CD                XCH     A,R5
+   \   09A2  F0                MOVX    @DPTR,A
+   \   09A3  A3                INC     DPTR
+   \   09A4  CD                XCH     A,R5
+   \   09A5  F0                MOVX    @DPTR,A
+    265                          TEMP_OLD.SumT    = 0  ;
+   \   09A6  900241            MOV     DPTR,#TEMP_OLD+20
+   \   09A9  E4                CLR     A
+   \   09AA  F0                MOVX    @DPTR,A
+   \   09AB  A3                INC     DPTR
+   \   09AC  F0                MOVX    @DPTR,A
+   \   09AD  A3                INC     DPTR
+   \   09AE  F0                MOVX    @DPTR,A
+   \   09AF  A3                INC     DPTR
+   \   09B0  F0                MOVX    @DPTR,A
+   \   09B1            ?0106:
+    266                  }
+    267          
+    268                  if(TEMP_OLD.Count_t >= 10)                      TEMP_OLD.Count_t = 0;
+   \   09B1  C3                CLR     C
+   \   09B2  900248            MOV     DPTR,#TEMP_OLD+27
+   \   09B5  E0                MOVX    A,@DPTR
+   \   09B6  940A              SUBB    A,#10
+   \   09B8  900247            MOV     DPTR,#TEMP_OLD+26
+   \   09BB  E0                MOVX    A,@DPTR
+   \   09BC  9400              SUBB    A,#0
+   \   09BE  4006              JC      ?0108
+   \   09C0            ?0107:
+   \   09C0  E4                CLR     A
+   \   09C1  F0                MOVX    @DPTR,A
+   \   09C2  A3                INC     DPTR
+   \   09C3  F0                MOVX    @DPTR,A
+   \   09C4  800C              SJMP    ?0109
+   \   09C6            ?0108:
+    269                  else                                                            TEMP_OLD.Count_t++  ;
+   \   09C6  A3                INC     DPTR
+   \   09C7  E0                MOVX    A,@DPTR
+   \   09C8  04                INC     A
+   \   09C9  F0                MOVX    @DPTR,A
+   \   09CA  900247            MOV     DPTR,#TEMP_OLD+26
+   \   09CD  7003              JNZ     ?0183
+   \   09CF  E0                MOVX    A,@DPTR
+   \   09D0  04                INC     A
+   \   09D1  F0                MOVX    @DPTR,A
+   \   09D2            ?0183:
+   \   09D2            ?0109:
+    270                  if(TEMP_OLD.Count_O >= 60)                      TEMP_OLD.Count_O = 0;
+   \   09D2  C3                CLR     C
+   \   09D3  90024A            MOV     DPTR,#TEMP_OLD+29
+   \   09D6  E0                MOVX    A,@DPTR
+   \   09D7  943C              SUBB    A,#60
+   \   09D9  900249            MOV     DPTR,#TEMP_OLD+28
+   \   09DC  E0                MOVX    A,@DPTR
+   \   09DD  9400              SUBB    A,#0
+   \   09DF  4006              JC      ?0111
+   \   09E1            ?0110:
+   \   09E1  E4                CLR     A
+   \   09E2  F0                MOVX    @DPTR,A
+   \   09E3  A3                INC     DPTR
+   \   09E4  F0                MOVX    @DPTR,A
+   \   09E5  800C              SJMP    ?0112
+   \   09E7            ?0111:
+    271                  else                                                            TEMP_OLD.Count_O++  ;
+   \   09E7  A3                INC     DPTR
+   \   09E8  E0                MOVX    A,@DPTR
+   \   09E9  04                INC     A
+   \   09EA  F0                MOVX    @DPTR,A
+   \   09EB  900249            MOV     DPTR,#TEMP_OLD+28
+   \   09EE  7003              JNZ     ?0184
+   \   09F0  E0                MOVX    A,@DPTR
+   \   09F1  04                INC     A
+   \   09F2  F0                MOVX    @DPTR,A
+   \   09F3            ?0184:
+   \   09F3            ?0112:
+    272                  if(TEMP_OLD.Count_T >= 600)                     TEMP_OLD.Count_T = 0;
+   \   09F3  C3                CLR     C
+   \   09F4  90024C            MOV     DPTR,#TEMP_OLD+31
+   \   09F7  E0                MOVX    A,@DPTR
+   \   09F8  9458              SUBB    A,#88
+   \   09FA  90024B            MOV     DPTR,#TEMP_OLD+30
+   \   09FD  E0                MOVX    A,@DPTR
+   \   09FE  9402              SUBB    A,#2
+   \   0A00  4006              JC      ?0114
+   \   0A02            ?0113:
+   \   0A02  E4                CLR     A
+   \   0A03  F0                MOVX    @DPTR,A
+   \   0A04  A3                INC     DPTR
+   \   0A05  F0                MOVX    @DPTR,A
+   \   0A06  800C              SJMP    ?0115
+   \   0A08            ?0114:
+    273                  else                                                            TEMP_OLD.Count_T++  ;
+   \   0A08  A3                INC     DPTR
+   \   0A09  E0                MOVX    A,@DPTR
+   \   0A0A  04                INC     A
+   \   0A0B  F0                MOVX    @DPTR,A
+   \   0A0C  90024B            MOV     DPTR,#TEMP_OLD+30
+   \   0A0F  7003              JNZ     ?0185
+   \   0A11  E0                MOVX    A,@DPTR
+   \   0A12  04                INC     A
+   \   0A13  F0                MOVX    @DPTR,A
+   \   0A14            ?0185:
+   \   0A14            ?0115:
+    274          
+    275                  disable(ES);
+   \   0A14  C2AC              CLR     IE.4
+    276                  MUX0 = 1;         MUX1 = 0;         MUX2 = 0 ;  // Humi CH Select
+   \   0A16  D293              SETB    P1.3
+   \   0A18  C294              CLR     P1.4
+   \   0A1A  C295              CLR     P1.5
+    277                  Flag = OFF;                              // Disable Flag . (Select.Loop Used. Flag Off)
+   \   0A1C  C200              CLR     Flag
+    278                  enable(ES);
+   \   0A1E  D2AC              SETB    IE.4
+    279          }
+   \   0A20  22                RET
+    280          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    281          void Humi_cal(void)        // HUMI Calculation Function
+    282          {
+   \   0A21            Humi_cal:
+    283                  AD_read();
+   \   0A21  120000            LCALL   $REFFN AD_read
+    284                  ///////////////////////////
+    285          //      HUMI_Move[HUMI_Point++]         = ADValue;
+    286          //      if(HUMI_Point >= AvrCount)        HUMI_Point = 0;
+    287          //      for(MovCount = 0; MovCount<AvrCount ; MovCount++)       MovValue += HUMI_Move[MovCount];
+    288          //      ADValue          = MovValue/AvrCount;
+    289          //      MovValue         = 0;
+    290                  ///////////////////////////
+    291                  disable(ES);
+   \   0A24  C2AC              CLR     IE.4
+    292                  HUMI_OLD.Real  = ADValue / 4.095;      // HUMI Cal.
+   \   0A26  900273            MOV     DPTR,#ADValue
+   \   0A29  E0                MOVX    A,@DPTR
+   \   0A2A  FD                MOV     R5,A
+   \   0A2B  A3                INC     DPTR
+   \   0A2C  E0                MOVX    A,@DPTR
+   \   0A2D  FC                MOV     R4,A
+   \   0A2E  ED                MOV     A,R5
+   \   0A2F  E4                CLR     A
+   \   0A30  FE                MOV     R6,A
+   \   0A31  FF                MOV     R7,A
+   \   0A32  120000            LCALL   ?R4567_ULONG_TO_FLT_L02
+   \   0A35  790A              MOV     R1,#10
+   \   0A37  783D              MOV     R0,#61
+   \   0A39  7B40              MOV     R3,#64
+   \   0A3B  7A83              MOV     R2,#131
+   \   0A3D  120000            LCALL   ?F_DIV_L02
+   \   0A40  120000            LCALL   ?R4567_FLT_TO_LONG_L02
+   \   0A43  90024D            MOV     DPTR,#HUMI_OLD
+   \   0A46  ED                MOV     A,R5
+   \   0A47  F0                MOVX    @DPTR,A
+   \   0A48  A3                INC     DPTR
+   \   0A49  EC                MOV     A,R4
+   \   0A4A  F0                MOVX    @DPTR,A
+    293                  if(HUMI_OLD.Real > 999)         HUMI_OLD.Real = 999;    // HUMI MAX SETTING
+   \   0A4B  D3                SETB    C
+   \   0A4C  FC                MOV     R4,A
+   \   0A4D  94E7              SUBB    A,#231
+   \   0A4F  ED                MOV     A,R5
+   \   0A50  9403              SUBB    A,#3
+   \   0A52  400C              JC      ?0117
+   \   0A54            ?0116:
+   \   0A54  7D03              MOV     R5,#3
+   \   0A56  7CE7              MOV     R4,#231
+   \   0A58  90024D            MOV     DPTR,#HUMI_OLD
+   \   0A5B  ED                MOV     A,R5
+   \   0A5C  F0                MOVX    @DPTR,A
+   \   0A5D  A3                INC     DPTR
+   \   0A5E  EC                MOV     A,R4
+   \   0A5F  F0                MOVX    @DPTR,A
+   \   0A60            ?0117:
+    294                  HUMI_R.Sam.Avr = HUMI_OLD.Real;
+   \   0A60  90004C            MOV     DPTR,#HUMI_R+6
+   \   0A63  ED                MOV     A,R5
+   \   0A64  F0                MOVX    @DPTR,A
+   \   0A65  A3                INC     DPTR
+   \   0A66  EC                MOV     A,R4
+   \   0A67  F0                MOVX    @DPTR,A
+    295                  enable(ES);
+   \   0A68  D2AC              SETB    IE.4
+    296          
+    297                  HUMI_OLD.Sumt += HUMI_OLD.Real;        // Average Value 10 sec
+   \   0A6A  90024D            MOV     DPTR,#HUMI_OLD
+   \   0A6D  E0                MOVX    A,@DPTR
+   \   0A6E  FD                MOV     R5,A
+   \   0A6F  A3                INC     DPTR
+   \   0A70  E0                MOVX    A,@DPTR
+   \   0A71  FC                MOV     R4,A
+   \   0A72  7E00              MOV     R6,#0
+   \   0A74  7F00              MOV     R7,#0
+   \   0A76  900251            MOV     DPTR,#HUMI_OLD+4
+   \   0A79  120000            LCALL   ?L_ADD_ASG_DPTR_R4567_L01
+    298                  HUMI_OLD.SumO += HUMI_OLD.Real;        // Average Value 1  min
+   \   0A7C  90024D            MOV     DPTR,#HUMI_OLD
+   \   0A7F  E0                MOVX    A,@DPTR
+   \   0A80  FD                MOV     R5,A
+   \   0A81  A3                INC     DPTR
+   \   0A82  E0                MOVX    A,@DPTR
+   \   0A83  FC                MOV     R4,A
+   \   0A84  7E00              MOV     R6,#0
+   \   0A86  7F00              MOV     R7,#0
+   \   0A88  900259            MOV     DPTR,#HUMI_OLD+12
+   \   0A8B  120000            LCALL   ?L_ADD_ASG_DPTR_R4567_L01
+    299                  HUMI_OLD.SumT += HUMI_OLD.Real;        // Average Value 10 min
+   \   0A8E  90024D            MOV     DPTR,#HUMI_OLD
+   \   0A91  E0                MOVX    A,@DPTR
+   \   0A92  FD                MOV     R5,A
+   \   0A93  A3                INC     DPTR
+   \   0A94  E0                MOVX    A,@DPTR
+   \   0A95  FC                MOV     R4,A
+   \   0A96  7E00              MOV     R6,#0
+   \   0A98  7F00              MOV     R7,#0
+   \   0A9A  900261            MOV     DPTR,#HUMI_OLD+20
+   \   0A9D  120000            LCALL   ?L_ADD_ASG_DPTR_R4567_L01
+    300                  // One Day Max, Min processing
+    301                  if(HUMI_OLD.Real > HUMI_R.Sam.Max)      HUMI_R.Sam.Max = HUMI_OLD.Real;
+   \   0AA0  90024D            MOV     DPTR,#HUMI_OLD
+   \   0AA3  E0                MOVX    A,@DPTR
+   \   0AA4  FD                MOV     R5,A
+   \   0AA5  A3                INC     DPTR
+   \   0AA6  E0                MOVX    A,@DPTR
+   \   0AA7  FC                MOV     R4,A
+   \   0AA8  900051            MOV     DPTR,#HUMI_R+11
+   \   0AAB  E0                MOVX    A,@DPTR
+   \   0AAC  C3                CLR     C
+   \   0AAD  9C                SUBB    A,R4
+   \   0AAE  900050            MOV     DPTR,#HUMI_R+10
+   \   0AB1  E0                MOVX    A,@DPTR
+   \   0AB2  9D                SUBB    A,R5
+   \   0AB3  5005              JNC     ?0119
+   \   0AB5            ?0118:
+   \   0AB5  ED                MOV     A,R5
+   \   0AB6  F0                MOVX    @DPTR,A
+   \   0AB7  A3                INC     DPTR
+   \   0AB8  EC                MOV     A,R4
+   \   0AB9  F0                MOVX    @DPTR,A
+   \   0ABA            ?0119:
+    302                  if(HUMI_OLD.Real < HUMI_R.Sam.Min)      HUMI_R.Sam.Min = HUMI_OLD.Real;
+   \   0ABA  90024D            MOV     DPTR,#HUMI_OLD
+   \   0ABD  E0                MOVX    A,@DPTR
+   \   0ABE  FD                MOV     R5,A
+   \   0ABF  A3                INC     DPTR
+   \   0AC0  E0                MOVX    A,@DPTR
+   \   0AC1  FC                MOV     R4,A
+   \   0AC2  900053            MOV     DPTR,#HUMI_R+13
+   \   0AC5  E0                MOVX    A,@DPTR
+   \   0AC6  D3                SETB    C
+   \   0AC7  9C                SUBB    A,R4
+   \   0AC8  900052            MOV     DPTR,#HUMI_R+12
+   \   0ACB  E0                MOVX    A,@DPTR
+   \   0ACC  9D                SUBB    A,R5
+   \   0ACD  4005              JC      ?0121
+   \   0ACF            ?0120:
+   \   0ACF  ED                MOV     A,R5
+   \   0AD0  F0                MOVX    @DPTR,A
+   \   0AD1  A3                INC     DPTR
+   \   0AD2  EC                MOV     A,R4
+   \   0AD3  F0                MOVX    @DPTR,A
+   \   0AD4            ?0121:
+    303                  // 10 sec, 1 min, 10 min MAX & MIN proc...
+    304                  if(HUMI_OLD.Real > HUMI_OLD.Maxt )      HUMI_OLD.Maxt  = HUMI_OLD.Real;
+   \   0AD4  90024D            MOV     DPTR,#HUMI_OLD
+   \   0AD7  E0                MOVX    A,@DPTR
+   \   0AD8  FD                MOV     R5,A
+   \   0AD9  A3                INC     DPTR
+   \   0ADA  E0                MOVX    A,@DPTR
+   \   0ADB  FC                MOV     R4,A
+   \   0ADC  A3                INC     DPTR
+   \   0ADD  A3                INC     DPTR
+   \   0ADE  E0                MOVX    A,@DPTR
+   \   0ADF  C3                CLR     C
+   \   0AE0  9C                SUBB    A,R4
+   \   0AE1  90024F            MOV     DPTR,#HUMI_OLD+2
+   \   0AE4  E0                MOVX    A,@DPTR
+   \   0AE5  9D                SUBB    A,R5
+   \   0AE6  5005              JNC     ?0123
+   \   0AE8            ?0122:
+   \   0AE8  ED                MOV     A,R5
+   \   0AE9  F0                MOVX    @DPTR,A
+   \   0AEA  A3                INC     DPTR
+   \   0AEB  EC                MOV     A,R4
+   \   0AEC  F0                MOVX    @DPTR,A
+   \   0AED            ?0123:
+    305                  if(HUMI_OLD.Real < HUMI_OLD.Mint )      HUMI_OLD.Mint  = HUMI_OLD.Real;
+   \   0AED  90024D            MOV     DPTR,#HUMI_OLD
+   \   0AF0  E0                MOVX    A,@DPTR
+   \   0AF1  FD                MOV     R5,A
+   \   0AF2  A3                INC     DPTR
+   \   0AF3  E0                MOVX    A,@DPTR
+   \   0AF4  FC                MOV     R4,A
+   \   0AF5  900256            MOV     DPTR,#HUMI_OLD+9
+   \   0AF8  E0                MOVX    A,@DPTR
+   \   0AF9  D3                SETB    C
+   \   0AFA  9C                SUBB    A,R4
+   \   0AFB  900255            MOV     DPTR,#HUMI_OLD+8
+   \   0AFE  E0                MOVX    A,@DPTR
+   \   0AFF  9D                SUBB    A,R5
+   \   0B00  4005              JC      ?0125
+   \   0B02            ?0124:
+   \   0B02  ED                MOV     A,R5
+   \   0B03  F0                MOVX    @DPTR,A
+   \   0B04  A3                INC     DPTR
+   \   0B05  EC                MOV     A,R4
+   \   0B06  F0                MOVX    @DPTR,A
+   \   0B07            ?0125:
+    306                  if(HUMI_OLD.Real > HUMI_OLD.MaxO )  HUMI_OLD.MaxO  = HUMI_OLD.Real;
+   \   0B07  90024D            MOV     DPTR,#HUMI_OLD
+   \   0B0A  E0                MOVX    A,@DPTR
+   \   0B0B  FD                MOV     R5,A
+   \   0B0C  A3                INC     DPTR
+   \   0B0D  E0                MOVX    A,@DPTR
+   \   0B0E  FC                MOV     R4,A
+   \   0B0F  900258            MOV     DPTR,#HUMI_OLD+11
+   \   0B12  E0                MOVX    A,@DPTR
+   \   0B13  C3                CLR     C
+   \   0B14  9C                SUBB    A,R4
+   \   0B15  900257            MOV     DPTR,#HUMI_OLD+10
+   \   0B18  E0                MOVX    A,@DPTR
+   \   0B19  9D                SUBB    A,R5
+   \   0B1A  5005              JNC     ?0127
+   \   0B1C            ?0126:
+   \   0B1C  ED                MOV     A,R5
+   \   0B1D  F0                MOVX    @DPTR,A
+   \   0B1E  A3                INC     DPTR
+   \   0B1F  EC                MOV     A,R4
+   \   0B20  F0                MOVX    @DPTR,A
+   \   0B21            ?0127:
+    307                  if(HUMI_OLD.Real < HUMI_OLD.MinO )      HUMI_OLD.MinO  = HUMI_OLD.Real;
+   \   0B21  90024D            MOV     DPTR,#HUMI_OLD
+   \   0B24  E0                MOVX    A,@DPTR
+   \   0B25  FD                MOV     R5,A
+   \   0B26  A3                INC     DPTR
+   \   0B27  E0                MOVX    A,@DPTR
+   \   0B28  FC                MOV     R4,A
+   \   0B29  90025E            MOV     DPTR,#HUMI_OLD+17
+   \   0B2C  E0                MOVX    A,@DPTR
+   \   0B2D  D3                SETB    C
+   \   0B2E  9C                SUBB    A,R4
+   \   0B2F  90025D            MOV     DPTR,#HUMI_OLD+16
+   \   0B32  E0                MOVX    A,@DPTR
+   \   0B33  9D                SUBB    A,R5
+   \   0B34  4005              JC      ?0129
+   \   0B36            ?0128:
+   \   0B36  ED                MOV     A,R5
+   \   0B37  F0                MOVX    @DPTR,A
+   \   0B38  A3                INC     DPTR
+   \   0B39  EC                MOV     A,R4
+   \   0B3A  F0                MOVX    @DPTR,A
+   \   0B3B            ?0129:
+    308                  if(HUMI_OLD.Real > HUMI_OLD.MaxO )  HUMI_OLD.MaxT  = HUMI_OLD.Real;
+   \   0B3B  90024D            MOV     DPTR,#HUMI_OLD
+   \   0B3E  E0                MOVX    A,@DPTR
+   \   0B3F  FD                MOV     R5,A
+   \   0B40  A3                INC     DPTR
+   \   0B41  E0                MOVX    A,@DPTR
+   \   0B42  FC                MOV     R4,A
+   \   0B43  900258            MOV     DPTR,#HUMI_OLD+11
+   \   0B46  E0                MOVX    A,@DPTR
+   \   0B47  C3                CLR     C
+   \   0B48  9C                SUBB    A,R4
+   \   0B49  900257            MOV     DPTR,#HUMI_OLD+10
+   \   0B4C  E0                MOVX    A,@DPTR
+   \   0B4D  9D                SUBB    A,R5
+   \   0B4E  5008              JNC     ?0131
+   \   0B50            ?0130:
+   \   0B50  90025F            MOV     DPTR,#HUMI_OLD+18
+   \   0B53  ED                MOV     A,R5
+   \   0B54  F0                MOVX    @DPTR,A
+   \   0B55  A3                INC     DPTR
+   \   0B56  EC                MOV     A,R4
+   \   0B57  F0                MOVX    @DPTR,A
+   \   0B58            ?0131:
+    309                  if(HUMI_OLD.Real < HUMI_OLD.MinO )      HUMI_OLD.MinT  = HUMI_OLD.Real;
+   \   0B58  90024D            MOV     DPTR,#HUMI_OLD
+   \   0B5B  E0                MOVX    A,@DPTR
+   \   0B5C  FD                MOV     R5,A
+   \   0B5D  A3                INC     DPTR
+   \   0B5E  E0                MOVX    A,@DPTR
+   \   0B5F  FC                MOV     R4,A
+   \   0B60  90025E            MOV     DPTR,#HUMI_OLD+17
+   \   0B63  E0                MOVX    A,@DPTR
+   \   0B64  D3                SETB    C
+   \   0B65  9C                SUBB    A,R4
+   \   0B66  90025D            MOV     DPTR,#HUMI_OLD+16
+   \   0B69  E0                MOVX    A,@DPTR
+   \   0B6A  9D                SUBB    A,R5
+   \   0B6B  4008              JC      ?0133
+   \   0B6D            ?0132:
+   \   0B6D  900265            MOV     DPTR,#HUMI_OLD+24
+   \   0B70  ED                MOV     A,R5
+   \   0B71  F0                MOVX    @DPTR,A
+   \   0B72  A3                INC     DPTR
+   \   0B73  EC                MOV     A,R4
+   \   0B74  F0                MOVX    @DPTR,A
+   \   0B75            ?0133:
+    310                  // 10 sec proc...
+    311                  if(HUMI_OLD.Count_t >= 10)      {
+   \   0B75  C3                CLR     C
+   \   0B76  900268            MOV     DPTR,#HUMI_OLD+27
+   \   0B79  E0                MOVX    A,@DPTR
+   \   0B7A  940A              SUBB    A,#10
+   \   0B7C  900267            MOV     DPTR,#HUMI_OLD+26
+   \   0B7F  E0                MOVX    A,@DPTR
+   \   0B80  9400              SUBB    A,#0
+   \   0B82  4060              JC      ?0135
+   \   0B84            ?0134:
+    312                          disable(ES);
+   \   0B84  C2AC              CLR     IE.4
+    313                          HUMI_t.Sam.Avr   = (Word)(HUMI_OLD.Sumt/10.)          ;
+   \   0B86  900251            MOV     DPTR,#HUMI_OLD+4
+   \   0B89  120000            LCALL   ?LD_R4567_XDPTR_L20
+   \   0B8C  120000            LCALL   ?R4567_ULONG_TO_FLT_L02
+   \   0B8F  E4                CLR     A
+   \   0B90  F8                MOV     R0,A
+   \   0B91  F9                MOV     R1,A
+   \   0B92  7A20              MOV     R2,#32
+   \   0B94  7B41              MOV     R3,#65
+   \   0B96  120000            LCALL   ?F_DIV_L02
+   \   0B99  120000            LCALL   ?R4567_FLT_TO_LONG_L02
+   \   0B9C  90005D            MOV     DPTR,#HUMI_t+6
+   \   0B9F  ED                MOV     A,R5
+   \   0BA0  F0                MOVX    @DPTR,A
+   \   0BA1  A3                INC     DPTR
+   \   0BA2  EC                MOV     A,R4
+   \   0BA3  F0                MOVX    @DPTR,A
+    314                          enable(ES);
+   \   0BA4  D2AC              SETB    IE.4
+    315                          HUMI_t.Sam.Max   = HUMI_OLD.Maxt                      ;
+   \   0BA6  90024F            MOV     DPTR,#HUMI_OLD+2
+   \   0BA9  E0                MOVX    A,@DPTR
+   \   0BAA  FD                MOV     R5,A
+   \   0BAB  A3                INC     DPTR
+   \   0BAC  E0                MOVX    A,@DPTR
+   \   0BAD  900061            MOV     DPTR,#HUMI_t+10
+   \   0BB0  CD                XCH     A,R5
+   \   0BB1  F0                MOVX    @DPTR,A
+   \   0BB2  A3                INC     DPTR
+   \   0BB3  CD                XCH     A,R5
+   \   0BB4  F0                MOVX    @DPTR,A
+    316                          HUMI_t.Sam.Min   = HUMI_OLD.Mint                      ;
+   \   0BB5  900255            MOV     DPTR,#HUMI_OLD+8
+   \   0BB8  E0                MOVX    A,@DPTR
+   \   0BB9  FD                MOV     R5,A
+   \   0BBA  A3                INC     DPTR
+   \   0BBB  E0                MOVX    A,@DPTR
+   \   0BBC  900063            MOV     DPTR,#HUMI_t+12
+   \   0BBF  CD                XCH     A,R5
+   \   0BC0  F0                MOVX    @DPTR,A
+   \   0BC1  A3                INC     DPTR
+   \   0BC2  CD                XCH     A,R5
+   \   0BC3  F0                MOVX    @DPTR,A
+    317                          HUMI_OLD.Maxt    = HUMI_OLD.Mint =      HUMI_OLD.Real     ;
+   \   0BC4  90024D            MOV     DPTR,#HUMI_OLD
+   \   0BC7  E0                MOVX    A,@DPTR
+   \   0BC8  FD                MOV     R5,A
+   \   0BC9  A3                INC     DPTR
+   \   0BCA  E0                MOVX    A,@DPTR
+   \   0BCB  A3                INC     DPTR
+   \   0BCC  CD                XCH     A,R5
+   \   0BCD  F0                MOVX    @DPTR,A
+   \   0BCE  A3                INC     DPTR
+   \   0BCF  CD                XCH     A,R5
+   \   0BD0  F0                MOVX    @DPTR,A
+   \   0BD1  900255            MOV     DPTR,#HUMI_OLD+8
+   \   0BD4  CD                XCH     A,R5
+   \   0BD5  F0                MOVX    @DPTR,A
+   \   0BD6  A3                INC     DPTR
+   \   0BD7  CD                XCH     A,R5
+   \   0BD8  F0                MOVX    @DPTR,A
+    318                          HUMI_OLD.Sumt    = 0  ;
+   \   0BD9  900251            MOV     DPTR,#HUMI_OLD+4
+   \   0BDC  E4                CLR     A
+   \   0BDD  F0                MOVX    @DPTR,A
+   \   0BDE  A3                INC     DPTR
+   \   0BDF  F0                MOVX    @DPTR,A
+   \   0BE0  A3                INC     DPTR
+   \   0BE1  F0                MOVX    @DPTR,A
+   \   0BE2  A3                INC     DPTR
+   \   0BE3  F0                MOVX    @DPTR,A
+   \   0BE4            ?0135:
+    319                  }
+    320                  // 1 min proc...
+    321                  if(HUMI_OLD.Count_O >= 60)      {
+   \   0BE4  C3                CLR     C
+   \   0BE5  90026A            MOV     DPTR,#HUMI_OLD+29
+   \   0BE8  E0                MOVX    A,@DPTR
+   \   0BE9  943C              SUBB    A,#60
+   \   0BEB  900269            MOV     DPTR,#HUMI_OLD+28
+   \   0BEE  E0                MOVX    A,@DPTR
+   \   0BEF  9400              SUBB    A,#0
+   \   0BF1  4062              JC      ?0137
+   \   0BF3            ?0136:
+    322                          disable(ES);
+   \   0BF3  C2AC              CLR     IE.4
+    323                          HUMI_O.Sam.Avr   = (Word)(HUMI_OLD.SumO/60.)          ;
+   \   0BF5  900259            MOV     DPTR,#HUMI_OLD+12
+   \   0BF8  120000            LCALL   ?LD_R4567_XDPTR_L20
+   \   0BFB  120000            LCALL   ?R4567_ULONG_TO_FLT_L02
+   \   0BFE  E4                CLR     A
+   \   0BFF  F8                MOV     R0,A
+   \   0C00  F9                MOV     R1,A
+   \   0C01  7B42              MOV     R3,#66
+   \   0C03  7A70              MOV     R2,#112
+   \   0C05  120000            LCALL   ?F_DIV_L02
+   \   0C08  120000            LCALL   ?R4567_FLT_TO_LONG_L02
+   \   0C0B  90006E            MOV     DPTR,#HUMI_O+6
+   \   0C0E  ED                MOV     A,R5
+   \   0C0F  F0                MOVX    @DPTR,A
+   \   0C10  A3                INC     DPTR
+   \   0C11  EC                MOV     A,R4
+   \   0C12  F0                MOVX    @DPTR,A
+    324                          enable(ES);
+   \   0C13  D2AC              SETB    IE.4
+    325                          HUMI_O.Sam.Max   = HUMI_OLD.MaxO                      ;
+   \   0C15  900257            MOV     DPTR,#HUMI_OLD+10
+   \   0C18  E0                MOVX    A,@DPTR
+   \   0C19  FD                MOV     R5,A
+   \   0C1A  A3                INC     DPTR
+   \   0C1B  E0                MOVX    A,@DPTR
+   \   0C1C  900072            MOV     DPTR,#HUMI_O+10
+   \   0C1F  CD                XCH     A,R5
+   \   0C20  F0                MOVX    @DPTR,A
+   \   0C21  A3                INC     DPTR
+   \   0C22  CD                XCH     A,R5
+   \   0C23  F0                MOVX    @DPTR,A
+    326                          HUMI_O.Sam.Min   = HUMI_OLD.MinO                      ;
+   \   0C24  90025D            MOV     DPTR,#HUMI_OLD+16
+   \   0C27  E0                MOVX    A,@DPTR
+   \   0C28  FD                MOV     R5,A
+   \   0C29  A3                INC     DPTR
+   \   0C2A  E0                MOVX    A,@DPTR
+   \   0C2B  900074            MOV     DPTR,#HUMI_O+12
+   \   0C2E  CD                XCH     A,R5
+   \   0C2F  F0                MOVX    @DPTR,A
+   \   0C30  A3                INC     DPTR
+   \   0C31  CD                XCH     A,R5
+   \   0C32  F0                MOVX    @DPTR,A
+    327                          HUMI_OLD.MaxO    = HUMI_OLD.MinO = HUMI_OLD.Real      ;
+   \   0C33  90024D            MOV     DPTR,#HUMI_OLD
+   \   0C36  E0                MOVX    A,@DPTR
+   \   0C37  FD                MOV     R5,A
+   \   0C38  A3                INC     DPTR
+   \   0C39  E0                MOVX    A,@DPTR
+   \   0C3A  900257            MOV     DPTR,#HUMI_OLD+10
+   \   0C3D  CD                XCH     A,R5
+   \   0C3E  F0                MOVX    @DPTR,A
+   \   0C3F  A3                INC     DPTR
+   \   0C40  CD                XCH     A,R5
+   \   0C41  F0                MOVX    @DPTR,A
+   \   0C42  90025D            MOV     DPTR,#HUMI_OLD+16
+   \   0C45  CD                XCH     A,R5
+   \   0C46  F0                MOVX    @DPTR,A
+   \   0C47  A3                INC     DPTR
+   \   0C48  CD                XCH     A,R5
+   \   0C49  F0                MOVX    @DPTR,A
+    328                          HUMI_OLD.SumO    = 0  ;
+   \   0C4A  900259            MOV     DPTR,#HUMI_OLD+12
+   \   0C4D  E4                CLR     A
+   \   0C4E  F0                MOVX    @DPTR,A
+   \   0C4F  A3                INC     DPTR
+   \   0C50  F0                MOVX    @DPTR,A
+   \   0C51  A3                INC     DPTR
+   \   0C52  F0                MOVX    @DPTR,A
+   \   0C53  A3                INC     DPTR
+   \   0C54  F0                MOVX    @DPTR,A
+   \   0C55            ?0137:
+    329                  }
+    330                  // 10 min proc...
+    331                  if(HUMI_OLD.Count_T >= 600)     {
+   \   0C55  C3                CLR     C
+   \   0C56  90026C            MOV     DPTR,#HUMI_OLD+31
+   \   0C59  E0                MOVX    A,@DPTR
+   \   0C5A  9458              SUBB    A,#88
+   \   0C5C  90026B            MOV     DPTR,#HUMI_OLD+30
+   \   0C5F  E0                MOVX    A,@DPTR
+   \   0C60  9402              SUBB    A,#2
+   \   0C62  4062              JC      ?0139
+   \   0C64            ?0138:
+    332                          disable(ES);
+   \   0C64  C2AC              CLR     IE.4
+    333                          HUMI_T.Sam.Avr   = (Word)(HUMI_OLD.SumT/600.)         ;
+   \   0C66  900261            MOV     DPTR,#HUMI_OLD+20
+   \   0C69  120000            LCALL   ?LD_R4567_XDPTR_L20
+   \   0C6C  120000            LCALL   ?R4567_ULONG_TO_FLT_L02
+   \   0C6F  E4                CLR     A
+   \   0C70  F8                MOV     R0,A
+   \   0C71  F9                MOV     R1,A
+   \   0C72  7A16              MOV     R2,#22
+   \   0C74  7B44              MOV     R3,#68
+   \   0C76  120000            LCALL   ?F_DIV_L02
+   \   0C79  120000            LCALL   ?R4567_FLT_TO_LONG_L02
+   \   0C7C  90007F            MOV     DPTR,#HUMI_T+6
+   \   0C7F  ED                MOV     A,R5
+   \   0C80  F0                MOVX    @DPTR,A
+   \   0C81  A3                INC     DPTR
+   \   0C82  EC                MOV     A,R4
+   \   0C83  F0                MOVX    @DPTR,A
+    334                          enable(ES);
+   \   0C84  D2AC              SETB    IE.4
+    335                          HUMI_T.Sam.Max   = HUMI_OLD.MaxT                      ;
+   \   0C86  90025F            MOV     DPTR,#HUMI_OLD+18
+   \   0C89  E0                MOVX    A,@DPTR
+   \   0C8A  FD                MOV     R5,A
+   \   0C8B  A3                INC     DPTR
+   \   0C8C  E0                MOVX    A,@DPTR
+   \   0C8D  900083            MOV     DPTR,#HUMI_T+10
+   \   0C90  CD                XCH     A,R5
+   \   0C91  F0                MOVX    @DPTR,A
+   \   0C92  A3                INC     DPTR
+   \   0C93  CD                XCH     A,R5
+   \   0C94  F0                MOVX    @DPTR,A
+    336                          HUMI_T.Sam.Min   = HUMI_OLD.MinT                      ;
+   \   0C95  900265            MOV     DPTR,#HUMI_OLD+24
+   \   0C98  E0                MOVX    A,@DPTR
+   \   0C99  FD                MOV     R5,A
+   \   0C9A  A3                INC     DPTR
+   \   0C9B  E0                MOVX    A,@DPTR
+   \   0C9C  900085            MOV     DPTR,#HUMI_T+12
+   \   0C9F  CD                XCH     A,R5
+   \   0CA0  F0                MOVX    @DPTR,A
+   \   0CA1  A3                INC     DPTR
+   \   0CA2  CD                XCH     A,R5
+   \   0CA3  F0                MOVX    @DPTR,A
+    337                          HUMI_OLD.MaxT    = HUMI_OLD.MinT = HUMI_OLD.Real      ;
+   \   0CA4  90024D            MOV     DPTR,#HUMI_OLD
+   \   0CA7  E0                MOVX    A,@DPTR
+   \   0CA8  FD                MOV     R5,A
+   \   0CA9  A3                INC     DPTR
+   \   0CAA  E0                MOVX    A,@DPTR
+   \   0CAB  90025F            MOV     DPTR,#HUMI_OLD+18
+   \   0CAE  CD                XCH     A,R5
+   \   0CAF  F0                MOVX    @DPTR,A
+   \   0CB0  A3                INC     DPTR
+   \   0CB1  CD                XCH     A,R5
+   \   0CB2  F0                MOVX    @DPTR,A
+   \   0CB3  900265            MOV     DPTR,#HUMI_OLD+24
+   \   0CB6  CD                XCH     A,R5
+   \   0CB7  F0                MOVX    @DPTR,A
+   \   0CB8  A3                INC     DPTR
+   \   0CB9  CD                XCH     A,R5
+   \   0CBA  F0                MOVX    @DPTR,A
+    338                          HUMI_OLD.SumT    = 0  ;
+   \   0CBB  900261            MOV     DPTR,#HUMI_OLD+20
+   \   0CBE  E4                CLR     A
+   \   0CBF  F0                MOVX    @DPTR,A
+   \   0CC0  A3                INC     DPTR
+   \   0CC1  F0                MOVX    @DPTR,A
+   \   0CC2  A3                INC     DPTR
+   \   0CC3  F0                MOVX    @DPTR,A
+   \   0CC4  A3                INC     DPTR
+   \   0CC5  F0                MOVX    @DPTR,A
+   \   0CC6            ?0139:
+    339                  }
+    340          
+    341                  if(HUMI_OLD.Count_t >= 10)                      HUMI_OLD.Count_t = 0;
+   \   0CC6  C3                CLR     C
+   \   0CC7  900268            MOV     DPTR,#HUMI_OLD+27
+   \   0CCA  E0                MOVX    A,@DPTR
+   \   0CCB  940A              SUBB    A,#10
+   \   0CCD  900267            MOV     DPTR,#HUMI_OLD+26
+   \   0CD0  E0                MOVX    A,@DPTR
+   \   0CD1  9400              SUBB    A,#0
+   \   0CD3  4006              JC      ?0141
+   \   0CD5            ?0140:
+   \   0CD5  E4                CLR     A
+   \   0CD6  F0                MOVX    @DPTR,A
+   \   0CD7  A3                INC     DPTR
+   \   0CD8  F0                MOVX    @DPTR,A
+   \   0CD9  800C              SJMP    ?0142
+   \   0CDB            ?0141:
+    342                  else                                                            HUMI_OLD.Count_t++  ;
+   \   0CDB  A3                INC     DPTR
+   \   0CDC  E0                MOVX    A,@DPTR
+   \   0CDD  04                INC     A
+   \   0CDE  F0                MOVX    @DPTR,A
+   \   0CDF  900267            MOV     DPTR,#HUMI_OLD+26
+   \   0CE2  7003              JNZ     ?0186
+   \   0CE4  E0                MOVX    A,@DPTR
+   \   0CE5  04                INC     A
+   \   0CE6  F0                MOVX    @DPTR,A
+   \   0CE7            ?0186:
+   \   0CE7            ?0142:
+    343                  if(HUMI_OLD.Count_O >= 60)                      HUMI_OLD.Count_O = 0;
+   \   0CE7  C3                CLR     C
+   \   0CE8  90026A            MOV     DPTR,#HUMI_OLD+29
+   \   0CEB  E0                MOVX    A,@DPTR
+   \   0CEC  943C              SUBB    A,#60
+   \   0CEE  900269            MOV     DPTR,#HUMI_OLD+28
+   \   0CF1  E0                MOVX    A,@DPTR
+   \   0CF2  9400              SUBB    A,#0
+   \   0CF4  4006              JC      ?0144
+   \   0CF6            ?0143:
+   \   0CF6  E4                CLR     A
+   \   0CF7  F0                MOVX    @DPTR,A
+   \   0CF8  A3                INC     DPTR
+   \   0CF9  F0                MOVX    @DPTR,A
+   \   0CFA  800C              SJMP    ?0145
+   \   0CFC            ?0144:
+    344                  else                                                            HUMI_OLD.Count_O++  ;
+   \   0CFC  A3                INC     DPTR
+   \   0CFD  E0                MOVX    A,@DPTR
+   \   0CFE  04                INC     A
+   \   0CFF  F0                MOVX    @DPTR,A
+   \   0D00  900269            MOV     DPTR,#HUMI_OLD+28
+   \   0D03  7003              JNZ     ?0187
+   \   0D05  E0                MOVX    A,@DPTR
+   \   0D06  04                INC     A
+   \   0D07  F0                MOVX    @DPTR,A
+   \   0D08            ?0187:
+   \   0D08            ?0145:
+    345                  if(HUMI_OLD.Count_T >= 600)                     HUMI_OLD.Count_T = 0;
+   \   0D08  C3                CLR     C
+   \   0D09  90026C            MOV     DPTR,#HUMI_OLD+31
+   \   0D0C  E0                MOVX    A,@DPTR
+   \   0D0D  9458              SUBB    A,#88
+   \   0D0F  90026B            MOV     DPTR,#HUMI_OLD+30
+   \   0D12  E0                MOVX    A,@DPTR
+   \   0D13  9402              SUBB    A,#2
+   \   0D15  4006              JC      ?0147
+   \   0D17            ?0146:
+   \   0D17  E4                CLR     A
+   \   0D18  F0                MOVX    @DPTR,A
+   \   0D19  A3                INC     DPTR
+   \   0D1A  F0                MOVX    @DPTR,A
+   \   0D1B  800C              SJMP    ?0148
+   \   0D1D            ?0147:
+    346                  else                                                            HUMI_OLD.Count_T++  ;
+   \   0D1D  A3                INC     DPTR
+   \   0D1E  E0                MOVX    A,@DPTR
+   \   0D1F  04                INC     A
+   \   0D20  F0                MOVX    @DPTR,A
+   \   0D21  90026B            MOV     DPTR,#HUMI_OLD+30
+   \   0D24  7003              JNZ     ?0188
+   \   0D26  E0                MOVX    A,@DPTR
+   \   0D27  04                INC     A
+   \   0D28  F0                MOVX    @DPTR,A
+   \   0D29            ?0188:
+   \   0D29            ?0148:
+    347          
+    348                  disable(ES);
+   \   0D29  C2AC              CLR     IE.4
+    349                  MUX0 = 0;     MUX1 = 0;     MUX2 = 0 ;  // Temp CH Select
+   \   0D2B  C293              CLR     P1.3
+   \   0D2D  C294              CLR     P1.4
+   \   0D2F  C295              CLR     P1.5
+    350                  Flag = OFF;                              // Disable Flag . (Select.Loop Used. Flag Off)
+   \   0D31  C200              CLR     Flag
+    351                  enable(ES);
+   \   0D33  D2AC              SETB    IE.4
+    352          }
+   \   0D35  22                RET
+    353          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    354          //[*]  Interrupt Function Start....                                        [*]
+    355          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    356          interrupt void SCON_int(void)   // Serial Interrupt Function
+    357          {
+   \   0D36            SCON_int:
+   \   0D36  C0E0              PUSH    ACC
+   \   0D38  C0F0              PUSH    B
+   \   0D3A  C082              PUSH    DPL
+   \   0D3C  C083              PUSH    DPH
+   \   0D3E  C0D0              PUSH    PSW
+   \   0D40  E8                MOV     A,R0
+   \   0D41  C0E0              PUSH    ACC
+   \   0D43  E9                MOV     A,R1
+   \   0D44  C0E0              PUSH    ACC
+   \   0D46  EA                MOV     A,R2
+   \   0D47  C0E0              PUSH    ACC
+   \   0D49  EB                MOV     A,R3
+   \   0D4A  C0E0              PUSH    ACC
+   \   0D4C  EC                MOV     A,R4
+   \   0D4D  C0E0              PUSH    ACC
+   \   0D4F  ED                MOV     A,R5
+   \   0D50  C0E0              PUSH    ACC
+   \   0D52  EE                MOV     A,R6
+   \   0D53  C0E0              PUSH    ACC
+   \   0D55  EF                MOV     A,R7
+   \   0D56  C0E0              PUSH    ACC
+    358                  disable(EA);
+   \   0D58  C2AF              CLR     IE.7
+    359                  if(RI)  {
+   \   0D5A  309840            JNB     SCON.0,?0150
+   \   0D5D            ?0149:
+    360                          disable(RI);                    enable(GREENL);
+   \   0D5D  C298              CLR     SCON.0
+   \   0D5F  D290              SETB    P1.0
+    361                          Com.RxBuf[Com.RxEp++] = SBUF;
+   \   0D61  E599              MOV     A,SBUF
+   \   0D63  900227            MOV     DPTR,#Com+402
+   \   0D66  FE                MOV     R6,A
+   \   0D67  E0                MOVX    A,@DPTR
+   \   0D68  FD                MOV     R5,A
+   \   0D69  A3                INC     DPTR
+   \   0D6A  E0                MOVX    A,@DPTR
+   \   0D6B  FC                MOV     R4,A
+   \   0D6C  E0                MOVX    A,@DPTR
+   \   0D6D  04                INC     A
+   \   0D6E  F0                MOVX    @DPTR,A
+   \   0D6F  900227            MOV     DPTR,#Com+402
+   \   0D72  7003              JNZ     ?0189
+   \   0D74  E0                MOVX    A,@DPTR
+   \   0D75  04                INC     A
+   \   0D76  F0                MOVX    @DPTR,A
+   \   0D77            ?0189:
+   \   0D77  EC                MOV     A,R4
+   \   0D78  2495              ADD     A,#LOW(Com)
+   \   0D7A  F582              MOV     DPL,A
+   \   0D7C  ED                MOV     A,R5
+   \   0D7D  3400              ADDC    A,#HIGH(Com)
+   \   0D7F  F583              MOV     DPH,A
+   \   0D81  EE                MOV     A,R6
+   \   0D82  F0                MOVX    @DPTR,A
+    362                          if(Com.RxEp >= MAX)             Com.RxEp = 0;
+   \   0D83  C3                CLR     C
+   \   0D84  900228            MOV     DPTR,#Com+403
+   \   0D87  E0                MOVX    A,@DPTR
+   \   0D88  94C8              SUBB    A,#200
+   \   0D8A  900227            MOV     DPTR,#Com+402
+   \   0D8D  E0                MOVX    A,@DPTR
+   \   0D8E  6480              XRL     A,#128
+   \   0D90  9480              SUBB    A,#128
+   \   0D92  4004              JC      ?0152
+   \   0D94            ?0151:
+   \   0D94  E4                CLR     A
+   \   0D95  F0                MOVX    @DPTR,A
+   \   0D96  A3                INC     DPTR
+   \   0D97  F0                MOVX    @DPTR,A
+   \   0D98            ?0152:
+    363                          check_mpm();                     // Portocol Check. ( MPM -> SAM )
+   \   0D98  120000            LCALL   $REFFN check_mpm
+   \   0D9B  8055              SJMP    ?0153
+   \   0D9D            ?0150:
+    364                  }
+    365                  else if(TI)     {
+   \   0D9D  309952            JNB     SCON.1,?0155
+   \   0DA0            ?0154:
+    366                          disable(TI);
+   \   0DA0  C299              CLR     SCON.1
+    367                          if(Com.TxSp != Com.TxEp)        SBUF = Com.TxBuf[Com.TxSp++];
+   \   0DA2  900229            MOV     DPTR,#Com+404
+   \   0DA5  E0                MOVX    A,@DPTR
+   \   0DA6  FD                MOV     R5,A
+   \   0DA7  A3                INC     DPTR
+   \   0DA8  E0                MOVX    A,@DPTR
+   \   0DA9  FC                MOV     R4,A
+   \   0DAA  A3                INC     DPTR
+   \   0DAB  A3                INC     DPTR
+   \   0DAC  E0                MOVX    A,@DPTR
+   \   0DAD  6C                XRL     A,R4
+   \   0DAE  7007              JNZ     ?0190
+   \   0DB0  90022B            MOV     DPTR,#Com+406
+   \   0DB3  E0                MOVX    A,@DPTR
+   \   0DB4  6D                XRL     A,R5
+   \   0DB5  6023              JZ      ?0157
+   \   0DB7            ?0190:
+   \   0DB7            ?0156:
+   \   0DB7  EC                MOV     A,R4
+   \   0DB8  FE                MOV     R6,A
+   \   0DB9  ED                MOV     A,R5
+   \   0DBA  FF                MOV     R7,A
+   \   0DBB  CC                XCH     A,R4
+   \   0DBC  2401              ADD     A,#1
+   \   0DBE  CC                XCH     A,R4
+   \   0DBF  CD                XCH     A,R5
+   \   0DC0  3400              ADDC    A,#0
+   \   0DC2  CD                XCH     A,R5
+   \   0DC3  900229            MOV     DPTR,#Com+404
+   \   0DC6  ED                MOV     A,R5
+   \   0DC7  F0                MOVX    @DPTR,A
+   \   0DC8  A3                INC     DPTR
+   \   0DC9  EC                MOV     A,R4
+   \   0DCA  F0                MOVX    @DPTR,A
+   \   0DCB  EE                MOV     A,R6
+   \   0DCC  245D              ADD     A,#LOW(Com+200)
+   \   0DCE  F582              MOV     DPL,A
+   \   0DD0  EF                MOV     A,R7
+   \   0DD1  3401              ADDC    A,#HIGH(Com+200)
+   \   0DD3  F583              MOV     DPH,A
+   \   0DD5  E0                MOVX    A,@DPTR
+   \   0DD6  F599              MOV     SBUF,A
+   \   0DD8  8002              SJMP    ?0158
+   \   0DDA            ?0157:
+    368                          else                                            disable(REDL);
+   \   0DDA  C291              CLR     P1.1
+   \   0DDC            ?0158:
+    369                          if(Com.TxSp >= MAX)                     Com.TxSp = 0;
+   \   0DDC  C3                CLR     C
+   \   0DDD  EC                MOV     A,R4
+   \   0DDE  94C8              SUBB    A,#200
+   \   0DE0  ED                MOV     A,R5
+   \   0DE1  6480              XRL     A,#128
+   \   0DE3  9480              SUBB    A,#128
+   \   0DE5  400B              JC      ?0160
+   \   0DE7            ?0159:
+   \   0DE7  E4                CLR     A
+   \   0DE8  FC                MOV     R4,A
+   \   0DE9  FD                MOV     R5,A
+   \   0DEA  900229            MOV     DPTR,#Com+404
+   \   0DED  ED                MOV     A,R5
+   \   0DEE  F0                MOVX    @DPTR,A
+   \   0DEF  A3                INC     DPTR
+   \   0DF0  EC                MOV     A,R4
+   \   0DF1  F0                MOVX    @DPTR,A
+   \   0DF2            ?0160:
+   \   0DF2            ?0155:
+   \   0DF2            ?0153:
+    370                  }
+    371                  enable(EA);
+   \   0DF2  D2AF              SETB    IE.7
+    372          }
+   \   0DF4  D0E0              POP     ACC
+   \   0DF6  FF                MOV     R7,A
+   \   0DF7  D0E0              POP     ACC
+   \   0DF9  FE                MOV     R6,A
+   \   0DFA  D0E0              POP     ACC
+   \   0DFC  FD                MOV     R5,A
+   \   0DFD  D0E0              POP     ACC
+   \   0DFF  FC                MOV     R4,A
+   \   0E00  D0E0              POP     ACC
+   \   0E02  FB                MOV     R3,A
+   \   0E03  D0E0              POP     ACC
+   \   0E05  FA                MOV     R2,A
+   \   0E06  D0E0              POP     ACC
+   \   0E08  F9                MOV     R1,A
+   \   0E09  D0E0              POP     ACC
+   \   0E0B  F8                MOV     R0,A
+   \   0E0C  D0D0              POP     PSW
+   \   0E0E  D083              POP     DPH
+   \   0E10  D082              POP     DPL
+   \   0E12  D0F0              POP     B
+   \   0E14  D0E0              POP     ACC
+   \   0E16  32                RETI
+    373          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    374          interrupt void EX0_int(void)    // External Interrupt Function
+    375          {
+   \   0E17            EX0_int:
+   \   0E17  C0E0              PUSH    ACC
+   \   0E19  C082              PUSH    DPL
+   \   0E1B  C083              PUSH    DPH
+   \   0E1D  C0D0              PUSH    PSW
+   \   0E1F  EC                MOV     A,R4
+   \   0E20  C0E0              PUSH    ACC
+   \   0E22  ED                MOV     A,R5
+   \   0E23  C0E0              PUSH    ACC
+    376                  disable(EA);
+   \   0E25  C2AF              CLR     IE.7
+    377                  switch(Event)
+   \   0E27  900275            MOV     DPTR,#Event
+   \   0E2A  E0                MOVX    A,@DPTR
+   \   0E2B  7016              JNZ     ?0163
+   \   0E2D            ?0162:
+    378                  {
+    379                          case    0:  Loop.Select = Temp_cal;             Flag = ON;
+   \   0E2D  7400              MOV     A,#LOW $IFREF Temp_cal
+   \   0E2F  7D00              MOV     R5,#HIGH $IFREF Temp_cal
+   \   0E31  900000            MOV     DPTR,#Loop
+   \   0E34  CD                XCH     A,R5
+   \   0E35  F0                MOVX    @DPTR,A
+   \   0E36  A3                INC     DPTR
+   \   0E37  CD                XCH     A,R5
+   \   0E38  F0                MOVX    @DPTR,A
+   \   0E39  D200              SETB    Flag
+    380                                                  Event++;                                                                          break;
+   \   0E3B  900275            MOV     DPTR,#Event
+   \   0E3E  E0                MOVX    A,@DPTR
+   \   0E3F  04                INC     A
+   \   0E40  F0                MOVX    @DPTR,A
+   \   0E41  8030              SJMP    ?0161
+   \   0E43            ?0163:
+   \   0E43  B40108            CJNE    A,#1,?0164
+    381                          case    1:  Event++;                                                                      break;
+   \   0E46  900275            MOV     DPTR,#Event
+   \   0E49  E0                MOVX    A,@DPTR
+   \   0E4A  04                INC     A
+   \   0E4B  F0                MOVX    @DPTR,A
+   \   0E4C  8025              SJMP    ?0161
+   \   0E4E            ?0164:
+   \   0E4E  B40216            CJNE    A,#2,?0165
+    382                          case    2:      Loop.Select = Humi_cal;         Flag = ON;
+   \   0E51  7400              MOV     A,#LOW $IFREF Humi_cal
+   \   0E53  7D00              MOV     R5,#HIGH $IFREF Humi_cal
+   \   0E55  900000            MOV     DPTR,#Loop
+   \   0E58  CD                XCH     A,R5
+   \   0E59  F0                MOVX    @DPTR,A
+   \   0E5A  A3                INC     DPTR
+   \   0E5B  CD                XCH     A,R5
+   \   0E5C  F0                MOVX    @DPTR,A
+   \   0E5D  D200              SETB    Flag
+    383                                                  Event++;                                                                          break;
+   \   0E5F  900275            MOV     DPTR,#Event
+   \   0E62  E0                MOVX    A,@DPTR
+   \   0E63  04                INC     A
+   \   0E64  F0                MOVX    @DPTR,A
+   \   0E65  800C              SJMP    ?0161
+   \   0E67            ?0165:
+   \   0E67  B40307            CJNE    A,#3,?0166
+    384                          case    3:      Event=0 ;                                                                 break;
+   \   0E6A  E4                CLR     A
+   \   0E6B  900275            MOV     DPTR,#Event
+   \   0E6E  F0                MOVX    @DPTR,A
+   \   0E6F  8002              SJMP    ?0161
+   \   0E71            ?0166:
+    385                          default  :                                                                                                break;
+   \   0E71  8000              SJMP    ?0161
+   \   0E73            ?0161:
+    386                  }
+    387                  enable(EA);
+   \   0E73  D2AF              SETB    IE.7
+    388          }
+   \   0E75  D0E0              POP     ACC
+   \   0E77  FD                MOV     R5,A
+   \   0E78  D0E0              POP     ACC
+   \   0E7A  FC                MOV     R4,A
+   \   0E7B  D0D0              POP     PSW
+   \   0E7D  D083              POP     DPH
+   \   0E7F  D082              POP     DPL
+   \   0E81  D0E0              POP     ACC
+   \   0E83  32                RETI
+    389          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    390          //[*]    Main Program Start...                                             [*]
+    391          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    392          void main(void)
+    393          {
+   \   0E84            main:
+    394                  initiliaze();                      // Initiliaze Serial & Variable & Structs.
+   \   0E84  120000            LCALL   $REFFN initiliaze
+   \   0E87            ?0168:
+    395          
+    396                  while(1)        {
+    397                          if(Init == 1)   {      // Min & Max Value Initiliaze
+   \   0E87  900276            MOV     DPTR,#Init
+   \   0E8A  E0                MOVX    A,@DPTR
+   \   0E8B  14                DEC     A
+   \   0E8C  6003              JZ      $+5
+   \   0E8E  020F4E            LJMP    ?0171
+   \   0E91            ?0170:
+    398                                  disable(EA);
+   \   0E91  C2AF              CLR     IE.7
+    399                                  TEMP_t.Sam.Max = TEMP_OLD.Real;  TEMP_t.Sam.Min = TEMP_OLD.Real;
+   \   0E93  90022D            MOV     DPTR,#TEMP_OLD
+   \   0E96  E0                MOVX    A,@DPTR
+   \   0E97  FD                MOV     R5,A
+   \   0E98  A3                INC     DPTR
+   \   0E99  E0                MOVX    A,@DPTR
+   \   0E9A  90001D            MOV     DPTR,#TEMP_t+10
+   \   0E9D  CD                XCH     A,R5
+   \   0E9E  F0                MOVX    @DPTR,A
+   \   0E9F  A3                INC     DPTR
+   \   0EA0  CD                XCH     A,R5
+   \   0EA1  F0                MOVX    @DPTR,A
+   \   0EA2  90022D            MOV     DPTR,#TEMP_OLD
+   \   0EA5  E0                MOVX    A,@DPTR
+   \   0EA6  FD                MOV     R5,A
+   \   0EA7  A3                INC     DPTR
+   \   0EA8  E0                MOVX    A,@DPTR
+   \   0EA9  90001F            MOV     DPTR,#TEMP_t+12
+   \   0EAC  CD                XCH     A,R5
+   \   0EAD  F0                MOVX    @DPTR,A
+   \   0EAE  A3                INC     DPTR
+   \   0EAF  CD                XCH     A,R5
+   \   0EB0  F0                MOVX    @DPTR,A
+    400                                  TEMP_O.Sam.Max = TEMP_OLD.Real;  TEMP_O.Sam.Min = TEMP_OLD.Real;
+   \   0EB1  90022D            MOV     DPTR,#TEMP_OLD
+   \   0EB4  E0                MOVX    A,@DPTR
+   \   0EB5  FD                MOV     R5,A
+   \   0EB6  A3                INC     DPTR
+   \   0EB7  E0                MOVX    A,@DPTR
+   \   0EB8  90002E            MOV     DPTR,#TEMP_O+10
+   \   0EBB  CD                XCH     A,R5
+   \   0EBC  F0                MOVX    @DPTR,A
+   \   0EBD  A3                INC     DPTR
+   \   0EBE  CD                XCH     A,R5
+   \   0EBF  F0                MOVX    @DPTR,A
+   \   0EC0  90022D            MOV     DPTR,#TEMP_OLD
+   \   0EC3  E0                MOVX    A,@DPTR
+   \   0EC4  FD                MOV     R5,A
+   \   0EC5  A3                INC     DPTR
+   \   0EC6  E0                MOVX    A,@DPTR
+   \   0EC7  900030            MOV     DPTR,#TEMP_O+12
+   \   0ECA  CD                XCH     A,R5
+   \   0ECB  F0                MOVX    @DPTR,A
+   \   0ECC  A3                INC     DPTR
+   \   0ECD  CD                XCH     A,R5
+   \   0ECE  F0                MOVX    @DPTR,A
+    401                                  TEMP_T.Sam.Max = TEMP_OLD.Real;  TEMP_T.Sam.Min = TEMP_OLD.Real;
+   \   0ECF  90022D            MOV     DPTR,#TEMP_OLD
+   \   0ED2  E0                MOVX    A,@DPTR
+   \   0ED3  FD                MOV     R5,A
+   \   0ED4  A3                INC     DPTR
+   \   0ED5  E0                MOVX    A,@DPTR
+   \   0ED6  90003F            MOV     DPTR,#TEMP_T+10
+   \   0ED9  CD                XCH     A,R5
+   \   0EDA  F0                MOVX    @DPTR,A
+   \   0EDB  A3                INC     DPTR
+   \   0EDC  CD                XCH     A,R5
+   \   0EDD  F0                MOVX    @DPTR,A
+   \   0EDE  90022D            MOV     DPTR,#TEMP_OLD
+   \   0EE1  E0                MOVX    A,@DPTR
+   \   0EE2  FD                MOV     R5,A
+   \   0EE3  A3                INC     DPTR
+   \   0EE4  E0                MOVX    A,@DPTR
+   \   0EE5  900041            MOV     DPTR,#TEMP_T+12
+   \   0EE8  CD                XCH     A,R5
+   \   0EE9  F0                MOVX    @DPTR,A
+   \   0EEA  A3                INC     DPTR
+   \   0EEB  CD                XCH     A,R5
+   \   0EEC  F0                MOVX    @DPTR,A
+    402          
+    403                                  HUMI_t.Sam.Max = HUMI_OLD.Real;  HUMI_t.Sam.Min = HUMI_OLD.Real;
+   \   0EED  90024D            MOV     DPTR,#HUMI_OLD
+   \   0EF0  E0                MOVX    A,@DPTR
+   \   0EF1  FD                MOV     R5,A
+   \   0EF2  A3                INC     DPTR
+   \   0EF3  E0                MOVX    A,@DPTR
+   \   0EF4  900061            MOV     DPTR,#HUMI_t+10
+   \   0EF7  CD                XCH     A,R5
+   \   0EF8  F0                MOVX    @DPTR,A
+   \   0EF9  A3                INC     DPTR
+   \   0EFA  CD                XCH     A,R5
+   \   0EFB  F0                MOVX    @DPTR,A
+   \   0EFC  90024D            MOV     DPTR,#HUMI_OLD
+   \   0EFF  E0                MOVX    A,@DPTR
+   \   0F00  FD                MOV     R5,A
+   \   0F01  A3                INC     DPTR
+   \   0F02  E0                MOVX    A,@DPTR
+   \   0F03  900063            MOV     DPTR,#HUMI_t+12
+   \   0F06  CD                XCH     A,R5
+   \   0F07  F0                MOVX    @DPTR,A
+   \   0F08  A3                INC     DPTR
+   \   0F09  CD                XCH     A,R5
+   \   0F0A  F0                MOVX    @DPTR,A
+    404                                  HUMI_O.Sam.Max = HUMI_OLD.Real;  HUMI_O.Sam.Min = HUMI_OLD.Real;
+   \   0F0B  90024D            MOV     DPTR,#HUMI_OLD
+   \   0F0E  E0                MOVX    A,@DPTR
+   \   0F0F  FD                MOV     R5,A
+   \   0F10  A3                INC     DPTR
+   \   0F11  E0                MOVX    A,@DPTR
+   \   0F12  900072            MOV     DPTR,#HUMI_O+10
+   \   0F15  CD                XCH     A,R5
+   \   0F16  F0                MOVX    @DPTR,A
+   \   0F17  A3                INC     DPTR
+   \   0F18  CD                XCH     A,R5
+   \   0F19  F0                MOVX    @DPTR,A
+   \   0F1A  90024D            MOV     DPTR,#HUMI_OLD
+   \   0F1D  E0                MOVX    A,@DPTR
+   \   0F1E  FD                MOV     R5,A
+   \   0F1F  A3                INC     DPTR
+   \   0F20  E0                MOVX    A,@DPTR
+   \   0F21  900074            MOV     DPTR,#HUMI_O+12
+   \   0F24  CD                XCH     A,R5
+   \   0F25  F0                MOVX    @DPTR,A
+   \   0F26  A3                INC     DPTR
+   \   0F27  CD                XCH     A,R5
+   \   0F28  F0                MOVX    @DPTR,A
+    405                                  HUMI_T.Sam.Max = HUMI_OLD.Real;  HUMI_T.Sam.Min = HUMI_OLD.Real;
+   \   0F29  90024D            MOV     DPTR,#HUMI_OLD
+   \   0F2C  E0                MOVX    A,@DPTR
+   \   0F2D  FD                MOV     R5,A
+   \   0F2E  A3                INC     DPTR
+   \   0F2F  E0                MOVX    A,@DPTR
+   \   0F30  900083            MOV     DPTR,#HUMI_T+10
+   \   0F33  CD                XCH     A,R5
+   \   0F34  F0                MOVX    @DPTR,A
+   \   0F35  A3                INC     DPTR
+   \   0F36  CD                XCH     A,R5
+   \   0F37  F0                MOVX    @DPTR,A
+   \   0F38  90024D            MOV     DPTR,#HUMI_OLD
+   \   0F3B  E0                MOVX    A,@DPTR
+   \   0F3C  FD                MOV     R5,A
+   \   0F3D  A3                INC     DPTR
+   \   0F3E  E0                MOVX    A,@DPTR
+   \   0F3F  900085            MOV     DPTR,#HUMI_T+12
+   \   0F42  CD                XCH     A,R5
+   \   0F43  F0                MOVX    @DPTR,A
+   \   0F44  A3                INC     DPTR
+   \   0F45  CD                XCH     A,R5
+   \   0F46  F0                MOVX    @DPTR,A
+    406                                  Init = 0;
+   \   0F47  E4                CLR     A
+   \   0F48  900276            MOV     DPTR,#Init
+   \   0F4B  F0                MOVX    @DPTR,A
+    407                                  enable(EA);
+   \   0F4C  D2AF              SETB    IE.7
+   \   0F4E            ?0171:
+    408                          }
+    409                          if(Flag == ON)          Loop.Select();   // Run Function (Select Function)
+   \   0F4E  300011            JNB     Flag,?0173
+   \   0F51            ?0172:
+   \   0F51  900000            MOV     DPTR,#Loop
+   \   0F54  E0                MOVX    A,@DPTR
+   \   0F55  FF                MOV     R7,A
+   \   0F56  A3                INC     DPTR
+   \   0F57  E0                MOVX    A,@DPTR
+   \   0F58  F582              MOV     DPL,A
+   \   0F5A  8F83              MOV     DPH,R7
+   \   0F5C  120000            LCALL   ?LOAD_IND_DPTR2_L20
+   \   0F5F  120000            LCALL   ?LCALL_IND_L20
+   \   0F62            ?0173:
+    410                  }
+    411          }
+   \   0F62  020E87            LJMP    ?0168
+    412          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+   \   0000                    RSEG    CONST
+   \   0000            NAME:
+   \   0000  5B2A5DC4          DB      '[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+   \   0004  C4C4C4C4
+   \   0008  C4C4C4C4
+   \   000C  C4C4C4C4
+   \   0010  C4C4
+   \   0012  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   0016  C4C4C4C4
+   \   001A  C4C4C4C4
+   \   001E  C4C4C4C4
+   \   0022  C4
+   \   0023  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   0027  C4C4C4C4
+   \   002B  C4C4C4C4
+   \   002F  C4C4C4C4
+   \   0033  C4
+   \   0034  C4C4C4C4          DB      -60,-60,-60,-60,'[*]',0
+   \   0038  5B2A5D00
+   \   003C  5B2A5D20          DB      '[*]  JIN-YANG  INDUSTRIAL.,CO LTD                       [*]',0
+   \   0040  204A494E
+   \   0044  2D59414E
+   \   0048  47202049
+   \   004C  4E445553
+   \   0050  54524941
+   \   0054  4C2E2C43
+   \   0058  4F204C54
+   \   005C  44202020
+   \   0060  20202020
+   \   0064  20202020
+   \   0068  20202020
+   \   006C  20202020
+   \   0070  20202020
+   \   0074  5B2A5D00
+   \   0078  5B2A5D20          DB      '[*]  Program : PARK. JongKil    Date : 1997. 2. 26~     [*]',0
+   \   007C  2050726F
+   \   0080  6772616D
+   \   0084  203A2050
+   \   0088  41524B2E
+   \   008C  204A6F6E
+   \   0090  674B696C
+   \   0094  20202020
+   \   0098  44617465
+   \   009C  203A2031
+   \   00A0  3939372E
+   \   00A4  20322E20
+   \   00A8  32367E20
+   \   00AC  20202020
+   \   00B0  5B2A5D00
+   \   00B4  5B2A5DC4          DB      '[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+   \   00B8  C4C4C4C4
+   \   00BC  C4C4C4C4
+   \   00C0  C4C4C4C4
+   \   00C4  C4C4
+   \   00C6  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   00CA  C4C4C4C4
+   \   00CE  C4C4C4C4
+   \   00D2  C4C4C4C4
+   \   00D6  C4
+   \   00D7  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   00DB  C4C4C4C4
+   \   00DF  C4C4C4C4
+   \   00E3  C4C4C4C4
+   \   00E7  C4
+   \   00E8  C4C4C4C4          DB      -60,-60,-60,-60,'[*]',0
+   \   00EC  5B2A5D00
+   \   00F0  5B2A5DC4          DB      '[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+   \   00F4  C4C4C4C4
+   \   00F8  C4C4C4C4
+   \   00FC  C4C4C4C4
+   \   0100  C4C4
+   \   0102  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   0106  C4C4C4C4
+   \   010A  C4C4C4C4
+   \   010E  C4C4C4C4
+   \   0112  C4
+   \   0113  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   0117  C4C4C4C4
+   \   011B  C4C4C4C4
+   \   011F  C4C4C4C4
+   \   0123  C4
+   \   0124  C4C4C4C4          DB      -60,-60,-60,-60,'[*]',0
+   \   0128  5B2A5D00
+   \   012C  5B2A5D20          DB      '[*]  Sensor : TEMPERLATURE 1 EA  Analog CH : 0, ID : 0  [*]',0
+   \   0130  2053656E
+   \   0134  736F7220
+   \   0138  3A205445
+   \   013C  4D504552
+   \   0140  4C415455
+   \   0144  52452031
+   \   0148  20454120
+   \   014C  20416E61
+   \   0150  6C6F6720
+   \   0154  4348203A
+   \   0158  20302C20
+   \   015C  4944203A
+   \   0160  20302020
+   \   0164  5B2A5D00
+   \   0168  5B2A5D20          DB      '[*]           HUMIDUTIY    1 EA  Analog CH : 1, ID : 1  [*]',0
+   \   016C  20202020
+   \   0170  20202020
+   \   0174  20204855
+   \   0178  4D494455
+   \   017C  54495920
+   \   0180  20202031
+   \   0184  20454120
+   \   0188  20416E61
+   \   018C  6C6F6720
+   \   0190  4348203A
+   \   0194  20312C20
+   \   0198  4944203A
+   \   019C  20312020
+   \   01A0  5B2A5D00
+   \   01A4  5B2A5D20          DB      '[*]  Sensor Code : TEMP = 2, HUMI = 6                   [*]',0
+   \   01A8  2053656E
+   \   01AC  736F7220
+   \   01B0  436F6465
+   \   01B4  203A2054
+   \   01B8  454D5020
+   \   01BC  3D20322C
+   \   01C0  2048554D
+   \   01C4  49203D20
+   \   01C8  36202020
+   \   01CC  20202020
+   \   01D0  20202020
+   \   01D4  20202020
+   \   01D8  20202020
+   \   01DC  5B2A5D00
+   \   01E0  5B2A5DC4          DB      '[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+   \   01E4  C4C4C4C4
+   \   01E8  C4C4C4C4
+   \   01EC  C4C4C4C4
+   \   01F0  C4C4
+   \   01F2  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   01F6  C4C4C4C4
+   \   01FA  C4C4C4C4
+   \   01FE  C4C4C4C4
+   \   0202  C4
+   \   0203  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   0207  C4C4C4C4
+   \   020B  C4C4C4C4
+   \   020F  C4C4C4C4
+   \   0213  C4
+   \   0214  C4C4C4C4          DB      -60,-60,-60,-60,'[*]',0
+   \   0218  5B2A5D00
+   \   021C  5B2A5DC4          DB      '[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+   \   0220  C4C4C4C4
+   \   0224  C4C4C4C4
+   \   0228  C4C4C4C4
+   \   022C  C4C4
+   \   022E  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   0232  C4C4C4C4
+   \   0236  C4C4C4C4
+   \   023A  C4C4C4C4
+   \   023E  C4
+   \   023F  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   0243  C4C4C4C4
+   \   0247  C4C4C4C4
+   \   024B  C4C4C4C4
+   \   024F  C4
+   \   0250  C4C4C4C4          DB      -60,-60,-60,-60,'[*]',0
+   \   0254  5B2A5D00
+   \   0258  5B2A5D20          DB      '[*]  Used Board : SAM3 Board(Designed PARKIK)           [*]',0
+   \   025C  20557365
+   \   0260  6420426F
+   \   0264  61726420
+   \   0268  3A205341
+   \   026C  4D332042
+   \   0270  6F617264
+   \   0274  28446573
+   \   0278  69676E65
+   \   027C  64205041
+   \   0280  524B494B
+   \   0284  29202020
+   \   0288  20202020
+   \   028C  20202020
+   \   0290  5B2A5D00
+   \   0294  5B2A5DC4          DB      '[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+   \   0298  C4C4C4C4
+   \   029C  C4C4C4C4
+   \   02A0  C4C4C4C4
+   \   02A4  C4C4
+   \   02A6  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   02AA  C4C4C4C4
+   \   02AE  C4C4C4C4
+   \   02B2  C4C4C4C4
+   \   02B6  C4
+   \   02B7  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   02BB  C4C4C4C4
+   \   02BF  C4C4C4C4
+   \   02C3  C4C4C4C4
+   \   02C7  C4
+   \   02C8  C4C4C4C4          DB      -60,-60,-60,-60,'[*]',0
+   \   02CC  5B2A5D00
+   \   02D0  5B2A5DC4          DB      '[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+   \   02D4  C4C4C4C4
+   \   02D8  C4C4C4C4
+   \   02DC  C4C4C4C4
+   \   02E0  C4C4
+   \   02E2  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   02E6  C4C4C4C4
+   \   02EA  C4C4C4C4
+   \   02EE  C4C4C4C4
+   \   02F2  C4
+   \   02F3  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   02F7  C4C4C4C4
+   \   02FB  C4C4C4C4
+   \   02FF  C4C4C4C4
+   \   0303  C4
+   \   0304  C4C4C4C4          DB      -60,-60,-60,-60,'[*]',0
+   \   0308  5B2A5D00
+   \   030C  5B2A5D20          DB      '[*]  VERSION : Test Ver 1.0  First TEST : 97. 3. 10     [*]',0
+   \   0310  20564552
+   \   0314  53494F4E
+   \   0318  203A2054
+   \   031C  65737420
+   \   0320  56657220
+   \   0324  312E3020
+   \   0328  20466972
+   \   032C  73742054
+   \   0330  45535420
+   \   0334  3A203937
+   \   0338  2E20332E
+   \   033C  20313020
+   \   0340  20202020
+   \   0344  5B2A5D00
+   \   0348  5B2A5DC4          DB      '[*]',-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,
+   \   034C  C4C4C4C4
+   \   0350  C4C4C4C4
+   \   0354  C4C4C4C4
+   \   0358  C4C4
+   \   035A  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   035E  C4C4C4C4
+   \   0362  C4C4C4C4
+   \   0366  C4C4C4C4
+   \   036A  C4
+   \   036B  C4C4C4C4          DB      -60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60,-60
+   \   036F  C4C4C4C4
+   \   0373  C4C4C4C4
+   \   0377  C4C4C4C4
+   \   037B  C4
+   \   037C  C4C4C4C4          DB      -60,-60,-60,-60,'[*]',0
+   \   0380  5B2A5D00
+   \   0384  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   0388  00000000
+   \   038C  00000000
+   \   0390  00000000
+   \   0394  00000000
+   \   0398  00000000
+   \   039C  00000000
+   \   03A0  00000000
+   \   03A4  0000
+   \   03A6  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   03AA  00000000
+   \   03AE  00000000
+   \   03B2  00000000
+   \   03B6  00000000
+   \   03BA  00000000
+   \   03BE  00000000
+   \   03C2  00000000
+   \   03C6  0000
+   \   03C8  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   03CC  00000000
+   \   03D0  00000000
+   \   03D4  00000000
+   \   03D8  00000000
+   \   03DC  00000000
+   \   03E0  00000000
+   \   03E4  00000000
+   \   03E8  0000
+   \   03EA  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   03EE  00000000
+   \   03F2  00000000
+   \   03F6  00000000
+   \   03FA  00000000
+   \   03FE  00000000
+   \   0402  00000000
+   \   0406  00000000
+   \   040A  0000
+   \   040C  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   0410  00000000
+   \   0414  00000000
+   \   0418  00000000
+   \   041C  00000000
+   \   0420  00000000
+   \   0424  00000000
+   \   0428  00000000
+   \   042C  0000
+   \   042E  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   0432  00000000
+   \   0436  00000000
+   \   043A  00000000
+   \   043E  00000000
+   \   0442  00000000
+   \   0446  00000000
+   \   044A  00000000
+   \   044E  0000
+   \   0450  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   0454  00000000
+   \   0458  00000000
+   \   045C  00000000
+   \   0460  00000000
+   \   0464  00000000
+   \   0468  00000000
+   \   046C  00000000
+   \   0470  0000
+   \   0472  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   0476  00000000
+   \   047A  00000000
+   \   047E  00000000
+   \   0482  00000000
+   \   0486  00000000
+   \   048A  00000000
+   \   048E  00000000
+   \   0492  0000
+   \   0494  00000000          DB      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   \   0498  00000000
+   \   049C  00000000
+   \   04A0  00000000
+   \   04A4  00000000
+   \   04A8  00000000
+   \   04AC  00000000
+   \   0000                    COMMON  INTVEC
+   \   0003                    DS      3
+   \   0003  02                DB      2
+   \   0004  0E17              DB      HIGH(EX0_int),LOW(EX0_int)
+   \   0023                    DS      29
+   \   0023  02                DB      2
+   \   0024  0D36              DB      HIGH(SCON_int),LOW(SCON_int)
+   \   0000                    RSEG    X_UDATA
+   \   0000            Loop:
+   \   0002                    DS      2
+   \   0002            TEMP_R:
+   \   0013                    DS      17
+   \   0013            TEMP_t:
+   \   0024                    DS      17
+   \   0024            TEMP_O:
+   \   0035                    DS      17
+   \   0035            TEMP_T:
+   \   0046                    DS      17
+   \   0046            HUMI_R:
+   \   0057                    DS      17
+   \   0057            HUMI_t:
+   \   0068                    DS      17
+   \   0068            HUMI_O:
+   \   0079                    DS      17
+   \   0079            HUMI_T:
+   \   008A                    DS      17
+   \   008A            Mpm:
+   \   0095                    DS      11
+   \   0095            Com:
+   \   022D                    DS      408
+   \   022D            TEMP_OLD:
+   \   024D                    DS      32
+   \   024D            HUMI_OLD:
+   \   026D                    DS      32
+   \   026D            ERcount:
+   \   026F                    DS      2
+   \   026F            ERROR:
+   \   0271                    DS      2
+   \   0271            DLYcount:
+   \   0273                    DS      2
+   \   0273            ADValue:
+   \   0275                    DS      2
+   \   0275            Event:
+   \   0276                    DS      1
+   \   0276            Init:
+   \   0277                    DS      1
+   \   0000                    RSEG    BITVARS
+   \   0000            Flag:
+   \   0001                    DS      1
+   \   0001                    END
+
+Errors: none
+Warnings: none
+Code size: 3941
+Constant size: 1238
+Static variable size: Data(0) Idata(0) Bit(1) Xdata(631)
+

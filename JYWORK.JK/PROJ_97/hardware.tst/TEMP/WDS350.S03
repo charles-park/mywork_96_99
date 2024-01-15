@@ -1,0 +1,7069 @@
+	NAME	wds350(17)
+	RSEG	CODE(0)
+	RSEG	CONST(0)
+	COMMON	INTVEC(0)
+	RSEG	X_UDATA(0)
+	RSEG	BITVARS(0)
+	PUBLIC	EX0_int
+	$DEFFN	EX0_int(512,2,0,0,0,0,0,0)
+	PUBLIC	One_pros
+	$DEFFN	One_pros(0,6,0,0,0,0,0,0),main
+	PUBLIC	Quad_pros
+	$DEFFN	Quad_pros(0,16,0,0,0,0,0,0),main
+	PUBLIC	SCON_int
+	$DEFFN	SCON_int(512,2,0,0,0,0,0,0)
+	PUBLIC	Sec_pros
+	$DEFFN	Sec_pros(0,12,0,0,0,0,0,0),main
+	PUBLIC	T0_int
+	$DEFFN	T0_int(512,0,0,0,0,0,0,0)
+	PUBLIC	T2_int
+	$DEFFN	T2_int(512,0,0,0,0,0,0,0)
+	PUBLIC	Ten_pros
+	$DEFFN	Ten_pros(0,10,0,0,0,0,0,0),main
+	PUBLIC	Title
+	PUBLIC	Ws_calc
+	$DEFFN	Ws_calc(0,2,0,0,0,2,0,0),One_pros,Ten_pros,Sec_pros,Quad_pros
+	PUBLIC	Ws_calc1
+	$DEFFN	Ws_calc1(0,12,0,0,0,2,0,0),Ws_calc
+	PUBLIC	Ws_calc2
+	$DEFFN	Ws_calc2(0,12,0,0,0,2,0,0),Ws_calc
+	EXTERN	atan
+	$DEFFN	atan(0,4,0,0),One_pros,Ten_pros,Sec_pros,Quad_pros
+	EXTERN	cos
+	$DEFFN	cos(0,4,0,0),One_pros,Sec_pros,Quad_pros
+	PUBLIC	initialize
+	$DEFFN	initialize(0,2,0,0,0,0,0,0),main
+	PUBLIC	main
+	$DEFFN	main(0,2,0,0,0,0,0,0)
+	EXTERN	sin
+	$DEFFN	sin(0,4,0,0),One_pros,Sec_pros,Quad_pros
+	EXTERN	?UI_MOD_L00
+	EXTERN	?SL_DIV_L01
+	EXTERN	?L_CMP_L01
+	EXTERN	?L_ADD_ASG_DPTR_R4567_L01
+	EXTERN	?L_OR_ASG_DPTR_R4567_L01
+	EXTERN	?F_ADD_L02
+	EXTERN	?F_SUB_R_L02
+	EXTERN	?F_MUL_L02
+	EXTERN	?F_DIV_L02
+	EXTERN	?F_DIV_R_L02
+	EXTERN	?F_ADD_ASG_R0_R4567_L02
+	EXTERN	?F_ADD_ASG_DPTR_R4567_L02
+	EXTERN	?R4567_FLT_TO_LONG_L02
+	EXTERN	?R4567_LONG_TO_FLT_L02
+	EXTERN	?R0123_ULONG_TO_FLT_L02
+	EXTERN	?R4567_ULONG_TO_FLT_L02
+	EXTERN	?STO_R4567_IR0_L20
+	EXTERN	?STO_R0123_DPTR_L20
+	EXTERN	?STO_R4567_DPTR_L20
+	EXTERN	?LD_R0123_IR0_L20
+	EXTERN	?LD_R4567_IR0_L20
+	EXTERN	?LD_R0123_XDPTR_L20
+	EXTERN	?LD_R4567_XDPTR_L20
+	EXTERN	?CL8051M_5_12_L17
+	RSEG	CODE
+; 1.	#include <c:\cci_hdsl\include\io51.h>
+; 2.	#include <c:\cci_hdsl\include\math.h>
+; 3.	#include <wds350.h>
+; 4.	
+; 5.	#pragma memory=code
+; 6.	char Title[10][65]={
+; 7.	"/ /// /////////////////////////////////////////////// /// /",
+; 8.	"/ /// /////////////////////////////////////////////// /// /",
+; 9.	"/ /// ///        Wind Speed & Direction Board     /// /// /",
+; 10.	"/ /// ///                        (General)        /// /// /",
+; 11.	"/ /// ///       JINYANG  INDUSTRIAL.,CO LTD       /// /// /",
+; 12.	"/ /// ///       Program By  Hae-suk. JIN          /// /// /",
+; 13.	"/ /// ///     Start :  1995.12. 17                /// /// /",
+; 14.	"/ /// ///       End :  1996. 4.  3  Ver 3.0       /// /// /",
+; 15.	"/ /// /////////////////////////////////////////////// /// /",
+; 16.	"/ /// /////////////////////////////////////////////// /// /"
+; 17.	};
+; 18.	//               Memory Default Set
+; 19.	//  Adirection Default Value   Aspeed Default Value
+; 20.	//                           0 :                   5.835
+; 21.	//   254 ;  22.5       //   45 ;  3 m/s   5.833    3.890 knot
+; 22.	//   509 ;  45         //   80 ;  5 m/s   9.725    9.725
+; 23.	//   763 ;  67.5       //  160 ; 10 m/s  19.5      9.725
+; 24.	//  1018 ;  90         //  248 ; 15 m/s  29.16
+; 25.	//  1272 ; 112.5       //  333 ; 20 m/s  38.88
+; 26.	//  1526 ; 135         //  420 ; 25 m/s  48.61
+; 27.	//  1781 ; 157.5       //  507 ; 30 m/s
+; 28.	//  2035 ; 180         //  593 ; 35 m/s
+; 29.	//  2289 ; 202.5       //  680 ; 40 m/s
+; 30.	//  2544 ; 225         //  766 ; 45 m/s
+; 31.	//  2798 ; 247.5       //  853 ; 50 m/s
+; 32.	//  3053 ; 270         //  940 ; 55 m/s
+; 33.	//  3307 ; 292.5       // 1027 ; 60 m/s 116.7
+; 34.	//  3561 ; 315         // 1113 ; 65 m/s 126.4
+; 35.	//  3816 ; 337.5       // 1200 ; 70 m/s
+; 36.	//  4070 ; 360         // 1287 ; 75 m/s
+; 37.	
+; 38.	
+; 39.	static  unsigned    int Adirection[16] = {
+; 40.	 254,509, 763,1018,1272,1526,1781,2035,2289,2544,2798,3053,3307,3561,3816,4070};
+; 41.	// 0   1   2   3    4    5    6    7    8    9   10   11   12   13   14   15
+; 42.	static  unsigned    int Aspeed[16] = {
+; 43.	//   3   5   10   15   20   25   30   35   40   45   50   55   60   65   70   75
+; 44.	        38, 72, 152, 227, 303, 382, 460, 544, 627, 706, 785, 864,944 ,1022,1101,1181};
+; 45.	//  45, 80, 160, 248, 324, 410, 495, 579, 663, 748, 833, 918,1003,1088,1172,1257};
+; 46.	//static  unsigned    int Adirection[16] = {
+; 47.	// 254,509,763,1018,1272,1526,1781,2035,2289,2544,2798,3053,3307,3561,3816,4070};
+; 48.	// 0   1   2   3    4    5    6    7    8    9   10   11   12   13   14   15
+; 49.	//static  unsigned    int Aspeed[16] = {
+; 50.	//  45, 80, 160, 248, 333, 420, 507, 593, 680, 766, 853, 940,1027,1113,1200,1287};
+; 51.	//   0   1   2   3    4    5    6    7    8    9   10   11   12   13   14   15
+; 52.	#pragma memory=default
+; 53.	
+; 54.	#define     CS      P1.3
+; 55.	#define     CLK     P1.2
+; 56.	#define     DI      P1.1
+; 57.	#define     DO      P1.0
+; 58.	#define     RedL    P1.7        // Transm
+; 59.	#define     BlueL   P1.6        // Receve
+; 60.	#define     Wdt     P1.5
+; 61.	#define     LightL  0x800
+; 62.	
+; 63.	interrupt   void    EX0_int(void);       // 4 Hz (Time Process)
+; 64.	interrupt   void    T0_int(void);        // Wind Speed Buffer
+; 65.	interrupt   void    T2_int(void);
+; 66.	interrupt   void    SCON_int(void);      // Internal Serial Communication
+; 67.	                        void    Quad_pros(void);
+; 68.	                        void    Sec_pros(void);
+; 69.	                        void    One_pros(void);
+; 70.	                        void    Ten_pros(void);
+; 71.	                        void    initialize(void);
+; 72.	   unsigned int     Ws_calc(unsigned int);
+; 73.	   unsigned int     Ws_calc1(unsigned int);
+; 74.	   unsigned int     Ws_calc2(unsigned int);
+; 75.	
+; 76.	void initialize(void)
+; 77.	{
+initialize:
+; 78.	        unsigned int i;
+; 79.	
+; 80.	        IE=0x80;
+	MOV	IE,#128
+; 81.	        PCON=0x80;          // Baudrate double set
+	MOV	PCON,#128
+; 82.	        P2=0xff;
+	MOV	P2,#255
+; 83.	
+; 84.	        TMOD = 0x25;        // T0 = counter 16Bit no,Prescaler,
+	MOV	TMOD,#37
+; 85.	
+; 86.	    TH1 = 0xf4;
+	MOV	TH1,#244
+; 87.	    TL1 = 0xf4;        // 23Mhz = F3, 22Mhz = F4,18Mhz = F6, 11Mhz = fa Set
+	MOV	TL1,#244
+; 88.	    TH0=0;
+	MOV	TH0,#0
+; 89.	    TL0=0;
+	MOV	TL0,#0
+; 90.	
+; 91.	    TH2=0;
+	MOV	205,#0
+; 92.	        TL2=0;
+	MOV	204,#0
+; 93.	    RCAP2L=0x00;
+	MOV	202,#0
+; 94.	    RCAP2H=0x00;
+	MOV	203,#0
+; 95.	
+; 96.	        SCON=0x50;
+	MOV	SCON,#80
+; 97.	    TR1=1;
+	SETB	TCON.6
+; 98.	    TR0=0;      // External Counting Stop
+	CLR	TCON.4
+; 99.	
+; 100.	    Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 101.	    Spoint=0;
+	MOV	DPTR,#Spoint
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 102.	    Comon=0;
+	CLR	Comon
+; 103.	    Quad=0;
+	MOV	DPTR,#Quad
+	MOVX	@DPTR,A
+; 104.	        Second=1;
+	INC	A
+	MOV	DPTR,#Second
+	MOVX	@DPTR,A
+; 105.	        Minute=0;
+	CLR	A
+	MOV	DPTR,#Minute
+	MOVX	@DPTR,A
+; 106.	    Wssta=0;
+	MOV	DPTR,#Wssta
+	MOVX	@DPTR,A
+; 107.	        Wdsta=0;
+	MOV	DPTR,#Wdsta
+	MOVX	@DPTR,A
+; 108.	    Wpoint=0;
+	MOV	DPTR,#Wpoint
+	MOVX	@DPTR,A
+; 109.	    Nws=0;
+	MOV	DPTR,#Nws
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 110.	    Ows=0;
+	MOV	DPTR,#Ows
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 111.	
+; 112.	        Sbuf[4]=0;
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 113.	    Sbuf[5]=0;
+	INC	DPTR
+	MOVX	@DPTR,A
+; 114.	    Sbuf[6]=0;
+	INC	DPTR
+	MOVX	@DPTR,A
+; 115.	    Sbuf[7]=0;
+	INC	DPTR
+	MOVX	@DPTR,A
+; 116.	        for(i=0; i != 60;i++)
+	MOV	R0,#$LOCBI initialize
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0001:
+	MOV	R0,#$LOCBI initialize+1
+	MOV	A,@R0
+	XRL	A,#60
+	JNZ	?0361
+	DEC	R0
+	MOV	A,@R0
+	JZ	?0000
+?0361:
+?0002:
+; 117.	    {
+; 118.	        WdSecd[i]=0;
+	MOV	R0,#$LOCBI initialize+1
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WdSecd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WdSecd)
+	MOV	DPH,A
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 119.	        WsSecd[i]=0;
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WsSecd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsSecd)
+	MOV	DPH,A
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0001
+?0000:
+; 120.	    }               // 1 Sec, Avarage Dim Clear
+; 121.	    for(i=0; i != 12;i++)
+	MOV	R0,#$LOCBI initialize
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0005:
+	MOV	R0,#$LOCBI initialize+1
+	MOV	A,@R0
+	XRL	A,#12
+	JNZ	?0362
+	DEC	R0
+	MOV	A,@R0
+	JZ	?0004
+?0362:
+?0006:
+; 122.	    {
+; 123.	        Wddata[i]=0;
+	MOV	R0,#$LOCBI initialize+1
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(Wddata)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Wddata)
+	MOV	DPH,A
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 124.	                Wsdata[i]=0;
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(Wsdata)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Wsdata)
+	MOV	DPH,A
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0005
+?0004:
+; 125.	        }               // 3 Sec, Avarage Dim Clear
+; 126.	    for(i=0; i != 10;i++)
+	MOV	R0,#$LOCBI initialize
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0009:
+	MOV	R0,#$LOCBI initialize+1
+	MOV	A,@R0
+	XRL	A,#10
+	JNZ	?0363
+	DEC	R0
+	MOV	A,@R0
+	JZ	?0008
+?0363:
+?0010:
+; 127.	    {
+; 128.	        WdMind[i]=0;
+	MOV	R0,#$LOCBI initialize+1
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WdMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WdMind)
+	MOV	DPH,A
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 129.	        WsMind[i]=0;
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WsMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsMind)
+	MOV	DPH,A
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0009
+?0008:
+; 130.	    }               // Minute Dim Clear
+; 131.	    WdMin=0;
+	MOV	DPTR,#WdMin
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 132.	        WsMin=0;
+	MOV	DPTR,#WsMin
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 133.	    WsMin  = 0;
+	MOV	DPTR,#WsMin
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 134.	    WsTen  = 0;
+	MOV	DPTR,#WsTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 135.	    WsGmax = 0;
+	MOV	DPTR,#WsGmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 136.	        WsMmax = 0;
+	MOV	DPTR,#WsMmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 137.	    WsTmax = 0;
+	MOV	DPTR,#WsTmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 138.	    WsEcount=0;
+	MOV	DPTR,#WsEcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 139.	    WdEcount=0;
+	MOV	DPTR,#WdEcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 140.	    WdsEcount=0;
+	MOV	DPTR,#WdsEcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 141.	    TEcount=0;
+	MOV	DPTR,#TEcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 142.	    sinSec=0;
+	MOV	DPTR,#sinSec
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 143.	    sinOne=0;
+	MOV	DPTR,#sinOne
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 144.	        sinTen=0;
+	MOV	DPTR,#sinTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 145.	        cosSec=0;
+	MOV	DPTR,#cosSec
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 146.	        cosOne=0;
+	MOV	DPTR,#cosOne
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 147.	        cosTen=0;
+	MOV	DPTR,#cosTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 148.	        sumSec=0;
+	MOV	DPTR,#sumSec
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 149.	        sumOne=0;
+	MOV	DPTR,#sumOne
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 150.	        sumTen=0;
+	MOV	DPTR,#sumTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 151.	
+; 152.	        sinHTen = 0;
+	MOV	DPTR,#sinHTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 153.	    cosHTen = 0;
+	MOV	DPTR,#cosHTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 154.	
+; 155.	        WdEvalue=0;
+	MOV	DPTR,#WdEvalue
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 156.	    WsEvalue=0;
+	MOV	DPTR,#WsEvalue
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 157.	
+; 158.	    // Bit Default Set
+; 159.	    Send=0;
+	CLR	Send
+; 160.	    Sendd=0;
+	CLR	Sendd
+; 161.	    Init=1;
+	SETB	Init
+; 162.	    Aderr=0;
+	CLR	Aderr
+; 163.	    MeasQ=0;
+	CLR	MeasQ
+; 164.	        Terror=0;
+	CLR	Terror
+?0014:
+; 165.	/* Hard Ware Set up ID READ */
+; 166.	    do
+; 167.	    {
+; 168.	        ID=read_XDATA(VID);
+	MOV	DPTR,#32768
+	MOVX	A,@DPTR
+	MOV	DPTR,#ID
+	MOVX	@DPTR,A
+; 169.	        for(i=10; i != 0; i--)
+	MOV	R0,#$LOCBI initialize
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,#10
+?0016:
+	MOV	R0,#$LOCBI initialize
+	MOV	A,@R0
+	INC	R0
+	ORL	A,@R0
+	JZ	?0015
+?0017:
+; 170.	        {
+; 171.	                        if(ID != read_XDATA(VID))
+	MOV	DPTR,#32768
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JZ	?0020
+?0019:
+; 172.	                break;
+	SJMP	?0015
+?0020:
+	MOV	A,@R0
+	DEC	@R0
+	DEC	R0
+	JNZ	$+3
+	DEC	@R0
+	SJMP	?0016
+?0015:
+; 173.	        }
+; 174.	    } while(i != 0);
+	DEC	R0
+	MOV	A,@R0
+	INC	R0
+	ORL	A,@R0
+	JNZ	?0014
+?0012:
+; 175.	
+; 176.	    Fout=0;                     /* Fout 0 = Gust,1Min,10Min Max.    */
+	CLR	Fout
+; 177.	    if((ID & 0x80) == 0x80)
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	ANL	A,#128
+	CJNE	A,#128,?0022
+?0021:
+; 178.	        Fout=1;                 /* Fout 1 = Gust,Gust,Gust Max. */
+	SETB	Fout
+?0022:
+; 179.	
+; 180.	    unit=0;                     // knot
+	CLR	unit
+; 181.	    if((ID & 0x40) == 0x40)
+	MOVX	A,@DPTR
+	ANL	A,#64
+	CJNE	A,#64,?0024
+?0023:
+; 182.	        unit=1;                 // m/s
+	SETB	unit
+?0024:
+; 183.	
+; 184.	        ID &= 0x0f;
+	MOVX	A,@DPTR
+	ANL	A,#15
+	MOVX	@DPTR,A
+; 185.	    ID  = (0x0f-ID) & 0x0f;     /* ID Number Complemently   */
+	MOVX	A,@DPTR
+	MOV	R7,A
+	CPL	A
+	INC	A
+	ADD	A,#15
+	ANL	A,#15
+	MOV	R7,A
+	MOVX	@DPTR,A
+; 186.	    BlueL=0;
+	CLR	P1.6
+; 187.	    RedL=0;
+	CLR	P1.7
+; 188.	
+; 189.	    PS =1;      // Serial Priority
+	SETB	IP.4
+; 190.	    TR2=1;      // Quad Time Watcher "RUN
+	SETB	T2CON.2
+; 191.	        IT0=1;      // Edge Trigger
+	SETB	TCON.0
+; 192.	    ES =1;      // Serial Interrupt Enable
+	SETB	IE.4
+; 193.	    ET2=1;      // Quad Time Watcher Enable
+	SETB	IE.5
+; 194.	    EX0=1;      // External Interrupt Enable 4hz
+	SETB	IE.0
+; 195.	}
+	RET
+; 196.	
+; 197.	void main(void)
+; 198.	{
+main:
+; 199.	    unsigned int i;
+; 200.	
+; 201.	    initialize();
+	LCALL	$REFFN initialize
+?0026:
+; 202.	    while(1)
+; 203.	    {
+; 204.	                if(Wbit)
+	JNB	Wbit,?0029
+?0028:
+; 205.	        {
+; 206.	            Wdt=0;
+	CLR	P1.5
+; 207.	            Wbit=0;
+	CLR	Wbit
+; 208.	        }
+; 209.	        else
+	SJMP	?0030
+?0029:
+; 210.	        {
+; 211.	                        Wdt=1;
+	SETB	P1.5
+; 212.	            Wbit=1;
+	SETB	Wbit
+?0030:
+; 213.	        }
+; 214.	
+; 215.	                if(Receve)
+	JNB	Receve,?0032
+?0031:
+; 216.	        {
+; 217.	            if(!Blueb--)
+	MOV	DPTR,#Blueb
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	ADD	A,#255
+	MOVX	@DPTR,A
+	MOV	DPTR,#Blueb
+	MOVX	A,@DPTR
+	ADDC	A,#255
+	MOVX	@DPTR,A
+	MOV	A,R4
+	ORL	A,R5
+	JNZ	?0034
+?0033:
+; 218.	            {
+; 219.	                BlueL=0;     // Receive LED off
+	CLR	P1.6
+; 220.	                Receve=0;
+	CLR	Receve
+?0034:
+?0032:
+; 221.	            }
+; 222.	        }
+; 223.	        if(Transm)
+	JNB	Transm,?0036
+?0035:
+; 224.	                {
+; 225.	                        if(!Redb--)
+	MOV	DPTR,#Redb
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	ADD	A,#255
+	MOVX	@DPTR,A
+	MOV	DPTR,#Redb
+	MOVX	A,@DPTR
+	ADDC	A,#255
+	MOVX	@DPTR,A
+	MOV	A,R4
+	ORL	A,R5
+	JNZ	?0038
+?0037:
+; 226.	            {
+; 227.	                RedL=0;
+	CLR	P1.7
+; 228.	                Transm=0;
+	CLR	Transm
+?0038:
+?0036:
+; 229.	            }
+; 230.	        }
+; 231.	
+; 232.	        if(WdsEcount == 43200 || WsEcount == 21600)
+	MOV	DPTR,#WdsEcount+1
+	MOVX	A,@DPTR
+	XRL	A,#192
+	JNZ	?0364
+	MOV	DPTR,#WdsEcount
+	MOVX	A,@DPTR
+	XRL	A,#168
+	JZ	?0039
+?0364:
+	MOV	DPTR,#WsEcount+1
+	MOVX	A,@DPTR
+	XRL	A,#96
+	JNZ	?0365
+	MOV	DPTR,#WsEcount
+	MOVX	A,@DPTR
+	XRL	A,#84
+?0365:
+	JNZ	?0040
+?0041:
+?0042:
+?0039:
+; 233.	        {
+; 234.	            ES=0;
+	CLR	IE.4
+; 235.	                        Wssta |= 2;         // 010
+	MOV	DPTR,#Wssta
+	MOVX	A,@DPTR
+	ORL	A,#2
+	MOVX	@DPTR,A
+; 236.	            ES=1;
+	SETB	IE.4
+; 237.	        }
+; 238.	        else
+	SJMP	?0043
+?0040:
+; 239.	        {
+; 240.	            ES=0;
+	CLR	IE.4
+; 241.	            Wssta &= 5;         // 101
+	MOV	DPTR,#Wssta
+	MOVX	A,@DPTR
+	ANL	A,#5
+	MOVX	@DPTR,A
+; 242.	            ES=1;
+	SETB	IE.4
+?0043:
+; 243.	        }
+; 244.	
+; 245.	                if(WdsEcount == 43200 || WdEcount == 21600)
+	MOV	DPTR,#WdsEcount+1
+	MOVX	A,@DPTR
+	XRL	A,#192
+	JNZ	?0366
+	MOV	DPTR,#WdsEcount
+	MOVX	A,@DPTR
+	XRL	A,#168
+	JZ	?0044
+?0366:
+	MOV	DPTR,#WdEcount+1
+	MOVX	A,@DPTR
+	XRL	A,#96
+	JNZ	?0367
+	MOV	DPTR,#WdEcount
+	MOVX	A,@DPTR
+	XRL	A,#84
+?0367:
+	JNZ	?0045
+?0046:
+?0047:
+?0044:
+; 246.	        {
+; 247.	            ES=0;
+	CLR	IE.4
+; 248.	                        Wdsta |= 2;         // 010
+	MOV	DPTR,#Wdsta
+	MOVX	A,@DPTR
+	ORL	A,#2
+	MOVX	@DPTR,A
+; 249.	            ES=1;
+	SETB	IE.4
+; 250.	        }
+; 251.	                else
+	SJMP	?0048
+?0045:
+; 252.	        {
+; 253.	            ES=0;
+	CLR	IE.4
+; 254.	                        Wdsta &= 5;         // 101
+	MOV	DPTR,#Wdsta
+	MOVX	A,@DPTR
+	ANL	A,#5
+	MOVX	@DPTR,A
+; 255.	                        ES=1;
+	SETB	IE.4
+?0048:
+; 256.	        }
+; 257.	
+; 258.	        if(Aderr)
+	JNB	Aderr,?0050
+?0049:
+; 259.	        {
+; 260.	            ES=0;
+	CLR	IE.4
+; 261.	                        Wdsta |= 4;         // 100
+	MOVX	A,@DPTR
+	ORL	A,#4
+	MOVX	@DPTR,A
+; 262.	            ES=1;
+	SETB	IE.4
+; 263.	        }
+; 264.	                else
+	SJMP	?0051
+?0050:
+; 265.	                {
+; 266.	            ES=0;
+	CLR	IE.4
+; 267.	                        Wdsta &= 3;         // 011
+	MOVX	A,@DPTR
+	ANL	A,#3
+	MOVX	@DPTR,A
+; 268.	            ES=1;
+	SETB	IE.4
+?0051:
+; 269.	        }
+; 270.	        
+; 271.	                if(Terror)
+	JNB	Terror,?0053
+?0052:
+; 272.	        {
+; 273.	            ES=0;
+	CLR	IE.4
+; 274.	            Wssta |= 1;         // 001
+	MOV	DPTR,#Wssta
+	MOVX	A,@DPTR
+	ORL	A,#1
+	MOVX	@DPTR,A
+; 275.	                        Wdsta |= 1;
+	MOV	DPTR,#Wdsta
+	MOVX	A,@DPTR
+	ORL	A,#1
+	MOVX	@DPTR,A
+; 276.	            ES=1;
+	SETB	IE.4
+; 277.	        }
+; 278.	        else
+	SJMP	?0054
+?0053:
+; 279.	        {
+; 280.	            ES=0;
+	CLR	IE.4
+; 281.	            Wssta &= 6;         // 110
+	MOV	DPTR,#Wssta
+	MOVX	A,@DPTR
+	ANL	A,#6
+	MOVX	@DPTR,A
+; 282.	                        Wdsta &= 6;
+	MOV	DPTR,#Wdsta
+	MOVX	A,@DPTR
+	ANL	A,#6
+	MOVX	@DPTR,A
+; 283.	            ES=1;
+	SETB	IE.4
+?0054:
+; 284.	                }
+; 285.	
+; 286.	        if(MeasQ == 1)
+	JNB	MeasQ,?0056
+?0055:
+; 287.	        {
+; 288.	            EX0=0;
+	CLR	IE.0
+; 289.	            MeasQ=0;
+	CLR	MeasQ
+; 290.	            Quad_pros();
+	LCALL	$REFFN Quad_pros
+; 291.	                        if(Quad == 0)
+	MOV	DPTR,#Quad
+	MOVX	A,@DPTR
+	JNZ	?0058
+?0057:
+; 292.	            {
+; 293.	                Sec_pros();
+	LCALL	$REFFN Sec_pros
+; 294.	                if(Second == 0)
+	MOV	DPTR,#Second
+	MOVX	A,@DPTR
+	JNZ	?0060
+?0059:
+; 295.	                                {
+; 296.	                    One_pros();
+	LCALL	$REFFN One_pros
+; 297.	                    if(Minute == 0)
+	MOV	DPTR,#Minute
+	MOVX	A,@DPTR
+	JNZ	?0062
+?0061:
+; 298.	                        Ten_pros();
+	LCALL	$REFFN Ten_pros
+?0062:
+?0060:
+?0058:
+; 299.	                }
+; 300.	            }
+; 301.	            EX0=1;
+	SETB	IE.0
+?0056:
+; 302.	        }
+; 303.	    }
+; 304.	}
+	LJMP	?0026
+; 305.	
+; 306.	
+; 307.	void Quad_pros(void)
+; 308.	{
+Quad_pros:
+; 309.	    unsigned int i,wssum;
+; 310.	    double sumsin,sumcos,ave;
+; 311.	                                //  Wind Speed Guest Average Calculate
+; 312.	    wssum=0;
+	MOV	R0,#$LOCBI Quad_pros+2
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+; 313.	    for(i=0;i != 12;i++)
+	MOV	R0,#$LOCBI Quad_pros
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0064:
+	MOV	R0,#$LOCBI Quad_pros+1
+	MOV	A,@R0
+	XRL	A,#12
+	JNZ	?0368
+	DEC	R0
+	MOV	A,@R0
+	JZ	?0063
+?0368:
+?0065:
+; 314.	        wssum+=Wsdata[i];
+	MOV	R0,#$LOCBI Quad_pros+1
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(Wsdata)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Wsdata)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	INC	R0
+	INC	R0
+	MOV	A,@R0
+	ADD	A,R4
+	MOV	@R0,A
+	DEC	R0
+	MOV	A,@R0
+	ADDC	A,R5
+	MOV	@R0,A
+	DEC	R0
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0064
+?0063:
+; 315.	        wssum = wssum/3.;
+	MOV	R0,#$LOCBI Quad_pros+2
+	MOV	A,@R0
+	MOV	R7,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R6,A
+	DEC	R0
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	A,#64
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+; 316.	    wssum = Ws_calc(wssum);
+	MOV	R0,#$LOCBI Quad_pros+2
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	DEC	R0
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+	LCALL	$REFFN Ws_calc
+; 317.	
+; 318.	    if(wssum > WsGmax)
+	MOV	R0,#$LOCBI Quad_pros+2
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	MOV	DPTR,#WsGmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#WsGmax
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	$+5
+	LJMP	?0068
+?0067:
+; 319.	    {
+; 320.	        ES=0;
+	CLR	IE.4
+; 321.	        WsGmax = wssum;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 322.	        ES=1;
+	SETB	IE.4
+; 323.	        sumcos=0;
+	MOV	R0,#$LOCBI Quad_pros+8
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+; 324.	                sumsin=0;
+	MOV	R0,#$LOCBI Quad_pros+4
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+; 325.	        for(i=0;i != 12; i++)
+	MOV	R0,#$LOCBI Quad_pros
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0070:
+	MOV	R0,#$LOCBI Quad_pros+1
+	MOV	A,@R0
+	XRL	A,#12
+	JNZ	?0369
+	DEC	R0
+	MOV	A,@R0
+	JZ	?0069
+?0369:
+?0071:
+; 326.	        {
+; 327.	            ave=(double)(Wddata[i]/10.)*(3.141592/180.);
+	MOV	R0,#$LOCBI Quad_pros+1
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(Wddata)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Wddata)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_DIV_L02
+	MOV	R0,#51
+	MOV	R3,#60
+	MOV	R2,#142
+	MOV	R1,#250
+	LCALL	?F_MUL_L02
+; 328.	            sumsin += sin(ave);
+	MOV	R0,#$LOCBI Quad_pros+12
+	LCALL	?STO_R4567_IR0_L20
+	LCALL	$REFFN sin
+	MOV	R0,#$LOCBI Quad_pros+4
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+; 329.	            sumcos += cos(ave);
+	MOV	R0,#$LOCBI Quad_pros+12
+	LCALL	?LD_R4567_IR0_L20
+	LCALL	$REFFN cos
+	MOV	R0,#$LOCBI Quad_pros+8
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+	MOV	R0,#$LOCBI Quad_pros+1
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0070
+?0069:
+; 330.	        }
+; 331.	                ave=(double)(atan(sumsin/sumcos))*(180./3.141592);
+	MOV	R0,#$LOCBI Quad_pros+4
+	LCALL	?LD_R4567_IR0_L20
+	INC	R0
+	LCALL	?LD_R0123_IR0_L20
+	LCALL	?F_DIV_L02
+	LCALL	$REFFN atan
+	MOV	R1,#46
+	MOV	R3,#66
+	MOV	R2,#101
+	MOV	R0,#228
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI Quad_pros+12
+	LCALL	?STO_R4567_IR0_L20
+; 332.	                if(sumsin < 0 && sumcos > 0)
+	MOV	R0,#$LOCBI Quad_pros+4
+	LCALL	?LD_R4567_IR0_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0370
+	MOV	A,R7
+	ANL	A,#128
+?0370:
+	CPL	ACC.7
+	JNZ	?0074
+	INC	R0
+	LCALL	?LD_R4567_IR0_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0371
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0371:
+	CPL	ACC.7
+	JNZ	?0074
+?0076:
+?0075:
+?0073:
+; 333.	                        ave+=360.;
+	INC	R0
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#180
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+	SJMP	?0077
+?0074:
+; 334.	                else if((sumsin > 0 && sumcos < 0) || (sumsin < 0 && sumcos < 0))
+	MOV	R0,#$LOCBI Quad_pros+4
+	LCALL	?LD_R4567_IR0_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0372
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0372:
+	CPL	ACC.7
+	JNZ	?0080
+	INC	R0
+	LCALL	?LD_R4567_IR0_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0373
+	MOV	A,R7
+	ANL	A,#128
+?0373:
+	JNZ	?0078
+?0081:
+?0080:
+	MOV	R0,#$LOCBI Quad_pros+4
+	LCALL	?LD_R4567_IR0_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0374
+	MOV	A,R7
+	ANL	A,#128
+?0374:
+	CPL	ACC.7
+	JNZ	?0079
+	INC	R0
+	LCALL	?LD_R4567_IR0_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0375
+	MOV	A,R7
+	ANL	A,#128
+?0375:
+	CPL	ACC.7
+	JNZ	?0079
+?0085:
+?0084:
+?0082:
+?0083:
+?0078:
+; 335.	                        ave+=180.;
+	INC	R0
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#52
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+?0079:
+?0077:
+; 336.	                ES=0;
+	CLR	IE.4
+; 337.	                WdGmax=(double)ave*10.;
+	MOV	R0,#$LOCBI Quad_pros+12
+	LCALL	?LD_R4567_IR0_L20
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#WdGmax
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 338.	                ES=1;
+	SETB	IE.4
+?0068:
+; 339.	        }
+; 340.	        TEcount=0;
+	MOV	DPTR,#TEcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 341.	}
+	RET
+; 342.	
+; 343.	void Sec_pros(void)
+; 344.	{
+Sec_pros:
+; 345.	        unsigned int i,wssum;
+; 346.	        double ave,ave2;
+; 347.	
+; 348.	        sinSec=0;
+	MOV	DPTR,#sinSec
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 349.	        cosSec=0;
+	MOV	DPTR,#cosSec
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 350.	        sumSec=0;
+	MOV	DPTR,#sumSec
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 351.	        for(i=9; i != 13; i++)
+	MOV	R0,#$LOCBI Sec_pros
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,#9
+?0087:
+	MOV	R0,#$LOCBI Sec_pros+1
+	MOV	A,@R0
+	XRL	A,#13
+	JNZ	?0376
+	DEC	R0
+	MOV	A,@R0
+	JNZ	$+5
+	LJMP	?0086
+?0376:
+?0088:
+; 352.	        {
+; 353.	                wssum   =  Wsdata[(Wpoint+i)%12];      // Wind Speed Sum
+	MOV	DPTR,#Wpoint
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R0,#$LOCBI Sec_pros+1
+	ADD	A,@R0
+	MOV	R4,A
+	DEC	R0
+	MOV	A,R5
+	ADDC	A,@R0
+	MOV	R5,A
+	CLR	A
+	MOV	R3,A
+	MOV	R2,#12
+	MOV	A,R4
+	MOV	R0,A
+	MOV	A,R5
+	MOV	R1,A
+	LCALL	?UI_MOD_L00
+	MOV	A,R0
+	ADD	A,ACC
+	ADD	A,#LOW(Wsdata)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Wsdata)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+; 354.	                sumSec +=  wssum;
+	MOV	R4,A
+	MOV	A,R5
+	MOV	R7,A
+	MOV	A,R4
+	MOV	R6,A
+	MOV	DPTR,#sumSec+1
+	MOVX	A,@DPTR
+	ADD	A,R6
+	MOVX	@DPTR,A
+	MOV	DPTR,#sumSec
+	MOVX	A,@DPTR
+	ADDC	A,R7
+	MOVX	@DPTR,A
+; 355.	                sumOne +=  wssum;
+	MOV	R0,#$LOCBI Sec_pros+2
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	MOV	R6,#0
+	MOV	R7,#0
+	MOV	DPTR,#sumOne
+	LCALL	?L_ADD_ASG_DPTR_R4567_L01
+; 356.	                sumTen +=  wssum;
+	DEC	R0
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+	MOV	R6,#0
+	MOV	R7,#0
+	MOV	DPTR,#sumTen
+	LCALL	?L_ADD_ASG_DPTR_R4567_L01
+; 357.	                                                                                           // Wind Direction Sum
+; 358.	                ave     = (double)(Wddata[(Wpoint+i)%12]/10.)*(3.141592/180.);
+	MOV	DPTR,#Wpoint
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	DEC	R0
+	DEC	R0
+	ADD	A,@R0
+	MOV	R4,A
+	DEC	R0
+	MOV	A,R5
+	ADDC	A,@R0
+	MOV	R5,A
+	CLR	A
+	MOV	R3,A
+	MOV	R2,#12
+	MOV	A,R4
+	MOV	R0,A
+	MOV	A,R5
+	MOV	R1,A
+	LCALL	?UI_MOD_L00
+	MOV	A,R0
+	ADD	A,ACC
+	ADD	A,#LOW(Wddata)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Wddata)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_DIV_L02
+	MOV	R0,#51
+	MOV	R3,#60
+	MOV	R2,#142
+	MOV	R1,#250
+	LCALL	?F_MUL_L02
+; 359.	                ave2    = sin(ave);
+	MOV	R0,#$LOCBI Sec_pros+4
+	LCALL	?STO_R4567_IR0_L20
+	LCALL	$REFFN sin
+; 360.	                sinSec += ave2;
+	MOV	R0,#$LOCBI Sec_pros+8
+	LCALL	?STO_R4567_IR0_L20
+	MOV	DPTR,#sinSec
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 361.	                sinOne += ave2;
+	MOV	R0,#$LOCBI Sec_pros+8
+	LCALL	?LD_R4567_IR0_L20
+	MOV	DPTR,#sinOne
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 362.	                sinTen += ave2;
+	MOV	R0,#$LOCBI Sec_pros+8
+	LCALL	?LD_R4567_IR0_L20
+	MOV	DPTR,#sinTen
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 363.	                ave2    = cos(ave);
+	MOV	R0,#$LOCBI Sec_pros+4
+	LCALL	?LD_R4567_IR0_L20
+	LCALL	$REFFN cos
+; 364.	                cosSec += ave2;
+	MOV	R0,#$LOCBI Sec_pros+8
+	LCALL	?STO_R4567_IR0_L20
+	MOV	DPTR,#cosSec
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 365.	                cosOne += ave2;
+	MOV	R0,#$LOCBI Sec_pros+8
+	LCALL	?LD_R4567_IR0_L20
+	MOV	DPTR,#cosOne
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 366.	                cosTen += ave2;
+	MOV	R0,#$LOCBI Sec_pros+8
+	LCALL	?LD_R4567_IR0_L20
+	MOV	DPTR,#cosTen
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+	MOV	R0,#$LOCBI Sec_pros+1
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	LJMP	?0087
+?0086:
+; 367.	        }
+; 368.	        ave=(double)(atan(sinSec/cosSec))*(180./3.141592);
+	MOV	DPTR,#sinSec
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	DPTR,#cosSec
+	LCALL	?LD_R0123_XDPTR_L20
+	LCALL	?F_DIV_L02
+	LCALL	$REFFN atan
+	MOV	R1,#46
+	MOV	R3,#66
+	MOV	R2,#101
+	MOV	R0,#228
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI Sec_pros+4
+	LCALL	?STO_R4567_IR0_L20
+; 369.	        if(sinSec < 0 && cosSec > 0)   ave+=360.;
+	MOV	DPTR,#sinSec
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0377
+	MOV	A,R7
+	ANL	A,#128
+?0377:
+	CPL	ACC.7
+	JNZ	?0091
+	MOV	DPTR,#cosSec
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0378
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0378:
+	CPL	ACC.7
+	JNZ	?0091
+?0093:
+?0092:
+?0090:
+	MOV	R0,#$LOCBI Sec_pros+4
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#180
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+	SJMP	?0094
+?0091:
+; 370.	        else if((sinSec > 0 && cosSec < 0) || (sinSec < 0 && cosSec < 0))  ave+=180.;
+	MOV	DPTR,#sinSec
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0379
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0379:
+	CPL	ACC.7
+	JNZ	?0097
+	MOV	DPTR,#cosSec
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0380
+	MOV	A,R7
+	ANL	A,#128
+?0380:
+	JNZ	?0095
+?0098:
+?0097:
+	MOV	DPTR,#sinSec
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0381
+	MOV	A,R7
+	ANL	A,#128
+?0381:
+	CPL	ACC.7
+	JNZ	?0096
+	MOV	DPTR,#cosSec
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0382
+	MOV	A,R7
+	ANL	A,#128
+?0382:
+	CPL	ACC.7
+	JNZ	?0096
+?0102:
+?0101:
+?0099:
+?0100:
+?0095:
+	MOV	R0,#$LOCBI Sec_pros+4
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#52
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+?0096:
+?0094:
+; 371.	
+; 372.	        Wsreal=sumSec;
+	MOV	DPTR,#sumSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#Wsreal
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 373.	        i=Ws_calc(sumSec);
+	MOV	DPTR,#sumSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	LCALL	$REFFN Ws_calc
+; 374.	
+; 375.	        ES=0;
+	CLR	IE.4
+; 376.	        WsSec=i;
+	MOV	R0,#$LOCBI Sec_pros
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+; 377.	        WdSec=(double)ave*10.;
+	MOV	DPTR,#WsSec
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	MOV	R0,#$LOCBI Sec_pros+4
+	LCALL	?LD_R4567_IR0_L20
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+; 378.	        WsSecd[Second]=WsSec;
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R6,A
+	MOV	DPTR,#Second
+	MOVX	A,@DPTR
+	ADD	A,ACC
+	ADD	A,#LOW(WsSecd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsSecd)
+	MOV	DPH,A
+	MOV	A,R7
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R6
+	MOVX	@DPTR,A
+; 379.	        WdSecd[Second]=WdSec;
+	MOV	DPTR,#Second
+	MOVX	A,@DPTR
+	ADD	A,ACC
+	ADD	A,#LOW(WdSecd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WdSecd)
+	MOV	DPH,A
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#WdSec
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 380.	        ES=1;
+	SETB	IE.4
+; 381.	        if(Init)
+	JB	Init,$+6
+	LJMP	?0104
+?0103:
+; 382.	        {
+; 383.	                Init=0;
+	CLR	Init
+; 384.	                ES=0;
+	CLR	IE.4
+; 385.	                WdMin  = WdSec;
+	MOV	DPTR,#WdMin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 386.	                WdTen  = WdMin;
+	MOV	DPTR,#WdMin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdTen
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 387.	                WdGmax = WdSec;
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdGmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 388.	                WdMmax = WdSec;
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdMmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 389.	                WdTmax = WdSec;
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdTmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 390.	                WdThvalue=WdSec;
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdThvalue
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 391.	
+; 392.	                WsSec  = WsSec*1.33;
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R1,#61
+	MOV	R3,#63
+	MOV	R0,#113
+	MOV	R2,#170
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+; 393.	                WsMin  = WsSec;
+	MOV	DPTR,#WsMin
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 394.	                WsTen  = WsSec;
+	MOV	DPTR,#WsTen
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 395.	                WsGmax = WsSec;
+	MOV	DPTR,#WsGmax
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 396.	                WsMmax = WsSec;
+	MOV	DPTR,#WsMmax
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 397.	                WsTmax = WsSec;
+	MOV	DPTR,#WsTmax
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 398.	                WsThvalue=WsSec;
+	MOV	DPTR,#WsThvalue
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#WsSec
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 399.	                ES=1;
+	SETB	IE.4
+?0104:
+; 400.	        }
+; 401.	
+; 402.	        if(WsSec != WsEvalue)
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#WsEvalue+1
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0383
+	MOV	DPTR,#WsEvalue
+	MOVX	A,@DPTR
+	XRL	A,R5
+	JZ	?0106
+?0383:
+?0105:
+; 403.	        {
+; 404.	                if(WdSec == WdEvalue)
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#WdEvalue+1
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0384
+	MOV	DPTR,#WdEvalue
+	MOVX	A,@DPTR
+	XRL	A,R5
+?0384:
+	JNZ	?0108
+?0107:
+; 405.	                {
+; 406.	                        if(WdEcount < 21600)    /* Wd = 6 Hour Fix Then Error */
+	CLR	C
+	MOV	DPTR,#WdEcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#96
+	MOV	DPTR,#WdEcount
+	MOVX	A,@DPTR
+	SUBB	A,#84
+	JNC	?0110
+?0109:
+; 407.	                                WdEcount++;
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#WdEcount
+	JNZ	?0385
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0385:
+?0110:
+; 408.	                }
+; 409.	                else
+	SJMP	?0111
+?0108:
+; 410.	                        WdEcount=0;
+	MOV	DPTR,#WdEcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0111:
+?0106:
+; 411.	        }
+; 412.	        if(WdSec != WdEvalue)
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#WdEvalue+1
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0386
+	MOV	DPTR,#WdEvalue
+	MOVX	A,@DPTR
+	XRL	A,R5
+	JZ	?0113
+?0386:
+?0112:
+; 413.	        {
+; 414.	                if(WsSec == WsEvalue)
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#WsEvalue+1
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0387
+	MOV	DPTR,#WsEvalue
+	MOVX	A,@DPTR
+	XRL	A,R5
+?0387:
+	JNZ	?0115
+?0114:
+; 415.	                {
+; 416.	                        if(WsEcount < 21600)
+	CLR	C
+	MOV	DPTR,#WsEcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#96
+	MOV	DPTR,#WsEcount
+	MOVX	A,@DPTR
+	SUBB	A,#84
+	JNC	?0117
+?0116:
+; 417.	                                WsEcount++;
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#WsEcount
+	JNZ	?0388
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0388:
+?0117:
+; 418.	                }
+; 419.	                else
+	SJMP	?0118
+?0115:
+; 420.	                        WsEcount=0;
+	MOV	DPTR,#WsEcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0118:
+?0113:
+; 421.	        }
+; 422.	
+; 423.	        if((WdSec == WdEvalue) && (WsSec == WsEvalue))
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#WdEvalue+1
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0389
+	MOV	DPTR,#WdEvalue
+	MOVX	A,@DPTR
+	XRL	A,R5
+?0389:
+	JNZ	?0120
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#WsEvalue+1
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0390
+	MOV	DPTR,#WsEvalue
+	MOVX	A,@DPTR
+	XRL	A,R5
+?0390:
+	JNZ	?0120
+?0122:
+?0121:
+?0119:
+; 424.	        {
+; 425.	                if(WdsEcount < 43200)       /* All Stop Then 12 Hour */
+	CLR	C
+	MOV	DPTR,#WdsEcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#192
+	MOV	DPTR,#WdsEcount
+	MOVX	A,@DPTR
+	SUBB	A,#168
+	JNC	?0124
+?0123:
+; 426.	                        WdsEcount++;
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#WdsEcount
+	JNZ	?0391
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0391:
+?0124:
+; 427.	        }
+; 428.	        else
+	SJMP	?0125
+?0120:
+; 429.	                WdsEcount=0;
+	MOV	DPTR,#WdsEcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0125:
+; 430.	
+; 431.	        WdEvalue=WdSec;
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdEvalue
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 432.	        WsEvalue=WsSec;
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WsEvalue
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 433.	        //*************************************************** WD VECTOR
+; 434.	        ave     = (double)(WdSec)*(3.141592/180.);
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R0,#51
+	MOV	R3,#60
+	MOV	R2,#142
+	MOV	R1,#250
+	LCALL	?F_MUL_L02
+; 435.	        sinHTen += (sin(ave)*WsSec);
+	MOV	R0,#$LOCBI Sec_pros+4
+	LCALL	?STO_R4567_IR0_L20
+	LCALL	$REFFN sin
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	LCALL	?F_MUL_L02
+	MOV	DPTR,#sinHTen
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 436.	        cosHTen += (cos(ave)*WsSec);
+	MOV	R0,#$LOCBI Sec_pros+4
+	LCALL	?LD_R4567_IR0_L20
+	LCALL	$REFFN cos
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	LCALL	?F_MUL_L02
+	MOV	DPTR,#cosHTen
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 437.	}
+	RET
+; 438.	
+; 439.	
+; 440.	void Ten_pros(void)
+; 441.	{
+Ten_pros:
+; 442.	        unsigned int i;
+; 443.	        double ave,aveH;
+; 444.	
+; 445.	        ave =(atan(sinTen /cosTen ))*(180./3.141592);
+	MOV	DPTR,#sinTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	DPTR,#cosTen
+	LCALL	?LD_R0123_XDPTR_L20
+	LCALL	?F_DIV_L02
+	LCALL	$REFFN atan
+	MOV	R1,#46
+	MOV	R3,#66
+	MOV	R2,#101
+	MOV	R0,#228
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI Ten_pros+2
+	LCALL	?STO_R4567_IR0_L20
+; 446.	        aveH=(atan(sinHTen/cosHTen))*(180./3.141592);
+	MOV	DPTR,#sinHTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	DPTR,#cosHTen
+	LCALL	?LD_R0123_XDPTR_L20
+	LCALL	?F_DIV_L02
+	LCALL	$REFFN atan
+	MOV	R1,#46
+	MOV	R3,#66
+	MOV	R2,#101
+	MOV	R0,#228
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI Ten_pros+6
+	LCALL	?STO_R4567_IR0_L20
+; 447.	
+; 448.	        if     ( sinTen <0 && cosTen >0)                                    ave +=360.;
+	MOV	DPTR,#sinTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0392
+	MOV	A,R7
+	ANL	A,#128
+?0392:
+	CPL	ACC.7
+	JNZ	?0127
+	MOV	DPTR,#cosTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0393
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0393:
+	CPL	ACC.7
+	JNZ	?0127
+?0129:
+?0128:
+?0126:
+	MOV	R0,#$LOCBI Ten_pros+2
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#180
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+	SJMP	?0130
+?0127:
+; 449.	        else if((sinTen >0 && cosTen <0)||(sinTen <0 && cosTen <0)) ave +=180.;
+	MOV	DPTR,#sinTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0394
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0394:
+	CPL	ACC.7
+	JNZ	?0133
+	MOV	DPTR,#cosTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0395
+	MOV	A,R7
+	ANL	A,#128
+?0395:
+	JNZ	?0131
+?0134:
+?0133:
+	MOV	DPTR,#sinTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0396
+	MOV	A,R7
+	ANL	A,#128
+?0396:
+	CPL	ACC.7
+	JNZ	?0132
+	MOV	DPTR,#cosTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0397
+	MOV	A,R7
+	ANL	A,#128
+?0397:
+	CPL	ACC.7
+	JNZ	?0132
+?0138:
+?0137:
+?0135:
+?0136:
+?0131:
+	MOV	R0,#$LOCBI Ten_pros+2
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#52
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+?0132:
+?0130:
+; 450.	        if     ( sinHTen<0 && cosHTen>0)                                    aveH+=360.;
+	MOV	DPTR,#sinHTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0398
+	MOV	A,R7
+	ANL	A,#128
+?0398:
+	CPL	ACC.7
+	JNZ	?0140
+	MOV	DPTR,#cosHTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0399
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0399:
+	CPL	ACC.7
+	JNZ	?0140
+?0142:
+?0141:
+?0139:
+	MOV	R0,#$LOCBI Ten_pros+6
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#180
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+	SJMP	?0143
+?0140:
+; 451.	        else if((sinHTen>0 && cosHTen<0)||(sinHTen<0 && cosHTen<0)) aveH+=180.;
+	MOV	DPTR,#sinHTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0400
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0400:
+	CPL	ACC.7
+	JNZ	?0146
+	MOV	DPTR,#cosHTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0401
+	MOV	A,R7
+	ANL	A,#128
+?0401:
+	JNZ	?0144
+?0147:
+?0146:
+	MOV	DPTR,#sinHTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0402
+	MOV	A,R7
+	ANL	A,#128
+?0402:
+	CPL	ACC.7
+	JNZ	?0145
+	MOV	DPTR,#cosHTen
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0403
+	MOV	A,R7
+	ANL	A,#128
+?0403:
+	CPL	ACC.7
+	JNZ	?0145
+?0151:
+?0150:
+?0148:
+?0149:
+?0144:
+	MOV	R0,#$LOCBI Ten_pros+6
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#52
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+?0145:
+?0143:
+; 452.	        i      = Ws_calc(sumTen/600.);
+	MOV	DPTR,#sumTen
+	LCALL	?LD_R4567_XDPTR_L20
+	LCALL	?R4567_LONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#22
+	MOV	R3,#68
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	LCALL	$REFFN Ws_calc
+; 453.	        ES     = 0;
+	CLR	IE.4
+; 454.	        WsTen  = i;
+	MOV	DPTR,#WsTen
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 455.	        WdTen  = (double)ave *10.;
+	MOV	R0,#$LOCBI Ten_pros
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	INC	R0
+	LCALL	?LD_R4567_IR0_L20
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#WdTen
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 456.	        WdHTen = (double)aveH*10.;
+	MOV	R0,#$LOCBI Ten_pros+6
+	LCALL	?LD_R4567_IR0_L20
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#WdHTen
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 457.	        WsTmax = 0;
+	MOV	DPTR,#WsTmax
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 458.	        WdTmax = 0;
+	MOV	DPTR,#WdTmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 459.	        for(i=0; i != 10; i++)
+	MOV	R0,#$LOCBI Ten_pros
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0153:
+	MOV	R0,#$LOCBI Ten_pros+1
+	MOV	A,@R0
+	XRL	A,#10
+	JNZ	?0404
+	DEC	R0
+	MOV	A,@R0
+	JZ	?0152
+?0404:
+?0154:
+; 460.	        {
+; 461.	                if(WsMind[i] > WsTmax)
+	MOV	R0,#$LOCBI Ten_pros+1
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WsMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsMind)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#WsTmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#WsTmax
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0157
+?0156:
+; 462.	                {
+; 463.	                        WdTmax=WdMind[i];
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WdMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WdMind)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdTmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 464.	                        WsTmax=WsMind[i];
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WsMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsMind)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WsTmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+?0157:
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0153
+?0152:
+; 465.	                }
+; 466.	        }
+; 467.	        ES=1;
+	SETB	IE.4
+; 468.	        sumTen=0;
+	MOV	DPTR,#sumTen
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 469.	        sinTen=0;
+	MOV	DPTR,#sinTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 470.	        cosTen=0;
+	MOV	DPTR,#cosTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 471.	
+; 472.	        sinHTen          = 0;
+	MOV	DPTR,#sinHTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 473.	        cosHTen          = 0;
+	MOV	DPTR,#cosHTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 474.	}
+	RET
+; 475.	
+; 476.	void One_pros(void)
+; 477.	{
+One_pros:
+; 478.	        unsigned int i;
+; 479.	        double ave;
+; 480.	
+; 481.	        ave=(double)(atan(sinOne/cosOne))*(180/3.141592);
+	MOV	DPTR,#sinOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	DPTR,#cosOne
+	LCALL	?LD_R0123_XDPTR_L20
+	LCALL	?F_DIV_L02
+	LCALL	$REFFN atan
+	MOV	R1,#46
+	MOV	R3,#66
+	MOV	R2,#101
+	MOV	R0,#228
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI One_pros+2
+	LCALL	?STO_R4567_IR0_L20
+; 482.	        if(sinOne < 0 && cosOne > 0)
+	MOV	DPTR,#sinOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0405
+	MOV	A,R7
+	ANL	A,#128
+?0405:
+	CPL	ACC.7
+	JNZ	?0159
+	MOV	DPTR,#cosOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0406
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0406:
+	CPL	ACC.7
+	JNZ	?0159
+?0161:
+?0160:
+?0158:
+; 483.	                ave+=360.;
+	MOV	R0,#$LOCBI One_pros+2
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#180
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+	SJMP	?0162
+?0159:
+; 484.	        else if((sinOne > 0 && cosOne < 0) || (sinOne < 0 && cosOne < 0))
+	MOV	DPTR,#sinOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0407
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0407:
+	CPL	ACC.7
+	JNZ	?0165
+	MOV	DPTR,#cosOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0408
+	MOV	A,R7
+	ANL	A,#128
+?0408:
+	JNZ	?0163
+?0166:
+?0165:
+	MOV	DPTR,#sinOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0409
+	MOV	A,R7
+	ANL	A,#128
+?0409:
+	CPL	ACC.7
+	JNZ	?0164
+	MOV	DPTR,#cosOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0410
+	MOV	A,R7
+	ANL	A,#128
+?0410:
+	CPL	ACC.7
+	JNZ	?0164
+?0170:
+?0169:
+?0167:
+?0168:
+?0163:
+; 485.	                ave+=180.;
+	MOV	R0,#$LOCBI One_pros+2
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#52
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+?0164:
+?0162:
+; 486.	        i=Ws_calc(sumOne/60);
+	MOV	DPTR,#sumOne
+	LCALL	?LD_R4567_XDPTR_L20
+	CLR	A
+	MOV	R1,A
+	MOV	R2,A
+	MOV	R3,A
+	MOV	R0,#60
+	LCALL	?SL_DIV_L01
+	LCALL	$REFFN Ws_calc
+; 487.	        ES=0;
+	CLR	IE.4
+; 488.	        WsMin=i;
+	MOV	DPTR,#WsMin
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 489.	    WdMin=(double)ave*10.;
+	MOV	R0,#$LOCBI One_pros
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	INC	R0
+	LCALL	?LD_R4567_IR0_L20
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+; 490.	    ES=1;
+	SETB	IE.4
+; 491.	
+; 492.	    WsMind[Minute]=WsMin;
+	MOV	DPTR,#WsMin
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R6,A
+	MOV	DPTR,#Minute
+	MOVX	A,@DPTR
+	ADD	A,ACC
+	ADD	A,#LOW(WsMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsMind)
+	MOV	DPH,A
+	MOV	A,R7
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R6
+	MOVX	@DPTR,A
+; 493.	    WdMind[Minute]=WdMin;
+	MOV	DPTR,#Minute
+	MOVX	A,@DPTR
+	ADD	A,ACC
+	ADD	A,#LOW(WdMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WdMind)
+	MOV	DPH,A
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	MOV	DPTR,#WdMin
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 494.	
+; 495.	    ES=0;
+	CLR	IE.4
+; 496.	    WsMmax=0;
+	MOV	DPTR,#WsMmax
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 497.	    WdMmax=0;
+	MOV	DPTR,#WdMmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 498.	        for(i=0;i != 60; i++)
+	MOV	R0,#$LOCBI One_pros
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0172:
+	MOV	R0,#$LOCBI One_pros+1
+	MOV	A,@R0
+	XRL	A,#60
+	JNZ	?0411
+	DEC	R0
+	MOV	A,@R0
+	JZ	?0171
+?0411:
+?0173:
+; 499.	        {
+; 500.	                if(WsSecd[i] > WsMmax)
+	MOV	R0,#$LOCBI One_pros+1
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WsSecd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsSecd)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#WsMmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#WsMmax
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0176
+?0175:
+; 501.	                {
+; 502.	                        WdMmax=WdSecd[i];
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WdSecd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WdSecd)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdMmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 503.	                        WsMmax=WsSecd[i];
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WsSecd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsSecd)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WsMmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+?0176:
+; 504.	                }
+; 505.	                WsSecd[i]=0;
+	MOV	A,@R0
+	ADD	A,ACC
+	ADD	A,#LOW(WsSecd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsSecd)
+	MOV	DPH,A
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0172
+?0171:
+; 506.	        }
+; 507.	        ES=1;
+	SETB	IE.4
+; 508.	
+; 509.	        sumOne=0;
+	MOV	DPTR,#sumOne
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 510.	        sinOne=0;
+	MOV	DPTR,#sinOne
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 511.	        cosOne=0;
+	MOV	DPTR,#cosOne
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 512.	        for(i=8;i != 11; i++)
+	MOV	R0,#$LOCBI One_pros
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,#8
+?0178:
+	MOV	R0,#$LOCBI One_pros+1
+	MOV	A,@R0
+	XRL	A,#11
+	JNZ	?0412
+	DEC	R0
+	MOV	A,@R0
+	JNZ	$+5
+	LJMP	?0177
+?0412:
+?0179:
+; 513.	        {
+; 514.	                sumOne+=WsMind[(Minute+i)%10];
+	MOV	DPTR,#Minute
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R0,#$LOCBI One_pros+1
+	ADD	A,@R0
+	MOV	R4,A
+	DEC	R0
+	MOV	A,R5
+	ADDC	A,@R0
+	MOV	R5,A
+	CLR	A
+	MOV	R3,A
+	MOV	R2,#10
+	MOV	A,R4
+	MOV	R0,A
+	MOV	A,R5
+	MOV	R1,A
+	LCALL	?UI_MOD_L00
+	MOV	A,R0
+	ADD	A,ACC
+	ADD	A,#LOW(WsMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WsMind)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	R6,#0
+	MOV	R7,#0
+	MOV	DPTR,#sumOne
+	LCALL	?L_ADD_ASG_DPTR_R4567_L01
+; 515.	                ave=(double)(WdMind[(Minute+i)%10]/10.)*(3.141592/180.);
+	MOV	DPTR,#Minute
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R0,#$LOCBI One_pros+1
+	ADD	A,@R0
+	MOV	R4,A
+	DEC	R0
+	MOV	A,R5
+	ADDC	A,@R0
+	MOV	R5,A
+	CLR	A
+	MOV	R3,A
+	MOV	R2,#10
+	MOV	A,R4
+	MOV	R0,A
+	MOV	A,R5
+	MOV	R1,A
+	LCALL	?UI_MOD_L00
+	MOV	A,R0
+	ADD	A,ACC
+	ADD	A,#LOW(WdMind)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(WdMind)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_DIV_L02
+	MOV	R0,#51
+	MOV	R3,#60
+	MOV	R2,#142
+	MOV	R1,#250
+	LCALL	?F_MUL_L02
+; 516.	                sinOne += sin(ave);
+	MOV	R0,#$LOCBI One_pros+2
+	LCALL	?STO_R4567_IR0_L20
+	LCALL	$REFFN sin
+	MOV	DPTR,#sinOne
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 517.	                cosOne += cos(ave);
+	MOV	R0,#$LOCBI One_pros+2
+	LCALL	?LD_R4567_IR0_L20
+	LCALL	$REFFN cos
+	MOV	DPTR,#cosOne
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+	MOV	R0,#$LOCBI One_pros+1
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	LJMP	?0178
+?0177:
+; 518.	        }
+; 519.	        ave=(double)(atan(sinOne/cosOne))*(180./3.141592);
+	MOV	DPTR,#sinOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	DPTR,#cosOne
+	LCALL	?LD_R0123_XDPTR_L20
+	LCALL	?F_DIV_L02
+	LCALL	$REFFN atan
+	MOV	R1,#46
+	MOV	R3,#66
+	MOV	R2,#101
+	MOV	R0,#228
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI One_pros+2
+	LCALL	?STO_R4567_IR0_L20
+; 520.	        if(sinOne < 0 && cosOne > 0)
+	MOV	DPTR,#sinOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0413
+	MOV	A,R7
+	ANL	A,#128
+?0413:
+	CPL	ACC.7
+	JNZ	?0182
+	MOV	DPTR,#cosOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0414
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0414:
+	CPL	ACC.7
+	JNZ	?0182
+?0184:
+?0183:
+?0181:
+; 521.	                ave+=360.;
+	MOV	R0,#$LOCBI One_pros+2
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#180
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+	SJMP	?0185
+?0182:
+; 522.	        else if((sinOne > 0 && cosOne < 0) || (sinOne < 0 && cosOne < 0))
+	MOV	DPTR,#sinOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0415
+	MOV	A,R7
+	ANL	A,#128
+	CPL	ACC.7
+?0415:
+	CPL	ACC.7
+	JNZ	?0188
+	MOV	DPTR,#cosOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0416
+	MOV	A,R7
+	ANL	A,#128
+?0416:
+	JNZ	?0186
+?0189:
+?0188:
+	MOV	DPTR,#sinOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0417
+	MOV	A,R7
+	ANL	A,#128
+?0417:
+	CPL	ACC.7
+	JNZ	?0187
+	MOV	DPTR,#cosOne
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	A,R7
+	ORL	A,R6
+	JZ	?0418
+	MOV	A,R7
+	ANL	A,#128
+?0418:
+	CPL	ACC.7
+	JNZ	?0187
+?0193:
+?0192:
+?0190:
+?0191:
+?0186:
+; 523.	                ave+=180.;
+	MOV	R0,#$LOCBI One_pros+2
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#52
+	MOV	R7,#67
+	LCALL	?F_ADD_ASG_R0_R4567_L02
+?0187:
+?0185:
+; 524.	
+; 525.	        ES=0;
+	CLR	IE.4
+; 526.	        WsThvalue=sumOne/3.;
+	MOV	DPTR,#sumOne
+	LCALL	?LD_R4567_XDPTR_L20
+	LCALL	?R4567_LONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	A,#64
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#WsThvalue
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 527.	        WdThvalue=(double)ave*10.;
+	MOV	R0,#$LOCBI One_pros+2
+	LCALL	?LD_R4567_IR0_L20
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#WdThvalue
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 528.	        ES=1;
+	SETB	IE.4
+; 529.	
+; 530.	        sumOne=0;
+	MOV	DPTR,#sumOne
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 531.	        sinOne=0;
+	MOV	DPTR,#sinOne
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 532.	        cosOne=0;
+	MOV	DPTR,#cosOne
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 533.	}
+	RET
+; 534.	
+; 535.	interrupt void T0_int(void)
+; 536.	{
+T0_int:
+; 537.	
+; 538.	}
+	RETI
+; 539.	
+; 540.	interrupt void T2_int(void)
+; 541.	{
+T2_int:
+	PUSH	ACC
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+; 542.	        TR2=0;          /* Timer 2 Stop */
+	CLR	T2CON.2
+; 543.	        TH2=0x00;
+	MOV	205,#0
+; 544.	        TL2=0x00;
+	MOV	204,#0
+; 545.	
+; 546.	    if(TEcount > 20)
+	SETB	C
+	MOV	DPTR,#TEcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#20
+	MOV	DPTR,#TEcount
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0195
+?0194:
+; 547.	        Terror=1;
+	SETB	Terror
+; 548.	    else
+	SJMP	?0196
+?0195:
+; 549.	    {
+; 550.	        Terror=0;
+	CLR	Terror
+; 551.	        TEcount++;
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#TEcount
+	JNZ	?0419
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0419:
+?0196:
+; 552.	    }
+; 553.	
+; 554.	    RCAP2L=0x00;
+	MOV	202,#0
+; 555.	    RCAP2H=0x00;
+	MOV	203,#0
+; 556.	    TR2=1;          /* Timer 2 Run */
+	SETB	T2CON.2
+; 557.	    TF2=0;
+	CLR	T2CON.7
+; 558.	}
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	ACC
+	RETI
+; 559.	
+; 560.	interrupt void EX0_int(void)
+; 561.	{
+EX0_int:
+	PUSH	ACC
+	PUSH	B
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R0
+	PUSH	ACC
+	MOV	A,R1
+	PUSH	ACC
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R7
+	PUSH	ACC
+; 562.	    unsigned int i;
+; 563.	
+; 564.	    if(Quad++ == 3)
+	MOV	DPTR,#Quad
+	MOVX	A,@DPTR
+	MOV	R4,A
+	INC	A
+	MOVX	@DPTR,A
+	MOV	A,R4
+	CJNE	A,#3,?0198
+?0197:
+; 565.	    {
+; 566.	        Quad=0;
+	CLR	A
+	MOVX	@DPTR,A
+; 567.	        ES=0;
+	CLR	IE.4
+; 568.	        if(++Second == 60)
+	MOV	DPTR,#Second
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	CJNE	A,#60,?0200
+?0199:
+; 569.	        {
+; 570.	            Second=0;
+	CLR	A
+	MOVX	@DPTR,A
+; 571.	            Minute=++Minute%10;
+	MOV	DPTR,#Minute
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	R7
+	MOV	A,R7
+	MOV	B,#10
+	DIV	AB
+	MOV	A,B
+	MOVX	@DPTR,A
+?0200:
+; 572.	        }
+; 573.	        ES=1;
+	SETB	IE.4
+?0198:
+; 574.	    }
+; 575.	    P3.5 = 0;                               // Holding
+	CLR	P3.5
+; 576.	    for(i=0; i < 15; i++)
+	MOV	R0,#$LOCBI EX0_int
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0202:
+	CLR	C
+	MOV	R0,#$LOCBI EX0_int+1
+	MOV	A,@R0
+	SUBB	A,#15
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,#0
+	JNC	?0201
+?0203:
+; 577.	    {
+; 578.	        i++;
+	INC	R0
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+; 579.	        i--;
+	INC	R0
+	MOV	A,@R0
+	DEC	@R0
+	DEC	R0
+	JNZ	$+3
+	DEC	@R0
+	INC	R0
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0202
+?0201:
+; 580.	    }                                       // Delay
+; 581.	    write_XDATA(ADCMSB,0xff);               // Converting Start
+	MOV	A,#255
+	MOV	DPTR,#49152
+	MOVX	@DPTR,A
+; 582.	        for(i=0; i < 10; i++)
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0206:
+	CLR	C
+	MOV	R0,#$LOCBI EX0_int+1
+	MOV	A,@R0
+	SUBB	A,#10
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,#0
+	JNC	?0205
+?0207:
+; 583.	    {
+; 584.	        i++;
+	INC	R0
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+; 585.	        i--;
+	INC	R0
+	MOV	A,@R0
+	DEC	@R0
+	DEC	R0
+	JNZ	$+3
+	DEC	@R0
+	INC	R0
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SJMP	?0206
+?0205:
+; 586.	    }
+; 587.	    i=0;                                    // Delay
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0210:
+; 588.	    while(P3.3 == 1)                        // Converting Delay
+	JNB	P3.3,?0209
+?0211:
+; 589.	    {
+; 590.	        if(i++ > 100)
+	MOV	R0,#$LOCBI EX0_int
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	SETB	C
+	MOV	A,R4
+	SUBB	A,#100
+	MOV	A,R5
+	SUBB	A,#0
+	JC	?0213
+?0212:
+; 591.	            break;
+	SJMP	?0209
+?0213:
+	SJMP	?0210
+?0209:
+; 592.	    }
+; 593.	    if(i > 100)
+	SETB	C
+	MOV	R0,#$LOCBI EX0_int+1
+	MOV	A,@R0
+	SUBB	A,#100
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,#0
+	JC	?0215
+?0214:
+; 594.	        Aderr=1;
+	SETB	Aderr
+; 595.	    else
+	SJMP	?0216
+?0215:
+; 596.	        Aderr=0;
+	CLR	Aderr
+?0216:
+; 597.	
+; 598.	    ES=0;
+	CLR	IE.4
+; 599.	    Wdreal  = read_XDATA(ADCLSB) >> 4;
+	MOV	DPTR,#49153
+	MOVX	A,@DPTR
+	SWAP	A
+	ANL	A,#15
+	MOV	R5,#0
+; 600.	    Wdreal |= read_XDATA(ADCMSB) << 4;      // Measuring Wind Direction
+	MOV	R4,A
+	MOV	DPL,R5
+	MOVX	A,@DPTR
+	MOV	R7,#0
+	MOV	R6,#4
+?0420:
+	ADD	A,ACC
+	XCH	A,R7
+	RLC	A
+	XCH	A,R7
+	DJNZ	R6,?0420
+	MOV	R6,A
+	MOV	A,R4
+	ORL	A,R6
+	MOV	R4,A
+	MOV	A,R5
+	ORL	A,R7
+	MOV	DPTR,#Wdreal
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 601.	    ES=1;
+	SETB	IE.4
+; 602.	    P3.5 = 1;                               // Sampling
+	SETB	P3.5
+; 603.	
+; 604.	    TR0=0;                                  // Timer Stop
+	CLR	TCON.4
+; 605.	    Nws  = TH0 << 8;                        // Capturing Wind Speed
+	MOV	A,TH0
+	MOV	R5,#0
+	MOV	R4,#0
+	MOV	R5,A
+	MOV	A,R4
+	MOV	A,R5
+	RLC	A
+	SUBB	A,ACC
+	MOV	R6,A
+	MOV	R7,A
+	MOV	DPTR,#Nws
+	LCALL	?STO_R4567_DPTR_L20
+; 606.	    Nws |= TL0;
+	MOV	A,TL0
+	MOV	R4,A
+	MOV	R5,#0
+	MOV	R6,#0
+	MOV	R7,#0
+	MOV	DPTR,#Nws
+	LCALL	?L_OR_ASG_DPTR_R4567_L01
+; 607.	    TR0=1;                                  // Timer Run
+	SETB	TCON.4
+; 608.	    if(Ows > Nws)
+	MOV	DPTR,#Ows
+	LCALL	?LD_R4567_XDPTR_L20
+	MOV	DPTR,#Nws
+	LCALL	?LD_R0123_XDPTR_L20
+	MOV	A,#7
+	LCALL	?L_CMP_L01
+	JNZ	?0218
+?0217:
+; 609.	        Wsabs=(Nws+0x10000)-Ows;
+	MOV	A,R0
+	MOV	R4,A
+	MOV	A,R1
+	MOV	R5,A
+	CLR	C
+	MOV	DPTR,#Ows+3
+	MOVX	A,@DPTR
+	MOV	R6,A
+	MOV	A,R4
+	SUBB	A,R6
+	MOV	R4,A
+	MOV	DPTR,#Ows+2
+	MOVX	A,@DPTR
+	MOV	R6,A
+	MOV	A,R5
+	SUBB	A,R6
+	MOV	DPTR,#Wsabs
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 610.	    else
+	SJMP	?0219
+?0218:
+; 611.	        Wsabs=Nws-Ows;
+	MOV	A,R0
+	MOV	R4,A
+	MOV	A,R1
+	MOV	R5,A
+	CLR	C
+	MOV	DPTR,#Ows+3
+	MOVX	A,@DPTR
+	MOV	R6,A
+	MOV	A,R4
+	SUBB	A,R6
+	MOV	R4,A
+	MOV	DPTR,#Ows+2
+	MOVX	A,@DPTR
+	MOV	R6,A
+	MOV	A,R5
+	SUBB	A,R6
+	MOV	DPTR,#Wsabs
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+?0219:
+; 612.	    Ows=Nws;
+	MOV	DPTR,#Ows
+	LCALL	?STO_R0123_DPTR_L20
+; 613.	                                            // Calculation W_D
+; 614.	    oldv=0;
+	MOV	DPTR,#oldv
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 615.	    flag=0;
+	MOV	DPTR,#flag
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 616.	    Sens=0;
+	CLR	Sens
+; 617.	    for(i=0; i != 16; i++)
+	MOV	R0,#$LOCBI EX0_int
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,A
+?0221:
+	MOV	R0,#$LOCBI EX0_int+1
+	MOV	A,@R0
+	XRL	A,#16
+	JNZ	?0421
+	DEC	R0
+	MOV	A,@R0
+	JNZ	$+5
+	LJMP	?0220
+?0421:
+?0222:
+; 618.	    {
+; 619.	        flag += 22.5;
+	MOV	DPTR,#flag
+	MOV	R4,#0
+	MOV	R5,#0
+	MOV	R6,#180
+	MOV	R7,#65
+	LCALL	?F_ADD_ASG_DPTR_R4567_L02
+; 620.	        newv=Adirection[i];
+	MOV	R0,#$LOCBI EX0_int+1
+	MOV	A,@R0
+	ADD	A,ACC
+	MOV	DPTR,#Adirection
+	MOV	R3,A
+	MOVC	A,@A+DPTR
+	XCH	A,R3
+	INC	A
+	MOVC	A,@A+DPTR
+; 621.	        if( Wdreal < newv && Wdreal >= oldv)
+	MOV	DPTR,#newv
+	XCH	A,R3
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R3
+	MOVX	@DPTR,A
+	MOV	R2,A
+	MOV	DPTR,#Wdreal+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R2
+	MOV	DPTR,#Wdreal
+	MOVX	A,@DPTR
+	SUBB	A,R3
+	JC	$+5
+	LJMP	?0225
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R2,A
+	MOV	DPTR,#oldv+1
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R2
+	MOV	DPTR,#oldv
+	MOVX	A,@DPTR
+	SUBB	A,R3
+	JC	$+5
+	LJMP	?0225
+?0227:
+?0226:
+?0224:
+; 622.	        {
+; 623.	            Sens=1;
+	SETB	Sens
+; 624.	            value=(flag-(flag-22.5))/(newv-oldv);
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#180
+	MOV	R3,#193
+	LCALL	?F_ADD_L02
+	MOV	A,R6
+	ORL	A,R7
+	JZ	$+6
+	MOV	A,R7
+	XRL	A,#128
+	MOV	R7,A
+	MOV	DPTR,#flag
+	LCALL	?LD_R0123_XDPTR_L20
+	LCALL	?F_ADD_L02
+	MOV	DPTR,#newv
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	CLR	C
+	MOV	DPTR,#oldv+1
+	MOV	R1,A
+	MOVX	A,@DPTR
+	XCH	A,R1
+	SUBB	A,R1
+	MOV	R2,A
+	MOV	DPTR,#oldv
+	MOVX	A,@DPTR
+	MOV	R1,A
+	MOV	A,R3
+	SUBB	A,R1
+	MOV	R3,A
+	MOV	A,R2
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	LCALL	?F_DIV_L02
+; 625.	            Wdvalue=(float)((value*Wdreal)-(value*oldv)+(flag-22.5)) * 10.;
+	MOV	DPTR,#Wdreal
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	DPTR,#value
+	LCALL	?STO_R4567_DPTR_L20
+	LCALL	?F_MUL_L02
+	MOV	A,R7
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	DPTR,#flag
+	LCALL	?LD_R4567_XDPTR_L20
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#180
+	MOV	R3,#193
+	LCALL	?F_ADD_L02
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_ADD_L02
+	MOV	DPTR,#oldv
+	MOVX	A,@DPTR
+	MOV	R3,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	A,R7
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	DPTR,#value
+	LCALL	?LD_R4567_XDPTR_L20
+	LCALL	?F_MUL_L02
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_SUB_R_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#Wdvalue
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 626.	            break;
+	SJMP	?0220
+?0225:
+; 627.	        }
+; 628.	        else
+; 629.	            oldv=newv;
+	MOV	DPTR,#newv
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#oldv
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+	LJMP	?0221
+?0220:
+; 630.	    }
+; 631.	    if(!Sens)
+	JB	Sens,?0229
+?0228:
+; 632.	        Wdvalue=3599;
+	MOV	DPTR,#Wdvalue
+	MOV	A,#14
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0229:
+; 633.	                            // Data Store
+; 634.	    Wpoint = ++Wpoint%12;
+	MOV	DPTR,#Wpoint
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	R7
+	MOV	A,R7
+	MOV	B,#12
+	DIV	AB
+	MOV	A,B
+; 635.	    Wddata[Wpoint]=Wdvalue;
+	MOV	R4,A
+	MOV	DPTR,#Wdvalue
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R6,A
+	MOV	A,R4
+	MOV	DPTR,#Wpoint
+	MOVX	@DPTR,A
+	ADD	A,ACC
+	ADD	A,#LOW(Wddata)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Wddata)
+	MOV	DPH,A
+	MOV	A,R7
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R6
+	MOVX	@DPTR,A
+; 636.	    Wsdata[Wpoint]=Wsabs;
+	MOV	DPTR,#Wsabs
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R6,A
+	MOV	A,R4
+	ADD	A,ACC
+	ADD	A,#LOW(Wsdata)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Wsdata)
+	MOV	DPH,A
+	MOV	A,R7
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R6
+	MOVX	@DPTR,A
+; 637.	    MeasQ=1;
+	SETB	MeasQ
+; 638.	}
+	POP	ACC
+	MOV	R7,A
+	POP	ACC
+	MOV	R6,A
+	POP	ACC
+	MOV	R5,A
+	POP	ACC
+	MOV	R4,A
+	POP	ACC
+	MOV	R3,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R0,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	B
+	POP	ACC
+	RETI
+; 639.	
+; 640.	interrupt void SCON_int(void)
+; 641.	{
+SCON_int:
+	PUSH	ACC
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R0
+	PUSH	ACC
+	MOV	A,R1
+	PUSH	ACC
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R7
+	PUSH	ACC
+; 642.	    unsigned char i,j;
+; 643.	
+; 644.	    if(RI == 1)
+	JB	SCON.0,$+6
+	LJMP	?0231
+?0230:
+; 645.	        {
+; 646.	                RI=0;
+	CLR	SCON.0
+; 647.	                Receve=1;
+	SETB	Receve
+; 648.	                BlueL=1;
+	SETB	P1.6
+; 649.	                Blueb=LightL;
+	MOV	DPTR,#Blueb
+	MOV	A,#8
+	MOVX	@DPTR,A
+	INC	DPTR
+	CLR	A
+	MOVX	@DPTR,A
+; 650.	                Rbuf[Rpoint++]=SBUF;
+	MOV	A,SBUF
+	MOV	DPTR,#Rpoint
+	MOV	R6,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#Rpoint
+	JNZ	?0422
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0422:
+	MOV	A,R4
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOV	A,R6
+	MOVX	@DPTR,A
+; 651.	
+; 652.	                if( Rbuf[Rpoint-1]  == 0xfe && Rbuf[Rpoint-2]  == 0xff
+; 653.	                 && Rbuf[Rpoint-10] == 0xff && Rbuf[Rpoint-11] == 0xff)
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	DEC	A
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	CJNE	A,#254,$+5
+	SJMP	$+5
+	LJMP	?0233
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#254
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	$+5
+	LJMP	?0233
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#246
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	$+5
+	LJMP	?0233
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#245
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	$+5
+	LJMP	?0233
+?0235:
+?0234:
+?0232:
+; 654.	                {
+; 655.	                        j=0;
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#0
+; 656.	                        for(i=9; i != 3; i--)
+	DEC	R0
+	MOV	@R0,#9
+?0237:
+	MOV	R0,#$LOCBI SCON_int
+	MOV	A,@R0
+	XRL	A,#3
+	JZ	?0236
+?0238:
+; 657.	                                j ^= Rbuf[Rpoint-i];
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,@R0
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R1,#$LOCBI SCON_int+1
+	MOV	R4,A
+	MOV	A,@R1
+	XRL	A,R4
+	INC	R0
+	MOV	@R0,A
+	DEC	R0
+	DEC	@R0
+	SJMP	?0237
+?0236:
+; 658.	                        if(j == Rbuf[Rpoint-3])
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#253
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	R0
+	XRL	A,@R0
+	JZ	$+5
+	LJMP	?0241
+?0240:
+; 659.	                        {
+; 660.	                                if(Rbuf[Rpoint-8] == ID)            // Temp 1 Call
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#248
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JZ	$+5
+	LJMP	?0243
+?0242:
+; 661.	                                {
+; 662.	                                        switch(Rbuf[Rpoint-9])
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#247
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	CJNE	A,#77,$+5
+	SJMP	$+5
+	LJMP	?0250
+?0245:
+; 663.	                                        {
+; 664.	                                                case 'M':
+; 665.	                                                        Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 666.	                                                        Sbuf[16]= 0xff;          // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 667.	                                                        Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 668.	                                                        Sbuf[14]= 'M';
+	MOV	A,#77
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 669.	                                                        // Sbuf[13]= Wdsta;
+; 670.	                                                        Sbuf[13]= 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 671.	                                                        Sbuf[12]= 0;            // Sensor Code
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 672.	                                                        Sbuf[11]= ID;           // sensor code & ID
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 673.	                                                        Sbuf[10]= WdSec >> 8;
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 674.	                                                        Sbuf[9] = WdSec;
+	MOV	DPTR,#WdSec+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 675.	                                                        Sbuf[8] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 676.	                                                        Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 677.	                                                        Sbuf[6] = 0;
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 678.	                                                        Sbuf[5] = 0;
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 679.	                                                        Sbuf[4] = WdGmax >> 8;
+	MOV	DPTR,#WdGmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 680.	                                                        Sbuf[3] = WdGmax;
+	MOV	DPTR,#WdGmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 681.	                                                        Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 682.	                                                        for(j=14;j != 2;j--)
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#14
+?0247:
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	A,@R0
+	XRL	A,#2
+	JZ	?0246
+?0248:
+; 683.	                                                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,@R0
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	@R0
+	SJMP	?0247
+?0246:
+; 684.	                                                        Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 685.	                                                        Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 686.	                                                        Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 687.	                                                        Comon=1;
+	SETB	Comon
+; 688.	                                                        SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 689.	                                                        break;
+	LJMP	?0244
+?0250:
+	CJNE	A,#79,$+5
+	SJMP	$+5
+	LJMP	?0258
+; 690.	                                                case 'O':
+; 691.	                                                        Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 692.	                                                        Sbuf[16]= 0xff;      /* Head */
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 693.	                                                        Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 694.	                                                        Sbuf[14]= 'O';
+	MOV	A,#79
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 695.	                                                        // Sbuf[13]= Wdsta;
+; 696.	                                                        Sbuf[13]= 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 697.	                                                        Sbuf[12]= 0;        // Sensor Code
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 698.	                                                        Sbuf[11]= ID;       // Sensor ID
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 699.	                                                        Sbuf[10]= WdMin >> 8;
+	MOV	DPTR,#WdMin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 700.	                                                        Sbuf[9] = WdMin;
+	MOV	DPTR,#WdMin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 701.	                                                        Sbuf[8] = WdThvalue >> 8;
+	MOV	DPTR,#WdThvalue
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 702.	                                                        Sbuf[7] = WdThvalue;
+	MOV	DPTR,#WdThvalue+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 703.	                                                        Sbuf[6] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 704.	                                                        Sbuf[5] = 0;
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 705.	                                                        if(Fout == 1)
+	JNB	Fout,?0252
+?0251:
+; 706.	                                                        {
+; 707.	                                                                Sbuf[4]=WdGmax >> 8;
+	MOV	DPTR,#WdGmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 708.	                                                                Sbuf[3]=WdGmax;
+	MOV	DPTR,#WdGmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 709.	                                                        }
+; 710.	                                                        else
+	SJMP	?0253
+?0252:
+; 711.	                                                        {
+; 712.	
+; 713.	                                                                Sbuf[4]=WdMmax >> 8;
+	MOV	DPTR,#WdMmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 714.	                                                                Sbuf[3]=WdMmax;
+	MOV	DPTR,#WdMmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+?0253:
+; 715.	                                                        }
+; 716.	                                                        Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 717.	                                                        for(j=14;j != 2;j--)
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#14
+?0255:
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	A,@R0
+	XRL	A,#2
+	JZ	?0254
+?0256:
+; 718.	                                                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,@R0
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	@R0
+	SJMP	?0255
+?0254:
+; 719.	                                                        Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 720.	                                                        Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 721.	                                                        Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 722.	                                                        Comon=1;
+	SETB	Comon
+; 723.	                                                        SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 724.	                                                        break;
+	LJMP	?0244
+?0258:
+	CJNE	A,#84,$+5
+	SJMP	$+5
+	LJMP	?0266
+; 725.	                                                case 'T':
+; 726.	                                                        Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 727.	                                                        Sbuf[16]= 0xff;      /* Head */
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 728.	                                                        Sbuf[15]=0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 729.	                                                        Sbuf[14]= 'T';
+	MOV	A,#84
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 730.	                                                        Sbuf[13]= 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 731.	                                                        Sbuf[12]= 0;        // Sensor Code
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 732.	                                                        Sbuf[11]= ID;       // Sensor ID
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 733.	//                                                      Sbuf[10]= WdTen >> 8;
+; 734.	//                                                      Sbuf[9] = WdTen;
+; 735.	                                                        Sbuf[10]= WdHTen >> 8;
+	MOV	DPTR,#WdHTen
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 736.	                                                        Sbuf[9] = WdHTen;
+	MOV	DPTR,#WdHTen+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 737.	                                                        Sbuf[8] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 738.	                                                        Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 739.	                                                        Sbuf[6] = 0;
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 740.	                                                        Sbuf[5] = 0;
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 741.	                                                        if(Fout == 1)
+	JNB	Fout,?0260
+?0259:
+; 742.	                                                        {
+; 743.	                                                                Sbuf[4]=WdGmax >> 8;
+	MOV	DPTR,#WdGmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 744.	                                                                Sbuf[3]=WdGmax;
+	MOV	DPTR,#WdGmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 745.	                                                        }
+; 746.	                                                        else
+	SJMP	?0261
+?0260:
+; 747.	                                                        {
+; 748.	                                                                Sbuf[4]=WdTmax >> 8;
+	MOV	DPTR,#WdTmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 749.	                                                                Sbuf[3]=WdTmax;
+	MOV	DPTR,#WdTmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+?0261:
+; 750.	                                                        }
+; 751.	                                                        Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 752.	                                                        for(j=14;j != 2;j--)
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#14
+?0263:
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	A,@R0
+	XRL	A,#2
+	JZ	?0262
+?0264:
+; 753.	                                                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,@R0
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	@R0
+	SJMP	?0263
+?0262:
+; 754.	                                                        Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 755.	                                                        Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 756.	                                                        Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 757.	                                                        Comon=1;
+	SETB	Comon
+; 758.	                                                        SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 759.	                                                        break;
+	LJMP	?0244
+?0266:
+	CJNE	A,#82,$+5
+	SJMP	$+5
+	LJMP	?0271
+; 760.	                                                case 'R':
+; 761.	                                                        Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 762.	                                                        Sbuf[16]= 0xff;      /* Head */
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 763.	                                                        Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 764.	                                                        Sbuf[14]= 'R';
+	MOV	A,#82
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 765.	                                                        // Sbuf[13]= Wdsta;
+; 766.	                                                        Sbuf[13]= 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 767.	                                                        Sbuf[12]= 0;        // Sensor Code
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 768.	                                                        Sbuf[11]= ID;       // Sensor ID
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 769.	                                                        Sbuf[10]= Wdreal >> 8;
+	MOV	DPTR,#Wdreal
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 770.	                                                        Sbuf[9] = Wdreal;
+	MOV	DPTR,#Wdreal+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 771.	                                                        Sbuf[8] = WdSec >> 8;
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 772.	                                                        Sbuf[7] = WdSec;
+	MOV	DPTR,#WdSec+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 773.	                                                        Sbuf[6] = WdMin >> 8;
+	MOV	DPTR,#WdMin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 774.	                                                        Sbuf[5] = WdMin;
+	MOV	DPTR,#WdMin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 775.	                                                        Sbuf[4] = WdGmax >> 8;
+	MOV	DPTR,#WdGmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 776.	                                                        Sbuf[3] = WdGmax;
+	MOV	DPTR,#WdGmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 777.	                                                        Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 778.	                                                        for(j=14;j != 2;j--)
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#14
+?0268:
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	A,@R0
+	XRL	A,#2
+	JZ	?0267
+?0269:
+; 779.	                                                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,@R0
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	@R0
+	SJMP	?0268
+?0267:
+; 780.	                                                        Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 781.	                                                        Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 782.	                                                        Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 783.	                                                        Comon=1;
+	SETB	Comon
+; 784.	                                                        SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 785.	                                                        break;
+	SJMP	?0244
+?0271:
+	CJNE	A,#64,?0244
+; 786.	                                                case '@':
+; 787.	                                                        WdGmax=Rbuf[Rpoint-5] << 8 | Rbuf[Rpoint-4];
+	MOV	DPTR,#Rpoint
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R6,A
+	ADD	A,#251
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,#0
+	XCH	A,R6
+	MOV	R2,A
+	XCH	A,R6
+	MOV	R5,A
+	MOV	A,R2
+	ADD	A,#252
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R3,#0
+	MOV	R2,A
+	MOV	A,R4
+	ORL	A,R2
+	MOV	R4,A
+	MOV	A,R5
+	MOV	DPTR,#WdGmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 788.	                                                        Rpoint=0;
+	MOV	A,R3
+	MOV	R6,A
+	MOV	R7,A
+	MOV	DPTR,#Rpoint
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 789.	                                                        break;
+	SJMP	?0244
+?0244:
+?0243:
+; 790.	                                        }
+; 791.	                                }
+; 792.	                                if(Rbuf[Rpoint-8] == ID+1)          // Temp 2 Call
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#248
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,A
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	MOV	R7,#0
+	INC	A
+	MOV	R6,A
+	JNZ	?0423
+	INC	R7
+?0423:
+	MOV	A,R4
+	XRL	A,R6
+	JNZ	?0424
+	MOV	A,R5
+	XRL	A,R7
+?0424:
+	JZ	$+5
+	LJMP	?0273
+?0272:
+; 793.	                                {
+; 794.	                                        switch(Rbuf[Rpoint-9])
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#247
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	CJNE	A,#77,$+5
+	SJMP	$+5
+	LJMP	?0280
+?0275:
+; 795.	                                        {
+; 796.	                                                case 'M':
+; 797.	                                                        Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 798.	                                                        Sbuf[16]= 0xff;          // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 799.	                                                        Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 800.	                                                        Sbuf[14]= 'M';
+	MOV	A,#77
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 801.	                                                        // Sbuf[13]= Wssta;
+; 802.	                                                        Sbuf[13]= 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 803.	                            Sbuf[12]= 0x01;         // Sensor Code
+	INC	A
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 804.	                            Sbuf[11]= ID+1;         // Sensor ID
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	INC	A
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 805.	                            Sbuf[10]= WsSec >> 8;
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 806.	                            Sbuf[9] = WsSec;
+	MOV	DPTR,#WsSec+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 807.	                            Sbuf[8] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 808.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 809.	                            Sbuf[6] = 0;
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 810.	                            Sbuf[5] = 0;
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 811.	                            Sbuf[4] = WsGmax >> 8;
+	MOV	DPTR,#WsGmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 812.	                            Sbuf[3] = WsGmax;
+	MOV	DPTR,#WsGmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 813.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 814.	                            for(j=14;j != 2;j--)
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#14
+?0277:
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	A,@R0
+	XRL	A,#2
+	JZ	?0276
+?0278:
+; 815.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,@R0
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	@R0
+	SJMP	?0277
+?0276:
+; 816.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 817.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 818.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 819.	                            Comon=1;
+	SETB	Comon
+; 820.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 821.	                            break;
+	LJMP	?0274
+?0280:
+	CJNE	A,#79,$+5
+	SJMP	$+5
+	LJMP	?0288
+; 822.	                        case 'O':
+; 823.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 824.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 825.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 826.	                                                        Sbuf[14]= 'O';
+	MOV	A,#79
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 827.	                                                        // Sbuf[13]= Wssta;
+; 828.	                                                        Sbuf[13]= 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 829.	                            Sbuf[12]= 0x01;             // Sensor Code
+	INC	A
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 830.	                            Sbuf[11]= ID+1;             // Sensor ID
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	INC	A
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 831.	                            Sbuf[10]= WsMin >> 8;
+	MOV	DPTR,#WsMin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 832.	                            Sbuf[9] = WsMin;
+	MOV	DPTR,#WsMin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 833.	                            Sbuf[8] = WsThvalue >> 8;
+	MOV	DPTR,#WsThvalue
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 834.	                            Sbuf[7] = WsThvalue;
+	MOV	DPTR,#WsThvalue+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 835.	                            Sbuf[6] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 836.	                            Sbuf[5] = 0;
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 837.	                            if(Fout == 1)
+	JNB	Fout,?0282
+?0281:
+; 838.	                            {
+; 839.	                                Sbuf[4]=WsGmax >> 8;
+	MOV	DPTR,#WsGmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 840.	                                Sbuf[3]=WsGmax;
+	MOV	DPTR,#WsGmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 841.	                            }
+; 842.	                            else
+	SJMP	?0283
+?0282:
+; 843.	                            {
+; 844.	                                Sbuf[4]=WsMmax >> 8;
+	MOV	DPTR,#WsMmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 845.	                                Sbuf[3]=WsMmax;
+	MOV	DPTR,#WsMmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+?0283:
+; 846.	                            }
+; 847.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 848.	                            for(j=14;j != 2;j--)
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#14
+?0285:
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	A,@R0
+	XRL	A,#2
+	JZ	?0284
+?0286:
+; 849.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,@R0
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	@R0
+	SJMP	?0285
+?0284:
+; 850.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 851.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 852.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 853.	                            Comon=1;
+	SETB	Comon
+; 854.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 855.	                            break;
+	LJMP	?0274
+?0288:
+	CJNE	A,#84,$+5
+	SJMP	$+5
+	LJMP	?0296
+; 856.	                        case 'T':
+; 857.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 858.	                            Sbuf[16]= 0xff;         // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 859.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 860.	                            Sbuf[14]= 'T';
+	MOV	A,#84
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 861.	                            Sbuf[13]= 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 862.	                            Sbuf[12]= 0x01;         // Sensor Code
+	INC	A
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 863.	                            Sbuf[11]= ID+1;         // Sensor ID
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	INC	A
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 864.	                            Sbuf[10]= WsTen >> 8;
+	MOV	DPTR,#WsTen
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 865.	                            Sbuf[9] = WsTen;
+	MOV	DPTR,#WsTen+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 866.	                            Sbuf[8] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 867.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 868.	                            Sbuf[6] = 0;
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 869.	                            Sbuf[5] = 0;
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 870.	                            if(Fout == 1)
+	JNB	Fout,?0290
+?0289:
+; 871.	                            {
+; 872.	                                Sbuf[4]=WsGmax >> 8;
+	MOV	DPTR,#WsGmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 873.	                                Sbuf[3]=WsGmax;
+	MOV	DPTR,#WsGmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 874.	                            }
+; 875.	                            else
+	SJMP	?0291
+?0290:
+; 876.	                            {
+; 877.	                                Sbuf[4]=WsTmax >> 8;
+	MOV	DPTR,#WsTmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 878.	                                Sbuf[3]=WsTmax;
+	MOV	DPTR,#WsTmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+?0291:
+; 879.	                            }
+; 880.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 881.	                            for(j=14;j != 2;j--)
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#14
+?0293:
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	A,@R0
+	XRL	A,#2
+	JZ	?0292
+?0294:
+; 882.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,@R0
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	@R0
+	SJMP	?0293
+?0292:
+; 883.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 884.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 885.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 886.	                            Comon=1;
+	SETB	Comon
+; 887.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 888.	                            break;
+	LJMP	?0274
+?0296:
+	CJNE	A,#82,$+5
+	SJMP	$+5
+	LJMP	?0301
+; 889.	                        case 'R':
+; 890.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 891.	                            Sbuf[16]= 0xff;         // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 892.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 893.	                                                        Sbuf[14]= 'R';
+	MOV	A,#82
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 894.	                                                        // Sbuf[13]= Wssta;
+; 895.	                                                        Sbuf[13]= 0;
+	CLR	A
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 896.	                            Sbuf[12]= 0x01;         // Sensor Code
+	INC	A
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 897.	                            Sbuf[11]= ID+1;         // Sensor ID
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	INC	A
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 898.	                            Sbuf[10]= Wsreal >> 8;
+	MOV	DPTR,#Wsreal
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 899.	                            Sbuf[9] = Wsreal;
+	MOV	DPTR,#Wsreal+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 900.	                            Sbuf[8] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 901.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 902.	                            Sbuf[6] = 0;
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 903.	                            Sbuf[5] = 0;
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 904.	                            Sbuf[4] = WsGmax >> 8;
+	MOV	DPTR,#WsGmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 905.	                            Sbuf[3] = WsGmax;
+	MOV	DPTR,#WsGmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 906.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 907.	                            for(j=14;j != 2;j--)
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	@R0,#14
+?0298:
+	MOV	R0,#$LOCBI SCON_int+1
+	MOV	A,@R0
+	XRL	A,#2
+	JZ	?0297
+?0299:
+; 908.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,@R0
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	@R0
+	SJMP	?0298
+?0297:
+; 909.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 910.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 911.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 912.	                            Comon=1;
+	SETB	Comon
+; 913.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 914.	                            break;
+	SJMP	?0274
+?0301:
+	CJNE	A,#64,?0274
+; 915.	                        case '@':
+; 916.	                            WsGmax=Rbuf[Rpoint-5] << 8 | Rbuf[Rpoint-4];
+	MOV	DPTR,#Rpoint
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R6,A
+	ADD	A,#251
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,#0
+	XCH	A,R6
+	MOV	R2,A
+	XCH	A,R6
+	MOV	R5,A
+	MOV	A,R2
+	ADD	A,#252
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R3,#0
+	MOV	R2,A
+	MOV	A,R4
+	ORL	A,R2
+	MOV	R4,A
+	MOV	A,R5
+	MOV	DPTR,#WsGmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 917.	                            Rpoint=0;
+	MOV	A,R3
+	MOV	R6,A
+	MOV	R7,A
+	MOV	DPTR,#Rpoint
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 918.	                            break;
+	SJMP	?0274
+?0274:
+	SJMP	?0302
+?0273:
+; 919.	                    }
+; 920.	                }
+; 921.	
+; 922.	                else if(Rbuf[Rpoint-9] == 'I')
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#247
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	CJNE	A,#73,?0304
+?0303:
+; 923.	                {
+; 924.	                    Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 925.	                    WdGmax=WdSec;
+	MOV	DPTR,#WdSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WdGmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 926.	                    WsGmax=WsSec;
+	MOV	DPTR,#WsSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#WsGmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+?0304:
+?0302:
+?0241:
+; 927.	                }
+; 928.	            }
+; 929.	            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0233:
+; 930.	        }
+; 931.	        if(Rpoint > 90)
+	SETB	C
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	SUBB	A,#90
+	MOV	DPTR,#Rpoint
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0306
+?0305:
+; 932.	            Rpoint=0;
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0306:
+?0231:
+; 933.	    }
+; 934.	
+; 935.	    if(TI == 1)
+	JNB	SCON.1,?0308
+?0307:
+; 936.	    {
+; 937.	        TI=0;
+	CLR	SCON.1
+; 938.	        if(Comon == 1)
+	JNB	Comon,?0310
+?0309:
+; 939.	        {
+; 940.	            if( Spoint-- != 0 )
+	MOV	DPTR,#Spoint
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	ADD	A,#255
+	MOVX	@DPTR,A
+	MOV	DPTR,#Spoint
+	MOVX	A,@DPTR
+	ADDC	A,#255
+	MOVX	@DPTR,A
+	MOV	A,R4
+	ORL	A,R5
+	JZ	?0312
+?0311:
+; 941.	            {
+; 942.	                SBUF=Sbuf[Spoint];
+	INC	DPTR
+	MOVX	A,@DPTR
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 943.	                Transm=1;
+	SETB	Transm
+; 944.	                RedL=1;
+	SETB	P1.7
+; 945.	                                Redb=LightL;
+	MOV	DPTR,#Redb
+	MOV	A,#8
+	MOVX	@DPTR,A
+	INC	DPTR
+	CLR	A
+	MOVX	@DPTR,A
+; 946.	            }
+; 947.	            else
+	SJMP	?0313
+?0312:
+; 948.	                Comon=0;
+	CLR	Comon
+?0313:
+?0310:
+?0308:
+; 949.	        }
+; 950.	    }
+; 951.	}
+	POP	ACC
+	MOV	R7,A
+	POP	ACC
+	MOV	R6,A
+	POP	ACC
+	MOV	R5,A
+	POP	ACC
+	MOV	R4,A
+	POP	ACC
+	MOV	R3,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R0,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	ACC
+	RETI
+; 952.	
+; 953.	unsigned int Ws_calc(unsigned int Wssum)
+; 954.	{
+Ws_calc:
+; 955.	    unsigned int i;
+; 956.	
+; 957.	    if(unit) {
+	MOV	R0,#$LOCBI Ws_calc+2
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	JNB	unit,?0315
+?0314:
+; 958.	        i=Ws_calc1(Wssum);
+	MOV	R4,A
+	LCALL	$REFFN Ws_calc1
+; 959.	        return i;
+	MOV	R0,#$LOCBI Ws_calc
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+; 960.	    }
+	RET
+?0315:
+; 961.	    else {
+; 962.	        i=Ws_calc2(Wssum);
+	MOV	R4,A
+	LCALL	$REFFN Ws_calc2
+; 963.	        return i;
+	MOV	R0,#$LOCBI Ws_calc
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+; 964.	    }
+?0316:
+	RET
+; 965.	}
+; 966.	
+; 967.	unsigned int Ws_calc1(unsigned int Wssum)    // m/s
+; 968.	{
+Ws_calc1:
+; 969.	
+; 970.	        unsigned int newv,oldv,i,flag;
+; 971.	        float value;
+; 972.	                                                /* Calculation W_S  */
+; 973.	        if(Wssum == 0)   Wssum = 0;
+	MOV	R0,#$LOCBI Ws_calc1+12
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	ORL	A,R5
+	JNZ	?0318
+?0317:
+	CLR	A
+	MOV	R4,A
+	MOV	R5,A
+	DEC	R0
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	LJMP	?0319
+?0318:
+; 974.	        else if(Wssum <= Aspeed[0])
+	MOV	DPTR,#Aspeed+1
+	CLR	A
+	MOVC	A,@A+DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#Aspeed
+	CLR	A
+	MOVC	A,@A+DPTR
+	SUBB	A,R5
+	JC	?0321
+?0320:
+; 975.	        {
+; 976.	                value=3./(float)Aspeed[0];
+	CLR	A
+	MOVC	A,@A+DPTR
+	MOV	R5,A
+	MOV	A,#1
+	MOVC	A,@A+DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	A,#64
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?F_DIV_R_L02
+; 977.	                Wssum = value*Wssum*10;
+	MOV	R0,#$LOCBI Ws_calc1+12
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	XCH	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc1+8
+	LCALL	?STO_R4567_IR0_L20
+	POP	ACC
+	XCH	A,R0
+	LCALL	?F_MUL_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	R0,#$LOCBI Ws_calc1+12
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	LJMP	?0322
+?0321:
+; 978.	        }
+; 979.	        else if(Wssum > Aspeed[0] && Wssum <= Aspeed[1])
+	INC	DPTR
+	CLR	A
+	MOVC	A,@A+DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#Aspeed
+	CLR	A
+	MOVC	A,@A+DPTR
+	SUBB	A,R5
+	JC	$+5
+	LJMP	?0324
+	MOV	DPTR,#Aspeed+3
+	CLR	A
+	MOVC	A,@A+DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#Aspeed+2
+	CLR	A
+	MOVC	A,@A+DPTR
+	SUBB	A,R5
+	JNC	$+5
+	LJMP	?0324
+?0326:
+?0325:
+?0323:
+; 980.	        {
+; 981.	                newv=Aspeed[1];
+	CLR	A
+	MOVC	A,@A+DPTR
+	MOV	R5,A
+	MOV	A,#1
+	MOVC	A,@A+DPTR
+; 982.	                oldv=Aspeed[0];
+	MOV	R4,A
+	MOV	DPTR,#Aspeed
+	CLR	A
+	MOVC	A,@A+DPTR
+	MOV	R7,A
+	MOV	A,#1
+	MOVC	A,@A+DPTR
+; 983.	                value=2./(float)(newv-oldv);
+	MOV	R0,#$LOCBI Ws_calc1
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	XCH	A,R4
+	MOV	@R0,A
+	XCH	A,R4
+	INC	R0
+	XCH	A,R7
+	MOV	@R0,A
+	XCH	A,R7
+	INC	R0
+	MOV	@R0,A
+	MOV	R6,A
+	CLR	C
+	MOV	A,R4
+	SUBB	A,R6
+	MOV	R4,A
+	MOV	A,R5
+	SUBB	A,R7
+	MOV	R5,A
+	MOV	A,R4
+	MOV	R0,A
+	XCH	A,R5
+	MOV	R1,A
+	XCH	A,R5
+	MOV	A,R5
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R4,A
+	MOV	R5,A
+	MOV	R6,A
+	MOV	R7,#64
+	LCALL	?F_DIV_L02
+; 984.	                Wssum = ((value*Wssum)-(value*oldv)+3)*10.;
+	MOV	R0,#$LOCBI Ws_calc1+12
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	XCH	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc1+8
+	LCALL	?STO_R4567_IR0_L20
+	POP	ACC
+	XCH	A,R0
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI Ws_calc1+2
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	A,R7
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R1
+	PUSH	ACC
+	MOV	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc1+8
+	LCALL	?LD_R4567_IR0_L20
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_MUL_L02
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_SUB_R_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	A,#64
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?F_ADD_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	R0,#$LOCBI Ws_calc1+12
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+; 985.	        }
+; 986.	        else
+	LJMP	?0327
+?0324:
+; 987.	        {
+; 988.	                oldv=Aspeed[1];
+	MOV	DPTR,#Aspeed+2
+	CLR	A
+	MOVC	A,@A+DPTR
+	MOV	R5,A
+	MOV	A,#1
+	MOVC	A,@A+DPTR
+	MOV	R0,#$LOCBI Ws_calc1+2
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	MOV	@R0,A
+; 989.	                flag=5.;
+	MOV	R0,#$LOCBI Ws_calc1+6
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,#5
+; 990.	                for(i=2; i != 16; i++)
+	MOV	R0,#$LOCBI Ws_calc1+4
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,#2
+?0329:
+	MOV	R0,#$LOCBI Ws_calc1+5
+	MOV	A,@R0
+	XRL	A,#16
+	JNZ	?0425
+	DEC	R0
+	MOV	A,@R0
+	JNZ	$+5
+	LJMP	?0328
+?0425:
+?0330:
+; 991.	                {
+; 992.	                        flag += 5.;
+	MOV	R0,#$LOCBI Ws_calc1+7
+	MOV	A,@R0
+	ADD	A,#5
+	MOV	@R0,A
+	DEC	R0
+	MOV	A,@R0
+	ADDC	A,#0
+	MOV	@R0,A
+; 993.	                        newv=Aspeed[i];
+	DEC	R0
+	MOV	A,@R0
+	ADD	A,ACC
+	MOV	DPTR,#Aspeed
+	MOV	R5,A
+	MOVC	A,@A+DPTR
+	XCH	A,R5
+	INC	A
+	MOVC	A,@A+DPTR
+; 994.	                        if( Wssum < newv && Wssum >= oldv)
+	MOV	R0,#$LOCBI Ws_calc1
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	MOV	@R0,A
+	MOV	R0,#$LOCBI Ws_calc1+13
+	SETB	C
+	SUBB	A,@R0
+	MOV	R4,A
+	MOV	A,R5
+	DEC	R0
+	SUBB	A,@R0
+	JNC	$+5
+	LJMP	?0333
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,#$LOCBI Ws_calc1+3
+	CLR	C
+	SUBB	A,@R0
+	MOV	R4,A
+	MOV	A,R5
+	DEC	R0
+	SUBB	A,@R0
+	JNC	$+5
+	LJMP	?0333
+?0335:
+?0334:
+?0332:
+; 995.	                        {
+; 996.	                                value=(float)(flag-(flag-5.))/(newv-oldv);
+	MOV	R0,#$LOCBI Ws_calc1+6
+	MOV	A,@R0
+	MOV	R7,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R6,A
+	MOV	R4,A
+	XCH	A,R7
+	MOV	R5,A
+	XCH	A,R7
+	MOV	A,R7
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#160
+	MOV	R3,#192
+	LCALL	?F_ADD_L02
+	MOV	A,R6
+	ORL	A,R7
+	JZ	$+6
+	MOV	A,R7
+	XRL	A,#128
+	MOV	R7,A
+	MOV	R0,#$LOCBI Ws_calc1+6
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	LCALL	?F_ADD_L02
+	CLR	C
+	MOV	R0,#$LOCBI Ws_calc1+3
+	MOV	R1,#$LOCBI Ws_calc1+1
+	MOV	A,@R1
+	SUBB	A,@R0
+	MOV	R2,A
+	DEC	R0
+	DEC	R1
+	MOV	A,@R1
+	SUBB	A,@R0
+	MOV	R3,A
+	MOV	A,R2
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	LCALL	?F_DIV_L02
+; 997.	                                Wssum = ((value*Wssum) - (value*oldv) + ( flag-5.))*10.;
+	MOV	R0,#$LOCBI Ws_calc1+12
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	XCH	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc1+8
+	LCALL	?STO_R4567_IR0_L20
+	POP	ACC
+	XCH	A,R0
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI Ws_calc1+6
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	A,R7
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	CLR	A
+	MOV	R4,A
+	MOV	R5,A
+	MOV	R6,#160
+	MOV	R7,#192
+	LCALL	?F_ADD_L02
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_ADD_L02
+	MOV	R0,#$LOCBI Ws_calc1+2
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	A,R7
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R1
+	PUSH	ACC
+	MOV	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc1+8
+	LCALL	?LD_R4567_IR0_L20
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_MUL_L02
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_SUB_R_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	R0,#$LOCBI Ws_calc1+12
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+; 998.	                                break;
+	SJMP	?0328
+?0333:
+; 999.	                        }
+; 1000.	                        else
+; 1001.	                                oldv=newv;
+	MOV	R0,#$LOCBI Ws_calc1
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	INC	R0
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	MOV	@R0,A
+	INC	R0
+	INC	R0
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+; 1002.	                }
+; 1003.	        }
+	LJMP	?0329
+?0328:
+?0327:
+?0322:
+?0319:
+; 1004.	        if(Wssum > 599)
+	SETB	C
+	MOV	R0,#$LOCBI Ws_calc1+13
+	MOV	A,@R0
+	SUBB	A,#87
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,#2
+	JC	?0337
+?0336:
+; 1005.	                return 600;
+	MOV	R5,#2
+	MOV	R4,#88
+; 1006.	        else
+	RET
+?0337:
+; 1007.	                return Wssum;
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+; 1008.	}
+?0338:
+	RET
+; 1009.	
+; 1010.	unsigned int Ws_calc2(unsigned int Wssum)    // Knot
+; 1011.	{
+Ws_calc2:
+; 1012.	
+; 1013.	        unsigned int newv,oldv,i,flag;
+; 1014.	        float value;
+; 1015.	                                                /* Calculation W_S  */
+; 1016.	        if(Wssum == 0)
+	MOV	R0,#$LOCBI Ws_calc2+12
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	ORL	A,R5
+	JNZ	?0340
+?0339:
+; 1017.	                Wssum = 0;
+	CLR	A
+	MOV	R4,A
+	MOV	R5,A
+	DEC	R0
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	LJMP	?0341
+?0340:
+; 1018.	        else if(Wssum <= Aspeed[0])
+	MOV	DPTR,#Aspeed+1
+	CLR	A
+	MOVC	A,@A+DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#Aspeed
+	CLR	A
+	MOVC	A,@A+DPTR
+	SUBB	A,R5
+	JC	?0343
+?0342:
+; 1019.	        {
+; 1020.	                value=5.835/(float)Aspeed[0];
+	CLR	A
+	MOVC	A,@A+DPTR
+	MOV	R5,A
+	MOV	A,#1
+	MOVC	A,@A+DPTR
+	MOV	R4,A
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R3,#64
+	MOV	R0,#82
+	MOV	R1,#184
+	MOV	R2,#186
+	LCALL	?F_DIV_R_L02
+; 1021.	                Wssum = value*Wssum*10;
+	MOV	R0,#$LOCBI Ws_calc2+12
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	XCH	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc2+8
+	LCALL	?STO_R4567_IR0_L20
+	POP	ACC
+	XCH	A,R0
+	LCALL	?F_MUL_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	R0,#$LOCBI Ws_calc2+12
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+	LJMP	?0344
+?0343:
+; 1022.	        }
+; 1023.	        else if(Wssum > Aspeed[0] && Wssum <= Aspeed[1])
+	INC	DPTR
+	CLR	A
+	MOVC	A,@A+DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#Aspeed
+	CLR	A
+	MOVC	A,@A+DPTR
+	SUBB	A,R5
+	JC	$+5
+	LJMP	?0346
+	MOV	DPTR,#Aspeed+3
+	CLR	A
+	MOVC	A,@A+DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#Aspeed+2
+	CLR	A
+	MOVC	A,@A+DPTR
+	SUBB	A,R5
+	JNC	$+5
+	LJMP	?0346
+?0348:
+?0347:
+?0345:
+; 1024.	        {
+; 1025.	                newv=Aspeed[1];
+	CLR	A
+	MOVC	A,@A+DPTR
+	MOV	R5,A
+	MOV	A,#1
+	MOVC	A,@A+DPTR
+; 1026.	                oldv=Aspeed[0];
+	MOV	R4,A
+	MOV	DPTR,#Aspeed
+	CLR	A
+	MOVC	A,@A+DPTR
+	MOV	R7,A
+	MOV	A,#1
+	MOVC	A,@A+DPTR
+; 1027.	                value=3.890/(float)(newv-oldv);
+	MOV	R0,#$LOCBI Ws_calc2
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	XCH	A,R4
+	MOV	@R0,A
+	XCH	A,R4
+	INC	R0
+	XCH	A,R7
+	MOV	@R0,A
+	XCH	A,R7
+	INC	R0
+	MOV	@R0,A
+	MOV	R6,A
+	CLR	C
+	MOV	A,R4
+	SUBB	A,R6
+	MOV	R4,A
+	MOV	A,R5
+	SUBB	A,R7
+	MOV	R5,A
+	MOV	A,R4
+	MOV	R0,A
+	XCH	A,R5
+	MOV	R1,A
+	XCH	A,R5
+	MOV	A,R5
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	R7,#64
+	MOV	R6,#120
+	MOV	R4,#195
+	MOV	R5,#245
+	LCALL	?F_DIV_L02
+; 1028.	                Wssum = ((value*Wssum)-(value*oldv)+5.835)*10.;
+	MOV	R0,#$LOCBI Ws_calc2+12
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	XCH	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc2+8
+	LCALL	?STO_R4567_IR0_L20
+	POP	ACC
+	XCH	A,R0
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI Ws_calc2+2
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	A,R7
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R1
+	PUSH	ACC
+	MOV	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc2+8
+	LCALL	?LD_R4567_IR0_L20
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_MUL_L02
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_SUB_R_L02
+	MOV	R3,#64
+	MOV	R0,#82
+	MOV	R1,#184
+	MOV	R2,#186
+	LCALL	?F_ADD_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	R0,#$LOCBI Ws_calc2+12
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+; 1029.	        }
+; 1030.	        else
+	LJMP	?0349
+?0346:
+; 1031.	        {
+; 1032.	                oldv=Aspeed[1];
+	MOV	DPTR,#Aspeed+2
+	CLR	A
+	MOVC	A,@A+DPTR
+	MOV	R5,A
+	MOV	A,#1
+	MOVC	A,@A+DPTR
+	MOV	R0,#$LOCBI Ws_calc2+2
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	MOV	@R0,A
+; 1033.	                flag=9.725;
+	MOV	R0,#$LOCBI Ws_calc2+6
+	CLR	A
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,#9
+; 1034.	                for(i=2; i != 16; i++)
+	MOV	R0,#$LOCBI Ws_calc2+4
+	MOV	@R0,A
+	INC	R0
+	MOV	@R0,#2
+?0351:
+	MOV	R0,#$LOCBI Ws_calc2+5
+	MOV	A,@R0
+	XRL	A,#16
+	JNZ	?0426
+	DEC	R0
+	MOV	A,@R0
+	JNZ	$+5
+	LJMP	?0350
+?0426:
+?0352:
+; 1035.	                {
+; 1036.	                        flag += 9.725;
+	MOV	R0,#$LOCBI Ws_calc2+7
+	MOV	A,@R0
+	ADD	A,#9
+	MOV	@R0,A
+	DEC	R0
+	MOV	A,@R0
+	ADDC	A,#0
+	MOV	@R0,A
+; 1037.	                        newv=Aspeed[i];
+	DEC	R0
+	MOV	A,@R0
+	ADD	A,ACC
+	MOV	DPTR,#Aspeed
+	MOV	R5,A
+	MOVC	A,@A+DPTR
+	XCH	A,R5
+	INC	A
+	MOVC	A,@A+DPTR
+; 1038.	                        if( Wssum < newv && Wssum >= oldv)
+	MOV	R0,#$LOCBI Ws_calc2
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	MOV	@R0,A
+	MOV	R0,#$LOCBI Ws_calc2+13
+	SETB	C
+	SUBB	A,@R0
+	MOV	R4,A
+	MOV	A,R5
+	DEC	R0
+	SUBB	A,@R0
+	JNC	$+5
+	LJMP	?0355
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,#$LOCBI Ws_calc2+3
+	CLR	C
+	SUBB	A,@R0
+	MOV	R4,A
+	MOV	A,R5
+	DEC	R0
+	SUBB	A,@R0
+	JNC	$+5
+	LJMP	?0355
+?0357:
+?0356:
+?0354:
+; 1039.	                        {
+; 1040.	                                value=(float)(flag-(flag-9.725))/(newv-oldv);
+	MOV	R0,#$LOCBI Ws_calc2+6
+	MOV	A,@R0
+	MOV	R7,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R6,A
+	MOV	R4,A
+	XCH	A,R7
+	MOV	R5,A
+	XCH	A,R7
+	MOV	A,R7
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R2,#27
+	MOV	A,#153
+	MOV	R1,A
+	INC	A
+	MOV	R0,A
+	MOV	R3,#193
+	LCALL	?F_ADD_L02
+	MOV	A,R6
+	ORL	A,R7
+	JZ	$+6
+	MOV	A,R7
+	XRL	A,#128
+	MOV	R7,A
+	MOV	R0,#$LOCBI Ws_calc2+6
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	LCALL	?F_ADD_L02
+	CLR	C
+	MOV	R0,#$LOCBI Ws_calc2+3
+	MOV	R1,#$LOCBI Ws_calc2+1
+	MOV	A,@R1
+	SUBB	A,@R0
+	MOV	R2,A
+	DEC	R0
+	DEC	R1
+	MOV	A,@R1
+	SUBB	A,@R0
+	MOV	R3,A
+	MOV	A,R2
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	LCALL	?F_DIV_L02
+; 1041.	                                Wssum = ((value*Wssum) - (value*oldv) + ( flag-9.725))*10.;
+	MOV	R0,#$LOCBI Ws_calc2+12
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	XCH	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc2+8
+	LCALL	?STO_R4567_IR0_L20
+	POP	ACC
+	XCH	A,R0
+	LCALL	?F_MUL_L02
+	MOV	R0,#$LOCBI Ws_calc2+6
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	A,R7
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	R6,#27
+	MOV	A,#153
+	MOV	R5,A
+	INC	A
+	MOV	R4,A
+	MOV	R7,#193
+	LCALL	?F_ADD_L02
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_ADD_L02
+	MOV	R0,#$LOCBI Ws_calc2+2
+	MOV	A,@R0
+	MOV	R3,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R0,A
+	XCH	A,R3
+	MOV	R1,A
+	XCH	A,R3
+	MOV	A,R3
+	CLR	A
+	MOV	R2,A
+	MOV	R3,A
+	LCALL	?R0123_ULONG_TO_FLT_L02
+	MOV	A,R7
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R1
+	PUSH	ACC
+	MOV	A,R0
+	PUSH	ACC
+	MOV	R0,#$LOCBI Ws_calc2+8
+	LCALL	?LD_R4567_IR0_L20
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_MUL_L02
+	POP	ACC
+	MOV	R0,A
+	POP	ACC
+	MOV	R1,A
+	POP	ACC
+	MOV	R2,A
+	POP	ACC
+	MOV	R3,A
+	LCALL	?F_SUB_R_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#32
+	MOV	R3,#65
+	LCALL	?F_MUL_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	R0,#$LOCBI Ws_calc2+12
+	MOV	A,R5
+	MOV	@R0,A
+	INC	R0
+	MOV	A,R4
+	MOV	@R0,A
+; 1042.	                                break;
+	SJMP	?0350
+?0355:
+; 1043.	                        }
+; 1044.	                        else
+; 1045.	                                oldv=newv;
+	MOV	R0,#$LOCBI Ws_calc2
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	INC	R0
+	XCH	A,R5
+	MOV	@R0,A
+	XCH	A,R5
+	INC	R0
+	MOV	@R0,A
+	INC	R0
+	INC	R0
+	INC	@R0
+	MOV	A,@R0
+	DEC	R0
+	JNZ	$+3
+	INC	@R0
+; 1046.	                }
+; 1047.	        }
+	LJMP	?0351
+?0350:
+?0349:
+?0344:
+?0341:
+; 1048.	        if(Wssum > 1199)
+	SETB	C
+	MOV	R0,#$LOCBI Ws_calc2+13
+	MOV	A,@R0
+	SUBB	A,#175
+	DEC	R0
+	MOV	A,@R0
+	SUBB	A,#4
+	JC	?0359
+?0358:
+; 1049.	                return 1200;
+	MOV	R5,#4
+	MOV	R4,#176
+; 1050.	        else
+	RET
+?0359:
+; 1051.	                return Wssum;
+	MOV	A,@R0
+	MOV	R5,A
+	INC	R0
+	MOV	A,@R0
+	MOV	R4,A
+; 1052.	}
+?0360:
+	RET
+	RSEG	CONST
+Title:
+	DB	'/ /// /////////////////////////////////////////////// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// /////////////////////////////////////////////// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///        Wind Speed & Direction Board     /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///                        (General)        /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///       JINYANG  INDUSTRIAL.,CO LTD       /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///       Program By  Hae-suk. JIN          /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///     Start :  1995.12. 17                /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///       End :  1996. 4.  3  Ver 3.0       /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// /////////////////////////////////////////////// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// /////////////////////////////////////////////// /// /',0
+	DB	0,0,0,0,0
+Adirection:
+	DW	254
+	DW	509
+	DW	763
+	DW	1018
+	DW	1272
+	DW	1526
+	DW	1781
+	DW	2035
+	DW	2289
+	DW	2544
+	DW	2798
+	DW	3053
+	DW	3307
+	DW	3561
+	DW	3816
+	DW	4070
+Aspeed:
+	DW	38
+	DW	72
+	DW	152
+	DW	227
+	DW	303
+	DW	382
+	DW	460
+	DW	544
+	DW	627
+	DW	706
+	DW	785
+	DW	864
+	DW	944
+	DW	1022
+	DW	1101
+	DW	1181
+	COMMON	INTVEC
+	DS	3
+	DB	2
+	DB	HIGH(EX0_int),LOW(EX0_int)
+	DS	5
+	DB	2
+	DB	HIGH(T0_int),LOW(T0_int)
+	DS	21
+	DB	2
+	DB	HIGH(SCON_int),LOW(SCON_int)
+	DS	5
+	DB	2
+	DB	HIGH(T2_int),LOW(T2_int)
+	RSEG	X_UDATA
+Wdsta:
+	DS	1
+Wssta:
+	DS	1
+Nws:
+	DS	4
+Ows:
+	DS	4
+Quad:
+	DS	1
+Minute:
+	DS	1
+Second:
+	DS	1
+Wdreal:
+	DS	2
+Wsreal:
+	DS	2
+Wsabs:
+	DS	2
+Wdvalue:
+	DS	2
+Wsvalue:
+	DS	2
+Wddata:
+	DS	24
+Wsdata:
+	DS	24
+Wpoint:
+	DS	1
+WdSec:
+	DS	2
+WdSecd:
+	DS	120
+WsSec:
+	DS	2
+WsSecd:
+	DS	120
+WdMin:
+	DS	2
+WdMind:
+	DS	20
+WsMin:
+	DS	2
+WsMind:
+	DS	20
+WsTen:
+	DS	2
+WdTen:
+	DS	2
+WdHTen:
+	DS	2
+WdGmax:
+	DS	2
+WsGmax:
+	DS	2
+WdMmax:
+	DS	2
+WsMmax:
+	DS	2
+WdTmax:
+	DS	2
+WsTmax:
+	DS	2
+WdEvalue:
+	DS	2
+WsEvalue:
+	DS	2
+WdEcount:
+	DS	2
+WsEcount:
+	DS	2
+WdThvalue:
+	DS	2
+WsThvalue:
+	DS	2
+WdsEcount:
+	DS	2
+TEcount:
+	DS	2
+Rbuf:
+	DS	100
+Rpoint:
+	DS	2
+Sbuf:
+	DS	100
+Spoint:
+	DS	2
+ID:
+	DS	1
+Blueb:
+	DS	2
+Redb:
+	DS	2
+wdb:
+	DS	2
+oldv:
+	DS	2
+newv:
+	DS	2
+flag:
+	DS	4
+value:
+	DS	4
+sinHTen:
+	DS	4
+cosHTen:
+	DS	4
+sinSec:
+	DS	4
+sinOne:
+	DS	4
+sinTen:
+	DS	4
+cosSec:
+	DS	4
+cosOne:
+	DS	4
+cosTen:
+	DS	4
+sumSec:
+	DS	2
+sumOne:
+	DS	4
+sumTen:
+	DS	4
+	RSEG	BITVARS
+unit:
+	DS	1
+Sendd:
+	DS	1
+Send:
+	DS	1
+Comon:
+	DS	1
+Receve:
+	DS	1
+Transm:
+	DS	1
+Sens:
+	DS	1
+MeasQ:
+	DS	1
+Init:
+	DS	1
+Wbit:
+	DS	1
+Aderr:
+	DS	1
+Wderr:
+	DS	1
+Wserr:
+	DS	1
+Terror:
+	DS	1
+Fout:
+	DS	1
+	END

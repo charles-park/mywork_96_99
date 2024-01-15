@@ -1,0 +1,9 @@
+Channel Discription..
+CH0 : PRECIPITATION     (0.5mm)       Direct Connection (PRE SIG - CH0.3)
+      * CH0.3 Pull Up Resister(4.7K)
+CH1 : TEMPERATURE       (-50 ~ +80)   Use TEMP Converter
+CH2 : HUMIDUTY          (0 ~ 99.9%)   Use AMP  Converter(Range Sig * 10 Range)
+CH3 : PRECIPITATION/DETECT            Direct Connection (PRE/D SIG - CH3.2)
+      * CH3.2 Pull Up Resister(4.7K)
+CH4 : SUN/DETECT        (TIME)        Direct Connection (SUN/D SIG - CH4.2)
+      * CH4.2 Pull Up Resister(4.7K)

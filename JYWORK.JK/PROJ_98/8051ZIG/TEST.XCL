@@ -1,0 +1,54 @@
+-! 
+   TUT1.XCL Linker control file for first tutorial example
+   Based on the example linker control file LNK8051.XCL
+   Linker command line: xlink -f tut1
+   EAG 7 JUN 90 
+   IMAF 25 MAR 91
+-!
+
+-! Define the CPU type: (item 1) -!
+-c8051
+
+-! Select bank 0 as the default register bank: (item 2) -!
+-D_R=0
+
+-! Specify the start address of the XDATA segments: (item 3) -!
+-Z(XDATA)C_ARGX,X_UDATA,X_IDATA,NO_INIT,ECSTR=0
+
+-! Specify the start of the CODE segments: (item 4) -!
+-Z(CODE)INTVEC=0
+-Z(CODE)RCODE,D_CDATA,I_CDATA,X_CDATA=80
+-Z(CODE)C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST
+
+-! Specify the start address of the DATA segments: (item 5) -!
+-Z(DATA)C_ARGD,D_UDATA,D_IDATA=30
+
+-! The IDATA segments begin at the end of the DATA segments: (item 6) -!
+-Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK
+
+-! Specify the start address of the bit-addressable segments: (item 7) -!
+-Z(BIT)C_ARGB,BITVARS=0
+
+-! Specify the printf() formatter: (item 8) -! 
+-e_small_write=_formatted_write
+
+-! Specify the scanf() formatter: (item 9) -!
+-e_medium_read=_formatted_read
+
+-! List the module(s) to be linked: (item 10) -!
+test
+
+-! List the C runtime library file to be linked: (item 11) -!
+cl8051l
+
+-! Specify the output file format: (item 12) -!
+-Fintel-standard
+
+-! Specify an output file name: (item 13) -!
+-o test.hex
+
+-! Generate a linker list map file: (item 14) -!
+-x
+
+-! Name the linker map file: (item 15) -!
+-l test.map

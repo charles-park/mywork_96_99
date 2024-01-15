@@ -1,0 +1,42 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    DATA STORAGE ADDRESS DECODE GAL
+PATTERN  
+REVISION 1.0
+AUTHOR   HAE SUK, JIN
+COMPANY  JINYANG INDUSTRIAL.,CO
+DATE     09/23/95
+
+CHIP  DSTODECO  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A15                  COMBINATORIAL ; INPUT 
+PIN  2          A14                  COMBINATORIAL ; INPUT 
+PIN  3          A13                  COMBINATORIAL ; INPUT 
+PIN  4          RD                   COMBINATORIAL ; INPUT 
+PIN  5          WR                   COMBINATORIAL ; INPUT 
+PIN  6          RTI                  COMBINATORIAL ; INPUT 
+PIN  7          RTCK                 COMBINATORIAL ; INPUT 
+PIN  8          RTSQ                 COMBINATORIAL ; INPUT 
+PIN  9          SINT                 COMBINATORIAL ; INPUT 
+PIN  10         GND                             ; INPUT 
+PIN  12         MEM                  COMBINATORIAL ; OUTPUT
+PIN  13         LCD                  COMBINATORIAL ; OUTPUT
+PIN  14         RTC                  COMBINATORIAL ; OUTPUT
+PIN  15         T1                   COMBINATORIAL ; OUTPUT
+PIN  16         T0                   COMBINATORIAL ; OUTPUT
+PIN  17         INT1                 COMBINATORIAL ; OUTPUT
+PIN  18         INT0                 COMBINATORIAL ; OUTPUT
+PIN  19         SCS0                 COMBINATORIAL ; OUTPUT
+PIN  20         VCC                             ; INPUT
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/MEM     = /A15
+/RTC     = A15 * /A14 * /A13
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

@@ -1,0 +1,44 @@
+-!                 -LNK8051A.XCL-
+
+        XLINK 4.46K, or higher, command file to be used with the 8051 
+	C-compiler V5.12 or higher using the -mt, or -ms memory model
+	together with the 80751 switch -v1.
+        Usage:  xlink  your_file(s)  -f lnk8051a
+
+        First: define CPU  -!
+
+-c8051
+
+-! If you have register independent code use: -D_R=0  -!
+-! (or 8,16,24) to choose the register bank used at startup -!
+-D_R=0
+
+-!  Setup "bit" segments (always zero if there is no need to reserve
+    bit variable space for some other purpose) -!
+
+-Z(BIT)C_ARGB,BITVARS=0
+
+-!  Setup "data" segments.  Start address may not be less
+    than start of register bank + 8.  Space must also
+    be left for interrupt functions with the "using" attribute. -!
+
+-Z(DATA)C_ARGD,D_UDATA,D_IDATA=8
+
+-!  Setup "idata" segments (usually loaded after "data") -!
+
+-Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK
+
+-!  Setup all read-only segments (PROM). Usually at zero -!
+
+-Z(CODE)INTVEC,RCODE,D_CDATA,I_CDATA,C_ICALL,CSTR,CODE,CONST=0
+
+-!  See configuration section concerning printf/sprintf -!
+-! Do not delete this due to the fact that this is the only supplied printf -!
+-! for the 80751 -!
+-e_small_write=_formatted_write
+
+-!  Load the 'C' library adapted for the selected memory model -!
+cl8051ta  -! or cl8051sa -!
+
+-!  Code will now reside on file aout.a03 in INTEL-STANDARD format -!
+

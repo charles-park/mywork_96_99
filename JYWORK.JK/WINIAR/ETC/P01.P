@@ -1,0 +1,45 @@
+P01_hhh: do;
+declare MEMORY_C00 byte external auxiliary;
+PRINT_C00: procedure(a) word external;
+declare a word; end;
+
+printing_ln: procedure(nr) word;
+declare nr byte;
+declare nr2 word auxiliary;
+declare str (2) byte;
+declare idiotic word;
+
+str(0) = 0dh;
+str(1) = 0ah;
+nr2 = 0;
+do while (nr <> 0);
+  nr = nr - 1;
+  nr2 = nr2 + 1;
+  MEMORY_C00 = 0;
+  idiotic = PRINT_C00(.str);
+  end;
+return (nr2);
+end printing_ln;
+
+
+PRINT_BUFF_P01: procedure(pek) word public;
+declare pek word;
+declare nr word idata;
+declare mem_p word;
+declare mem based mem_p byte auxiliary;
+declare off_p word;
+declare off based off_p word auxiliary;
+
+mem_p = pek;
+off_p = pek + 1;
+nr = 0;
+do while (off <> 0);
+  MEMORY_C00 = mem;
+  nr = nr + PRINT_C00(off);
+  nr = nr + printing_ln(1);
+  mem_p = mem_p + 3;
+  off_p = off_p + 3;
+  end;
+return (nr);
+end PRINT_BUFF_P01;
+end P01_hhh;

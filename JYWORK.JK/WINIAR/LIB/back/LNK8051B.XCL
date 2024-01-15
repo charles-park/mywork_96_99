@@ -1,0 +1,55 @@
+-!                 -LNK8051B.XCL-
+
+        XLINK 4.44, or higher, command file to be used with the 8051 
+	C-compiler V5.xx
+        using the -mb (banked) memory model
+        Usage:  xlink  your_file(s)  -f lnk8051l
+
+        First: define CPU  -!
+
+-c8051
+
+-! If you have register independent code use: -D_R=0  -!
+-! (or 8,16,24) to choose the register bank used at startup -!
+-D_R=0
+
+-!  Setup "bit" segments (always zero if there is no need to reserve
+    bit variable space for some other purpose) -!
+
+-Z(BIT)C_ARGB,BITVARS=0
+
+-!  Setup "data" segments.  Start address may not be less
+    than start of register bank + 8.  Space must also
+    be left for interrupt functions with the "using" attribute. -!
+
+-Z(DATA)C_ARGD,D_UDATA,D_IDATA=8
+
+-!  Setup "idata" segments (usually loaded after "data") -!
+
+-Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK
+
+-!  Setup "xdata" segments to the start address of external RAM. -!
+
+-Z(XDATA)C_ARGX,X_UDATA,X_IDATA,ECSTR,RF_XDATA,XSTACK=0
+
+-!  Setup all read-only root segments (PROM). Usually at zero -!
+
+-Z(CODE)INTVEC,RCODE,D_CDATA,I_CDATA,X_CDATA,C_ICALL,C_RECFN,CSTR,CCSTR,CONST=0
+-!  Setup all bank-switched read-only segments (PROM). -!
+
+-b(CODE)CODE=8000,8000,10000
+
+-!  See configuration section concerning printf/sprintf -!
+-e_small_write=_formatted_write
+
+-!  See configuration section concerning scanf/sscanf -!
+-e_medium_read=_formatted_read
+
+-!  Load the banked 'C' library -!
+cl8051b
+
+-!  Select the Motorola S-format to get banked 24-bit addresses -!
+-FMOTOROLA
+
+-!  Code will now reside on file aout.a03 -!
+

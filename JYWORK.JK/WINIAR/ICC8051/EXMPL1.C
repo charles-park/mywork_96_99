@@ -1,0 +1,131 @@
+/*
+   example for TINY51
+
+
+   - simple print out to show how multitasking is work
+
+   - runs only in non-preemptive mode because resource 'printf' is not
+     controlled
+*/
+
+#include <stdio.h>
+#include "tiny51.h"
+
+#define TASK_STACKSIZE  20
+typedef struct stack
+  {
+    byte vect[TASK_STACKSIZE];
+  };
+  
+void task1a(void);
+void task2a(void);
+
+void PushFunction1(void);
+void PopFunction1(void);
+void PushFunction2(void);
+void PopFunction2(void);
+
+#pragma memory=idata
+struct stack taskstack;
+
+#pragma memory=xdata
+struct stack taskstack1;
+struct stack taskstack2;
+byte regstack1[8];
+byte regstack2[8];
+
+#pragma memory=idata
+int counter1, counter2;
+
+static semaphore s1 = 1;
+
+#pragma memory=default
+
+/* main function is idle task !!! */
+
+void main(void);
+
+void main(void)
+  {
+    int ch;
+#pragma memory=xdata
+    struct TASK task1, task2;
+#pragma memory=default
+    
+    /* initialize task structure */
+    
+    task1.pid = 1;
+    
+    task1.sp = &taskstack.vect[0];
+    task1.pushfunc = PushFunction1;
+    task1.popfunc = PopFunction1;
+    
+    create(&task1, task1a);
+    
+    task2.pid = 2;
+    
+    task2.sp = &taskstack.vect[0];
+    task2.pushfunc = PushFunction2;
+    task2.popfunc = PopFunction2;
+    
+    create(&task2, task2a);
+    
+    counter1 = 0;
+    counter2 = 0;
+    
+    StartDispatcher(TINY51_NONPREEMPTIVE);
+    
+    do 
+      {
+   printf("%d %d\n",counter1,counter2);
+   ch = FALSE;
+   wait(SIG_CPU);
+      } 
+    while (!ch);
+   
+    StopDispatcher(TINY51_NONPREEMPTIVE);
+  }
+
+void task1a(void)
+  {
+    for (;;) 
+      {
+   printf("Task1\n");
+   counter1++;
+   wait(SIG_CPU);
+      }
+  }
+
+void task2a(void)
+  {
+    for (;;)
+      {
+   printf("Task2\n");
+   counter2++;
+   wait(SIG_CPU);
+      }
+  }
+
+void PushFunction1(void)
+  {
+    StoreRegs(regstack1);
+    taskstack1=taskstack;
+  }
+
+void PopFunction1(void)
+  {
+    RestoreRegs(regstack1);
+    taskstack=taskstack1;
+  }
+
+void PushFunction2(void)
+  {
+    StoreRegs(regstack2);
+    taskstack2=taskstack;
+  }
+
+void PopFunction2(void)
+  {
+    RestoreRegs(regstack2);
+    taskstack=taskstack2;
+  }

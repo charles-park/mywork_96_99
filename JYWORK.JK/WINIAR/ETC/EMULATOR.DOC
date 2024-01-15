@@ -1,0 +1,617 @@
+	Notes regarding emulator usage together with IAR systems tools.
+
+	Please let us know if something is wrong in the descriptions, or
+	if some emulator is not in this list, etc.
+
+	IMAF 910403
+
+
+
+C-SPY as simulator, emulator-driver, or EVB/rom-monitor-driver:
+---------------------------------------------------------------
+		Compile with -r0, -r1, or -r2 (see C-SPY manual for which)
+		Assemble with the s option for local assembler variables
+		Link with -r, -rt, or -Fdebug
+
+
+
+
+Intel Corporation:
+------------------
+
+ICE-5100	Compile with -rn or with -j if older version of compiler 
+		(pre V3.00) for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Faomf8051
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes (if new compiler, xlink > 4.28)
+		C parameters and local variables: yes (if new compiler, 
+						  xlink > 4.28)
+		C line numbers: yes
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Notes: To download only code to the emulator use 
+		-Fintel-standard when linking
+
+ICE-51FX/PC	Compile with -rn or with -j if older version of compiler 
+		(pre V3.00) for debug information, and with -L	
+		Assemble with the s option for local assembler variables
+		Link with -Faomf8051
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes (if new compiler, xlink > 4.28)
+		C parameters and local variables: yes (if new compiler, 
+	                                          xlink > 4.28)
+		C line numbers: yes
+		C source file: yes (if new compiler, xlink > 4.28)
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Notes: To download only code to the emulator use 
+		-Fintel-standard when linking
+
+ICE-196/PC	Compile with -rn or with -j if older version of compiler
+		(pre V3.00) for debug information	
+		Assemble with the s option for local assembler variables
+		Link with -Faomf8096
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes (if new compiler, xlink > 4.28)
+		C parameters and local variables: yes (if new compiler, 
+	                                          xlink > 4.28)
+		C line numbers: yes
+		C source file: no
+		C types: yes rudimentary (if new compiler, xlink > 4.28)
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Notes: To download only code to the emulator use 
+		-Fintel-standard when linking
+
+
+Hitex:
+------
+
+teletest-51	Compile with -rn or with -j if older version of compiler 
+		(pre V3.00) for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fhitex
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes (if new compiler, xlink > 4.28)
+		C parameters and local variables: yes (if new compiler, 
+						  xlink > 4.28)
+		C line numbers: yes
+		C source file: no
+		C types: yes rudimentary (if new compiler, xlink > 4.28)
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Notes: To download only code to the emulator use 
+		-Fintel-standard when linking
+
+teletest-68hc11	Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fdebug
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes 
+		C parameters and local variables: no
+		C line numbers: yes
+		C source file: yes
+		C types: yes 
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Notes: To download only code to the emulator use 
+		-Fintel-standard when linking
+
+NEC:
+----
+
+EVB78600	Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fnec78k (this gives a symbol file and an intel
+		standard code file)
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Notes: To download only code to the evaluation board use 
+		-Fintel-standard when linking
+
+Emulators and EVBs for 78200,78300,7800
+		Compile with -rn or -j if older compiler to get debug 
+		information
+		Assemble with the s option for local assembler variables
+		Link with -Fnec or -Fnec2 (this gives a symbol file and an 
+		intel standard code file) (nec gives 8 char-symbols while
+		nec2 gives 31 char-symbols)
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Notes: To download only code to the evaluation board use 
+		-Fintel-standard when linking
+
+Ashling:
+--------
+
+Ashling emulator with pathfinder
+		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -r or -Fdebug
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+*		C functions: yes 
+*		C parameters and local variables: yes 
+		C line numbers: yes
+		C source file: yes
+*		C types: yes 
+		Asm public variables: yes
+		Asm local variables: yes
+
+Ashling emulator without pathfinder
+		Compile with -rn or with -j if older version of compiler 
+		(pre V3.00) for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fashling-cpu
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+*		C functions: yes (if new compiler, xlink > 4.28)
+*		C parameters and local variables: yes (if new compiler, 
+	                                          xlink > 4.28)
+		C line numbers: yes
+*		C source file: yes 
+*		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+Nohau:
+--------
+
+8051		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -r, -Fdebug, or -Faomf8051
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes 
+		C parameters and local variables: yes 
+		C line numbers: yes
+		C source file: yes
+*		C types: yes (not if -Faomf8051)
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: Other formats to use are symbolic (for code and 
+		public and static variables) and intel-standard for code only
+
+68hc11		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -r, or -Fdebug
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes 
+		C parameters and local variables: yes 
+		C line numbers: yes
+		C source file: yes
+*		C types: yes 
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: Other formats to use are symbolic (for code and 
+		public and static variables) and intel-standard for code only
+
+Pentica:
+--------
+
+		Compile with -rn or -j if old compiler (pre v3.00) for 
+		debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fpentica-{abcd}i or -Fpentica-{abcd}m to get
+		pentica-{abcd} symbol format and intel-standard or motorola
+		for code
+
+Signum Systems:
+---------------
+
+8051		Compile with -rn or with -j if older version of compiler 
+		(pre V3.00) for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Faomf8051
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes (if new compiler, xlink > 4.28)
+		C parameters and local variables: yes (if new compiler, 
+						  xlink > 4.28)
+		C line numbers: yes
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+Zax corporation:
+----------------
+
+ERX-6301/6801/Z80 ICD-Z80/64180/Z180
+		Compile with -rn or with -j if older version of compiler 
+		(pre V3.00) for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fzax-i, or -Fzax-m to get zax symbol format and 
+		intel-standard or motorola for code.
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: yes
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+Huntsville Microsystems:
+------------------------
+
+HMI		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fdebug
+		Then use the IAR2XT debug file converter from Huntsville to
+		get extended-tekhex.
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: yes
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+Orion Instruments:
+------------------
+
+Unilab 8620 Analyzer-emulator
+		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Faomf8051 (regardless of chip)
+		Copy the source files to the ORION directory but delete the
+		extension from the files
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: yes
+		C source file: yes
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+
+Metalink Corporation:
+---------------------
+
+MicroICE, MicroICE+, MetaICE
+		Compile with -rn or -j if old compiler (pre 3.00) for debug 
+		information
+		Assemble with the s option for local assembler variables
+		Link with -Faomf8051
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes (if new compiler, xlink > 4.28)
+		C parameters and local variables: yes (if new compiler, 
+	                                          xlink > 4.28)
+		C line numbers: yes
+		C source file: yes
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: To download only code use -Fintel-standard when linking
+
+Softaid:
+--------
+
+ICEBOX, UEM	Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -r
+		Then use the ARC32SLD debug file converter from Softaid to
+		get a file compatible with the debugger.
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes
+		C parameters and local variables: yes
+		C line numbers: yes
+		C source file: yes
+		C types: yes
+		Asm public variables: yes
+		Asm local variables: yes
+
+Applied Microsystems:
+---------------------
+
+		Compile with -rn or -j if old compiler (pre 3.00) for 
+		debug information
+		Assemble with the s option for local assembler variables
+
+EC7000-8051	Link with -Faomf8051
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: yes (if new compiler, xlink > 4.28)
+		C parameters and local variables: yes (if new compiler, 
+	                                          xlink > 4.28)
+		C line numbers: yes
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: Intel-standard can be used if you only want code
+
+EC7000-HC11	Link with -Fextended-tekhex
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: no
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: Motorola can be used if you only want code
+
+EL800 - Z80 & 64180
+		Link with -Fextended-tekhex
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: no
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: Intel-standard, motorola, or tektronix can be used 
+		if you only want code
+
+Sophia Systems:
+---------------
+
+SA98		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -F???
+
+		This will give debug possibilities for:
+		C public variables: ??
+		C static variables: ??
+		C functions: ??
+		C parameters and local variables: ??
+		C line numbers: ??
+		C source file: ??
+		C types: ??
+		Asm public variables: ??
+		Asm local variables: ??
+
+Microtek international Inc:
+---------------------------
+
+MICE with USD	Compile with -rn or -j if old compiler (pre 3.00) for 
+		debug information
+		Assemble with the s option for local assembler variables
+		Link with -Faomf8051, or -Fsymbolic
+		Then use the debug file converter from supplied by Microtek to
+		get files applicable to the emulator.
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: yes
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: Use motorola, intel-standard, or tektronix to get file
+		with only code.
+
+MICE with MSD-3	Compile with -rn or -j if old compiler (pre 3.00) for 
+		debug information
+		Assemble with the s option for local assembler variables
+		Link with -Faomf8051 (, or -Fextended-tekhex)
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: yes (no)
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: Use motorola, intel-standard, or tektronix to get file
+		with only code.
+
+Lauterbach:
+-----------
+
+TRACE32		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fdebug
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: yes
+		C source file: no
+		C types: yes
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: You can also use the -Faomf8051 to get code and symbols,
+		zax to get symbols only, or intel-standard or motorola for
+		only code
+
+TRACE80		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fdebug
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: yes
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: yes
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: yes
+
+		Note: You can also use the zax, or msd to get symbols only, 
+		or intel-standard, motorola, or	mpds-code for only code
+
+Motorola:
+---------
+
+		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fmotorola
+
+		This will give debug possibilities for:
+		C public variables: no
+		C static variables: no
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: no
+		C source file: no
+		C types: no
+		Asm public variables: no
+		Asm local variables: no
+
+Ziltek:
+-------
+
+		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -F???
+		Use Ziltek-supplied converter utility
+		
+		This will give debug possibilities for:
+		C public variables: ??
+		C static variables: ??
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: ??
+		C source file: no
+		C types: no
+		Asm public variables: ??
+		Asm local variables: ??
+
+Iwasaki:
+--------
+
+Proice		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -Fmpds-code
+
+		This will give debug possibilities for:
+		C public variables: no
+		C static variables: no
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: no
+		C source file: no
+		C types: no
+		Asm public variables: no
+		Asm local variables: no
+
+Hewlett Packard:
+----------------
+
+HP64000		Compile with -rn for debug information
+		Assemble with the s option for local assembler variables
+		Link with -FHP to get a HP_code file and an HP-symbol file
+
+		This will give debug possibilities for:
+		C public variables: yes
+		C static variables: no
+		C functions: no
+		C parameters and local variables: no
+		C line numbers: no
+		C source file: no
+		C types: no
+		Asm public variables: yes
+		Asm local variables: no
+
+
+The HP 64000 system
+
+	To run the program on the emulator do the following:
+	  1. Link your program and if need be, make sure that there exists
+	     room for the monitor.
+	  2. If the emulator needs an monitor, link with the HP linker,
+	     (on the host or the HP 64000) placing it at the correct address.
+	  3. Make sure that the HP 64000 system is correctly configurated.
+	  4. Download the files created by XLINK (the emulation files) to 
+	     the HP 64000 system.
+	  5. Load the program and the monitor into the Measurement System.
+
+	Note: All symbols beginning with "?" are modified so they will
+	      begin with "_" instead.
+
+
+
+

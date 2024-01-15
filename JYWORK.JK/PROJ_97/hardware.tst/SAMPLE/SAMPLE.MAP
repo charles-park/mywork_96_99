@@ -1,0 +1,184 @@
+################################################################################
+#                                                                              #
+#      Micro Series Universal Linker V4.46M/DXT        26/Dec/96  17:30:58     #
+#                                                                              #
+#           Target CPU    =  8051                                              #
+#           List file     =  sample.map                                        #
+#           Output file 1 =  sample.hex                                        #
+#           Output format =  intel-standard                                    #
+#           Command line  =  -f sample (-c8051 -D_R=0                          #
+#                            -Z(CODE)INTVEC,RCODE,D_CDATA,I_CDATA,X_CDATA,     #
+#                            C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST=0           #
+#                                                                              #
+#                            -Z(XDATA)C_ARGX,X_UDATA,X_IDATA,ECSTR,RF_XDATA,   #
+#                            XSTACK=0                                          #
+#                            -Z(DATA)C_ARGD,D_UDATA,D_IDATA=26                 #
+#                            -Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK            #
+#                            -Z(BIT)C_ARGB,BITVARS=0                           #
+#                            -e_small_write=_formatted_write                   #
+#                            -e_medium_read=_formatted_read cl8051s sample -o  #
+#                            sample.hex -x -l sample.map -z -Fintel-standard)  #
+#                                                                              #
+#                                                                              #
+#                                               (c) Copyright IAR Systems 1994 #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+       Program entry at : 0000  Relocatable, from module : CSTARTUP
+
+
+
+                ****************************************
+                *                                      *
+                *             MODULE MAP               *
+                *                                      *
+                ****************************************
+
+  DEFINED ABSOLUTE ENTRIES
+  PROGRAM MODULE, NAME : ?ABS_ENTRY_MOD
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           _R                      0000            CSTARTUP
+
+
+  SEGMENTS IN THE MODULE
+  ======================
+C_ARGI
+  Relative segment, address : 0026 - 0032
+
+    *************************************************************************
+
+  FILE NAME : c:\cci_hdsl\lib\cl8051s.r03
+  PROGRAM MODULE, NAME : CSTARTUP
+
+  SEGMENTS IN THE MODULE
+  ======================
+CSTACK
+  Relative segment, address : 0033 - 0050
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 0002
+    -------------------------------------------------------------------------
+RCODE
+  Relative segment, address : 0003 - 00B2
+    -------------------------------------------------------------------------
+D_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+ECSTR
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+CCSTR
+  Relative segment, address : Not in use    
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : exit
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 00B3 - 00B4
+           ENTRIES                ADDRESS          REF BY MODULE
+           exit                    00B3            Not referred to
+           ?C_EXIT                 00B3            CSTARTUP
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?VERSION_L17
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           ?CL8051S_5_12_L17       C893            sample
+
+    -------------------------------------------------------------------------
+    *************************************************************************
+
+  FILE NAME : sample.r03
+  PROGRAM MODULE, NAME : sample
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 00B5 - 0166
+           ENTRIES                ADDRESS          REF BY MODULE
+           delay                   0102            Not referred to
+               idata = 0026 ( 0002 , 0002 )
+           initialize              00B5            Not referred to
+           main                    012A            CSTARTUP
+               idata = 002A ( 0009 , 0000 )
+
+                ****************************************
+                *                                      *
+                *        SEGMENTS IN DUMP ORDER        *
+                *                                      *
+                ****************************************
+
+ SEGMENT               START ADDRESS    END ADDRESS  TYPE  ORG  P/N  ALIGN
+ =======               =============    ===========  ====  ===  ===  =====
+C_ARGB                          Not in use            dse  stc  pos   0     
+BITVARS                         Not in use            dse  flt  pos   0     
+INTVEC                      0000     -     0002       com  stc  pos   0     
+RCODE                       0003     -     00B4       rel  flt  pos   0     
+D_CDATA                         Not in use            rel  flt  pos   0     
+I_CDATA                         Not in use            rel  flt  pos   0     
+X_CDATA                         Not in use            rel  flt  pos   0     
+C_ICALL                         Not in use            dse  flt  pos   0     
+C_RECFN                         Not in use            dse  flt  pos   0     
+CSTR                            Not in use            dse  flt  pos   0     
+CCSTR                           Not in use            rel  flt  pos   0     
+CODE                        00B5     -     0166       rel  flt  pos   0     
+CONST                           Not in use            dse  flt  pos   0     
+C_ARGX                          Not in use            dse  stc  pos   0     
+X_UDATA                         Not in use            rel  flt  pos   0     
+X_IDATA                         Not in use            rel  flt  pos   0     
+ECSTR                           Not in use            rel  flt  pos   0     
+RF_XDATA                        Not in use            dse  flt  pos   0     
+XSTACK                          Not in use            dse  flt  pos   0     
+C_ARGD                          Not in use            dse  stc  pos   0     
+D_UDATA                         Not in use            rel  flt  pos   0     
+D_IDATA                         Not in use            rel  flt  pos   0     
+C_ARGI                      0026     -     0032       rel  flt  pos   0     
+I_UDATA                         Not in use            rel  flt  pos   0     
+I_IDATA                         Not in use            rel  flt  pos   0     
+CSTACK                      0033     -     0050       rel  flt  pos   0     
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+Errors: none
+Warnings: none
+

@@ -1,0 +1,562 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12K/DXT                              31/Oct/97  17:34:41     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  large                                                                 #
+#           Source file   =  lcd.c                                                                 #
+#           List file     =  lcd.lst                                                               #
+#           Object file   =  lcd.r03                                                               #
+#           Command line  =  -ml -s -P LCD -K -gO -L -q                                            #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+   \   0000                    NAME    lcd(18)
+   \   0000                    RSEG    CODE(0)
+   \   0000                    COMMON  INTVEC(0)
+   \   0000                    RSEG    X_UDATA(0)
+   \   0000                    PUBLIC  T0_int
+   \   0000                    $DEFFN  T0_int(512,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  cursor_home
+   \   0000                    $DEFFN  cursor_home(0,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  cursor_locate
+   \   0000                    $DEFFN  cursor_locate(0,0,0,0,0,0,2,0),T0_int
+   \   0000                    PUBLIC  delay
+   \   0000                    $DEFFN  delay(0,0,2,0,0,0,2,0),entry_mode,cursor_home,display_onoff,func_set
+   \   0000                    PUBLIC  display_onoff
+   \   0000                    $DEFFN  display_onoff(0,0,0,0,0,0,1,0)
+   \   0000                    PUBLIC  entry_mode
+   \   0000                    $DEFFN  entry_mode(0,0,0,0,0,0,1,0)
+   \   0000                    PUBLIC  func_set
+   \   0000                    $DEFFN  func_set(0,0,0,0,0,0,1,0)
+   \   0000                    PUBLIC  lcd_clr
+   \   0000                    $DEFFN  lcd_clr(0,0,2,0,0,0,0,0)
+   \   0000                    PUBLIC  lcd_printf
+   \   0000                    $DEFFN  lcd_printf(0,0,0,0,0,0,5,0)
+   \   0000                    PUBLIC  lcd_write_byte
+   \   0000                    $DEFFN  lcd_write_byte(0,0,0,0,0,0,1,0),T0_int
+   \   0000                    EXTERN  ?LD_A_R123_L17
+   \   0000                    EXTERN  ?LD_A_R567_L17
+   \   0000                    EXTERN  ?PINC1_R567_TO_R123_L20
+   \   0000                    EXTERN  ?CL8051L_5_12_L17
+   \   0000                    RSEG    CODE
+      1          //[*]----------------------------------------------------------------------[*]
+      2          #include <io51.h>
+      3          //[*]----------------------------------------------------------------------[*]
+      4          #define         LCD_COLUM               16
+      5          #define         LCD_LINE                2
+      6          #define         LCD_CON         0xC000
+      7          #define         LCD_DATA                0xC001
+      8          //[*]----------------------------------------------------------------------[*]
+      9          #define         ON                              1
+     10          #define         OFF                             0
+     11          #define         disable(x)              x = OFF
+     12          #define         enable(y)               y = ON
+     13          //[*]----------------------------------------------------------------------[*]
+     14          typedef struct lcd__t   {
+     15                  byte    x;
+     16                  byte    y;
+     17                  byte    buffer[LCD_COLUM * LCD_LINE];
+     18          }       lcd_t;
+     19          
+     20          static  lcd_t   lcd;
+     21          //[*]----------------------------------------------------------------------[*]
+     22          void func_set(byte cfg);
+     23          void display_onoff(byte cfg);
+     24          void cursor_home(void);
+     25          void entry_mode(byte cfg);
+     26          void lcd_clr(void);
+     27          void lcd_printf(byte x, byte y, byte *str);
+     28          void cursor_locate(byte x, byte y);
+     29          void lcd_write_byte(byte ch);
+     30          void delay(word count);
+     31          //[*]----------------------------------------------------------------------[*]
+     32          interrupt [0x0B] void T0_int(void)
+     33          {
+   \   0000            T0_int:
+   \   0000  C0E0              PUSH    ACC
+   \   0002  C0F0              PUSH    B
+   \   0004  C082              PUSH    DPL
+   \   0006  C083              PUSH    DPH
+   \   0008  C0D0              PUSH    PSW
+   \   000A  E8                MOV     A,R0
+   \   000B  C0E0              PUSH    ACC
+   \   000D  E9                MOV     A,R1
+   \   000E  C0E0              PUSH    ACC
+   \   0010  EA                MOV     A,R2
+   \   0011  C0E0              PUSH    ACC
+   \   0013  EB                MOV     A,R3
+   \   0014  C0E0              PUSH    ACC
+   \   0016  EC                MOV     A,R4
+   \   0017  C0E0              PUSH    ACC
+   \   0019  ED                MOV     A,R5
+   \   001A  C0E0              PUSH    ACC
+   \   001C  EE                MOV     A,R6
+   \   001D  C0E0              PUSH    ACC
+   \   001F  EF                MOV     A,R7
+   \   0020  C0E0              PUSH    ACC
+     34                  disable(EA);
+   \   0022  C2AF              CLR     IE.7
+     35          
+     36                  cursor_locate(lcd.x, lcd.y);
+   \   0024  900001            MOV     DPTR,#lcd+1
+   \   0027  E0                MOVX    A,@DPTR
+   \   0028  FD                MOV     R5,A
+   \   0029  900000            MOV     DPTR,#lcd
+   \   002C  E0                MOVX    A,@DPTR
+   \   002D  FC                MOV     R4,A
+   \   002E  120000            LCALL   $REFFN cursor_locate
+     37                  lcd_write_byte(lcd.buffer[(lcd.y * LCD_COLUM) + lcd.x]);
+   \   0031  900001            MOV     DPTR,#lcd+1
+   \   0034  E0                MOVX    A,@DPTR
+   \   0035  C4                SWAP    A
+   \   0036  54F0              ANL     A,#240
+   \   0038  FC                MOV     R4,A
+   \   0039  900000            MOV     DPTR,#lcd
+   \   003C  E0                MOVX    A,@DPTR
+   \   003D  2C                ADD     A,R4
+   \   003E  2402              ADD     A,#LOW(lcd+2)
+   \   0040  F582              MOV     DPL,A
+   \   0042  E4                CLR     A
+   \   0043  3400              ADDC    A,#HIGH(lcd+2)
+   \   0045  F583              MOV     DPH,A
+   \   0047  E0                MOVX    A,@DPTR
+   \   0048  FC                MOV     R4,A
+   \   0049  120000            LCALL   $REFFN lcd_write_byte
+     38          
+     39                  if(lcd.x++ >= LCD_COLUM)        {
+   \   004C  900000            MOV     DPTR,#lcd
+   \   004F  E0                MOVX    A,@DPTR
+   \   0050  FC                MOV     R4,A
+   \   0051  04                INC     A
+   \   0052  F0                MOVX    @DPTR,A
+   \   0053  EC                MOV     A,R4
+   \   0054  C3                CLR     C
+   \   0055  9410              SUBB    A,#16
+   \   0057  400F              JC      ?0001
+   \   0059            ?0000:
+     40                          lcd.x = 0;
+   \   0059  E4                CLR     A
+   \   005A  F0                MOVX    @DPTR,A
+     41                          if(lcd.y++ >= LCD_LINE)                 lcd.y = 0;
+   \   005B  A3                INC     DPTR
+   \   005C  E0                MOVX    A,@DPTR
+   \   005D  FC                MOV     R4,A
+   \   005E  04                INC     A
+   \   005F  F0                MOVX    @DPTR,A
+   \   0060  EC                MOV     A,R4
+   \   0061  C3                CLR     C
+   \   0062  9402              SUBB    A,#2
+   \   0064  4002              JC      ?0003
+   \   0066            ?0002:
+   \   0066  E4                CLR     A
+   \   0067  F0                MOVX    @DPTR,A
+   \   0068            ?0003:
+   \   0068            ?0001:
+     42                  }
+     43          
+     44                  TH0 = 0xF0;             TL0 = 0x0;
+   \   0068  758CF0            MOV     TH0,#240
+   \   006B  758A00            MOV     TL0,#0
+     45                  enable(EA);
+   \   006E  D2AF              SETB    IE.7
+     46          }
+   \   0070  D0E0              POP     ACC
+   \   0072  FF                MOV     R7,A
+   \   0073  D0E0              POP     ACC
+   \   0075  FE                MOV     R6,A
+   \   0076  D0E0              POP     ACC
+   \   0078  FD                MOV     R5,A
+   \   0079  D0E0              POP     ACC
+   \   007B  FC                MOV     R4,A
+   \   007C  D0E0              POP     ACC
+   \   007E  FB                MOV     R3,A
+   \   007F  D0E0              POP     ACC
+   \   0081  FA                MOV     R2,A
+   \   0082  D0E0              POP     ACC
+   \   0084  F9                MOV     R1,A
+   \   0085  D0E0              POP     ACC
+   \   0087  F8                MOV     R0,A
+   \   0088  D0D0              POP     PSW
+   \   008A  D083              POP     DPH
+   \   008C  D082              POP     DPL
+   \   008E  D0F0              POP     B
+   \   0090  D0E0              POP     ACC
+   \   0092  32                RETI
+     47          //[*]----------------------------------------------------------------------[*]
+     48          void func_set(byte cfg)
+     49          {
+   \   0093            func_set:
+     50                  output(LCD_CON, cfg);
+   \   0093  EC                MOV     A,R4
+   \   0094  90C000            MOV     DPTR,#49152
+   \   0097  F0                MOVX    @DPTR,A
+     51                  delay(300);
+   \   0098  900000            MOV     DPTR,#$LOCBX func_set
+   \   009B  F0                MOVX    @DPTR,A
+   \   009C  7D01              MOV     R5,#1
+   \   009E  7C2C              MOV     R4,#44
+   \   00A0  120000            LCALL   $REFFN delay
+     52                  output(LCD_CON, cfg);
+   \   00A3  900000            MOV     DPTR,#$LOCBX func_set
+   \   00A6  E0                MOVX    A,@DPTR
+   \   00A7  90C000            MOV     DPTR,#49152
+   \   00AA  F0                MOVX    @DPTR,A
+     53                  delay(200);
+   \   00AB  E4                CLR     A
+   \   00AC  FD                MOV     R5,A
+   \   00AD  7CC8              MOV     R4,#200
+   \   00AF  120000            LCALL   $REFFN delay
+     54                  output(LCD_CON, cfg);
+   \   00B2  900000            MOV     DPTR,#$LOCBX func_set
+   \   00B5  E0                MOVX    A,@DPTR
+   \   00B6  90C000            MOV     DPTR,#49152
+   \   00B9  F0                MOVX    @DPTR,A
+     55                  delay(100);
+   \   00BA  E4                CLR     A
+   \   00BB  FD                MOV     R5,A
+   \   00BC  7C64              MOV     R4,#100
+   \   00BE  120000            LCALL   $REFFN delay
+     56          }
+   \   00C1  22                RET
+     57          //[*]----------------------------------------------------------------------[*]
+     58          void display_onoff(byte cfg)
+     59          {
+   \   00C2            display_onoff:
+     60                  output(LCD_CON, cfg & 0xF);
+   \   00C2  EC                MOV     A,R4
+   \   00C3  900000            MOV     DPTR,#$LOCBX display_onoff
+   \   00C6  F0                MOVX    @DPTR,A
+   \   00C7  540F              ANL     A,#15
+   \   00C9  90C000            MOV     DPTR,#49152
+   \   00CC  F0                MOVX    @DPTR,A
+     61                  delay(100);
+   \   00CD  E4                CLR     A
+   \   00CE  FD                MOV     R5,A
+   \   00CF  7C64              MOV     R4,#100
+   \   00D1  120000            LCALL   $REFFN delay
+     62          }
+   \   00D4  22                RET
+     63          //[*]----------------------------------------------------------------------[*]
+     64          void cursor_home(void)
+     65          {
+   \   00D5            cursor_home:
+     66                  output(LCD_CON, 0x02);
+   \   00D5  7402              MOV     A,#2
+   \   00D7  90C000            MOV     DPTR,#49152
+   \   00DA  F0                MOVX    @DPTR,A
+     67                  delay(100);
+   \   00DB  E4                CLR     A
+   \   00DC  FD                MOV     R5,A
+   \   00DD  7C64              MOV     R4,#100
+   \   00DF  120000            LCALL   $REFFN delay
+     68          }
+   \   00E2  22                RET
+     69          //[*]----------------------------------------------------------------------[*]
+     70          void entry_mode(byte cfg)
+     71          {
+   \   00E3            entry_mode:
+     72                  output(LCD_CON, cfg);
+   \   00E3  EC                MOV     A,R4
+   \   00E4  90C000            MOV     DPTR,#49152
+   \   00E7  F0                MOVX    @DPTR,A
+   \   00E8  900000            MOV     DPTR,#$LOCBX entry_mode
+   \   00EB  F0                MOVX    @DPTR,A
+     73                  delay(100);
+   \   00EC  E4                CLR     A
+   \   00ED  FD                MOV     R5,A
+   \   00EE  7C64              MOV     R4,#100
+   \   00F0  120000            LCALL   $REFFN delay
+     74          }
+   \   00F3  22                RET
+     75          //[*]----------------------------------------------------------------------[*]
+     76          void lcd_clr(void)
+     77          {
+   \   00F4            lcd_clr:
+     78                  word    i;
+     79          
+     80                  disable(EA);
+   \   00F4  C2AF              CLR     IE.7
+     81                  output(LCD_CON, 0x01);                  // Hardware clear
+   \   00F6  7401              MOV     A,#1
+   \   00F8  90C000            MOV     DPTR,#49152
+   \   00FB  F0                MOVX    @DPTR,A
+     82          
+     83                  lcd.x = 0;              lcd.y = 0;      // Software clear
+   \   00FC  E582              MOV     A,DPL
+   \   00FE  900000            MOV     DPTR,#lcd
+   \   0101  F0                MOVX    @DPTR,A
+   \   0102  A3                INC     DPTR
+   \   0103  F0                MOVX    @DPTR,A
+     84                  for(i=0; i<sizeof(lcd.buffer); i++)             lcd.buffer[i] = 0x20;
+   \   0104  900000            MOV     DPTR,#$LOCBX lcd_clr
+   \   0107  F0                MOVX    @DPTR,A
+   \   0108  A3                INC     DPTR
+   \   0109  F0                MOVX    @DPTR,A
+   \   010A            ?0005:
+   \   010A  C3                CLR     C
+   \   010B  900000            MOV     DPTR,#$LOCBX lcd_clr+1
+   \   010E  E0                MOVX    A,@DPTR
+   \   010F  9420              SUBB    A,#32
+   \   0111  900000            MOV     DPTR,#$LOCBX lcd_clr
+   \   0114  E0                MOVX    A,@DPTR
+   \   0115  9400              SUBB    A,#0
+   \   0117  501E              JNC     ?0004
+   \   0119            ?0006:
+   \   0119  A3                INC     DPTR
+   \   011A  E0                MOVX    A,@DPTR
+   \   011B  2402              ADD     A,#LOW(lcd+2)
+   \   011D  F582              MOV     DPL,A
+   \   011F  E4                CLR     A
+   \   0120  3400              ADDC    A,#HIGH(lcd+2)
+   \   0122  F583              MOV     DPH,A
+   \   0124  7420              MOV     A,#32
+   \   0126  F0                MOVX    @DPTR,A
+   \   0127  900000            MOV     DPTR,#$LOCBX lcd_clr+1
+   \   012A  E0                MOVX    A,@DPTR
+   \   012B  04                INC     A
+   \   012C  F0                MOVX    @DPTR,A
+   \   012D  900000            MOV     DPTR,#$LOCBX lcd_clr
+   \   0130  7003              JNZ     ?0028
+   \   0132  E0                MOVX    A,@DPTR
+   \   0133  04                INC     A
+   \   0134  F0                MOVX    @DPTR,A
+   \   0135            ?0028:
+   \   0135  80D3              SJMP    ?0005
+   \   0137            ?0004:
+     85          
+     86                  enable(EA);
+   \   0137  D2AF              SETB    IE.7
+     87          }
+   \   0139  22                RET
+     88          //[*]----------------------------------------------------------------------[*]
+     89          void lcd_printf(byte x, byte y, byte *str)
+     90          {
+   \   013A            lcd_printf:
+   \   013A  ED                MOV     A,R5
+   \   013B  900000            MOV     DPTR,#$LOCBX lcd_printf+1
+   \   013E  F0                MOVX    @DPTR,A
+   \   013F  EC                MOV     A,R4
+   \   0140  900000            MOV     DPTR,#$LOCBX lcd_printf
+   \   0143  F0                MOVX    @DPTR,A
+   \   0144            ?0009:
+     91                  while(*str != 0x00)     {
+   \   0144  900000            MOV     DPTR,#$LOCBX lcd_printf+2
+   \   0147  E0                MOVX    A,@DPTR
+   \   0148  FF                MOV     R7,A
+   \   0149  A3                INC     DPTR
+   \   014A  E0                MOVX    A,@DPTR
+   \   014B  FE                MOV     R6,A
+   \   014C  A3                INC     DPTR
+   \   014D  E0                MOVX    A,@DPTR
+   \   014E  FD                MOV     R5,A
+   \   014F  120000            LCALL   ?LD_A_R567_L17
+   \   0152  6048              JZ      ?0008
+   \   0154            ?0010:
+     92                          lcd.buffer[(y * LCD_COLUM) + x] = *str++;
+   \   0154  120000            LCALL   ?PINC1_R567_TO_R123_L20
+   \   0157  900000            MOV     DPTR,#$LOCBX lcd_printf+2
+   \   015A  EF                MOV     A,R7
+   \   015B  F0                MOVX    @DPTR,A
+   \   015C  A3                INC     DPTR
+   \   015D  EE                MOV     A,R6
+   \   015E  F0                MOVX    @DPTR,A
+   \   015F  A3                INC     DPTR
+   \   0160  ED                MOV     A,R5
+   \   0161  F0                MOVX    @DPTR,A
+   \   0162  120000            LCALL   ?LD_A_R123_L17
+   \   0165  FC                MOV     R4,A
+   \   0166  900000            MOV     DPTR,#$LOCBX lcd_printf+1
+   \   0169  E0                MOVX    A,@DPTR
+   \   016A  C4                SWAP    A
+   \   016B  54F0              ANL     A,#240
+   \   016D  FD                MOV     R5,A
+   \   016E  900000            MOV     DPTR,#$LOCBX lcd_printf
+   \   0171  E0                MOVX    A,@DPTR
+   \   0172  2D                ADD     A,R5
+   \   0173  2402              ADD     A,#LOW(lcd+2)
+   \   0175  F582              MOV     DPL,A
+   \   0177  E4                CLR     A
+   \   0178  3400              ADDC    A,#HIGH(lcd+2)
+   \   017A  F583              MOV     DPH,A
+   \   017C  EC                MOV     A,R4
+   \   017D  F0                MOVX    @DPTR,A
+     93          
+     94                          if(x++ >= LCD_COLUM)    {
+   \   017E  900000            MOV     DPTR,#$LOCBX lcd_printf
+   \   0181  E0                MOVX    A,@DPTR
+   \   0182  FC                MOV     R4,A
+   \   0183  04                INC     A
+   \   0184  F0                MOVX    @DPTR,A
+   \   0185  EC                MOV     A,R4
+   \   0186  C3                CLR     C
+   \   0187  9410              SUBB    A,#16
+   \   0189  400F              JC      ?0012
+   \   018B            ?0011:
+     95                                  x = 0;
+   \   018B  E4                CLR     A
+   \   018C  F0                MOVX    @DPTR,A
+     96                                  if(y++ >= LCD_LINE)                     y = 0;
+   \   018D  A3                INC     DPTR
+   \   018E  E0                MOVX    A,@DPTR
+   \   018F  FC                MOV     R4,A
+   \   0190  04                INC     A
+   \   0191  F0                MOVX    @DPTR,A
+   \   0192  EC                MOV     A,R4
+   \   0193  C3                CLR     C
+   \   0194  9402              SUBB    A,#2
+   \   0196  4002              JC      ?0014
+   \   0198            ?0013:
+   \   0198  E4                CLR     A
+   \   0199  F0                MOVX    @DPTR,A
+   \   019A            ?0014:
+   \   019A            ?0012:
+     97                          }
+     98                  }
+     99          }
+   \   019A  80A8              SJMP    ?0009
+   \   019C            ?0008:
+   \   019C  22                RET
+    100          //[*]----------------------------------------------------------------------[*]
+    101          void cursor_locate(byte x, byte y)
+    102          {
+   \   019D            cursor_locate:
+    103                  if     (y == 1)         output(LCD_CON, 0xC0             + x);
+   \   019D  ED                MOV     A,R5
+   \   019E  900000            MOV     DPTR,#$LOCBX cursor_locate+1
+   \   01A1  F0                MOVX    @DPTR,A
+   \   01A2  EC                MOV     A,R4
+   \   01A3  900000            MOV     DPTR,#$LOCBX cursor_locate
+   \   01A6  F0                MOVX    @DPTR,A
+   \   01A7  ED                MOV     A,R5
+   \   01A8  14                DEC     A
+   \   01A9  7009              JNZ     ?0016
+   \   01AB            ?0015:
+   \   01AB  EC                MOV     A,R4
+   \   01AC  24C0              ADD     A,#192
+   \   01AE  90C000            MOV     DPTR,#49152
+   \   01B1  F0                MOVX    @DPTR,A
+   \   01B2  8020              SJMP    ?0017
+   \   01B4            ?0016:
+    104                  else if(y == 2)         output(LCD_CON, 0x80 + LCD_COLUM + x);
+   \   01B4  ED                MOV     A,R5
+   \   01B5  B40209            CJNE    A,#2,?0019
+   \   01B8            ?0018:
+   \   01B8  EC                MOV     A,R4
+   \   01B9  2490              ADD     A,#144
+   \   01BB  90C000            MOV     DPTR,#49152
+   \   01BE  F0                MOVX    @DPTR,A
+   \   01BF  8013              SJMP    ?0020
+   \   01C1            ?0019:
+    105                  else if(y == 3)         output(LCD_CON, 0xC0 + LCD_COLUM + x);
+   \   01C1  B40309            CJNE    A,#3,?0022
+   \   01C4            ?0021:
+   \   01C4  EC                MOV     A,R4
+   \   01C5  24D0              ADD     A,#208
+   \   01C7  90C000            MOV     DPTR,#49152
+   \   01CA  F0                MOVX    @DPTR,A
+   \   01CB  8007              SJMP    ?0023
+   \   01CD            ?0022:
+    106                  else                            output(LCD_CON, 0x80             + x);
+   \   01CD  EC                MOV     A,R4
+   \   01CE  2480              ADD     A,#128
+   \   01D0  90C000            MOV     DPTR,#49152
+   \   01D3  F0                MOVX    @DPTR,A
+   \   01D4            ?0023:
+   \   01D4            ?0020:
+   \   01D4            ?0017:
+    107          }
+   \   01D4  22                RET
+    108          //[*]----------------------------------------------------------------------[*]
+    109          void lcd_write_byte(byte ch)
+    110          {
+   \   01D5            lcd_write_byte:
+    111                  output(LCD_DATA, ch);
+   \   01D5  EC                MOV     A,R4
+   \   01D6  90C001            MOV     DPTR,#49153
+   \   01D9  F0                MOVX    @DPTR,A
+   \   01DA  900000            MOV     DPTR,#$LOCBX lcd_write_byte
+   \   01DD  F0                MOVX    @DPTR,A
+    112          }
+   \   01DE  22                RET
+    113          //[*]----------------------------------------------------------------------[*]
+    114          void delay(word count)
+    115          {
+   \   01DF            delay:
+    116                  word    i;
+    117                  for(i=0; i<count; i++)  {       i++;    i--;    }
+   \   01DF  900000            MOV     DPTR,#$LOCBX delay
+   \   01E2  E4                CLR     A
+   \   01E3  F0                MOVX    @DPTR,A
+   \   01E4  A3                INC     DPTR
+   \   01E5  F0                MOVX    @DPTR,A
+   \   01E6  A3                INC     DPTR
+   \   01E7  ED                MOV     A,R5
+   \   01E8  F0                MOVX    @DPTR,A
+   \   01E9  A3                INC     DPTR
+   \   01EA  EC                MOV     A,R4
+   \   01EB  F0                MOVX    @DPTR,A
+   \   01EC            ?0025:
+   \   01EC  900000            MOV     DPTR,#$LOCBX delay
+   \   01EF  E0                MOVX    A,@DPTR
+   \   01F0  FD                MOV     R5,A
+   \   01F1  A3                INC     DPTR
+   \   01F2  E0                MOVX    A,@DPTR
+   \   01F3  FC                MOV     R4,A
+   \   01F4  A3                INC     DPTR
+   \   01F5  A3                INC     DPTR
+   \   01F6  E0                MOVX    A,@DPTR
+   \   01F7  D3                SETB    C
+   \   01F8  9C                SUBB    A,R4
+   \   01F9  900000            MOV     DPTR,#$LOCBX delay+2
+   \   01FC  E0                MOVX    A,@DPTR
+   \   01FD  9D                SUBB    A,R5
+   \   01FE  401C              JC      ?0024
+   \   0200            ?0026:
+   \   0200  0C                INC     R4
+   \   0201  EC                MOV     A,R4
+   \   0202  7001              JNZ     ?0029
+   \   0204  0D                INC     R5
+   \   0205            ?0029:
+   \   0205  EC                MOV     A,R4
+   \   0206  24FF              ADD     A,#255
+   \   0208  FC                MOV     R4,A
+   \   0209  ED                MOV     A,R5
+   \   020A  34FF              ADDC    A,#255
+   \   020C  FD                MOV     R5,A
+   \   020D  0C                INC     R4
+   \   020E  EC                MOV     A,R4
+   \   020F  7001              JNZ     ?0030
+   \   0211  0D                INC     R5
+   \   0212            ?0030:
+   \   0212  900000            MOV     DPTR,#$LOCBX delay
+   \   0215  ED                MOV     A,R5
+   \   0216  F0                MOVX    @DPTR,A
+   \   0217  A3                INC     DPTR
+   \   0218  EC                MOV     A,R4
+   \   0219  F0                MOVX    @DPTR,A
+    118          }
+   \   021A  80D0              SJMP    ?0025
+   \   021C            ?0024:
+   \   021C  22                RET
+    119          //[*]----------------------------------------------------------------------[*]
+    120          //[*]----------------------------------------------------------------------[*]
+    121          
+   \   0000                    COMMON  INTVEC
+   \   000B                    DS      11
+   \   000B  02                DB      2
+   \   000C  0000              DB      HIGH(T0_int),LOW(T0_int)
+   \   0000                    RSEG    X_UDATA
+   \   0000            lcd:
+   \   0022                    DS      34
+   \   0022                    END
+
+Errors: none
+Warnings: none
+Code size: 541
+Constant size: 14
+Static variable size: Data(0) Idata(0) Bit(0) Xdata(34)
+

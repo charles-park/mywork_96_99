@@ -1,0 +1,3416 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12K/DXT                              13/Mar/98  11:01:04     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  large                                                                 #
+#           Source file   =  8051zig.c                                                             #
+#           List file     =  8051zig.lst                                                           #
+#           Object file   =  8051zig.r03                                                           #
+#           Command line  =  -ml -s -P 8051ZIG -K -gO -L -q                                        #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+   \   0000                    NAME    8051zig(18)
+   \   0000                    RSEG    CODE(0)
+   \   0000                    RSEG    CSTR(0)
+   \   0000                    COMMON  INTVEC(0)
+   \   0000                    RSEG    X_UDATA(0)
+   \   0000                    RSEG    X_IDATA(0)
+   \   0000                    RSEG    X_CDATA(0)
+   \   0000                    PUBLIC  SCON_int
+   \   0000                    $DEFFN  SCON_int(512,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  T0_int
+   \   0000                    $DEFFN  T0_int(512,0,0,0,0,0,0,0)
+   \   0000                    PUBLIC  cursor_home
+   \   0000                    $DEFFN  cursor_home(0,0,0,0,0,0,0,0),init_lcd
+   \   0000                    PUBLIC  cursor_locate
+   \   0000                    $DEFFN  cursor_locate(0,0,0,0,0,0,2,0),T0_int
+   \   0000                    PUBLIC  delay
+   \   0000                    $DEFFN  delay(0,0,2,0,0,0,2,0),led_lcd_test,volume_test,func_set,display_onoff,
+   \   0000                            entry_mode,cursor_home,lcd_clr
+   \   0000                    PUBLIC  disp_catch
+   \   0000                    $DEFFN  disp_catch(0,0,3,0,0,0,3,0),rx_cat
+   \   0000                    PUBLIC  display_buffer
+   \   0000                    $DEFFN  display_buffer(0,0,0,0,0,0,6,0),led_lcd_test
+   \   0000                    PUBLIC  display_buffer_clear
+   \   0000                    $DEFFN  display_buffer_clear(0,0,4,0,0,0,1,0),led_lcd_test,init_lcd
+   \   0000                    PUBLIC  display_onoff
+   \   0000                    $DEFFN  display_onoff(0,0,0,0,0,0,1,0),init_lcd
+   \   0000                    PUBLIC  entry_mode
+   \   0000                    $DEFFN  entry_mode(0,0,0,0,0,0,1,0),init_lcd
+   \   0000                    PUBLIC  func_set
+   \   0000                    $DEFFN  func_set(0,0,0,0,0,0,1,0),init_lcd
+   \   0000                    PUBLIC  init_interrupt
+   \   0000                    $DEFFN  init_interrupt(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  init_lcd
+   \   0000                    $DEFFN  init_lcd(0,0,3,0,0,0,0,0),main
+   \   0000                    PUBLIC  init_serial
+   \   0000                    $DEFFN  init_serial(0,0,0,0,0,0,6,0),main
+   \   0000                    PUBLIC  key_check
+   \   0000                    $DEFFN  key_check(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  key_send_pc
+   \   0000                    $DEFFN  key_send_pc(0,0,2,0,0,0,1,0),key_check
+   \   0000                    PUBLIC  lcd_clr
+   \   0000                    $DEFFN  lcd_clr(0,0,0,0,0,0,0,0),init_lcd
+   \   0000                    PUBLIC  lcd_write_byte
+   \   0000                    $DEFFN  lcd_write_byte(0,0,0,0,0,0,1,0),T0_int
+   \   0000                    PUBLIC  led_lcd_test
+   \   0000                    $DEFFN  led_lcd_test(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  led_test
+   \   0000                    PUBLIC  main
+   \   0000                    $DEFFN  main(0,0,0,0,0,0,0,0)
+   \   0000                    EXTERN  malloc
+   \   0000                    $DEFFN  malloc(0,0,2,0),init_serial
+   \   0000                    PUBLIC  move_to_serial_buffer
+   \   0000                    $DEFFN  move_to_serial_buffer(0,0,0,0,0,0,4,0),key_send_pc
+   \   0000                    PUBLIC  protocol_event
+   \   0000                    $DEFFN  protocol_event(256,0,1,0,0,0,4,0),receive_check
+   \   0000                    PUBLIC  protocol_q
+   \   0000                    $DEFFN  protocol_q(0,0,0,0,0,0,5,0),protocol_event
+   \   0000                    PUBLIC  receive_check
+   \   0000                    $DEFFN  receive_check(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  rx_cat
+   \   0000                    $DEFFN  rx_cat(0,0,6,0,0,0,3,0)
+   \   0000                    PUBLIC  rx_chk
+   \   0000                    $DEFFN  rx_chk(0,0,0,0,0,0,3,0)
+   \   0000                    PUBLIC  set_protocol_flag
+   \   0000                    $DEFFN  set_protocol_flag(0,0,0,0,0,0,5,0),protocol_event
+   \   0000                    PUBLIC  transmit_check
+   \   0000                    $DEFFN  transmit_check(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  volume_test
+   \   0000                    $DEFFN  volume_test(0,0,2,0,0,0,0,0),led_lcd_test
+   \   0000                    EXTERN  ?UI_DIV_L00
+   \   0000                    EXTERN  ?UI_MOD_L00
+   \   0000                    EXTERN  ?UI_MOD_R_L00
+   \   0000                    EXTERN  ?IADD_ASG_R123_AR5_L00
+   \   0000                    EXTERN  ?UIMOD_ASG_R123_AR5_L00
+   \   0000                    EXTERN  ?UIMOD_ASG_R123_AR7_L00
+   \   0000                    EXTERN  ?IADD_POST_R567_AR3_L00
+   \   0000                    EXTERN  ?IADD_POST_R567_AR3_DISP_L00
+   \   0000                    EXTERN  ?LD_A_R123_L17
+   \   0000                    EXTERN  ?LD_A_R567_L17
+   \   0000                    EXTERN  ?LD_AR1_R567_L17
+   \   0000                    EXTERN  ?LD_AR3_R567_L17
+   \   0000                    EXTERN  ?LD_AR5_R123_L17
+   \   0000                    EXTERN  ?ST_AR3_R567_L17
+   \   0000                    EXTERN  ?LD_A_R123_DISP_L17
+   \   0000                    EXTERN  ?LD_A_R567_DISP_L17
+   \   0000                    EXTERN  ?ST_A_R567_DISP_L17
+   \   0000                    EXTERN  ?LD_AR1_R567_DISP_L17
+   \   0000                    EXTERN  ?LD_AR3_R567_DISP_L17
+   \   0000                    EXTERN  ?LD_AR5_R123_DISP_L17
+   \   0000                    EXTERN  ?LD_AR7_R123_DISP_L17
+   \   0000                    EXTERN  ?ST_AR5_R123_DISP_L17
+   \   0000                    EXTERN  ?ST_AR3_R567_DISP_L17
+   \   0000                    EXTERN  ?LD_R567_R123_DISP_L17
+   \   0000                    EXTERN  ?LD_R123_R567_DISP_L17
+   \   0000                    EXTERN  ?ST_R567_R123_DISP_L17
+   \   0000                    EXTERN  ?A_V_SWITCH_L05
+   \   0000                    EXTERN  ?PINC1_R567_TO_R123_L20
+   \   0000                    EXTERN  ?LOAD_IND_DPTR2_L20
+   \   0000                    EXTERN  ?LCALL_IND_L20
+   \   0000                    EXTERN  ?CL8051L_5_12_L17
+   \   0000                    RSEG    CODE
+      1          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+      2          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+      3          #include <io51.h>
+      4          #include <stdio.h>
+      5          #include <stdlib.h>
+      6          #include "8051zig.h"
+      7          #include "lcd.hpp"
+   \   0000            lcd_clr:
+   \   0000  7401              MOV     A,#1
+   \   0002  909000            MOV     DPTR,#36864
+   \   0005  F0                MOVX    @DPTR,A
+   \   0006  E4                CLR     A
+   \   0007  FD                MOV     R5,A
+   \   0008  7C64              MOV     R4,#100
+   \   000A  120000            LCALL   $REFFN delay
+   \   000D  22                RET
+   \   000E            cursor_home:
+   \   000E  7402              MOV     A,#2
+   \   0010  909000            MOV     DPTR,#36864
+   \   0013  F0                MOVX    @DPTR,A
+   \   0014  E4                CLR     A
+   \   0015  FD                MOV     R5,A
+   \   0016  7C64              MOV     R4,#100
+   \   0018  120000            LCALL   $REFFN delay
+   \   001B  22                RET
+   \   001C            entry_mode:
+   \   001C  EC                MOV     A,R4
+   \   001D  909000            MOV     DPTR,#36864
+   \   0020  F0                MOVX    @DPTR,A
+   \   0021  900000            MOV     DPTR,#$LOCBX entry_mode
+   \   0024  F0                MOVX    @DPTR,A
+   \   0025  E4                CLR     A
+   \   0026  FD                MOV     R5,A
+   \   0027  7C64              MOV     R4,#100
+   \   0029  120000            LCALL   $REFFN delay
+   \   002C  22                RET
+   \   002D            display_onoff:
+   \   002D  EC                MOV     A,R4
+   \   002E  900000            MOV     DPTR,#$LOCBX display_onoff
+   \   0031  F0                MOVX    @DPTR,A
+   \   0032  540F              ANL     A,#15
+   \   0034  909000            MOV     DPTR,#36864
+   \   0037  F0                MOVX    @DPTR,A
+   \   0038  E4                CLR     A
+   \   0039  FD                MOV     R5,A
+   \   003A  7C64              MOV     R4,#100
+   \   003C  120000            LCALL   $REFFN delay
+   \   003F  22                RET
+   \   0040            func_set:
+   \   0040  EC                MOV     A,R4
+   \   0041  909000            MOV     DPTR,#36864
+   \   0044  F0                MOVX    @DPTR,A
+   \   0045  900000            MOV     DPTR,#$LOCBX func_set
+   \   0048  F0                MOVX    @DPTR,A
+   \   0049  7D01              MOV     R5,#1
+   \   004B  7C2C              MOV     R4,#44
+   \   004D  120000            LCALL   $REFFN delay
+   \   0050  900000            MOV     DPTR,#$LOCBX func_set
+   \   0053  E0                MOVX    A,@DPTR
+   \   0054  909000            MOV     DPTR,#36864
+   \   0057  F0                MOVX    @DPTR,A
+   \   0058  E4                CLR     A
+   \   0059  FD                MOV     R5,A
+   \   005A  7CC8              MOV     R4,#200
+   \   005C  120000            LCALL   $REFFN delay
+   \   005F  900000            MOV     DPTR,#$LOCBX func_set
+   \   0062  E0                MOVX    A,@DPTR
+   \   0063  909000            MOV     DPTR,#36864
+   \   0066  F0                MOVX    @DPTR,A
+   \   0067  E4                CLR     A
+   \   0068  FD                MOV     R5,A
+   \   0069  7C64              MOV     R4,#100
+   \   006B  120000            LCALL   $REFFN delay
+   \   006E  22                RET
+   \   006F            display_buffer:
+   \   006F  ED                MOV     A,R5
+   \   0070  900000            MOV     DPTR,#$LOCBX display_buffer+1
+   \   0073  F0                MOVX    @DPTR,A
+   \   0074  EC                MOV     A,R4
+   \   0075  900000            MOV     DPTR,#$LOCBX display_buffer
+   \   0078  F0                MOVX    @DPTR,A
+   \   0079  ED                MOV     A,R5
+   \   007A  C3                CLR     C
+   \   007B  9404              SUBB    A,#4
+   \   007D  4001              JC      ?0001
+   \   007F            ?0000:
+   \   007F  22                RET
+   \   0080            ?0001:
+   \   0080  900000            MOV     DPTR,#$LOCBX display_buffer+5
+   \   0083  E0                MOVX    A,@DPTR
+   \   0084  C3                CLR     C
+   \   0085  940A              SUBB    A,#10
+   \   0087  4001              JC      ?0003
+   \   0089            ?0002:
+   \   0089  22                RET
+   \   008A            ?0003:
+   \   008A  E0                MOVX    A,@DPTR
+   \   008B  90000E            MOV     DPTR,#lcd_buffer+2
+   \   008E  F0                MOVX    @DPTR,A
+   \   008F            ?0005:
+   \   008F  900000            MOV     DPTR,#$LOCBX display_buffer+2
+   \   0092  E0                MOVX    A,@DPTR
+   \   0093  FF                MOV     R7,A
+   \   0094  A3                INC     DPTR
+   \   0095  E0                MOVX    A,@DPTR
+   \   0096  FE                MOV     R6,A
+   \   0097  A3                INC     DPTR
+   \   0098  E0                MOVX    A,@DPTR
+   \   0099  FD                MOV     R5,A
+   \   009A  120000            LCALL   ?LD_A_R567_L17
+   \   009D  6056              JZ      ?0004
+   \   009F            ?0006:
+   \   009F  120000            LCALL   ?PINC1_R567_TO_R123_L20
+   \   00A2  900000            MOV     DPTR,#$LOCBX display_buffer+2
+   \   00A5  EF                MOV     A,R7
+   \   00A6  F0                MOVX    @DPTR,A
+   \   00A7  A3                INC     DPTR
+   \   00A8  EE                MOV     A,R6
+   \   00A9  F0                MOVX    @DPTR,A
+   \   00AA  A3                INC     DPTR
+   \   00AB  ED                MOV     A,R5
+   \   00AC  F0                MOVX    @DPTR,A
+   \   00AD  120000            LCALL   ?LD_A_R123_L17
+   \   00B0  900000            MOV     DPTR,#$LOCBX display_buffer
+   \   00B3  FC                MOV     R4,A
+   \   00B4  E0                MOVX    A,@DPTR
+   \   00B5  FD                MOV     R5,A
+   \   00B6  04                INC     A
+   \   00B7  F0                MOVX    @DPTR,A
+   \   00B8  ED                MOV     A,R5
+   \   00B9  75F028            MOV     B,#40
+   \   00BC  A4                MUL     AB
+   \   00BD  AFF0              MOV     R7,B
+   \   00BF  FE                MOV     R6,A
+   \   00C0  A3                INC     DPTR
+   \   00C1  E0                MOVX    A,@DPTR
+   \   00C2  75F00A            MOV     B,#10
+   \   00C5  A4                MUL     AB
+   \   00C6  ABF0              MOV     R3,B
+   \   00C8  FA                MOV     R2,A
+   \   00C9  EE                MOV     A,R6
+   \   00CA  2A                ADD     A,R2
+   \   00CB  FE                MOV     R6,A
+   \   00CC  EF                MOV     A,R7
+   \   00CD  3B                ADDC    A,R3
+   \   00CE  FF                MOV     R7,A
+   \   00CF  900000            MOV     DPTR,#$LOCBX display_buffer+5
+   \   00D2  E0                MOVX    A,@DPTR
+   \   00D3  7B00              MOV     R3,#0
+   \   00D5  FA                MOV     R2,A
+   \   00D6  EE                MOV     A,R6
+   \   00D7  2A                ADD     A,R2
+   \   00D8  FE                MOV     R6,A
+   \   00D9  EF                MOV     A,R7
+   \   00DA  3B                ADDC    A,R3
+   \   00DB  FF                MOV     R7,A
+   \   00DC  EE                MOV     A,R6
+   \   00DD  2411              ADD     A,#LOW(lcd_buffer+5)
+   \   00DF  F582              MOV     DPL,A
+   \   00E1  EF                MOV     A,R7
+   \   00E2  3400              ADDC    A,#HIGH(lcd_buffer+5)
+   \   00E4  F583              MOV     DPH,A
+   \   00E6  EC                MOV     A,R4
+   \   00E7  F0                MOVX    @DPTR,A
+   \   00E8  900000            MOV     DPTR,#$LOCBX display_buffer
+   \   00EB  E0                MOVX    A,@DPTR
+   \   00EC  C3                CLR     C
+   \   00ED  9414              SUBB    A,#20
+   \   00EF  4002              JC      ?0008
+   \   00F1            ?0007:
+   \   00F1  EB                MOV     A,R3
+   \   00F2  F0                MOVX    @DPTR,A
+   \   00F3            ?0008:
+   \   00F3  809A              SJMP    ?0005
+   \   00F5            ?0004:
+   \   00F5            ?0009:
+   \   00F5  22                RET
+   \   00F6            display_buffer_clear:
+   \   00F6  E4                CLR     A
+   \   00F7  A297              MOV     C,P1.7
+   \   00F9  92E0              MOV     ACC.0,C
+   \   00FB  F4                CPL     A
+   \   00FC  04                INC     A
+   \   00FD  04                INC     A
+   \   00FE  A2E0              MOV     C,ACC.0
+   \   0100  9297              MOV     P1.7,C
+   \   0102  EC                MOV     A,R4
+   \   0103  900000            MOV     DPTR,#$LOCBX display_buffer_clear+4
+   \   0106  F0                MOVX    @DPTR,A
+   \   0107  C3                CLR     C
+   \   0108  9409              SUBB    A,#9
+   \   010A  4001              JC      ?0011
+   \   010C            ?0010:
+   \   010C  22                RET
+   \   010D            ?0011:
+   \   010D  900000            MOV     DPTR,#$LOCBX display_buffer_clear
+   \   0110  E4                CLR     A
+   \   0111  F0                MOVX    @DPTR,A
+   \   0112  A3                INC     DPTR
+   \   0113  F0                MOVX    @DPTR,A
+   \   0114            ?0013:
+   \   0114  C3                CLR     C
+   \   0115  900000            MOV     DPTR,#$LOCBX display_buffer_clear+1
+   \   0118  E0                MOVX    A,@DPTR
+   \   0119  9404              SUBB    A,#4
+   \   011B  900000            MOV     DPTR,#$LOCBX display_buffer_clear
+   \   011E  E0                MOVX    A,@DPTR
+   \   011F  9400              SUBB    A,#0
+   \   0121  4003              JC      $+5
+   \   0123  0201A5            LJMP    ?0012
+   \   0126            ?0014:
+   \   0126  A3                INC     DPTR
+   \   0127  A3                INC     DPTR
+   \   0128  E4                CLR     A
+   \   0129  F0                MOVX    @DPTR,A
+   \   012A  A3                INC     DPTR
+   \   012B  F0                MOVX    @DPTR,A
+   \   012C            ?0017:
+   \   012C  C3                CLR     C
+   \   012D  900000            MOV     DPTR,#$LOCBX display_buffer_clear+3
+   \   0130  E0                MOVX    A,@DPTR
+   \   0131  9414              SUBB    A,#20
+   \   0133  900000            MOV     DPTR,#$LOCBX display_buffer_clear+2
+   \   0136  E0                MOVX    A,@DPTR
+   \   0137  9400              SUBB    A,#0
+   \   0139  5059              JNC     ?0016
+   \   013B            ?0018:
+   \   013B  E0                MOVX    A,@DPTR
+   \   013C  FD                MOV     R5,A
+   \   013D  A3                INC     DPTR
+   \   013E  E0                MOVX    A,@DPTR
+   \   013F  FC                MOV     R4,A
+   \   0140  75F028            MOV     B,#40
+   \   0143  A4                MUL     AB
+   \   0144  FC                MOV     R4,A
+   \   0145  E5F0              MOV     A,B
+   \   0147  CD                XCH     A,R5
+   \   0148  75F028            MOV     B,#40
+   \   014B  A4                MUL     AB
+   \   014C  2D                ADD     A,R5
+   \   014D  FD                MOV     R5,A
+   \   014E  900000            MOV     DPTR,#$LOCBX display_buffer_clear
+   \   0151  E0                MOVX    A,@DPTR
+   \   0152  FF                MOV     R7,A
+   \   0153  A3                INC     DPTR
+   \   0154  E0                MOVX    A,@DPTR
+   \   0155  FE                MOV     R6,A
+   \   0156  75F00A            MOV     B,#10
+   \   0159  A4                MUL     AB
+   \   015A  FE                MOV     R6,A
+   \   015B  E5F0              MOV     A,B
+   \   015D  CF                XCH     A,R7
+   \   015E  75F00A            MOV     B,#10
+   \   0161  A4                MUL     AB
+   \   0162  2F                ADD     A,R7
+   \   0163  FF                MOV     R7,A
+   \   0164  EC                MOV     A,R4
+   \   0165  2E                ADD     A,R6
+   \   0166  FC                MOV     R4,A
+   \   0167  ED                MOV     A,R5
+   \   0168  3F                ADDC    A,R7
+   \   0169  FD                MOV     R5,A
+   \   016A  900000            MOV     DPTR,#$LOCBX display_buffer_clear+4
+   \   016D  E0                MOVX    A,@DPTR
+   \   016E  7F00              MOV     R7,#0
+   \   0170  FE                MOV     R6,A
+   \   0171  EC                MOV     A,R4
+   \   0172  2E                ADD     A,R6
+   \   0173  FC                MOV     R4,A
+   \   0174  ED                MOV     A,R5
+   \   0175  3F                ADDC    A,R7
+   \   0176  FD                MOV     R5,A
+   \   0177  EC                MOV     A,R4
+   \   0178  2411              ADD     A,#LOW(lcd_buffer+5)
+   \   017A  F582              MOV     DPL,A
+   \   017C  ED                MOV     A,R5
+   \   017D  3400              ADDC    A,#HIGH(lcd_buffer+5)
+   \   017F  F583              MOV     DPH,A
+   \   0181  7420              MOV     A,#32
+   \   0183  F0                MOVX    @DPTR,A
+   \   0184  900000            MOV     DPTR,#$LOCBX display_buffer_clear+3
+   \   0187  E0                MOVX    A,@DPTR
+   \   0188  04                INC     A
+   \   0189  F0                MOVX    @DPTR,A
+   \   018A  900000            MOV     DPTR,#$LOCBX display_buffer_clear+2
+   \   018D  7003              JNZ     ?0162
+   \   018F  E0                MOVX    A,@DPTR
+   \   0190  04                INC     A
+   \   0191  F0                MOVX    @DPTR,A
+   \   0192            ?0162:
+   \   0192  8098              SJMP    ?0017
+   \   0194            ?0016:
+   \   0194  900000            MOV     DPTR,#$LOCBX display_buffer_clear+1
+   \   0197  E0                MOVX    A,@DPTR
+   \   0198  04                INC     A
+   \   0199  F0                MOVX    @DPTR,A
+   \   019A  900000            MOV     DPTR,#$LOCBX display_buffer_clear
+   \   019D  7003              JNZ     ?0163
+   \   019F  E0                MOVX    A,@DPTR
+   \   01A0  04                INC     A
+   \   01A1  F0                MOVX    @DPTR,A
+   \   01A2            ?0163:
+   \   01A2  020114            LJMP    ?0013
+   \   01A5            ?0012:
+   \   01A5            ?0020:
+   \   01A5  22                RET
+   \   01A6            cursor_locate:
+   \   01A6  ED                MOV     A,R5
+   \   01A7  900000            MOV     DPTR,#$LOCBX cursor_locate+1
+   \   01AA  F0                MOVX    @DPTR,A
+   \   01AB  EC                MOV     A,R4
+   \   01AC  900000            MOV     DPTR,#$LOCBX cursor_locate
+   \   01AF  F0                MOVX    @DPTR,A
+   \   01B0  ED                MOV     A,R5
+   \   01B1  14                DEC     A
+   \   01B2  7009              JNZ     ?0022
+   \   01B4            ?0021:
+   \   01B4  EC                MOV     A,R4
+   \   01B5  24C0              ADD     A,#192
+   \   01B7  909000            MOV     DPTR,#36864
+   \   01BA  F0                MOVX    @DPTR,A
+   \   01BB  8020              SJMP    ?0023
+   \   01BD            ?0022:
+   \   01BD  ED                MOV     A,R5
+   \   01BE  B40209            CJNE    A,#2,?0025
+   \   01C1            ?0024:
+   \   01C1  EC                MOV     A,R4
+   \   01C2  2494              ADD     A,#148
+   \   01C4  909000            MOV     DPTR,#36864
+   \   01C7  F0                MOVX    @DPTR,A
+   \   01C8  8013              SJMP    ?0026
+   \   01CA            ?0025:
+   \   01CA  B40309            CJNE    A,#3,?0028
+   \   01CD            ?0027:
+   \   01CD  EC                MOV     A,R4
+   \   01CE  24D4              ADD     A,#212
+   \   01D0  909000            MOV     DPTR,#36864
+   \   01D3  F0                MOVX    @DPTR,A
+   \   01D4  8007              SJMP    ?0029
+   \   01D6            ?0028:
+   \   01D6  EC                MOV     A,R4
+   \   01D7  2480              ADD     A,#128
+   \   01D9  909000            MOV     DPTR,#36864
+   \   01DC  F0                MOVX    @DPTR,A
+   \   01DD            ?0029:
+   \   01DD            ?0026:
+   \   01DD            ?0023:
+   \   01DD  22                RET
+   \   01DE            lcd_write_byte:
+   \   01DE  EC                MOV     A,R4
+   \   01DF  909001            MOV     DPTR,#36865
+   \   01E2  F0                MOVX    @DPTR,A
+   \   01E3  900000            MOV     DPTR,#$LOCBX lcd_write_byte
+   \   01E6  F0                MOVX    @DPTR,A
+   \   01E7  22                RET
+   \   01E8            init_lcd:
+   \   01E8  7430              MOV     A,#48
+   \   01EA  900000            MOV     DPTR,#$LOCBX init_lcd+2
+   \   01ED  F0                MOVX    @DPTR,A
+   \   01EE  E4                CLR     A
+   \   01EF  A297              MOV     C,P1.7
+   \   01F1  92E0              MOV     ACC.0,C
+   \   01F3  F4                CPL     A
+   \   01F4  04                INC     A
+   \   01F5  04                INC     A
+   \   01F6  A2E0              MOV     C,ACC.0
+   \   01F8  9297              MOV     P1.7,C
+   \   01FA  7C38              MOV     R4,#56
+   \   01FC  120000            LCALL   $REFFN func_set
+   \   01FF  7C0C              MOV     R4,#12
+   \   0201  120000            LCALL   $REFFN display_onoff
+   \   0204  120000            LCALL   $REFFN cursor_home
+   \   0207  7C06              MOV     R4,#6
+   \   0209  120000            LCALL   $REFFN entry_mode
+   \   020C  120000            LCALL   $REFFN lcd_clr
+   \   020F  E4                CLR     A
+   \   0210  90000E            MOV     DPTR,#lcd_buffer+2
+   \   0213  F0                MOVX    @DPTR,A
+   \   0214  A3                INC     DPTR
+   \   0215  F0                MOVX    @DPTR,A
+   \   0216  90000C            MOV     DPTR,#lcd_buffer
+   \   0219  F0                MOVX    @DPTR,A
+   \   021A  A3                INC     DPTR
+   \   021B  F0                MOVX    @DPTR,A
+   \   021C  04                INC     A
+   \   021D  900010            MOV     DPTR,#lcd_buffer+4
+   \   0220  F0                MOVX    @DPTR,A
+   \   0221  900000            MOV     DPTR,#$LOCBX init_lcd
+   \   0224  E4                CLR     A
+   \   0225  F0                MOVX    @DPTR,A
+   \   0226  A3                INC     DPTR
+   \   0227  F0                MOVX    @DPTR,A
+   \   0228            ?0031:
+   \   0228  C3                CLR     C
+   \   0229  900000            MOV     DPTR,#$LOCBX init_lcd+1
+   \   022C  E0                MOVX    A,@DPTR
+   \   022D  940A              SUBB    A,#10
+   \   022F  900000            MOV     DPTR,#$LOCBX init_lcd
+   \   0232  E0                MOVX    A,@DPTR
+   \   0233  9400              SUBB    A,#0
+   \   0235  5016              JNC     ?0030
+   \   0237            ?0032:
+   \   0237  A3                INC     DPTR
+   \   0238  E0                MOVX    A,@DPTR
+   \   0239  FC                MOV     R4,A
+   \   023A  120000            LCALL   $REFFN display_buffer_clear
+   \   023D  900000            MOV     DPTR,#$LOCBX init_lcd+1
+   \   0240  E0                MOVX    A,@DPTR
+   \   0241  04                INC     A
+   \   0242  F0                MOVX    @DPTR,A
+   \   0243  900000            MOV     DPTR,#$LOCBX init_lcd
+   \   0246  7003              JNZ     ?0164
+   \   0248  E0                MOVX    A,@DPTR
+   \   0249  04                INC     A
+   \   024A  F0                MOVX    @DPTR,A
+   \   024B            ?0164:
+   \   024B  80DB              SJMP    ?0031
+   \   024D            ?0030:
+   \   024D  22                RET
+   \   024E            T0_int:
+   \   024E  C0E0              PUSH    ACC
+   \   0250  C0F0              PUSH    B
+   \   0252  C082              PUSH    DPL
+   \   0254  C083              PUSH    DPH
+   \   0256  C0D0              PUSH    PSW
+   \   0258  E8                MOV     A,R0
+   \   0259  C0E0              PUSH    ACC
+   \   025B  E9                MOV     A,R1
+   \   025C  C0E0              PUSH    ACC
+   \   025E  EA                MOV     A,R2
+   \   025F  C0E0              PUSH    ACC
+   \   0261  EB                MOV     A,R3
+   \   0262  C0E0              PUSH    ACC
+   \   0264  EC                MOV     A,R4
+   \   0265  C0E0              PUSH    ACC
+   \   0267  ED                MOV     A,R5
+   \   0268  C0E0              PUSH    ACC
+   \   026A  EE                MOV     A,R6
+   \   026B  C0E0              PUSH    ACC
+   \   026D  EF                MOV     A,R7
+   \   026E  C0E0              PUSH    ACC
+   \   0270  C28C              CLR     TCON.4
+   \   0272  C28D              CLR     TCON.5
+   \   0274  900010            MOV     DPTR,#lcd_buffer+4
+   \   0277  E0                MOVX    A,@DPTR
+   \   0278  6011              JZ      ?0035
+   \   027A            ?0034:
+   \   027A  E4                CLR     A
+   \   027B  F0                MOVX    @DPTR,A
+   \   027C  90000D            MOV     DPTR,#lcd_buffer+1
+   \   027F  E0                MOVX    A,@DPTR
+   \   0280  FD                MOV     R5,A
+   \   0281  90000C            MOV     DPTR,#lcd_buffer
+   \   0284  E0                MOVX    A,@DPTR
+   \   0285  FC                MOV     R4,A
+   \   0286  120000            LCALL   $REFFN cursor_locate
+   \   0289  806D              SJMP    ?0036
+   \   028B            ?0035:
+   \   028B  7401              MOV     A,#1
+   \   028D  F0                MOVX    @DPTR,A
+   \   028E  90000D            MOV     DPTR,#lcd_buffer+1
+   \   0291  E0                MOVX    A,@DPTR
+   \   0292  75F00A            MOV     B,#10
+   \   0295  A4                MUL     AB
+   \   0296  ADF0              MOV     R5,B
+   \   0298  FC                MOV     R4,A
+   \   0299  90000C            MOV     DPTR,#lcd_buffer
+   \   029C  E0                MOVX    A,@DPTR
+   \   029D  75F028            MOV     B,#40
+   \   02A0  A4                MUL     AB
+   \   02A1  AFF0              MOV     R7,B
+   \   02A3  2C                ADD     A,R4
+   \   02A4  FE                MOV     R6,A
+   \   02A5  EF                MOV     A,R7
+   \   02A6  3D                ADDC    A,R5
+   \   02A7  FF                MOV     R7,A
+   \   02A8  A3                INC     DPTR
+   \   02A9  A3                INC     DPTR
+   \   02AA  E0                MOVX    A,@DPTR
+   \   02AB  7D00              MOV     R5,#0
+   \   02AD  FC                MOV     R4,A
+   \   02AE  EE                MOV     A,R6
+   \   02AF  2C                ADD     A,R4
+   \   02B0  FE                MOV     R6,A
+   \   02B1  EF                MOV     A,R7
+   \   02B2  3D                ADDC    A,R5
+   \   02B3  FF                MOV     R7,A
+   \   02B4  EE                MOV     A,R6
+   \   02B5  2411              ADD     A,#LOW(lcd_buffer+5)
+   \   02B7  F582              MOV     DPL,A
+   \   02B9  EF                MOV     A,R7
+   \   02BA  3400              ADDC    A,#HIGH(lcd_buffer+5)
+   \   02BC  F583              MOV     DPH,A
+   \   02BE  E0                MOVX    A,@DPTR
+   \   02BF  FC                MOV     R4,A
+   \   02C0  120000            LCALL   $REFFN lcd_write_byte
+   \   02C3  90000C            MOV     DPTR,#lcd_buffer
+   \   02C6  E0                MOVX    A,@DPTR
+   \   02C7  FC                MOV     R4,A
+   \   02C8  04                INC     A
+   \   02C9  F0                MOVX    @DPTR,A
+   \   02CA  EC                MOV     A,R4
+   \   02CB  C3                CLR     C
+   \   02CC  9413              SUBB    A,#19
+   \   02CE  4028              JC      ?0038
+   \   02D0            ?0037:
+   \   02D0  E4                CLR     A
+   \   02D1  F0                MOVX    @DPTR,A
+   \   02D2  A3                INC     DPTR
+   \   02D3  E0                MOVX    A,@DPTR
+   \   02D4  FC                MOV     R4,A
+   \   02D5  04                INC     A
+   \   02D6  F0                MOVX    @DPTR,A
+   \   02D7  EC                MOV     A,R4
+   \   02D8  C3                CLR     C
+   \   02D9  9403              SUBB    A,#3
+   \   02DB  401B              JC      ?0040
+   \   02DD            ?0039:
+   \   02DD  E4                CLR     A
+   \   02DE  F0                MOVX    @DPTR,A
+   \   02DF  A3                INC     DPTR
+   \   02E0  A3                INC     DPTR
+   \   02E1  E0                MOVX    A,@DPTR
+   \   02E2  6014              JZ      ?0042
+   \   02E4            ?0041:
+   \   02E4  90000E            MOV     DPTR,#lcd_buffer+2
+   \   02E7  E0                MOVX    A,@DPTR
+   \   02E8  04                INC     A
+   \   02E9  F0                MOVX    @DPTR,A
+   \   02EA  E4                CLR     A
+   \   02EB  A3                INC     DPTR
+   \   02EC  F0                MOVX    @DPTR,A
+   \   02ED  90000E            MOV     DPTR,#lcd_buffer+2
+   \   02F0  E0                MOVX    A,@DPTR
+   \   02F1  C3                CLR     C
+   \   02F2  940A              SUBB    A,#10
+   \   02F4  4002              JC      ?0044
+   \   02F6            ?0043:
+   \   02F6  E4                CLR     A
+   \   02F7  F0                MOVX    @DPTR,A
+   \   02F8            ?0044:
+   \   02F8            ?0042:
+   \   02F8            ?0040:
+   \   02F8            ?0038:
+   \   02F8            ?0036:
+   \   02F8  758CFF            MOV     TH0,#255
+   \   02FB  758A00            MOV     TL0,#0
+   \   02FE  D28C              SETB    TCON.4
+   \   0300  D0E0              POP     ACC
+   \   0302  FF                MOV     R7,A
+   \   0303  D0E0              POP     ACC
+   \   0305  FE                MOV     R6,A
+   \   0306  D0E0              POP     ACC
+   \   0308  FD                MOV     R5,A
+   \   0309  D0E0              POP     ACC
+   \   030B  FC                MOV     R4,A
+   \   030C  D0E0              POP     ACC
+   \   030E  FB                MOV     R3,A
+   \   030F  D0E0              POP     ACC
+   \   0311  FA                MOV     R2,A
+   \   0312  D0E0              POP     ACC
+   \   0314  F9                MOV     R1,A
+   \   0315  D0E0              POP     ACC
+   \   0317  F8                MOV     R0,A
+   \   0318  D0D0              POP     PSW
+   \   031A  D083              POP     DPH
+   \   031C  D082              POP     DPL
+   \   031E  D0F0              POP     B
+   \   0320  D0E0              POP     ACC
+   \   0322  32                RETI
+      8          #include "serial.hpp"
+   \   0323            init_serial:
+   \   0323  900337            MOV     DPTR,#com+6
+   \   0326  E4                CLR     A
+   \   0327  F0                MOVX    @DPTR,A
+   \   0328  A3                INC     DPTR
+   \   0329  F0                MOVX    @DPTR,A
+   \   032A  900335            MOV     DPTR,#com+4
+   \   032D  F0                MOVX    @DPTR,A
+   \   032E  A3                INC     DPTR
+   \   032F  F0                MOVX    @DPTR,A
+   \   0330  900333            MOV     DPTR,#com+2
+   \   0333  F0                MOVX    @DPTR,A
+   \   0334  A3                INC     DPTR
+   \   0335  F0                MOVX    @DPTR,A
+   \   0336  900331            MOV     DPTR,#com
+   \   0339  F0                MOVX    @DPTR,A
+   \   033A  A3                INC     DPTR
+   \   033B  F0                MOVX    @DPTR,A
+   \   033C  04                INC     A
+   \   033D  90033A            MOV     DPTR,#com+9
+   \   0340  F0                MOVX    @DPTR,A
+   \   0341  A3                INC     DPTR
+   \   0342  F0                MOVX    @DPTR,A
+   \   0343  900000            MOV     DPTR,#$LOCBX init_serial+2
+   \   0346  EF                MOV     A,R7
+   \   0347  F0                MOVX    @DPTR,A
+   \   0348  A3                INC     DPTR
+   \   0349  EE                MOV     A,R6
+   \   034A  F0                MOVX    @DPTR,A
+   \   034B  900000            MOV     DPTR,#$LOCBX init_serial
+   \   034E  ED                MOV     A,R5
+   \   034F  F0                MOVX    @DPTR,A
+   \   0350  A3                INC     DPTR
+   \   0351  EC                MOV     A,R4
+   \   0352  F0                MOVX    @DPTR,A
+   \   0353  E4                CLR     A
+   \   0354  FD                MOV     R5,A
+   \   0355  7C0F              MOV     R4,#15
+   \   0357  120000            LCALL   $REFFN malloc
+   \   035A  9012DC            MOV     DPTR,#com+4011
+   \   035D  EF                MOV     A,R7
+   \   035E  F0                MOVX    @DPTR,A
+   \   035F  A3                INC     DPTR
+   \   0360  EE                MOV     A,R6
+   \   0361  F0                MOVX    @DPTR,A
+   \   0362  A3                INC     DPTR
+   \   0363  ED                MOV     A,R5
+   \   0364  F0                MOVX    @DPTR,A
+   \   0365  759850            MOV     SCON,#80
+   \   0368  758920            MOV     TMOD,#32
+   \   036B  438780            ORL     PCON,#128
+   \   036E  758BF4            MOV     TL1,#244
+   \   0371  758DF4            MOV     TH1,#244
+   \   0374  7401              MOV     A,#1
+   \   0376  900339            MOV     DPTR,#com+8
+   \   0379  F0                MOVX    @DPTR,A
+   \   037A  E4                CLR     A
+   \   037B  FB                MOV     R3,A
+   \   037C  120000            LCALL   ?ST_AR3_R567_L17
+   \   037F  900002            MOV     DPTR,#2
+   \   0382  120000            LCALL   ?ST_AR3_R567_DISP_L17
+   \   0385  900006            MOV     DPTR,#6
+   \   0388  120000            LCALL   ?ST_AR3_R567_DISP_L17
+   \   038B  900000            MOV     DPTR,#$LOCBX init_serial
+   \   038E  E0                MOVX    A,@DPTR
+   \   038F  FD                MOV     R5,A
+   \   0390  A3                INC     DPTR
+   \   0391  E0                MOVX    A,@DPTR
+   \   0392  FC                MOV     R4,A
+   \   0393  9012DC            MOV     DPTR,#com+4011
+   \   0396  E0                MOVX    A,@DPTR
+   \   0397  FB                MOV     R3,A
+   \   0398  A3                INC     DPTR
+   \   0399  E0                MOVX    A,@DPTR
+   \   039A  FA                MOV     R2,A
+   \   039B  A3                INC     DPTR
+   \   039C  E0                MOVX    A,@DPTR
+   \   039D  F9                MOV     R1,A
+   \   039E  EC                MOV     A,R4
+   \   039F  900004            MOV     DPTR,#4
+   \   03A2  120000            LCALL   ?ST_AR5_R123_DISP_L17
+   \   03A5  900000            MOV     DPTR,#$LOCBX init_serial+2
+   \   03A8  E0                MOVX    A,@DPTR
+   \   03A9  FD                MOV     R5,A
+   \   03AA  A3                INC     DPTR
+   \   03AB  E0                MOVX    A,@DPTR
+   \   03AC  90000B            MOV     DPTR,#11
+   \   03AF  120000            LCALL   ?ST_AR5_R123_DISP_L17
+   \   03B2  900000            MOV     DPTR,#$LOCBX init_serial+4
+   \   03B5  E0                MOVX    A,@DPTR
+   \   03B6  FD                MOV     R5,A
+   \   03B7  A3                INC     DPTR
+   \   03B8  E0                MOVX    A,@DPTR
+   \   03B9  90000D            MOV     DPTR,#13
+   \   03BC  120000            LCALL   ?ST_AR5_R123_DISP_L17
+   \   03BF  900000            MOV     DPTR,#$LOCBX init_serial
+   \   03C2  E0                MOVX    A,@DPTR
+   \   03C3  FD                MOV     R5,A
+   \   03C4  A3                INC     DPTR
+   \   03C5  E0                MOVX    A,@DPTR
+   \   03C6  FC                MOV     R4,A
+   \   03C7  120000            LCALL   $REFFN malloc
+   \   03CA  9012DC            MOV     DPTR,#com+4011
+   \   03CD  E0                MOVX    A,@DPTR
+   \   03CE  FB                MOV     R3,A
+   \   03CF  A3                INC     DPTR
+   \   03D0  E0                MOVX    A,@DPTR
+   \   03D1  FA                MOV     R2,A
+   \   03D2  A3                INC     DPTR
+   \   03D3  E0                MOVX    A,@DPTR
+   \   03D4  F9                MOV     R1,A
+   \   03D5  900008            MOV     DPTR,#8
+   \   03D8  120000            LCALL   ?ST_R567_R123_DISP_L17
+   \   03DB  E4                CLR     A
+   \   03DC  FD                MOV     R5,A
+   \   03DD  04                INC     A
+   \   03DE  900006            MOV     DPTR,#6
+   \   03E1  120000            LCALL   ?ST_AR5_R123_DISP_L17
+   \   03E4  D28E              SETB    TCON.6
+   \   03E6  D2AC              SETB    IE.4
+   \   03E8  D2BC              SETB    IP.4
+   \   03EA  22                RET
+   \   03EB            set_protocol_flag:
+   \   03EB  900000            MOV     DPTR,#$LOCBX set_protocol_flag+4
+   \   03EE  E0                MOVX    A,@DPTR
+   \   03EF  7B00              MOV     R3,#0
+   \   03F1  FA                MOV     R2,A
+   \   03F2  900000            MOV     DPTR,#$LOCBX set_protocol_flag
+   \   03F5  EF                MOV     A,R7
+   \   03F6  F0                MOVX    @DPTR,A
+   \   03F7  A3                INC     DPTR
+   \   03F8  EE                MOV     A,R6
+   \   03F9  F0                MOVX    @DPTR,A
+   \   03FA  A3                INC     DPTR
+   \   03FB  ED                MOV     A,R5
+   \   03FC  F0                MOVX    @DPTR,A
+   \   03FD  EB                MOV     A,R3
+   \   03FE  C0E0              PUSH    ACC
+   \   0400  EA                MOV     A,R2
+   \   0401  C0E0              PUSH    ACC
+   \   0403  900FAB            MOV     DPTR,#4011
+   \   0406  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   0409  EC                MOV     A,R4
+   \   040A  900000            MOV     DPTR,#$LOCBX set_protocol_flag+3
+   \   040D  F0                MOVX    @DPTR,A
+   \   040E  75F00F            MOV     B,#15
+   \   0411  A4                MUL     AB
+   \   0412  ADF0              MOV     R5,B
+   \   0414  29                ADD     A,R1
+   \   0415  F9                MOV     R1,A
+   \   0416  EA                MOV     A,R2
+   \   0417  3D                ADDC    A,R5
+   \   0418  FA                MOV     R2,A
+   \   0419  D0E0              POP     ACC
+   \   041B  FD                MOV     R5,A
+   \   041C  D0E0              POP     ACC
+   \   041E  CD                XCH     A,R5
+   \   041F  900006            MOV     DPTR,#6
+   \   0422  120000            LCALL   ?ST_AR5_R123_DISP_L17
+   \   0425  22                RET
+   \   0426            protocol_event:
+   \   0426  E4                CLR     A
+   \   0427  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   042A  F0                MOVX    @DPTR,A
+   \   042B  EC                MOV     A,R4
+   \   042C  900000            MOV     DPTR,#$LOCBX protocol_event+4
+   \   042F  F0                MOVX    @DPTR,A
+   \   0430  900000            MOV     DPTR,#$LOCBX protocol_event+1
+   \   0433  EF                MOV     A,R7
+   \   0434  F0                MOVX    @DPTR,A
+   \   0435  A3                INC     DPTR
+   \   0436  EE                MOV     A,R6
+   \   0437  F0                MOVX    @DPTR,A
+   \   0438  A3                INC     DPTR
+   \   0439  ED                MOV     A,R5
+   \   043A  F0                MOVX    @DPTR,A
+   \   043B            ?0046:
+   \   043B  900000            MOV     DPTR,#$LOCBX protocol_event+1
+   \   043E  E0                MOVX    A,@DPTR
+   \   043F  FF                MOV     R7,A
+   \   0440  A3                INC     DPTR
+   \   0441  E0                MOVX    A,@DPTR
+   \   0442  FE                MOV     R6,A
+   \   0443  A3                INC     DPTR
+   \   0444  E0                MOVX    A,@DPTR
+   \   0445  FD                MOV     R5,A
+   \   0446  900008            MOV     DPTR,#8
+   \   0449  120000            LCALL   ?LD_A_R567_DISP_L17
+   \   044C  FC                MOV     R4,A
+   \   044D  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   0450  E0                MOVX    A,@DPTR
+   \   0451  C3                CLR     C
+   \   0452  9C                SUBB    A,R4
+   \   0453  4003              JC      $+5
+   \   0455  020589            LJMP    ?0045
+   \   0458            ?0047:
+   \   0458  900FAB            MOV     DPTR,#4011
+   \   045B  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   045E  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   0461  E0                MOVX    A,@DPTR
+   \   0462  75F00F            MOV     B,#15
+   \   0465  A4                MUL     AB
+   \   0466  ADF0              MOV     R5,B
+   \   0468  29                ADD     A,R1
+   \   0469  F9                MOV     R1,A
+   \   046A  EA                MOV     A,R2
+   \   046B  3D                ADDC    A,R5
+   \   046C  FA                MOV     R2,A
+   \   046D  900006            MOV     DPTR,#6
+   \   0470  120000            LCALL   ?LD_AR5_R123_DISP_L17
+   \   0473  14                DEC     A
+   \   0474  4D                ORL     A,R5
+   \   0475  6003              JZ      $+5
+   \   0477  020580            LJMP    ?0050
+   \   047A            ?0049:
+   \   047A  900000            MOV     DPTR,#$LOCBX protocol_event+4
+   \   047D  E0                MOVX    A,@DPTR
+   \   047E  900000            MOV     DPTR,#$PRMBX protocol_q+4
+   \   0481  F0                MOVX    @DPTR,A
+   \   0482  900000            MOV     DPTR,#$LOCBX protocol_event+1
+   \   0485  E0                MOVX    A,@DPTR
+   \   0486  A3                INC     DPTR
+   \   0487  E0                MOVX    A,@DPTR
+   \   0488  A3                INC     DPTR
+   \   0489  E0                MOVX    A,@DPTR
+   \   048A  FD                MOV     R5,A
+   \   048B  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   048E  E0                MOVX    A,@DPTR
+   \   048F  FC                MOV     R4,A
+   \   0490  120000            LCALL   $REFFN protocol_q
+   \   0493  900000            MOV     DPTR,#$LOCBX protocol_event+1
+   \   0496  E0                MOVX    A,@DPTR
+   \   0497  FF                MOV     R7,A
+   \   0498  A3                INC     DPTR
+   \   0499  E0                MOVX    A,@DPTR
+   \   049A  FE                MOV     R6,A
+   \   049B  A3                INC     DPTR
+   \   049C  E0                MOVX    A,@DPTR
+   \   049D  FD                MOV     R5,A
+   \   049E  900FAB            MOV     DPTR,#4011
+   \   04A1  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   04A4  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   04A7  E0                MOVX    A,@DPTR
+   \   04A8  75F00F            MOV     B,#15
+   \   04AB  A4                MUL     AB
+   \   04AC  ADF0              MOV     R5,B
+   \   04AE  29                ADD     A,R1
+   \   04AF  F9                MOV     R1,A
+   \   04B0  EA                MOV     A,R2
+   \   04B1  3D                ADDC    A,R5
+   \   04B2  FA                MOV     R2,A
+   \   04B3  E9                MOV     A,R1
+   \   04B4  FD                MOV     R5,A
+   \   04B5  EA                MOV     A,R2
+   \   04B6  FE                MOV     R6,A
+   \   04B7  EB                MOV     A,R3
+   \   04B8  FF                MOV     R7,A
+   \   04B9  A3                INC     DPTR
+   \   04BA  E0                MOVX    A,@DPTR
+   \   04BB  FB                MOV     R3,A
+   \   04BC  A3                INC     DPTR
+   \   04BD  E0                MOVX    A,@DPTR
+   \   04BE  FA                MOV     R2,A
+   \   04BF  A3                INC     DPTR
+   \   04C0  E0                MOVX    A,@DPTR
+   \   04C1  F9                MOV     R1,A
+   \   04C2  EF                MOV     A,R7
+   \   04C3  C0E0              PUSH    ACC
+   \   04C5  EE                MOV     A,R6
+   \   04C6  C0E0              PUSH    ACC
+   \   04C8  ED                MOV     A,R5
+   \   04C9  C0E0              PUSH    ACC
+   \   04CB  900FAB            MOV     DPTR,#4011
+   \   04CE  120000            LCALL   ?LD_R567_R123_DISP_L17
+   \   04D1  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   04D4  E0                MOVX    A,@DPTR
+   \   04D5  75F00F            MOV     B,#15
+   \   04D8  A4                MUL     AB
+   \   04D9  ABF0              MOV     R3,B
+   \   04DB  2D                ADD     A,R5
+   \   04DC  FD                MOV     R5,A
+   \   04DD  EE                MOV     A,R6
+   \   04DE  3B                ADDC    A,R3
+   \   04DF  FE                MOV     R6,A
+   \   04E0  90000B            MOV     DPTR,#11
+   \   04E3  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   04E6  F582              MOV     DPL,A
+   \   04E8  8B83              MOV     DPH,R3
+   \   04EA  120000            LCALL   ?LOAD_IND_DPTR2_L20
+   \   04ED  D0E0              POP     ACC
+   \   04EF  FD                MOV     R5,A
+   \   04F0  D0E0              POP     ACC
+   \   04F2  FE                MOV     R6,A
+   \   04F3  D0E0              POP     ACC
+   \   04F5  FF                MOV     R7,A
+   \   04F6  120000            LCALL   ?LCALL_IND_L20
+   \   04F9  EC                MOV     A,R4
+   \   04FA  7003              JNZ     $+5
+   \   04FC  020580            LJMP    ?0052
+   \   04FF            ?0051:
+   \   04FF  900000            MOV     DPTR,#$LOCBX protocol_event+1
+   \   0502  E0                MOVX    A,@DPTR
+   \   0503  FF                MOV     R7,A
+   \   0504  A3                INC     DPTR
+   \   0505  E0                MOVX    A,@DPTR
+   \   0506  FE                MOV     R6,A
+   \   0507  A3                INC     DPTR
+   \   0508  E0                MOVX    A,@DPTR
+   \   0509  FD                MOV     R5,A
+   \   050A  900FAB            MOV     DPTR,#4011
+   \   050D  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   0510  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   0513  E0                MOVX    A,@DPTR
+   \   0514  75F00F            MOV     B,#15
+   \   0517  A4                MUL     AB
+   \   0518  ADF0              MOV     R5,B
+   \   051A  29                ADD     A,R1
+   \   051B  F9                MOV     R1,A
+   \   051C  EA                MOV     A,R2
+   \   051D  3D                ADDC    A,R5
+   \   051E  FA                MOV     R2,A
+   \   051F  E9                MOV     A,R1
+   \   0520  FD                MOV     R5,A
+   \   0521  EA                MOV     A,R2
+   \   0522  FE                MOV     R6,A
+   \   0523  EB                MOV     A,R3
+   \   0524  FF                MOV     R7,A
+   \   0525  A3                INC     DPTR
+   \   0526  E0                MOVX    A,@DPTR
+   \   0527  FB                MOV     R3,A
+   \   0528  A3                INC     DPTR
+   \   0529  E0                MOVX    A,@DPTR
+   \   052A  FA                MOV     R2,A
+   \   052B  A3                INC     DPTR
+   \   052C  E0                MOVX    A,@DPTR
+   \   052D  F9                MOV     R1,A
+   \   052E  EF                MOV     A,R7
+   \   052F  C0E0              PUSH    ACC
+   \   0531  EE                MOV     A,R6
+   \   0532  C0E0              PUSH    ACC
+   \   0534  ED                MOV     A,R5
+   \   0535  C0E0              PUSH    ACC
+   \   0537  900FAB            MOV     DPTR,#4011
+   \   053A  120000            LCALL   ?LD_R567_R123_DISP_L17
+   \   053D  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   0540  E0                MOVX    A,@DPTR
+   \   0541  75F00F            MOV     B,#15
+   \   0544  A4                MUL     AB
+   \   0545  ABF0              MOV     R3,B
+   \   0547  2D                ADD     A,R5
+   \   0548  FD                MOV     R5,A
+   \   0549  EE                MOV     A,R6
+   \   054A  3B                ADDC    A,R3
+   \   054B  FE                MOV     R6,A
+   \   054C  90000D            MOV     DPTR,#13
+   \   054F  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   0552  F582              MOV     DPL,A
+   \   0554  8B83              MOV     DPH,R3
+   \   0556  120000            LCALL   ?LOAD_IND_DPTR2_L20
+   \   0559  D0E0              POP     ACC
+   \   055B  FD                MOV     R5,A
+   \   055C  D0E0              POP     ACC
+   \   055E  FE                MOV     R6,A
+   \   055F  D0E0              POP     ACC
+   \   0561  FF                MOV     R7,A
+   \   0562  120000            LCALL   ?LCALL_IND_L20
+   \   0565  EC                MOV     A,R4
+   \   0566  6018              JZ      ?0054
+   \   0568            ?0053:
+   \   0568  E4                CLR     A
+   \   0569  900000            MOV     DPTR,#$PRMBX set_protocol_flag+4
+   \   056C  F0                MOVX    @DPTR,A
+   \   056D  900000            MOV     DPTR,#$LOCBX protocol_event+1
+   \   0570  E0                MOVX    A,@DPTR
+   \   0571  FF                MOV     R7,A
+   \   0572  A3                INC     DPTR
+   \   0573  E0                MOVX    A,@DPTR
+   \   0574  FE                MOV     R6,A
+   \   0575  A3                INC     DPTR
+   \   0576  E0                MOVX    A,@DPTR
+   \   0577  FD                MOV     R5,A
+   \   0578  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   057B  E0                MOVX    A,@DPTR
+   \   057C  FC                MOV     R4,A
+   \   057D  120000            LCALL   $REFFN set_protocol_flag
+   \   0580            ?0054:
+   \   0580            ?0052:
+   \   0580            ?0050:
+   \   0580  900000            MOV     DPTR,#$LOCBX protocol_event
+   \   0583  E0                MOVX    A,@DPTR
+   \   0584  04                INC     A
+   \   0585  F0                MOVX    @DPTR,A
+   \   0586  02043B            LJMP    ?0046
+   \   0589            ?0045:
+   \   0589  22                RET
+   \   058A            protocol_q:
+   \   058A  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   058D  EF                MOV     A,R7
+   \   058E  F0                MOVX    @DPTR,A
+   \   058F  A3                INC     DPTR
+   \   0590  EE                MOV     A,R6
+   \   0591  F0                MOVX    @DPTR,A
+   \   0592  A3                INC     DPTR
+   \   0593  ED                MOV     A,R5
+   \   0594  F0                MOVX    @DPTR,A
+   \   0595  900FAB            MOV     DPTR,#4011
+   \   0598  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   059B  EC                MOV     A,R4
+   \   059C  75F00F            MOV     B,#15
+   \   059F  A4                MUL     AB
+   \   05A0  AFF0              MOV     R7,B
+   \   05A2  29                ADD     A,R1
+   \   05A3  F9                MOV     R1,A
+   \   05A4  EA                MOV     A,R2
+   \   05A5  3F                ADDC    A,R7
+   \   05A6  FA                MOV     R2,A
+   \   05A7  E9                MOV     A,R1
+   \   05A8  2402              ADD     A,#2
+   \   05AA  F9                MOV     R1,A
+   \   05AB  EA                MOV     A,R2
+   \   05AC  3400              ADDC    A,#0
+   \   05AE  FA                MOV     R2,A
+   \   05AF  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   05B2  E0                MOVX    A,@DPTR
+   \   05B3  FF                MOV     R7,A
+   \   05B4  A3                INC     DPTR
+   \   05B5  E0                MOVX    A,@DPTR
+   \   05B6  A3                INC     DPTR
+   \   05B7  E0                MOVX    A,@DPTR
+   \   05B8  EB                MOV     A,R3
+   \   05B9  C0E0              PUSH    ACC
+   \   05BB  EA                MOV     A,R2
+   \   05BC  C0E0              PUSH    ACC
+   \   05BE  E9                MOV     A,R1
+   \   05BF  C0E0              PUSH    ACC
+   \   05C1  900FAB            MOV     DPTR,#4011
+   \   05C4  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   05C7  EC                MOV     A,R4
+   \   05C8  75F00F            MOV     B,#15
+   \   05CB  A4                MUL     AB
+   \   05CC  AFF0              MOV     R7,B
+   \   05CE  29                ADD     A,R1
+   \   05CF  F9                MOV     R1,A
+   \   05D0  EA                MOV     A,R2
+   \   05D1  3F                ADDC    A,R7
+   \   05D2  FA                MOV     R2,A
+   \   05D3  900004            MOV     DPTR,#4
+   \   05D6  120000            LCALL   ?LD_AR7_R123_DISP_L17
+   \   05D9  FE                MOV     R6,A
+   \   05DA  D0E0              POP     ACC
+   \   05DC  F9                MOV     R1,A
+   \   05DD  D0E0              POP     ACC
+   \   05DF  FA                MOV     R2,A
+   \   05E0  D0E0              POP     ACC
+   \   05E2  FB                MOV     R3,A
+   \   05E3  EE                MOV     A,R6
+   \   05E4  120000            LCALL   ?UIMOD_ASG_R123_AR7_L00
+   \   05E7  EC                MOV     A,R4
+   \   05E8  900000            MOV     DPTR,#$LOCBX protocol_q+3
+   \   05EB  F0                MOVX    @DPTR,A
+   \   05EC  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   05EF  E0                MOVX    A,@DPTR
+   \   05F0  FF                MOV     R7,A
+   \   05F1  A3                INC     DPTR
+   \   05F2  E0                MOVX    A,@DPTR
+   \   05F3  FE                MOV     R6,A
+   \   05F4  A3                INC     DPTR
+   \   05F5  E0                MOVX    A,@DPTR
+   \   05F6  900FAB            MOV     DPTR,#4011
+   \   05F9  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   05FC  EC                MOV     A,R4
+   \   05FD  75F00F            MOV     B,#15
+   \   0600  A4                MUL     AB
+   \   0601  ADF0              MOV     R5,B
+   \   0603  F582              MOV     DPL,A
+   \   0605  8D83              MOV     DPH,R5
+   \   0607  A3                INC     DPTR
+   \   0608  A3                INC     DPTR
+   \   0609  120000            LCALL   ?LD_AR5_R123_DISP_L17
+   \   060C  FC                MOV     R4,A
+   \   060D  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   0610  E0                MOVX    A,@DPTR
+   \   0611  FB                MOV     R3,A
+   \   0612  A3                INC     DPTR
+   \   0613  E0                MOVX    A,@DPTR
+   \   0614  FA                MOV     R2,A
+   \   0615  A3                INC     DPTR
+   \   0616  E0                MOVX    A,@DPTR
+   \   0617  F9                MOV     R1,A
+   \   0618  ED                MOV     A,R5
+   \   0619  C0E0              PUSH    ACC
+   \   061B  EC                MOV     A,R4
+   \   061C  C0E0              PUSH    ACC
+   \   061E  900FAB            MOV     DPTR,#4011
+   \   0621  120000            LCALL   ?LD_R567_R123_DISP_L17
+   \   0624  900000            MOV     DPTR,#$LOCBX protocol_q+3
+   \   0627  E0                MOVX    A,@DPTR
+   \   0628  75F00F            MOV     B,#15
+   \   062B  A4                MUL     AB
+   \   062C  ABF0              MOV     R3,B
+   \   062E  F582              MOV     DPL,A
+   \   0630  8B83              MOV     DPH,R3
+   \   0632  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   0635  FA                MOV     R2,A
+   \   0636  D0E0              POP     ACC
+   \   0638  FC                MOV     R4,A
+   \   0639  D0E0              POP     ACC
+   \   063B  FD                MOV     R5,A
+   \   063C  EA                MOV     A,R2
+   \   063D  6C                XRL     A,R4
+   \   063E  7002              JNZ     ?0165
+   \   0640  EB                MOV     A,R3
+   \   0641  6D                XRL     A,R5
+   \   0642            ?0165:
+   \   0642  6003              JZ      $+5
+   \   0644  0206C6            LJMP    ?0056
+   \   0647            ?0055:
+   \   0647  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   064A  E0                MOVX    A,@DPTR
+   \   064B  FF                MOV     R7,A
+   \   064C  A3                INC     DPTR
+   \   064D  E0                MOVX    A,@DPTR
+   \   064E  FE                MOV     R6,A
+   \   064F  A3                INC     DPTR
+   \   0650  E0                MOVX    A,@DPTR
+   \   0651  FD                MOV     R5,A
+   \   0652  900FAB            MOV     DPTR,#4011
+   \   0655  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   0658  900000            MOV     DPTR,#$LOCBX protocol_q+3
+   \   065B  E0                MOVX    A,@DPTR
+   \   065C  75F00F            MOV     B,#15
+   \   065F  A4                MUL     AB
+   \   0660  ADF0              MOV     R5,B
+   \   0662  29                ADD     A,R1
+   \   0663  F9                MOV     R1,A
+   \   0664  EA                MOV     A,R2
+   \   0665  3D                ADDC    A,R5
+   \   0666  FA                MOV     R2,A
+   \   0667  E4                CLR     A
+   \   0668  FD                MOV     R5,A
+   \   0669  04                INC     A
+   \   066A  120000            LCALL   ?IADD_ASG_R123_AR5_L00
+   \   066D  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   0670  E0                MOVX    A,@DPTR
+   \   0671  A3                INC     DPTR
+   \   0672  E0                MOVX    A,@DPTR
+   \   0673  A3                INC     DPTR
+   \   0674  E0                MOVX    A,@DPTR
+   \   0675  FD                MOV     R5,A
+   \   0676  900FAB            MOV     DPTR,#4011
+   \   0679  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   067C  900000            MOV     DPTR,#$LOCBX protocol_q+3
+   \   067F  E0                MOVX    A,@DPTR
+   \   0680  75F00F            MOV     B,#15
+   \   0683  A4                MUL     AB
+   \   0684  ADF0              MOV     R5,B
+   \   0686  29                ADD     A,R1
+   \   0687  F9                MOV     R1,A
+   \   0688  EA                MOV     A,R2
+   \   0689  3D                ADDC    A,R5
+   \   068A  FA                MOV     R2,A
+   \   068B  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   068E  E0                MOVX    A,@DPTR
+   \   068F  A3                INC     DPTR
+   \   0690  E0                MOVX    A,@DPTR
+   \   0691  A3                INC     DPTR
+   \   0692  E0                MOVX    A,@DPTR
+   \   0693  FD                MOV     R5,A
+   \   0694  EB                MOV     A,R3
+   \   0695  C0E0              PUSH    ACC
+   \   0697  EA                MOV     A,R2
+   \   0698  C0E0              PUSH    ACC
+   \   069A  E9                MOV     A,R1
+   \   069B  C0E0              PUSH    ACC
+   \   069D  900FAB            MOV     DPTR,#4011
+   \   06A0  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   06A3  900000            MOV     DPTR,#$LOCBX protocol_q+3
+   \   06A6  E0                MOVX    A,@DPTR
+   \   06A7  75F00F            MOV     B,#15
+   \   06AA  A4                MUL     AB
+   \   06AB  ADF0              MOV     R5,B
+   \   06AD  29                ADD     A,R1
+   \   06AE  F9                MOV     R1,A
+   \   06AF  EA                MOV     A,R2
+   \   06B0  3D                ADDC    A,R5
+   \   06B1  FA                MOV     R2,A
+   \   06B2  900004            MOV     DPTR,#4
+   \   06B5  120000            LCALL   ?LD_AR5_R123_DISP_L17
+   \   06B8  FC                MOV     R4,A
+   \   06B9  D0E0              POP     ACC
+   \   06BB  F9                MOV     R1,A
+   \   06BC  D0E0              POP     ACC
+   \   06BE  FA                MOV     R2,A
+   \   06BF  D0E0              POP     ACC
+   \   06C1  FB                MOV     R3,A
+   \   06C2  EC                MOV     A,R4
+   \   06C3  120000            LCALL   ?UIMOD_ASG_R123_AR5_L00
+   \   06C6            ?0056:
+   \   06C6  900000            MOV     DPTR,#$LOCBX protocol_q+4
+   \   06C9  E0                MOVX    A,@DPTR
+   \   06CA  FC                MOV     R4,A
+   \   06CB  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   06CE  E0                MOVX    A,@DPTR
+   \   06CF  FF                MOV     R7,A
+   \   06D0  A3                INC     DPTR
+   \   06D1  E0                MOVX    A,@DPTR
+   \   06D2  FE                MOV     R6,A
+   \   06D3  A3                INC     DPTR
+   \   06D4  E0                MOVX    A,@DPTR
+   \   06D5  FD                MOV     R5,A
+   \   06D6  900FAB            MOV     DPTR,#4011
+   \   06D9  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   06DC  900000            MOV     DPTR,#$LOCBX protocol_q+3
+   \   06DF  E0                MOVX    A,@DPTR
+   \   06E0  75F00F            MOV     B,#15
+   \   06E3  A4                MUL     AB
+   \   06E4  AFF0              MOV     R7,B
+   \   06E6  29                ADD     A,R1
+   \   06E7  F9                MOV     R1,A
+   \   06E8  EA                MOV     A,R2
+   \   06E9  3F                ADDC    A,R7
+   \   06EA  FA                MOV     R2,A
+   \   06EB  900008            MOV     DPTR,#8
+   \   06EE  120000            LCALL   ?LD_R567_R123_DISP_L17
+   \   06F1  900000            MOV     DPTR,#$LOCBX protocol_q
+   \   06F4  E0                MOVX    A,@DPTR
+   \   06F5  FB                MOV     R3,A
+   \   06F6  A3                INC     DPTR
+   \   06F7  E0                MOVX    A,@DPTR
+   \   06F8  FA                MOV     R2,A
+   \   06F9  A3                INC     DPTR
+   \   06FA  E0                MOVX    A,@DPTR
+   \   06FB  F9                MOV     R1,A
+   \   06FC  EF                MOV     A,R7
+   \   06FD  C0E0              PUSH    ACC
+   \   06FF  EE                MOV     A,R6
+   \   0700  C0E0              PUSH    ACC
+   \   0702  ED                MOV     A,R5
+   \   0703  C0E0              PUSH    ACC
+   \   0705  900FAB            MOV     DPTR,#4011
+   \   0708  120000            LCALL   ?LD_R567_R123_DISP_L17
+   \   070B  900000            MOV     DPTR,#$LOCBX protocol_q+3
+   \   070E  E0                MOVX    A,@DPTR
+   \   070F  75F00F            MOV     B,#15
+   \   0712  A4                MUL     AB
+   \   0713  ABF0              MOV     R3,B
+   \   0715  2D                ADD     A,R5
+   \   0716  FD                MOV     R5,A
+   \   0717  EE                MOV     A,R6
+   \   0718  3B                ADDC    A,R3
+   \   0719  FE                MOV     R6,A
+   \   071A  ED                MOV     A,R5
+   \   071B  2402              ADD     A,#2
+   \   071D  FD                MOV     R5,A
+   \   071E  EE                MOV     A,R6
+   \   071F  3400              ADDC    A,#0
+   \   0721  FE                MOV     R6,A
+   \   0722  E4                CLR     A
+   \   0723  FB                MOV     R3,A
+   \   0724  04                INC     A
+   \   0725  120000            LCALL   ?IADD_POST_R567_AR3_L00
+   \   0728  F582              MOV     DPL,A
+   \   072A  8B83              MOV     DPH,R3
+   \   072C  D0E0              POP     ACC
+   \   072E  FD                MOV     R5,A
+   \   072F  D0E0              POP     ACC
+   \   0731  FE                MOV     R6,A
+   \   0732  D0E0              POP     ACC
+   \   0734  FF                MOV     R7,A
+   \   0735  EC                MOV     A,R4
+   \   0736  120000            LCALL   ?ST_A_R567_DISP_L17
+   \   0739  22                RET
+   \   073A            rx_chk:
+   \   073A  E4                CLR     A
+   \   073B  A297              MOV     C,P1.7
+   \   073D  92E0              MOV     ACC.0,C
+   \   073F  F4                CPL     A
+   \   0740  04                INC     A
+   \   0741  04                INC     A
+   \   0742  A2E0              MOV     C,ACC.0
+   \   0744  9297              MOV     P1.7,C
+   \   0746  900000            MOV     DPTR,#$LOCBX rx_chk
+   \   0749  EF                MOV     A,R7
+   \   074A  F0                MOVX    @DPTR,A
+   \   074B  A3                INC     DPTR
+   \   074C  EE                MOV     A,R6
+   \   074D  F0                MOVX    @DPTR,A
+   \   074E  A3                INC     DPTR
+   \   074F  ED                MOV     A,R5
+   \   0750  F0                MOVX    @DPTR,A
+   \   0751  900008            MOV     DPTR,#8
+   \   0754  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   0757  EB                MOV     A,R3
+   \   0758  C0E0              PUSH    ACC
+   \   075A  EA                MOV     A,R2
+   \   075B  C0E0              PUSH    ACC
+   \   075D  E9                MOV     A,R1
+   \   075E  C0E0              PUSH    ACC
+   \   0760  900004            MOV     DPTR,#4
+   \   0763  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   0766  FA                MOV     R2,A
+   \   0767  120000            LCALL   ?LD_AR1_R567_L17
+   \   076A  F8                MOV     R0,A
+   \   076B  EA                MOV     A,R2
+   \   076C  28                ADD     A,R0
+   \   076D  FA                MOV     R2,A
+   \   076E  EB                MOV     A,R3
+   \   076F  39                ADDC    A,R1
+   \   0770  FB                MOV     R3,A
+   \   0771  EA                MOV     A,R2
+   \   0772  24FF              ADD     A,#255
+   \   0774  FA                MOV     R2,A
+   \   0775  EB                MOV     A,R3
+   \   0776  34FF              ADDC    A,#255
+   \   0778  FB                MOV     R3,A
+   \   0779  900004            MOV     DPTR,#4
+   \   077C  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   077F  F8                MOV     R0,A
+   \   0780  120000            LCALL   ?UI_MOD_R_L00
+   \   0783  8882              MOV     DPL,R0
+   \   0785  8983              MOV     DPH,R1
+   \   0787  D0E0              POP     ACC
+   \   0789  F9                MOV     R1,A
+   \   078A  D0E0              POP     ACC
+   \   078C  FA                MOV     R2,A
+   \   078D  D0E0              POP     ACC
+   \   078F  FB                MOV     R3,A
+   \   0790  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   0793  64FE              XRL     A,#254
+   \   0795  6003              JZ      ?0058
+   \   0797            ?0057:
+   \   0797  7C00              MOV     R4,#0
+   \   0799  22                RET
+   \   079A            ?0058:
+   \   079A  900008            MOV     DPTR,#8
+   \   079D  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   07A0  EB                MOV     A,R3
+   \   07A1  C0E0              PUSH    ACC
+   \   07A3  EA                MOV     A,R2
+   \   07A4  C0E0              PUSH    ACC
+   \   07A6  E9                MOV     A,R1
+   \   07A7  C0E0              PUSH    ACC
+   \   07A9  900004            MOV     DPTR,#4
+   \   07AC  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   07AF  FA                MOV     R2,A
+   \   07B0  120000            LCALL   ?LD_AR1_R567_L17
+   \   07B3  F8                MOV     R0,A
+   \   07B4  EA                MOV     A,R2
+   \   07B5  28                ADD     A,R0
+   \   07B6  FA                MOV     R2,A
+   \   07B7  EB                MOV     A,R3
+   \   07B8  39                ADDC    A,R1
+   \   07B9  FB                MOV     R3,A
+   \   07BA  EA                MOV     A,R2
+   \   07BB  24FE              ADD     A,#254
+   \   07BD  FA                MOV     R2,A
+   \   07BE  EB                MOV     A,R3
+   \   07BF  34FF              ADDC    A,#255
+   \   07C1  FB                MOV     R3,A
+   \   07C2  900004            MOV     DPTR,#4
+   \   07C5  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   07C8  F8                MOV     R0,A
+   \   07C9  120000            LCALL   ?UI_MOD_R_L00
+   \   07CC  8882              MOV     DPL,R0
+   \   07CE  8983              MOV     DPH,R1
+   \   07D0  D0E0              POP     ACC
+   \   07D2  F9                MOV     R1,A
+   \   07D3  D0E0              POP     ACC
+   \   07D5  FA                MOV     R2,A
+   \   07D6  D0E0              POP     ACC
+   \   07D8  FB                MOV     R3,A
+   \   07D9  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   07DC  64FE              XRL     A,#254
+   \   07DE  6003              JZ      ?0060
+   \   07E0            ?0059:
+   \   07E0  7C00              MOV     R4,#0
+   \   07E2  22                RET
+   \   07E3            ?0060:
+   \   07E3  900008            MOV     DPTR,#8
+   \   07E6  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   07E9  EB                MOV     A,R3
+   \   07EA  C0E0              PUSH    ACC
+   \   07EC  EA                MOV     A,R2
+   \   07ED  C0E0              PUSH    ACC
+   \   07EF  E9                MOV     A,R1
+   \   07F0  C0E0              PUSH    ACC
+   \   07F2  900004            MOV     DPTR,#4
+   \   07F5  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   07F8  FA                MOV     R2,A
+   \   07F9  120000            LCALL   ?LD_AR1_R567_L17
+   \   07FC  F8                MOV     R0,A
+   \   07FD  EA                MOV     A,R2
+   \   07FE  28                ADD     A,R0
+   \   07FF  FA                MOV     R2,A
+   \   0800  EB                MOV     A,R3
+   \   0801  39                ADDC    A,R1
+   \   0802  FB                MOV     R3,A
+   \   0803  EA                MOV     A,R2
+   \   0804  24FD              ADD     A,#253
+   \   0806  FA                MOV     R2,A
+   \   0807  EB                MOV     A,R3
+   \   0808  34FF              ADDC    A,#255
+   \   080A  FB                MOV     R3,A
+   \   080B  900004            MOV     DPTR,#4
+   \   080E  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   0811  F8                MOV     R0,A
+   \   0812  120000            LCALL   ?UI_MOD_R_L00
+   \   0815  8882              MOV     DPL,R0
+   \   0817  8983              MOV     DPH,R1
+   \   0819  D0E0              POP     ACC
+   \   081B  F9                MOV     R1,A
+   \   081C  D0E0              POP     ACC
+   \   081E  FA                MOV     R2,A
+   \   081F  D0E0              POP     ACC
+   \   0821  FB                MOV     R3,A
+   \   0822  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   0825  64FE              XRL     A,#254
+   \   0827  6003              JZ      ?0062
+   \   0829            ?0061:
+   \   0829  7C00              MOV     R4,#0
+   \   082B  22                RET
+   \   082C            ?0062:
+   \   082C  900008            MOV     DPTR,#8
+   \   082F  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   0832  EB                MOV     A,R3
+   \   0833  C0E0              PUSH    ACC
+   \   0835  EA                MOV     A,R2
+   \   0836  C0E0              PUSH    ACC
+   \   0838  E9                MOV     A,R1
+   \   0839  C0E0              PUSH    ACC
+   \   083B  900004            MOV     DPTR,#4
+   \   083E  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   0841  FA                MOV     R2,A
+   \   0842  120000            LCALL   ?LD_AR1_R567_L17
+   \   0845  F8                MOV     R0,A
+   \   0846  EA                MOV     A,R2
+   \   0847  28                ADD     A,R0
+   \   0848  FA                MOV     R2,A
+   \   0849  EB                MOV     A,R3
+   \   084A  39                ADDC    A,R1
+   \   084B  FB                MOV     R3,A
+   \   084C  EA                MOV     A,R2
+   \   084D  24FC              ADD     A,#252
+   \   084F  FA                MOV     R2,A
+   \   0850  EB                MOV     A,R3
+   \   0851  34FF              ADDC    A,#255
+   \   0853  FB                MOV     R3,A
+   \   0854  900004            MOV     DPTR,#4
+   \   0857  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   085A  F8                MOV     R0,A
+   \   085B  120000            LCALL   ?UI_MOD_R_L00
+   \   085E  8882              MOV     DPL,R0
+   \   0860  8983              MOV     DPH,R1
+   \   0862  D0E0              POP     ACC
+   \   0864  F9                MOV     R1,A
+   \   0865  D0E0              POP     ACC
+   \   0867  FA                MOV     R2,A
+   \   0868  D0E0              POP     ACC
+   \   086A  FB                MOV     R3,A
+   \   086B  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   086E  64FE              XRL     A,#254
+   \   0870  6003              JZ      ?0064
+   \   0872            ?0063:
+   \   0872  7C00              MOV     R4,#0
+   \   0874  22                RET
+   \   0875            ?0064:
+   \   0875  D295              SETB    P1.5
+   \   0877  900008            MOV     DPTR,#8
+   \   087A  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   087D  EB                MOV     A,R3
+   \   087E  C0E0              PUSH    ACC
+   \   0880  EA                MOV     A,R2
+   \   0881  C0E0              PUSH    ACC
+   \   0883  E9                MOV     A,R1
+   \   0884  C0E0              PUSH    ACC
+   \   0886  120000            LCALL   ?LD_AR3_R567_L17
+   \   0889  2403              ADD     A,#3
+   \   088B  FA                MOV     R2,A
+   \   088C  E4                CLR     A
+   \   088D  3B                ADDC    A,R3
+   \   088E  FB                MOV     R3,A
+   \   088F  900004            MOV     DPTR,#4
+   \   0892  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   0895  F8                MOV     R0,A
+   \   0896  120000            LCALL   ?UI_MOD_R_L00
+   \   0899  8882              MOV     DPL,R0
+   \   089B  8983              MOV     DPH,R1
+   \   089D  D0E0              POP     ACC
+   \   089F  F9                MOV     R1,A
+   \   08A0  D0E0              POP     ACC
+   \   08A2  FA                MOV     R2,A
+   \   08A3  D0E0              POP     ACC
+   \   08A5  FB                MOV     R3,A
+   \   08A6  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   08A9  04                INC     A
+   \   08AA  6003              JZ      ?0066
+   \   08AC            ?0065:
+   \   08AC  7C00              MOV     R4,#0
+   \   08AE  22                RET
+   \   08AF            ?0066:
+   \   08AF  900008            MOV     DPTR,#8
+   \   08B2  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   08B5  EB                MOV     A,R3
+   \   08B6  C0E0              PUSH    ACC
+   \   08B8  EA                MOV     A,R2
+   \   08B9  C0E0              PUSH    ACC
+   \   08BB  E9                MOV     A,R1
+   \   08BC  C0E0              PUSH    ACC
+   \   08BE  120000            LCALL   ?LD_AR3_R567_L17
+   \   08C1  2402              ADD     A,#2
+   \   08C3  FA                MOV     R2,A
+   \   08C4  E4                CLR     A
+   \   08C5  3B                ADDC    A,R3
+   \   08C6  FB                MOV     R3,A
+   \   08C7  900004            MOV     DPTR,#4
+   \   08CA  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   08CD  F8                MOV     R0,A
+   \   08CE  120000            LCALL   ?UI_MOD_R_L00
+   \   08D1  8882              MOV     DPL,R0
+   \   08D3  8983              MOV     DPH,R1
+   \   08D5  D0E0              POP     ACC
+   \   08D7  F9                MOV     R1,A
+   \   08D8  D0E0              POP     ACC
+   \   08DA  FA                MOV     R2,A
+   \   08DB  D0E0              POP     ACC
+   \   08DD  FB                MOV     R3,A
+   \   08DE  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   08E1  04                INC     A
+   \   08E2  6003              JZ      ?0068
+   \   08E4            ?0067:
+   \   08E4  7C00              MOV     R4,#0
+   \   08E6  22                RET
+   \   08E7            ?0068:
+   \   08E7  900008            MOV     DPTR,#8
+   \   08EA  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   08ED  EB                MOV     A,R3
+   \   08EE  C0E0              PUSH    ACC
+   \   08F0  EA                MOV     A,R2
+   \   08F1  C0E0              PUSH    ACC
+   \   08F3  E9                MOV     A,R1
+   \   08F4  C0E0              PUSH    ACC
+   \   08F6  120000            LCALL   ?LD_AR3_R567_L17
+   \   08F9  04                INC     A
+   \   08FA  FA                MOV     R2,A
+   \   08FB  7001              JNZ     ?0166
+   \   08FD  0B                INC     R3
+   \   08FE            ?0166:
+   \   08FE  900004            MOV     DPTR,#4
+   \   0901  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   0904  F8                MOV     R0,A
+   \   0905  120000            LCALL   ?UI_MOD_R_L00
+   \   0908  8882              MOV     DPL,R0
+   \   090A  8983              MOV     DPH,R1
+   \   090C  D0E0              POP     ACC
+   \   090E  F9                MOV     R1,A
+   \   090F  D0E0              POP     ACC
+   \   0911  FA                MOV     R2,A
+   \   0912  D0E0              POP     ACC
+   \   0914  FB                MOV     R3,A
+   \   0915  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   0918  04                INC     A
+   \   0919  6003              JZ      ?0070
+   \   091B            ?0069:
+   \   091B  7C00              MOV     R4,#0
+   \   091D  22                RET
+   \   091E            ?0070:
+   \   091E  900008            MOV     DPTR,#8
+   \   0921  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   0924  EB                MOV     A,R3
+   \   0925  C0E0              PUSH    ACC
+   \   0927  EA                MOV     A,R2
+   \   0928  C0E0              PUSH    ACC
+   \   092A  E9                MOV     A,R1
+   \   092B  C0E0              PUSH    ACC
+   \   092D  120000            LCALL   ?LD_AR3_R567_L17
+   \   0930  FA                MOV     R2,A
+   \   0931  900004            MOV     DPTR,#4
+   \   0934  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   0937  F8                MOV     R0,A
+   \   0938  120000            LCALL   ?UI_MOD_R_L00
+   \   093B  8882              MOV     DPL,R0
+   \   093D  8983              MOV     DPH,R1
+   \   093F  D0E0              POP     ACC
+   \   0941  F9                MOV     R1,A
+   \   0942  D0E0              POP     ACC
+   \   0944  FA                MOV     R2,A
+   \   0945  D0E0              POP     ACC
+   \   0947  FB                MOV     R3,A
+   \   0948  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   094B  04                INC     A
+   \   094C  6003              JZ      ?0072
+   \   094E            ?0071:
+   \   094E  7C00              MOV     R4,#0
+   \   0950  22                RET
+   \   0951            ?0072:
+   \   0951  7C01              MOV     R4,#1
+   \   0953            ?0073:
+   \   0953  22                RET
+   \   0954            rx_cat:
+   \   0954  E4                CLR     A
+   \   0955  900000            MOV     DPTR,#$LOCBX rx_cat
+   \   0958  F0                MOVX    @DPTR,A
+   \   0959  A3                INC     DPTR
+   \   095A  F0                MOVX    @DPTR,A
+   \   095B  A3                INC     DPTR
+   \   095C  F0                MOVX    @DPTR,A
+   \   095D  A3                INC     DPTR
+   \   095E  F0                MOVX    @DPTR,A
+   \   095F  A3                INC     DPTR
+   \   0960  F0                MOVX    @DPTR,A
+   \   0961  A3                INC     DPTR
+   \   0962  F0                MOVX    @DPTR,A
+   \   0963  A297              MOV     C,P1.7
+   \   0965  92E0              MOV     ACC.0,C
+   \   0967  F4                CPL     A
+   \   0968  04                INC     A
+   \   0969  04                INC     A
+   \   096A  A2E0              MOV     C,ACC.0
+   \   096C  9297              MOV     P1.7,C
+   \   096E  C294              CLR     P1.4
+   \   0970  900000            MOV     DPTR,#$LOCBX rx_cat+2
+   \   0973  E4                CLR     A
+   \   0974  F0                MOVX    @DPTR,A
+   \   0975  A3                INC     DPTR
+   \   0976  7404              MOV     A,#4
+   \   0978  F0                MOVX    @DPTR,A
+   \   0979  A3                INC     DPTR
+   \   097A  E4                CLR     A
+   \   097B  F0                MOVX    @DPTR,A
+   \   097C  A3                INC     DPTR
+   \   097D  F0                MOVX    @DPTR,A
+   \   097E  A3                INC     DPTR
+   \   097F  EF                MOV     A,R7
+   \   0980  F0                MOVX    @DPTR,A
+   \   0981  A3                INC     DPTR
+   \   0982  EE                MOV     A,R6
+   \   0983  F0                MOVX    @DPTR,A
+   \   0984  A3                INC     DPTR
+   \   0985  ED                MOV     A,R5
+   \   0986  F0                MOVX    @DPTR,A
+   \   0987            ?0075:
+   \   0987  900000            MOV     DPTR,#$LOCBX rx_cat+6
+   \   098A  E0                MOVX    A,@DPTR
+   \   098B  FF                MOV     R7,A
+   \   098C  A3                INC     DPTR
+   \   098D  E0                MOVX    A,@DPTR
+   \   098E  FE                MOV     R6,A
+   \   098F  A3                INC     DPTR
+   \   0990  E0                MOVX    A,@DPTR
+   \   0991  FD                MOV     R5,A
+   \   0992  900004            MOV     DPTR,#4
+   \   0995  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   0998  24FA              ADD     A,#250
+   \   099A  FA                MOV     R2,A
+   \   099B  EB                MOV     A,R3
+   \   099C  34FF              ADDC    A,#255
+   \   099E  FB                MOV     R3,A
+   \   099F  900000            MOV     DPTR,#$LOCBX rx_cat+3
+   \   09A2  E0                MOVX    A,@DPTR
+   \   09A3  C3                CLR     C
+   \   09A4  9A                SUBB    A,R2
+   \   09A5  900000            MOV     DPTR,#$LOCBX rx_cat+2
+   \   09A8  E0                MOVX    A,@DPTR
+   \   09A9  9B                SUBB    A,R3
+   \   09AA  4003              JC      $+5
+   \   09AC  020AAF            LJMP    ?0074
+   \   09AF            ?0076:
+   \   09AF  900008            MOV     DPTR,#8
+   \   09B2  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   09B5  EB                MOV     A,R3
+   \   09B6  C0E0              PUSH    ACC
+   \   09B8  EA                MOV     A,R2
+   \   09B9  C0E0              PUSH    ACC
+   \   09BB  E9                MOV     A,R1
+   \   09BC  C0E0              PUSH    ACC
+   \   09BE  120000            LCALL   ?LD_AR3_R567_L17
+   \   09C1  900000            MOV     DPTR,#$LOCBX rx_cat+3
+   \   09C4  FC                MOV     R4,A
+   \   09C5  E0                MOVX    A,@DPTR
+   \   09C6  2C                ADD     A,R4
+   \   09C7  FA                MOV     R2,A
+   \   09C8  900000            MOV     DPTR,#$LOCBX rx_cat+2
+   \   09CB  E0                MOVX    A,@DPTR
+   \   09CC  3B                ADDC    A,R3
+   \   09CD  FB                MOV     R3,A
+   \   09CE  900004            MOV     DPTR,#4
+   \   09D1  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   09D4  F8                MOV     R0,A
+   \   09D5  120000            LCALL   ?UI_MOD_R_L00
+   \   09D8  8882              MOV     DPL,R0
+   \   09DA  8983              MOV     DPH,R1
+   \   09DC  D0E0              POP     ACC
+   \   09DE  F9                MOV     R1,A
+   \   09DF  D0E0              POP     ACC
+   \   09E1  FA                MOV     R2,A
+   \   09E2  D0E0              POP     ACC
+   \   09E4  FB                MOV     R3,A
+   \   09E5  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   09E8  900000            MOV     DPTR,#$LOCBX rx_cat
+   \   09EB  FC                MOV     R4,A
+   \   09EC  E0                MOVX    A,@DPTR
+   \   09ED  6C                XRL     A,R4
+   \   09EE  F0                MOVX    @DPTR,A
+   \   09EF  900008            MOV     DPTR,#8
+   \   09F2  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   09F5  EB                MOV     A,R3
+   \   09F6  C0E0              PUSH    ACC
+   \   09F8  EA                MOV     A,R2
+   \   09F9  C0E0              PUSH    ACC
+   \   09FB  E9                MOV     A,R1
+   \   09FC  C0E0              PUSH    ACC
+   \   09FE  120000            LCALL   ?LD_AR3_R567_L17
+   \   0A01  900000            MOV     DPTR,#$LOCBX rx_cat+3
+   \   0A04  FC                MOV     R4,A
+   \   0A05  E0                MOVX    A,@DPTR
+   \   0A06  2C                ADD     A,R4
+   \   0A07  FA                MOV     R2,A
+   \   0A08  900000            MOV     DPTR,#$LOCBX rx_cat+2
+   \   0A0B  E0                MOVX    A,@DPTR
+   \   0A0C  3B                ADDC    A,R3
+   \   0A0D  FB                MOV     R3,A
+   \   0A0E  900004            MOV     DPTR,#4
+   \   0A11  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   0A14  F8                MOV     R0,A
+   \   0A15  120000            LCALL   ?UI_MOD_R_L00
+   \   0A18  8882              MOV     DPL,R0
+   \   0A1A  8983              MOV     DPH,R1
+   \   0A1C  D0E0              POP     ACC
+   \   0A1E  F9                MOV     R1,A
+   \   0A1F  D0E0              POP     ACC
+   \   0A21  FA                MOV     R2,A
+   \   0A22  D0E0              POP     ACC
+   \   0A24  FB                MOV     R3,A
+   \   0A25  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   0A28  900000            MOV     DPTR,#$LOCBX rx_cat+1
+   \   0A2B  FC                MOV     R4,A
+   \   0A2C  E0                MOVX    A,@DPTR
+   \   0A2D  2C                ADD     A,R4
+   \   0A2E  F0                MOVX    @DPTR,A
+   \   0A2F  900000            MOV     DPTR,#$LOCBX rx_cat+4
+   \   0A32  E0                MOVX    A,@DPTR
+   \   0A33  FF                MOV     R7,A
+   \   0A34  A3                INC     DPTR
+   \   0A35  E0                MOVX    A,@DPTR
+   \   0A36  FE                MOV     R6,A
+   \   0A37  A3                INC     DPTR
+   \   0A38  E0                MOVX    A,@DPTR
+   \   0A39  FB                MOV     R3,A
+   \   0A3A  A3                INC     DPTR
+   \   0A3B  E0                MOVX    A,@DPTR
+   \   0A3C  FA                MOV     R2,A
+   \   0A3D  A3                INC     DPTR
+   \   0A3E  E0                MOVX    A,@DPTR
+   \   0A3F  F9                MOV     R1,A
+   \   0A40  EF                MOV     A,R7
+   \   0A41  C0E0              PUSH    ACC
+   \   0A43  EE                MOV     A,R6
+   \   0A44  C0E0              PUSH    ACC
+   \   0A46  900008            MOV     DPTR,#8
+   \   0A49  120000            LCALL   ?LD_R567_R123_DISP_L17
+   \   0A4C  EF                MOV     A,R7
+   \   0A4D  C0E0              PUSH    ACC
+   \   0A4F  EE                MOV     A,R6
+   \   0A50  C0E0              PUSH    ACC
+   \   0A52  ED                MOV     A,R5
+   \   0A53  C0E0              PUSH    ACC
+   \   0A55  120000            LCALL   ?LD_AR5_R123_L17
+   \   0A58  900000            MOV     DPTR,#$LOCBX rx_cat+3
+   \   0A5B  FE                MOV     R6,A
+   \   0A5C  E0                MOVX    A,@DPTR
+   \   0A5D  2E                ADD     A,R6
+   \   0A5E  FC                MOV     R4,A
+   \   0A5F  900000            MOV     DPTR,#$LOCBX rx_cat+2
+   \   0A62  E0                MOVX    A,@DPTR
+   \   0A63  3D                ADDC    A,R5
+   \   0A64  FD                MOV     R5,A
+   \   0A65  900004            MOV     DPTR,#4
+   \   0A68  120000            LCALL   ?LD_AR7_R123_DISP_L17
+   \   0A6B  FE                MOV     R6,A
+   \   0A6C  FA                MOV     R2,A
+   \   0A6D  EF                MOV     A,R7
+   \   0A6E  FB                MOV     R3,A
+   \   0A6F  EC                MOV     A,R4
+   \   0A70  F8                MOV     R0,A
+   \   0A71  ED                MOV     A,R5
+   \   0A72  F9                MOV     R1,A
+   \   0A73  120000            LCALL   ?UI_MOD_L00
+   \   0A76  8882              MOV     DPL,R0
+   \   0A78  8983              MOV     DPH,R1
+   \   0A7A  D0E0              POP     ACC
+   \   0A7C  FD                MOV     R5,A
+   \   0A7D  D0E0              POP     ACC
+   \   0A7F  FE                MOV     R6,A
+   \   0A80  D0E0              POP     ACC
+   \   0A82  FF                MOV     R7,A
+   \   0A83  120000            LCALL   ?LD_A_R567_DISP_L17
+   \   0A86  FC                MOV     R4,A
+   \   0A87  D0E0              POP     ACC
+   \   0A89  FE                MOV     R6,A
+   \   0A8A  D0E0              POP     ACC
+   \   0A8C  FF                MOV     R7,A
+   \   0A8D  120000            LCALL   $REFFN disp_catch
+   \   0A90  900000            MOV     DPTR,#$LOCBX rx_cat+3
+   \   0A93  E0                MOVX    A,@DPTR
+   \   0A94  04                INC     A
+   \   0A95  F0                MOVX    @DPTR,A
+   \   0A96  900000            MOV     DPTR,#$LOCBX rx_cat+2
+   \   0A99  7003              JNZ     ?0167
+   \   0A9B  E0                MOVX    A,@DPTR
+   \   0A9C  04                INC     A
+   \   0A9D  F0                MOVX    @DPTR,A
+   \   0A9E            ?0167:
+   \   0A9E  900000            MOV     DPTR,#$LOCBX rx_cat+5
+   \   0AA1  E0                MOVX    A,@DPTR
+   \   0AA2  04                INC     A
+   \   0AA3  F0                MOVX    @DPTR,A
+   \   0AA4  900000            MOV     DPTR,#$LOCBX rx_cat+4
+   \   0AA7  7003              JNZ     ?0168
+   \   0AA9  E0                MOVX    A,@DPTR
+   \   0AAA  04                INC     A
+   \   0AAB  F0                MOVX    @DPTR,A
+   \   0AAC            ?0168:
+   \   0AAC  020987            LJMP    ?0075
+   \   0AAF            ?0074:
+   \   0AAF  7401              MOV     A,#1
+   \   0AB1  90000F            MOV     DPTR,#lcd_buffer+3
+   \   0AB4  F0                MOVX    @DPTR,A
+   \   0AB5  900008            MOV     DPTR,#8
+   \   0AB8  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   0ABB  EB                MOV     A,R3
+   \   0ABC  C0E0              PUSH    ACC
+   \   0ABE  EA                MOV     A,R2
+   \   0ABF  C0E0              PUSH    ACC
+   \   0AC1  E9                MOV     A,R1
+   \   0AC2  C0E0              PUSH    ACC
+   \   0AC4  900004            MOV     DPTR,#4
+   \   0AC7  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   0ACA  FA                MOV     R2,A
+   \   0ACB  120000            LCALL   ?LD_AR1_R567_L17
+   \   0ACE  F8                MOV     R0,A
+   \   0ACF  EA                MOV     A,R2
+   \   0AD0  28                ADD     A,R0
+   \   0AD1  FA                MOV     R2,A
+   \   0AD2  EB                MOV     A,R3
+   \   0AD3  39                ADDC    A,R1
+   \   0AD4  FB                MOV     R3,A
+   \   0AD5  EA                MOV     A,R2
+   \   0AD6  24F8              ADD     A,#248
+   \   0AD8  FA                MOV     R2,A
+   \   0AD9  EB                MOV     A,R3
+   \   0ADA  34FF              ADDC    A,#255
+   \   0ADC  FB                MOV     R3,A
+   \   0ADD  900004            MOV     DPTR,#4
+   \   0AE0  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   0AE3  F8                MOV     R0,A
+   \   0AE4  120000            LCALL   ?UI_MOD_R_L00
+   \   0AE7  8882              MOV     DPL,R0
+   \   0AE9  8983              MOV     DPH,R1
+   \   0AEB  D0E0              POP     ACC
+   \   0AED  F9                MOV     R1,A
+   \   0AEE  D0E0              POP     ACC
+   \   0AF0  FA                MOV     R2,A
+   \   0AF1  D0E0              POP     ACC
+   \   0AF3  FB                MOV     R3,A
+   \   0AF4  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   0AF7  90C001            MOV     DPTR,#49153
+   \   0AFA  F0                MOVX    @DPTR,A
+   \   0AFB  900008            MOV     DPTR,#8
+   \   0AFE  120000            LCALL   ?LD_R123_R567_DISP_L17
+   \   0B01  EB                MOV     A,R3
+   \   0B02  C0E0              PUSH    ACC
+   \   0B04  EA                MOV     A,R2
+   \   0B05  C0E0              PUSH    ACC
+   \   0B07  E9                MOV     A,R1
+   \   0B08  C0E0              PUSH    ACC
+   \   0B0A  900004            MOV     DPTR,#4
+   \   0B0D  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   0B10  FA                MOV     R2,A
+   \   0B11  120000            LCALL   ?LD_AR1_R567_L17
+   \   0B14  F8                MOV     R0,A
+   \   0B15  EA                MOV     A,R2
+   \   0B16  28                ADD     A,R0
+   \   0B17  FA                MOV     R2,A
+   \   0B18  EB                MOV     A,R3
+   \   0B19  39                ADDC    A,R1
+   \   0B1A  FB                MOV     R3,A
+   \   0B1B  EA                MOV     A,R2
+   \   0B1C  24F9              ADD     A,#249
+   \   0B1E  FA                MOV     R2,A
+   \   0B1F  EB                MOV     A,R3
+   \   0B20  34FF              ADDC    A,#255
+   \   0B22  FB                MOV     R3,A
+   \   0B23  900004            MOV     DPTR,#4
+   \   0B26  120000            LCALL   ?LD_AR1_R567_DISP_L17
+   \   0B29  F8                MOV     R0,A
+   \   0B2A  120000            LCALL   ?UI_MOD_R_L00
+   \   0B2D  8882              MOV     DPL,R0
+   \   0B2F  8983              MOV     DPH,R1
+   \   0B31  D0E0              POP     ACC
+   \   0B33  F9                MOV     R1,A
+   \   0B34  D0E0              POP     ACC
+   \   0B36  FA                MOV     R2,A
+   \   0B37  D0E0              POP     ACC
+   \   0B39  FB                MOV     R3,A
+   \   0B3A  120000            LCALL   ?LD_A_R123_DISP_L17
+   \   0B3D  90C000            MOV     DPTR,#49152
+   \   0B40  F0                MOVX    @DPTR,A
+   \   0B41  D294              SETB    P1.4
+   \   0B43  AC82              MOV     R4,DPL
+   \   0B45  22                RET
+   \   0B46            disp_catch:
+   \   0B46  E4                CLR     A
+   \   0B47  A297              MOV     C,P1.7
+   \   0B49  92E0              MOV     ACC.0,C
+   \   0B4B  F4                CPL     A
+   \   0B4C  04                INC     A
+   \   0B4D  04                INC     A
+   \   0B4E  A2E0              MOV     C,ACC.0
+   \   0B50  9297              MOV     P1.7,C
+   \   0B52  900000            MOV     DPTR,#$LOCBX disp_catch+4
+   \   0B55  EF                MOV     A,R7
+   \   0B56  F0                MOVX    @DPTR,A
+   \   0B57  A3                INC     DPTR
+   \   0B58  EE                MOV     A,R6
+   \   0B59  F0                MOVX    @DPTR,A
+   \   0B5A  EC                MOV     A,R4
+   \   0B5B  900000            MOV     DPTR,#$LOCBX disp_catch+3
+   \   0B5E  F0                MOVX    @DPTR,A
+   \   0B5F  C3                CLR     C
+   \   0B60  EE                MOV     A,R6
+   \   0B61  9450              SUBB    A,#80
+   \   0B63  EF                MOV     A,R7
+   \   0B64  9400              SUBB    A,#0
+   \   0B66  4001              JC      ?0079
+   \   0B68            ?0078:
+   \   0B68  22                RET
+   \   0B69            ?0079:
+   \   0B69  EE                MOV     A,R6
+   \   0B6A  4F                ORL     A,R7
+   \   0B6B  7009              JNZ     ?0081
+   \   0B6D            ?0080:
+   \   0B6D  E4                CLR     A
+   \   0B6E  900000            MOV     DPTR,#$LOCBX disp_catch
+   \   0B71  F0                MOVX    @DPTR,A
+   \   0B72  A3                INC     DPTR
+   \   0B73  F0                MOVX    @DPTR,A
+   \   0B74  8022              SJMP    ?0082
+   \   0B76            ?0081:
+   \   0B76  EF                MOV     A,R7
+   \   0B77  FD                MOV     R5,A
+   \   0B78  EE                MOV     A,R6
+   \   0B79  FC                MOV     R4,A
+   \   0B7A  E4                CLR     A
+   \   0B7B  FB                MOV     R3,A
+   \   0B7C  7A14              MOV     R2,#20
+   \   0B7E  EC                MOV     A,R4
+   \   0B7F  F8                MOV     R0,A
+   \   0B80  ED                MOV     A,R5
+   \   0B81  F9                MOV     R1,A
+   \   0B82  120000            LCALL   ?UI_MOD_L00
+   \   0B85  E8                MOV     A,R0
+   \   0B86  900000            MOV     DPTR,#$LOCBX disp_catch
+   \   0B89  F0                MOVX    @DPTR,A
+   \   0B8A  E4                CLR     A
+   \   0B8B  FB                MOV     R3,A
+   \   0B8C  7A14              MOV     R2,#20
+   \   0B8E  EE                MOV     A,R6
+   \   0B8F  F8                MOV     R0,A
+   \   0B90  EF                MOV     A,R7
+   \   0B91  F9                MOV     R1,A
+   \   0B92  120000            LCALL   ?UI_DIV_L00
+   \   0B95  E8                MOV     A,R0
+   \   0B96  A3                INC     DPTR
+   \   0B97  F0                MOVX    @DPTR,A
+   \   0B98            ?0082:
+   \   0B98  90000E            MOV     DPTR,#lcd_buffer+2
+   \   0B9B  E0                MOVX    A,@DPTR
+   \   0B9C  04                INC     A
+   \   0B9D  900000            MOV     DPTR,#$LOCBX disp_catch+2
+   \   0BA0  F0                MOVX    @DPTR,A
+   \   0BA1  C3                CLR     C
+   \   0BA2  940A              SUBB    A,#10
+   \   0BA4  4002              JC      ?0084
+   \   0BA6            ?0083:
+   \   0BA6  E4                CLR     A
+   \   0BA7  F0                MOVX    @DPTR,A
+   \   0BA8            ?0084:
+   \   0BA8  A3                INC     DPTR
+   \   0BA9  E0                MOVX    A,@DPTR
+   \   0BAA  FC                MOV     R4,A
+   \   0BAB  900000            MOV     DPTR,#$LOCBX disp_catch
+   \   0BAE  E0                MOVX    A,@DPTR
+   \   0BAF  75F028            MOV     B,#40
+   \   0BB2  A4                MUL     AB
+   \   0BB3  AFF0              MOV     R7,B
+   \   0BB5  FE                MOV     R6,A
+   \   0BB6  A3                INC     DPTR
+   \   0BB7  E0                MOVX    A,@DPTR
+   \   0BB8  75F00A            MOV     B,#10
+   \   0BBB  A4                MUL     AB
+   \   0BBC  ABF0              MOV     R3,B
+   \   0BBE  FA                MOV     R2,A
+   \   0BBF  EE                MOV     A,R6
+   \   0BC0  2A                ADD     A,R2
+   \   0BC1  FE                MOV     R6,A
+   \   0BC2  EF                MOV     A,R7
+   \   0BC3  3B                ADDC    A,R3
+   \   0BC4  FF                MOV     R7,A
+   \   0BC5  A3                INC     DPTR
+   \   0BC6  E0                MOVX    A,@DPTR
+   \   0BC7  7B00              MOV     R3,#0
+   \   0BC9  FA                MOV     R2,A
+   \   0BCA  EE                MOV     A,R6
+   \   0BCB  2A                ADD     A,R2
+   \   0BCC  FE                MOV     R6,A
+   \   0BCD  EF                MOV     A,R7
+   \   0BCE  3B                ADDC    A,R3
+   \   0BCF  FF                MOV     R7,A
+   \   0BD0  EE                MOV     A,R6
+   \   0BD1  2411              ADD     A,#LOW(lcd_buffer+5)
+   \   0BD3  F582              MOV     DPL,A
+   \   0BD5  EF                MOV     A,R7
+   \   0BD6  3400              ADDC    A,#HIGH(lcd_buffer+5)
+   \   0BD8  F583              MOV     DPH,A
+   \   0BDA  EC                MOV     A,R4
+   \   0BDB  F0                MOVX    @DPTR,A
+   \   0BDC            ?0085:
+   \   0BDC  22                RET
+   \   0BDD            key_send_pc:
+   \   0BDD  E4                CLR     A
+   \   0BDE  A297              MOV     C,P1.7
+   \   0BE0  92E0              MOV     ACC.0,C
+   \   0BE2  F4                CPL     A
+   \   0BE3  04                INC     A
+   \   0BE4  04                INC     A
+   \   0BE5  A2E0              MOV     C,ACC.0
+   \   0BE7  9297              MOV     P1.7,C
+   \   0BE9  900001            MOV     DPTR,#key_send
+   \   0BEC  74FF              MOV     A,#255
+   \   0BEE  F0                MOVX    @DPTR,A
+   \   0BEF  A3                INC     DPTR
+   \   0BF0  F0                MOVX    @DPTR,A
+   \   0BF1  A3                INC     DPTR
+   \   0BF2  F0                MOVX    @DPTR,A
+   \   0BF3  A3                INC     DPTR
+   \   0BF4  F0                MOVX    @DPTR,A
+   \   0BF5  900008            MOV     DPTR,#key_send+7
+   \   0BF8  14                DEC     A
+   \   0BF9  F0                MOVX    @DPTR,A
+   \   0BFA  A3                INC     DPTR
+   \   0BFB  F0                MOVX    @DPTR,A
+   \   0BFC  A3                INC     DPTR
+   \   0BFD  F0                MOVX    @DPTR,A
+   \   0BFE  A3                INC     DPTR
+   \   0BFF  F0                MOVX    @DPTR,A
+   \   0C00  E4                CLR     A
+   \   0C01  900007            MOV     DPTR,#key_send+6
+   \   0C04  F0                MOVX    @DPTR,A
+   \   0C05  900006            MOV     DPTR,#key_send+5
+   \   0C08  F0                MOVX    @DPTR,A
+   \   0C09  EC                MOV     A,R4
+   \   0C0A  900005            MOV     DPTR,#key_send+4
+   \   0C0D  F0                MOVX    @DPTR,A
+   \   0C0E  900000            MOV     DPTR,#$LOCBX key_send_pc+2
+   \   0C11  F0                MOVX    @DPTR,A
+   \   0C12  900005            MOV     DPTR,#key_send+4
+   \   0C15  E0                MOVX    A,@DPTR
+   \   0C16  A3                INC     DPTR
+   \   0C17  A3                INC     DPTR
+   \   0C18  FC                MOV     R4,A
+   \   0C19  E0                MOVX    A,@DPTR
+   \   0C1A  6C                XRL     A,R4
+   \   0C1B  F0                MOVX    @DPTR,A
+   \   0C1C  EC                MOV     A,R4
+   \   0C1D  900006            MOV     DPTR,#key_send+5
+   \   0C20  FD                MOV     R5,A
+   \   0C21  E0                MOVX    A,@DPTR
+   \   0C22  2D                ADD     A,R5
+   \   0C23  F0                MOVX    @DPTR,A
+   \   0C24  900000            MOV     DPTR,#$LOCBX key_send_pc
+   \   0C27  E4                CLR     A
+   \   0C28  F0                MOVX    @DPTR,A
+   \   0C29  A3                INC     DPTR
+   \   0C2A  F0                MOVX    @DPTR,A
+   \   0C2B            ?0087:
+   \   0C2B  C3                CLR     C
+   \   0C2C  900000            MOV     DPTR,#$LOCBX key_send_pc+1
+   \   0C2F  E0                MOVX    A,@DPTR
+   \   0C30  940B              SUBB    A,#11
+   \   0C32  900000            MOV     DPTR,#$LOCBX key_send_pc
+   \   0C35  E0                MOVX    A,@DPTR
+   \   0C36  9400              SUBB    A,#0
+   \   0C38  5026              JNC     ?0086
+   \   0C3A            ?0088:
+   \   0C3A  A3                INC     DPTR
+   \   0C3B  E0                MOVX    A,@DPTR
+   \   0C3C  2401              ADD     A,#LOW(key_send)
+   \   0C3E  F582              MOV     DPL,A
+   \   0C40  E4                CLR     A
+   \   0C41  3400              ADDC    A,#HIGH(key_send)
+   \   0C43  F583              MOV     DPH,A
+   \   0C45  E0                MOVX    A,@DPTR
+   \   0C46  FC                MOV     R4,A
+   \   0C47  7D31              MOV     R5,#LOW(com)
+   \   0C49  7E03              MOV     R6,#HIGH(com)
+   \   0C4B  7F01              MOV     R7,#1
+   \   0C4D  120000            LCALL   $REFFN move_to_serial_buffer
+   \   0C50  900000            MOV     DPTR,#$LOCBX key_send_pc+1
+   \   0C53  E0                MOVX    A,@DPTR
+   \   0C54  04                INC     A
+   \   0C55  F0                MOVX    @DPTR,A
+   \   0C56  900000            MOV     DPTR,#$LOCBX key_send_pc
+   \   0C59  7003              JNZ     ?0169
+   \   0C5B  E0                MOVX    A,@DPTR
+   \   0C5C  04                INC     A
+   \   0C5D  F0                MOVX    @DPTR,A
+   \   0C5E            ?0169:
+   \   0C5E  80CB              SJMP    ?0087
+   \   0C60            ?0086:
+   \   0C60  22                RET
+   \   0C61            move_to_serial_buffer:
+   \   0C61  E4                CLR     A
+   \   0C62  A297              MOV     C,P1.7
+   \   0C64  92E0              MOV     ACC.0,C
+   \   0C66  F4                CPL     A
+   \   0C67  04                INC     A
+   \   0C68  04                INC     A
+   \   0C69  A2E0              MOV     C,ACC.0
+   \   0C6B  9297              MOV     P1.7,C
+   \   0C6D  E4                CLR     A
+   \   0C6E  FB                MOV     R3,A
+   \   0C6F  04                INC     A
+   \   0C70  900006            MOV     DPTR,#6
+   \   0C73  120000            LCALL   ?IADD_POST_R567_AR3_DISP_L00
+   \   0C76  FA                MOV     R2,A
+   \   0C77  900000            MOV     DPTR,#$LOCBX move_to_serial_buffer
+   \   0C7A  EF                MOV     A,R7
+   \   0C7B  F0                MOVX    @DPTR,A
+   \   0C7C  A3                INC     DPTR
+   \   0C7D  EE                MOV     A,R6
+   \   0C7E  F0                MOVX    @DPTR,A
+   \   0C7F  A3                INC     DPTR
+   \   0C80  ED                MOV     A,R5
+   \   0C81  F0                MOVX    @DPTR,A
+   \   0C82  2A                ADD     A,R2
+   \   0C83  FD                MOV     R5,A
+   \   0C84  EE                MOV     A,R6
+   \   0C85  3B                ADDC    A,R3
+   \   0C86  FE                MOV     R6,A
+   \   0C87  EC                MOV     A,R4
+   \   0C88  90000B            MOV     DPTR,#11
+   \   0C8B  120000            LCALL   ?ST_A_R567_DISP_L17
+   \   0C8E  900000            MOV     DPTR,#$LOCBX move_to_serial_buffer+3
+   \   0C91  F0                MOVX    @DPTR,A
+   \   0C92  900000            MOV     DPTR,#$LOCBX move_to_serial_buffer
+   \   0C95  E0                MOVX    A,@DPTR
+   \   0C96  A3                INC     DPTR
+   \   0C97  E0                MOVX    A,@DPTR
+   \   0C98  FE                MOV     R6,A
+   \   0C99  A3                INC     DPTR
+   \   0C9A  E0                MOVX    A,@DPTR
+   \   0C9B  FD                MOV     R5,A
+   \   0C9C  900006            MOV     DPTR,#6
+   \   0C9F  120000            LCALL   ?LD_AR3_R567_DISP_L17
+   \   0CA2  C3                CLR     C
+   \   0CA3  FA                MOV     R2,A
+   \   0CA4  94D0              SUBB    A,#208
+   \   0CA6  EB                MOV     A,R3
+   \   0CA7  9407              SUBB    A,#7
+   \   0CA9  4008              JC      ?0091
+   \   0CAB            ?0090:
+   \   0CAB  E4                CLR     A
+   \   0CAC  FB                MOV     R3,A
+   \   0CAD  900006            MOV     DPTR,#6
+   \   0CB0  120000            LCALL   ?ST_AR3_R567_DISP_L17
+   \   0CB3            ?0091:
+   \   0CB3  22                RET
+   \   0CB4            transmit_check:
+   \   0CB4  E4                CLR     A
+   \   0CB5  A297              MOV     C,P1.7
+   \   0CB7  92E0              MOV     ACC.0,C
+   \   0CB9  F4                CPL     A
+   \   0CBA  04                INC     A
+   \   0CBB  04                INC     A
+   \   0CBC  A2E0              MOV     C,ACC.0
+   \   0CBE  9297              MOV     P1.7,C
+   \   0CC0  900335            MOV     DPTR,#com+4
+   \   0CC3  E0                MOVX    A,@DPTR
+   \   0CC4  FD                MOV     R5,A
+   \   0CC5  A3                INC     DPTR
+   \   0CC6  E0                MOVX    A,@DPTR
+   \   0CC7  FC                MOV     R4,A
+   \   0CC8  A3                INC     DPTR
+   \   0CC9  A3                INC     DPTR
+   \   0CCA  E0                MOVX    A,@DPTR
+   \   0CCB  6C                XRL     A,R4
+   \   0CCC  7007              JNZ     ?0170
+   \   0CCE  900337            MOV     DPTR,#com+6
+   \   0CD1  E0                MOVX    A,@DPTR
+   \   0CD2  6D                XRL     A,R5
+   \   0CD3  6046              JZ      ?0093
+   \   0CD5            ?0170:
+   \   0CD5            ?0092:
+   \   0CD5  90033A            MOV     DPTR,#com+9
+   \   0CD8  E0                MOVX    A,@DPTR
+   \   0CD9  603E              JZ      ?0095
+   \   0CDB            ?0094:
+   \   0CDB  C2AF              CLR     IE.7
+   \   0CDD  EC                MOV     A,R4
+   \   0CDE  FE                MOV     R6,A
+   \   0CDF  ED                MOV     A,R5
+   \   0CE0  FF                MOV     R7,A
+   \   0CE1  CC                XCH     A,R4
+   \   0CE2  2401              ADD     A,#1
+   \   0CE4  CC                XCH     A,R4
+   \   0CE5  CD                XCH     A,R5
+   \   0CE6  3400              ADDC    A,#0
+   \   0CE8  CD                XCH     A,R5
+   \   0CE9  900335            MOV     DPTR,#com+4
+   \   0CEC  ED                MOV     A,R5
+   \   0CED  F0                MOVX    @DPTR,A
+   \   0CEE  A3                INC     DPTR
+   \   0CEF  EC                MOV     A,R4
+   \   0CF0  F0                MOVX    @DPTR,A
+   \   0CF1  EE                MOV     A,R6
+   \   0CF2  243C              ADD     A,#LOW(com+11)
+   \   0CF4  F582              MOV     DPL,A
+   \   0CF6  EF                MOV     A,R7
+   \   0CF7  3403              ADDC    A,#HIGH(com+11)
+   \   0CF9  F583              MOV     DPH,A
+   \   0CFB  E0                MOVX    A,@DPTR
+   \   0CFC  F599              MOV     SBUF,A
+   \   0CFE  D2AF              SETB    IE.7
+   \   0D00  C3                CLR     C
+   \   0D01  EC                MOV     A,R4
+   \   0D02  94D0              SUBB    A,#208
+   \   0D04  ED                MOV     A,R5
+   \   0D05  9407              SUBB    A,#7
+   \   0D07  400B              JC      ?0097
+   \   0D09            ?0096:
+   \   0D09  E4                CLR     A
+   \   0D0A  FC                MOV     R4,A
+   \   0D0B  FD                MOV     R5,A
+   \   0D0C  900335            MOV     DPTR,#com+4
+   \   0D0F  ED                MOV     A,R5
+   \   0D10  F0                MOVX    @DPTR,A
+   \   0D11  A3                INC     DPTR
+   \   0D12  EC                MOV     A,R4
+   \   0D13  F0                MOVX    @DPTR,A
+   \   0D14            ?0097:
+   \   0D14  E4                CLR     A
+   \   0D15  90033A            MOV     DPTR,#com+9
+   \   0D18  F0                MOVX    @DPTR,A
+   \   0D19            ?0095:
+   \   0D19  8006              SJMP    ?0098
+   \   0D1B            ?0093:
+   \   0D1B  7401              MOV     A,#1
+   \   0D1D  90033B            MOV     DPTR,#com+10
+   \   0D20  F0                MOVX    @DPTR,A
+   \   0D21            ?0098:
+   \   0D21  22                RET
+   \   0D22            receive_check:
+   \   0D22  E4                CLR     A
+   \   0D23  A297              MOV     C,P1.7
+   \   0D25  92E0              MOV     ACC.0,C
+   \   0D27  F4                CPL     A
+   \   0D28  04                INC     A
+   \   0D29  04                INC     A
+   \   0D2A  A2E0              MOV     C,ACC.0
+   \   0D2C  9297              MOV     P1.7,C
+   \   0D2E  900331            MOV     DPTR,#com
+   \   0D31  E0                MOVX    A,@DPTR
+   \   0D32  FD                MOV     R5,A
+   \   0D33  A3                INC     DPTR
+   \   0D34  E0                MOVX    A,@DPTR
+   \   0D35  FC                MOV     R4,A
+   \   0D36  A3                INC     DPTR
+   \   0D37  A3                INC     DPTR
+   \   0D38  E0                MOVX    A,@DPTR
+   \   0D39  6C                XRL     A,R4
+   \   0D3A  7007              JNZ     ?0171
+   \   0D3C  900333            MOV     DPTR,#com+2
+   \   0D3F  E0                MOVX    A,@DPTR
+   \   0D40  6D                XRL     A,R5
+   \   0D41  6043              JZ      ?0100
+   \   0D43            ?0171:
+   \   0D43            ?0099:
+   \   0D43  90033B            MOV     DPTR,#com+10
+   \   0D46  E0                MOVX    A,@DPTR
+   \   0D47  7001              JNZ     ?0102
+   \   0D49            ?0101:
+   \   0D49  22                RET
+   \   0D4A            ?0102:
+   \   0D4A  EC                MOV     A,R4
+   \   0D4B  FE                MOV     R6,A
+   \   0D4C  ED                MOV     A,R5
+   \   0D4D  FF                MOV     R7,A
+   \   0D4E  CC                XCH     A,R4
+   \   0D4F  2401              ADD     A,#1
+   \   0D51  CC                XCH     A,R4
+   \   0D52  CD                XCH     A,R5
+   \   0D53  3400              ADDC    A,#0
+   \   0D55  CD                XCH     A,R5
+   \   0D56  900331            MOV     DPTR,#com
+   \   0D59  ED                MOV     A,R5
+   \   0D5A  F0                MOVX    @DPTR,A
+   \   0D5B  A3                INC     DPTR
+   \   0D5C  EC                MOV     A,R4
+   \   0D5D  F0                MOVX    @DPTR,A
+   \   0D5E  EE                MOV     A,R6
+   \   0D5F  240C              ADD     A,#LOW(com+2011)
+   \   0D61  F582              MOV     DPL,A
+   \   0D63  EF                MOV     A,R7
+   \   0D64  340B              ADDC    A,#HIGH(com+2011)
+   \   0D66  F583              MOV     DPH,A
+   \   0D68  E0                MOVX    A,@DPTR
+   \   0D69  FC                MOV     R4,A
+   \   0D6A  7D31              MOV     R5,#LOW(com)
+   \   0D6C  7E03              MOV     R6,#HIGH(com)
+   \   0D6E  7F01              MOV     R7,#1
+   \   0D70  120000            LCALL   $REFFN protocol_event
+   \   0D73  C3                CLR     C
+   \   0D74  900332            MOV     DPTR,#com+1
+   \   0D77  E0                MOVX    A,@DPTR
+   \   0D78  94D0              SUBB    A,#208
+   \   0D7A  900331            MOV     DPTR,#com
+   \   0D7D  E0                MOVX    A,@DPTR
+   \   0D7E  9407              SUBB    A,#7
+   \   0D80  4004              JC      ?0104
+   \   0D82            ?0103:
+   \   0D82  E4                CLR     A
+   \   0D83  F0                MOVX    @DPTR,A
+   \   0D84  A3                INC     DPTR
+   \   0D85  F0                MOVX    @DPTR,A
+   \   0D86            ?0104:
+   \   0D86            ?0100:
+   \   0D86            ?0105:
+   \   0D86  22                RET
+   \   0D87            SCON_int:
+   \   0D87  C0E0              PUSH    ACC
+   \   0D89  C082              PUSH    DPL
+   \   0D8B  C083              PUSH    DPH
+   \   0D8D  C0D0              PUSH    PSW
+   \   0D8F  EC                MOV     A,R4
+   \   0D90  C0E0              PUSH    ACC
+   \   0D92  ED                MOV     A,R5
+   \   0D93  C0E0              PUSH    ACC
+   \   0D95  EE                MOV     A,R6
+   \   0D96  C0E0              PUSH    ACC
+   \   0D98  EF                MOV     A,R7
+   \   0D99  C0E0              PUSH    ACC
+   \   0D9B  C2AF              CLR     IE.7
+   \   0D9D  30983B            JNB     SCON.0,?0107
+   \   0DA0            ?0106:
+   \   0DA0  C298              CLR     SCON.0
+   \   0DA2  C295              CLR     P1.5
+   \   0DA4  E599              MOV     A,SBUF
+   \   0DA6  900333            MOV     DPTR,#com+2
+   \   0DA9  FE                MOV     R6,A
+   \   0DAA  E0                MOVX    A,@DPTR
+   \   0DAB  FD                MOV     R5,A
+   \   0DAC  A3                INC     DPTR
+   \   0DAD  E0                MOVX    A,@DPTR
+   \   0DAE  FC                MOV     R4,A
+   \   0DAF  E0                MOVX    A,@DPTR
+   \   0DB0  04                INC     A
+   \   0DB1  F0                MOVX    @DPTR,A
+   \   0DB2  900333            MOV     DPTR,#com+2
+   \   0DB5  7003              JNZ     ?0172
+   \   0DB7  E0                MOVX    A,@DPTR
+   \   0DB8  04                INC     A
+   \   0DB9  F0                MOVX    @DPTR,A
+   \   0DBA            ?0172:
+   \   0DBA  EC                MOV     A,R4
+   \   0DBB  240C              ADD     A,#LOW(com+2011)
+   \   0DBD  F582              MOV     DPL,A
+   \   0DBF  ED                MOV     A,R5
+   \   0DC0  340B              ADDC    A,#HIGH(com+2011)
+   \   0DC2  F583              MOV     DPH,A
+   \   0DC4  EE                MOV     A,R6
+   \   0DC5  F0                MOVX    @DPTR,A
+   \   0DC6  C3                CLR     C
+   \   0DC7  900334            MOV     DPTR,#com+3
+   \   0DCA  E0                MOVX    A,@DPTR
+   \   0DCB  94D0              SUBB    A,#208
+   \   0DCD  900333            MOV     DPTR,#com+2
+   \   0DD0  E0                MOVX    A,@DPTR
+   \   0DD1  9407              SUBB    A,#7
+   \   0DD3  4004              JC      ?0109
+   \   0DD5            ?0108:
+   \   0DD5  E4                CLR     A
+   \   0DD6  F0                MOVX    @DPTR,A
+   \   0DD7  A3                INC     DPTR
+   \   0DD8  F0                MOVX    @DPTR,A
+   \   0DD9            ?0109:
+   \   0DD9  805B              SJMP    ?0110
+   \   0DDB            ?0107:
+   \   0DDB  309958            JNB     SCON.1,?0112
+   \   0DDE            ?0111:
+   \   0DDE  C299              CLR     SCON.1
+   \   0DE0  C296              CLR     P1.6
+   \   0DE2  900335            MOV     DPTR,#com+4
+   \   0DE5  E0                MOVX    A,@DPTR
+   \   0DE6  FD                MOV     R5,A
+   \   0DE7  A3                INC     DPTR
+   \   0DE8  E0                MOVX    A,@DPTR
+   \   0DE9  FC                MOV     R4,A
+   \   0DEA  A3                INC     DPTR
+   \   0DEB  A3                INC     DPTR
+   \   0DEC  E0                MOVX    A,@DPTR
+   \   0DED  6C                XRL     A,R4
+   \   0DEE  7007              JNZ     ?0173
+   \   0DF0  900337            MOV     DPTR,#com+6
+   \   0DF3  E0                MOVX    A,@DPTR
+   \   0DF4  6D                XRL     A,R5
+   \   0DF5  6037              JZ      ?0114
+   \   0DF7            ?0173:
+   \   0DF7            ?0113:
+   \   0DF7  EC                MOV     A,R4
+   \   0DF8  FE                MOV     R6,A
+   \   0DF9  ED                MOV     A,R5
+   \   0DFA  FF                MOV     R7,A
+   \   0DFB  CC                XCH     A,R4
+   \   0DFC  2401              ADD     A,#1
+   \   0DFE  CC                XCH     A,R4
+   \   0DFF  CD                XCH     A,R5
+   \   0E00  3400              ADDC    A,#0
+   \   0E02  CD                XCH     A,R5
+   \   0E03  900335            MOV     DPTR,#com+4
+   \   0E06  ED                MOV     A,R5
+   \   0E07  F0                MOVX    @DPTR,A
+   \   0E08  A3                INC     DPTR
+   \   0E09  EC                MOV     A,R4
+   \   0E0A  F0                MOVX    @DPTR,A
+   \   0E0B  EE                MOV     A,R6
+   \   0E0C  243C              ADD     A,#LOW(com+11)
+   \   0E0E  F582              MOV     DPL,A
+   \   0E10  EF                MOV     A,R7
+   \   0E11  3403              ADDC    A,#HIGH(com+11)
+   \   0E13  F583              MOV     DPH,A
+   \   0E15  E0                MOVX    A,@DPTR
+   \   0E16  F599              MOV     SBUF,A
+   \   0E18  C3                CLR     C
+   \   0E19  EC                MOV     A,R4
+   \   0E1A  94D0              SUBB    A,#208
+   \   0E1C  ED                MOV     A,R5
+   \   0E1D  9407              SUBB    A,#7
+   \   0E1F  400B              JC      ?0116
+   \   0E21            ?0115:
+   \   0E21  E4                CLR     A
+   \   0E22  FC                MOV     R4,A
+   \   0E23  FD                MOV     R5,A
+   \   0E24  900335            MOV     DPTR,#com+4
+   \   0E27  ED                MOV     A,R5
+   \   0E28  F0                MOVX    @DPTR,A
+   \   0E29  A3                INC     DPTR
+   \   0E2A  EC                MOV     A,R4
+   \   0E2B  F0                MOVX    @DPTR,A
+   \   0E2C            ?0116:
+   \   0E2C  8008              SJMP    ?0117
+   \   0E2E            ?0114:
+   \   0E2E  7401              MOV     A,#1
+   \   0E30  90033A            MOV     DPTR,#com+9
+   \   0E33  F0                MOVX    @DPTR,A
+   \   0E34  D296              SETB    P1.6
+   \   0E36            ?0117:
+   \   0E36            ?0112:
+   \   0E36            ?0110:
+   \   0E36  D2AF              SETB    IE.7
+   \   0E38  D0E0              POP     ACC
+   \   0E3A  FF                MOV     R7,A
+   \   0E3B  D0E0              POP     ACC
+   \   0E3D  FE                MOV     R6,A
+   \   0E3E  D0E0              POP     ACC
+   \   0E40  FD                MOV     R5,A
+   \   0E41  D0E0              POP     ACC
+   \   0E43  FC                MOV     R4,A
+   \   0E44  D0D0              POP     PSW
+   \   0E46  D083              POP     DPH
+   \   0E48  D082              POP     DPL
+   \   0E4A  D0E0              POP     ACC
+   \   0E4C  32                RETI
+      9          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     10          void volume_test(void)
+     11          {
+   \   0E4D            volume_test:
+     12                  byte    d = 0, i;
+   \   0E4D  E4                CLR     A
+   \   0E4E  900000            MOV     DPTR,#$LOCBX volume_test
+   \   0E51  F0                MOVX    @DPTR,A
+     13                  watch();
+   \   0E52  A297              MOV     C,P1.7
+   \   0E54  92E0              MOV     ACC.0,C
+   \   0E56  F4                CPL     A
+   \   0E57  04                INC     A
+   \   0E58  04                INC     A
+   \   0E59  A2E0              MOV     C,ACC.0
+   \   0E5B  9297              MOV     P1.7,C
+     14                  for(i=0; i<8;i++)       {
+   \   0E5D  E4                CLR     A
+   \   0E5E  A3                INC     DPTR
+   \   0E5F  F0                MOVX    @DPTR,A
+   \   0E60            ?0119:
+   \   0E60  900000            MOV     DPTR,#$LOCBX volume_test+1
+   \   0E63  E0                MOVX    A,@DPTR
+   \   0E64  C3                CLR     C
+   \   0E65  9408              SUBB    A,#8
+   \   0E67  5028              JNC     ?0118
+   \   0E69            ?0120:
+     15                          d |= led_test[i];
+   \   0E69  E0                MOVX    A,@DPTR
+   \   0E6A  2403              ADD     A,#LOW(led_test)
+   \   0E6C  F582              MOV     DPL,A
+   \   0E6E  E4                CLR     A
+   \   0E6F  3400              ADDC    A,#HIGH(led_test)
+   \   0E71  F583              MOV     DPH,A
+   \   0E73  E0                MOVX    A,@DPTR
+   \   0E74  900000            MOV     DPTR,#$LOCBX volume_test
+   \   0E77  FC                MOV     R4,A
+   \   0E78  E0                MOVX    A,@DPTR
+   \   0E79  4C                ORL     A,R4
+     16                          output(VOLUME_L, d);            delay(5000);
+   \   0E7A  90C000            MOV     DPTR,#49152
+   \   0E7D  F0                MOVX    @DPTR,A
+   \   0E7E  900000            MOV     DPTR,#$LOCBX volume_test
+   \   0E81  F0                MOVX    @DPTR,A
+   \   0E82  7D13              MOV     R5,#19
+   \   0E84  7C88              MOV     R4,#136
+   \   0E86  120000            LCALL   $REFFN delay
+   \   0E89  900000            MOV     DPTR,#$LOCBX volume_test+1
+   \   0E8C  E0                MOVX    A,@DPTR
+   \   0E8D  04                INC     A
+   \   0E8E  F0                MOVX    @DPTR,A
+   \   0E8F  80CF              SJMP    ?0119
+   \   0E91            ?0118:
+     17                  }       d = 0;
+   \   0E91  E4                CLR     A
+   \   0E92  900000            MOV     DPTR,#$LOCBX volume_test
+   \   0E95  F0                MOVX    @DPTR,A
+     18          
+     19                  for(i=0; i<8;i++)       {
+   \   0E96  A3                INC     DPTR
+   \   0E97  F0                MOVX    @DPTR,A
+   \   0E98            ?0123:
+   \   0E98  900000            MOV     DPTR,#$LOCBX volume_test+1
+   \   0E9B  E0                MOVX    A,@DPTR
+   \   0E9C  C3                CLR     C
+   \   0E9D  9408              SUBB    A,#8
+   \   0E9F  5028              JNC     ?0122
+   \   0EA1            ?0124:
+     20                          d |= led_test[i];
+   \   0EA1  E0                MOVX    A,@DPTR
+   \   0EA2  2403              ADD     A,#LOW(led_test)
+   \   0EA4  F582              MOV     DPL,A
+   \   0EA6  E4                CLR     A
+   \   0EA7  3400              ADDC    A,#HIGH(led_test)
+   \   0EA9  F583              MOV     DPH,A
+   \   0EAB  E0                MOVX    A,@DPTR
+   \   0EAC  900000            MOV     DPTR,#$LOCBX volume_test
+   \   0EAF  FC                MOV     R4,A
+   \   0EB0  E0                MOVX    A,@DPTR
+   \   0EB1  4C                ORL     A,R4
+     21                          output(VOLUME_H, d);            delay(5000);
+   \   0EB2  90C001            MOV     DPTR,#49153
+   \   0EB5  F0                MOVX    @DPTR,A
+   \   0EB6  900000            MOV     DPTR,#$LOCBX volume_test
+   \   0EB9  F0                MOVX    @DPTR,A
+   \   0EBA  7D13              MOV     R5,#19
+   \   0EBC  7C88              MOV     R4,#136
+   \   0EBE  120000            LCALL   $REFFN delay
+   \   0EC1  900000            MOV     DPTR,#$LOCBX volume_test+1
+   \   0EC4  E0                MOVX    A,@DPTR
+   \   0EC5  04                INC     A
+   \   0EC6  F0                MOVX    @DPTR,A
+   \   0EC7  80CF              SJMP    ?0123
+   \   0EC9            ?0122:
+     22                  }       d = 0;
+   \   0EC9  E4                CLR     A
+   \   0ECA  900000            MOV     DPTR,#$LOCBX volume_test
+   \   0ECD  F0                MOVX    @DPTR,A
+     23          
+     24          }
+   \   0ECE  22                RET
+     25          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     26          void led_lcd_test(void)
+     27          {
+   \   0ECF            led_lcd_test:
+     28                  SP(OFF);
+   \   0ECF  C290              CLR     P1.0
+     29                  output(VOLUME_H, 0x0);          output(VOLUME_L, 0x0);
+   \   0ED1  E4                CLR     A
+   \   0ED2  90C001            MOV     DPTR,#49153
+   \   0ED5  F0                MOVX    @DPTR,A
+   \   0ED6  90C000            MOV     DPTR,#49152
+   \   0ED9  F0                MOVX    @DPTR,A
+     30                  P1.6 = P1.5 = P1.4 = 0;         delay(5000);            delay(5000);
+   \   0EDA  C294              CLR     P1.4
+   \   0EDC  C295              CLR     P1.5
+   \   0EDE  C296              CLR     P1.6
+   \   0EE0  7D13              MOV     R5,#19
+   \   0EE2  7C88              MOV     R4,#136
+   \   0EE4  120000            LCALL   $REFFN delay
+   \   0EE7  7D13              MOV     R5,#19
+   \   0EE9  7C88              MOV     R4,#136
+   \   0EEB  120000            LCALL   $REFFN delay
+     31                  P1.6 = P1.5 = P1.4 = 1;         delay(5000);            delay(5000);
+   \   0EEE  D294              SETB    P1.4
+   \   0EF0  D295              SETB    P1.5
+   \   0EF2  D296              SETB    P1.6
+   \   0EF4  7D13              MOV     R5,#19
+   \   0EF6  7C88              MOV     R4,#136
+   \   0EF8  120000            LCALL   $REFFN delay
+   \   0EFB  7D13              MOV     R5,#19
+   \   0EFD  7C88              MOV     R4,#136
+   \   0EFF  120000            LCALL   $REFFN delay
+     32                                                    //01234567890123456789
+     33                  display_buffer(0,0,"JINYANG INDUSTRIAL.",0);
+   \   0F02  E4                CLR     A
+   \   0F03  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   0F06  F0                MOVX    @DPTR,A
+   \   0F07  7D00              MOV     R5,#LOW(?0126)
+   \   0F09  7E00              MOV     R6,#HIGH(?0126)
+   \   0F0B  7F02              MOV     R7,#2
+   \   0F0D  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   0F10  EF                MOV     A,R7
+   \   0F11  F0                MOVX    @DPTR,A
+   \   0F12  A3                INC     DPTR
+   \   0F13  EE                MOV     A,R6
+   \   0F14  F0                MOVX    @DPTR,A
+   \   0F15  A3                INC     DPTR
+   \   0F16  ED                MOV     A,R5
+   \   0F17  F0                MOVX    @DPTR,A
+   \   0F18  7D00              MOV     R5,#0
+   \   0F1A  7C00              MOV     R4,#0
+   \   0F1C  120000            LCALL   $REFFN display_buffer
+     34                  display_buffer(0,1,"H/W DESINE BY JK.  ",0);
+   \   0F1F  E4                CLR     A
+   \   0F20  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   0F23  F0                MOVX    @DPTR,A
+   \   0F24  7D14              MOV     R5,#LOW(?0127)
+   \   0F26  7E00              MOV     R6,#HIGH(?0127)
+   \   0F28  7F02              MOV     R7,#2
+   \   0F2A  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   0F2D  EF                MOV     A,R7
+   \   0F2E  F0                MOVX    @DPTR,A
+   \   0F2F  A3                INC     DPTR
+   \   0F30  EE                MOV     A,R6
+   \   0F31  F0                MOVX    @DPTR,A
+   \   0F32  A3                INC     DPTR
+   \   0F33  ED                MOV     A,R5
+   \   0F34  F0                MOVX    @DPTR,A
+   \   0F35  7D01              MOV     R5,#1
+   \   0F37  7C00              MOV     R4,#0
+   \   0F39  120000            LCALL   $REFFN display_buffer
+     35                  display_buffer(0,2,"SAMPLE BOARD       ",0);
+   \   0F3C  E4                CLR     A
+   \   0F3D  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   0F40  F0                MOVX    @DPTR,A
+   \   0F41  7D28              MOV     R5,#LOW(?0128)
+   \   0F43  7E00              MOV     R6,#HIGH(?0128)
+   \   0F45  7F02              MOV     R7,#2
+   \   0F47  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   0F4A  EF                MOV     A,R7
+   \   0F4B  F0                MOVX    @DPTR,A
+   \   0F4C  A3                INC     DPTR
+   \   0F4D  EE                MOV     A,R6
+   \   0F4E  F0                MOVX    @DPTR,A
+   \   0F4F  A3                INC     DPTR
+   \   0F50  ED                MOV     A,R5
+   \   0F51  F0                MOVX    @DPTR,A
+   \   0F52  7D02              MOV     R5,#2
+   \   0F54  7C00              MOV     R4,#0
+   \   0F56  120000            LCALL   $REFFN display_buffer
+     36                  display_buffer(0,3,"BAUDRATE 9600 BPS  ",0);
+   \   0F59  E4                CLR     A
+   \   0F5A  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   0F5D  F0                MOVX    @DPTR,A
+   \   0F5E  7D3C              MOV     R5,#LOW(?0129)
+   \   0F60  7E00              MOV     R6,#HIGH(?0129)
+   \   0F62  7F02              MOV     R7,#2
+   \   0F64  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   0F67  EF                MOV     A,R7
+   \   0F68  F0                MOVX    @DPTR,A
+   \   0F69  A3                INC     DPTR
+   \   0F6A  EE                MOV     A,R6
+   \   0F6B  F0                MOVX    @DPTR,A
+   \   0F6C  A3                INC     DPTR
+   \   0F6D  ED                MOV     A,R5
+   \   0F6E  F0                MOVX    @DPTR,A
+   \   0F6F  7D03              MOV     R5,#3
+   \   0F71  7C00              MOV     R4,#0
+   \   0F73  120000            LCALL   $REFFN display_buffer
+     37                  delay(5000);    delay(5000);    delay(5000);    delay(5000);    delay(5000);
+   \   0F76  7D13              MOV     R5,#19
+   \   0F78  7C88              MOV     R4,#136
+   \   0F7A  120000            LCALL   $REFFN delay
+   \   0F7D  7D13              MOV     R5,#19
+   \   0F7F  7C88              MOV     R4,#136
+   \   0F81  120000            LCALL   $REFFN delay
+   \   0F84  7D13              MOV     R5,#19
+   \   0F86  7C88              MOV     R4,#136
+   \   0F88  120000            LCALL   $REFFN delay
+   \   0F8B  7D13              MOV     R5,#19
+   \   0F8D  7C88              MOV     R4,#136
+   \   0F8F  120000            LCALL   $REFFN delay
+   \   0F92  7D13              MOV     R5,#19
+   \   0F94  7C88              MOV     R4,#136
+   \   0F96  120000            LCALL   $REFFN delay
+     38                  delay(5000);    delay(5000);    delay(5000);    delay(5000);    delay(5000);
+   \   0F99  7D13              MOV     R5,#19
+   \   0F9B  7C88              MOV     R4,#136
+   \   0F9D  120000            LCALL   $REFFN delay
+   \   0FA0  7D13              MOV     R5,#19
+   \   0FA2  7C88              MOV     R4,#136
+   \   0FA4  120000            LCALL   $REFFN delay
+   \   0FA7  7D13              MOV     R5,#19
+   \   0FA9  7C88              MOV     R4,#136
+   \   0FAB  120000            LCALL   $REFFN delay
+   \   0FAE  7D13              MOV     R5,#19
+   \   0FB0  7C88              MOV     R4,#136
+   \   0FB2  120000            LCALL   $REFFN delay
+   \   0FB5  7D13              MOV     R5,#19
+   \   0FB7  7C88              MOV     R4,#136
+   \   0FB9  120000            LCALL   $REFFN delay
+     39          
+     40                  display_buffer_clear(0);                        delay(5000);
+   \   0FBC  7C00              MOV     R4,#0
+   \   0FBE  120000            LCALL   $REFFN display_buffer_clear
+   \   0FC1  7D13              MOV     R5,#19
+   \   0FC3  7C88              MOV     R4,#136
+   \   0FC5  120000            LCALL   $REFFN delay
+     41                  display_buffer(0,0,"Volume LED TEST....",0);    volume_test();
+   \   0FC8  E4                CLR     A
+   \   0FC9  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   0FCC  F0                MOVX    @DPTR,A
+   \   0FCD  7D50              MOV     R5,#LOW(?0130)
+   \   0FCF  7E00              MOV     R6,#HIGH(?0130)
+   \   0FD1  7F02              MOV     R7,#2
+   \   0FD3  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   0FD6  EF                MOV     A,R7
+   \   0FD7  F0                MOVX    @DPTR,A
+   \   0FD8  A3                INC     DPTR
+   \   0FD9  EE                MOV     A,R6
+   \   0FDA  F0                MOVX    @DPTR,A
+   \   0FDB  A3                INC     DPTR
+   \   0FDC  ED                MOV     A,R5
+   \   0FDD  F0                MOVX    @DPTR,A
+   \   0FDE  7D00              MOV     R5,#0
+   \   0FE0  7C00              MOV     R4,#0
+   \   0FE2  120000            LCALL   $REFFN display_buffer
+   \   0FE5  120000            LCALL   $REFFN volume_test
+     42                  display_buffer(0,0,"SPEAKER TEST.......",0);    SP(ON);
+   \   0FE8  E4                CLR     A
+   \   0FE9  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   0FEC  F0                MOVX    @DPTR,A
+   \   0FED  7D64              MOV     R5,#LOW(?0131)
+   \   0FEF  7E00              MOV     R6,#HIGH(?0131)
+   \   0FF1  7F02              MOV     R7,#2
+   \   0FF3  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   0FF6  EF                MOV     A,R7
+   \   0FF7  F0                MOVX    @DPTR,A
+   \   0FF8  A3                INC     DPTR
+   \   0FF9  EE                MOV     A,R6
+   \   0FFA  F0                MOVX    @DPTR,A
+   \   0FFB  A3                INC     DPTR
+   \   0FFC  ED                MOV     A,R5
+   \   0FFD  F0                MOVX    @DPTR,A
+   \   0FFE  7D00              MOV     R5,#0
+   \   1000  7C00              MOV     R4,#0
+   \   1002  120000            LCALL   $REFFN display_buffer
+   \   1005  D290              SETB    P1.0
+     43                  delay(5000);    delay(5000);    delay(5000);    SP(OFF);
+   \   1007  7D13              MOV     R5,#19
+   \   1009  7C88              MOV     R4,#136
+   \   100B  120000            LCALL   $REFFN delay
+   \   100E  7D13              MOV     R5,#19
+   \   1010  7C88              MOV     R4,#136
+   \   1012  120000            LCALL   $REFFN delay
+   \   1015  7D13              MOV     R5,#19
+   \   1017  7C88              MOV     R4,#136
+   \   1019  120000            LCALL   $REFFN delay
+   \   101C  C290              CLR     P1.0
+     44                  output(VOLUME_H, 0x0);                                                  output(VOLUME_L, 0x0);
+   \   101E  E4                CLR     A
+   \   101F  90C001            MOV     DPTR,#49153
+   \   1022  F0                MOVX    @DPTR,A
+   \   1023  90C000            MOV     DPTR,#49152
+   \   1026  F0                MOVX    @DPTR,A
+     45          
+     46                  display_buffer_clear(0);                        delay(5000);
+   \   1027  FC                MOV     R4,A
+   \   1028  120000            LCALL   $REFFN display_buffer_clear
+   \   102B  7D13              MOV     R5,#19
+   \   102D  7C88              MOV     R4,#136
+   \   102F  120000            LCALL   $REFFN delay
+     47                  display_buffer(0,0,"VOICE SYNTHESIZER..",0);
+   \   1032  E4                CLR     A
+   \   1033  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   1036  F0                MOVX    @DPTR,A
+   \   1037  7D78              MOV     R5,#LOW(?0132)
+   \   1039  7E00              MOV     R6,#HIGH(?0132)
+   \   103B  7F02              MOV     R7,#2
+   \   103D  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   1040  EF                MOV     A,R7
+   \   1041  F0                MOVX    @DPTR,A
+   \   1042  A3                INC     DPTR
+   \   1043  EE                MOV     A,R6
+   \   1044  F0                MOVX    @DPTR,A
+   \   1045  A3                INC     DPTR
+   \   1046  ED                MOV     A,R5
+   \   1047  F0                MOVX    @DPTR,A
+   \   1048  7D00              MOV     R5,#0
+   \   104A  7C00              MOV     R4,#0
+   \   104C  120000            LCALL   $REFFN display_buffer
+     48                  delay(5000);    delay(5000);    delay(5000);    delay(5000);    delay(5000);
+   \   104F  7D13              MOV     R5,#19
+   \   1051  7C88              MOV     R4,#136
+   \   1053  120000            LCALL   $REFFN delay
+   \   1056  7D13              MOV     R5,#19
+   \   1058  7C88              MOV     R4,#136
+   \   105A  120000            LCALL   $REFFN delay
+   \   105D  7D13              MOV     R5,#19
+   \   105F  7C88              MOV     R4,#136
+   \   1061  120000            LCALL   $REFFN delay
+   \   1064  7D13              MOV     R5,#19
+   \   1066  7C88              MOV     R4,#136
+   \   1068  120000            LCALL   $REFFN delay
+   \   106B  7D13              MOV     R5,#19
+   \   106D  7C88              MOV     R4,#136
+   \   106F  120000            LCALL   $REFFN delay
+     49                  display_buffer(0,1,"COMPUTER BOOTING...",0);
+   \   1072  E4                CLR     A
+   \   1073  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   1076  F0                MOVX    @DPTR,A
+   \   1077  7D8C              MOV     R5,#LOW(?0133)
+   \   1079  7E00              MOV     R6,#HIGH(?0133)
+   \   107B  7F02              MOV     R7,#2
+   \   107D  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   1080  EF                MOV     A,R7
+   \   1081  F0                MOVX    @DPTR,A
+   \   1082  A3                INC     DPTR
+   \   1083  EE                MOV     A,R6
+   \   1084  F0                MOVX    @DPTR,A
+   \   1085  A3                INC     DPTR
+   \   1086  ED                MOV     A,R5
+   \   1087  F0                MOVX    @DPTR,A
+   \   1088  7D01              MOV     R5,#1
+   \   108A  7C00              MOV     R4,#0
+   \   108C  120000            LCALL   $REFFN display_buffer
+     50                  delay(5000);    delay(5000);    delay(5000);    delay(5000);    delay(5000);
+   \   108F  7D13              MOV     R5,#19
+   \   1091  7C88              MOV     R4,#136
+   \   1093  120000            LCALL   $REFFN delay
+   \   1096  7D13              MOV     R5,#19
+   \   1098  7C88              MOV     R4,#136
+   \   109A  120000            LCALL   $REFFN delay
+   \   109D  7D13              MOV     R5,#19
+   \   109F  7C88              MOV     R4,#136
+   \   10A1  120000            LCALL   $REFFN delay
+   \   10A4  7D13              MOV     R5,#19
+   \   10A6  7C88              MOV     R4,#136
+   \   10A8  120000            LCALL   $REFFN delay
+   \   10AB  7D13              MOV     R5,#19
+   \   10AD  7C88              MOV     R4,#136
+   \   10AF  120000            LCALL   $REFFN delay
+     51                  display_buffer(0,2,"HARDWARE INITIALIZE",0);
+   \   10B2  E4                CLR     A
+   \   10B3  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   10B6  F0                MOVX    @DPTR,A
+   \   10B7  7DA0              MOV     R5,#LOW(?0134)
+   \   10B9  7E00              MOV     R6,#HIGH(?0134)
+   \   10BB  7F02              MOV     R7,#2
+   \   10BD  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   10C0  EF                MOV     A,R7
+   \   10C1  F0                MOVX    @DPTR,A
+   \   10C2  A3                INC     DPTR
+   \   10C3  EE                MOV     A,R6
+   \   10C4  F0                MOVX    @DPTR,A
+   \   10C5  A3                INC     DPTR
+   \   10C6  ED                MOV     A,R5
+   \   10C7  F0                MOVX    @DPTR,A
+   \   10C8  7D02              MOV     R5,#2
+   \   10CA  7C00              MOV     R4,#0
+   \   10CC  120000            LCALL   $REFFN display_buffer
+     52                  delay(5000);    delay(5000);    delay(5000);    delay(5000);    delay(5000);
+   \   10CF  7D13              MOV     R5,#19
+   \   10D1  7C88              MOV     R4,#136
+   \   10D3  120000            LCALL   $REFFN delay
+   \   10D6  7D13              MOV     R5,#19
+   \   10D8  7C88              MOV     R4,#136
+   \   10DA  120000            LCALL   $REFFN delay
+   \   10DD  7D13              MOV     R5,#19
+   \   10DF  7C88              MOV     R4,#136
+   \   10E1  120000            LCALL   $REFFN delay
+   \   10E4  7D13              MOV     R5,#19
+   \   10E6  7C88              MOV     R4,#136
+   \   10E8  120000            LCALL   $REFFN delay
+   \   10EB  7D13              MOV     R5,#19
+   \   10ED  7C88              MOV     R4,#136
+   \   10EF  120000            LCALL   $REFFN delay
+     53                  display_buffer(0,3,"PROGRAM RUNNING!!!!",0);
+   \   10F2  E4                CLR     A
+   \   10F3  900000            MOV     DPTR,#$PRMBX display_buffer+5
+   \   10F6  F0                MOVX    @DPTR,A
+   \   10F7  7DB4              MOV     R5,#LOW(?0135)
+   \   10F9  7E00              MOV     R6,#HIGH(?0135)
+   \   10FB  7F02              MOV     R7,#2
+   \   10FD  900000            MOV     DPTR,#$PRMBX display_buffer+2
+   \   1100  EF                MOV     A,R7
+   \   1101  F0                MOVX    @DPTR,A
+   \   1102  A3                INC     DPTR
+   \   1103  EE                MOV     A,R6
+   \   1104  F0                MOVX    @DPTR,A
+   \   1105  A3                INC     DPTR
+   \   1106  ED                MOV     A,R5
+   \   1107  F0                MOVX    @DPTR,A
+   \   1108  7D03              MOV     R5,#3
+   \   110A  7C00              MOV     R4,#0
+   \   110C  120000            LCALL   $REFFN display_buffer
+     54                  delay(5000);    delay(5000);    delay(5000);    delay(5000);    delay(5000);
+   \   110F  7D13              MOV     R5,#19
+   \   1111  7C88              MOV     R4,#136
+   \   1113  120000            LCALL   $REFFN delay
+   \   1116  7D13              MOV     R5,#19
+   \   1118  7C88              MOV     R4,#136
+   \   111A  120000            LCALL   $REFFN delay
+   \   111D  7D13              MOV     R5,#19
+   \   111F  7C88              MOV     R4,#136
+   \   1121  120000            LCALL   $REFFN delay
+   \   1124  7D13              MOV     R5,#19
+   \   1126  7C88              MOV     R4,#136
+   \   1128  120000            LCALL   $REFFN delay
+   \   112B  7D13              MOV     R5,#19
+   \   112D  7C88              MOV     R4,#136
+   \   112F  120000            LCALL   $REFFN delay
+     55          }
+   \   1132  22                RET
+     56          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     57          void delay(word count)
+     58          {
+   \   1133            delay:
+     59                  word    i;
+     60                  for(i=0; i<count; i++)          watch();
+   \   1133  900000            MOV     DPTR,#$LOCBX delay
+   \   1136  E4                CLR     A
+   \   1137  F0                MOVX    @DPTR,A
+   \   1138  A3                INC     DPTR
+   \   1139  F0                MOVX    @DPTR,A
+   \   113A  A3                INC     DPTR
+   \   113B  ED                MOV     A,R5
+   \   113C  F0                MOVX    @DPTR,A
+   \   113D  A3                INC     DPTR
+   \   113E  EC                MOV     A,R4
+   \   113F  F0                MOVX    @DPTR,A
+   \   1140            ?0137:
+   \   1140  900000            MOV     DPTR,#$LOCBX delay
+   \   1143  E0                MOVX    A,@DPTR
+   \   1144  FD                MOV     R5,A
+   \   1145  A3                INC     DPTR
+   \   1146  E0                MOVX    A,@DPTR
+   \   1147  FC                MOV     R4,A
+   \   1148  A3                INC     DPTR
+   \   1149  A3                INC     DPTR
+   \   114A  E0                MOVX    A,@DPTR
+   \   114B  D3                SETB    C
+   \   114C  9C                SUBB    A,R4
+   \   114D  900000            MOV     DPTR,#$LOCBX delay+2
+   \   1150  E0                MOVX    A,@DPTR
+   \   1151  9D                SUBB    A,R5
+   \   1152  401B              JC      ?0136
+   \   1154            ?0138:
+   \   1154  E4                CLR     A
+   \   1155  A297              MOV     C,P1.7
+   \   1157  92E0              MOV     ACC.0,C
+   \   1159  F4                CPL     A
+   \   115A  04                INC     A
+   \   115B  04                INC     A
+   \   115C  A2E0              MOV     C,ACC.0
+   \   115E  9297              MOV     P1.7,C
+   \   1160  0C                INC     R4
+   \   1161  EC                MOV     A,R4
+   \   1162  7001              JNZ     ?0174
+   \   1164  0D                INC     R5
+   \   1165            ?0174:
+   \   1165  900000            MOV     DPTR,#$LOCBX delay
+   \   1168  ED                MOV     A,R5
+   \   1169  F0                MOVX    @DPTR,A
+   \   116A  A3                INC     DPTR
+   \   116B  EC                MOV     A,R4
+   \   116C  F0                MOVX    @DPTR,A
+     61          }
+   \   116D  80D1              SJMP    ?0137
+   \   116F            ?0136:
+   \   116F  22                RET
+     62          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     63          void init_interrupt(void)
+     64          {
+   \   1170            init_interrupt:
+     65                  TMOD |= 0x01;   TH0 = 0xFF;             TL0 = 0;
+   \   1170  438901            ORL     TMOD,#1
+   \   1173  758CFF            MOV     TH0,#255
+   \   1176  758A00            MOV     TL0,#0
+     66                  enable(ET0);    enable(TR0);    enable(EA);
+   \   1179  D2A9              SETB    IE.1
+   \   117B  D28C              SETB    TCON.4
+   \   117D  D2AF              SETB    IE.7
+     67          }
+   \   117F  22                RET
+     68          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     69          void key_check(void)
+     70          {
+   \   1180            key_check:
+     71                  watch();
+   \   1180  E4                CLR     A
+   \   1181  A297              MOV     C,P1.7
+   \   1183  92E0              MOV     ACC.0,C
+   \   1185  F4                CPL     A
+   \   1186  04                INC     A
+   \   1187  04                INC     A
+   \   1188  A2E0              MOV     C,ACC.0
+   \   118A  9297              MOV     P1.7,C
+     72          
+     73                  key.byte_data = 0x0;    key.byte_data = input(KEY_ADDR);
+   \   118C  E4                CLR     A
+   \   118D  900000            MOV     DPTR,#key
+   \   1190  F0                MOVX    @DPTR,A
+   \   1191  90A000            MOV     DPTR,#40960
+   \   1194  E0                MOVX    A,@DPTR
+   \   1195  900000            MOV     DPTR,#key
+   \   1198  F0                MOVX    @DPTR,A
+     74                  if(key_wait)                                                                    return;
+   \   1199  900000            MOV     DPTR,#key_wait
+   \   119C  E0                MOVX    A,@DPTR
+   \   119D  6001              JZ      ?0141
+   \   119F            ?0140:
+   \   119F  22                RET
+   \   11A0            ?0141:
+     75                  if(!key.bits.flag)                                                              return;
+   \   11A0  900000            MOV     DPTR,#key
+   \   11A3  E0                MOVX    A,@DPTR
+   \   11A4  33                RLC     A
+   \   11A5  33                RLC     A
+   \   11A6  5401              ANL     A,#1
+   \   11A8  5401              ANL     A,#1
+   \   11AA  7001              JNZ     ?0143
+   \   11AC            ?0142:
+   \   11AC  22                RET
+   \   11AD            ?0143:
+     76          
+     77                  key.bits.flag = OFF;
+   \   11AD  E0                MOVX    A,@DPTR
+   \   11AE  547F              ANL     A,#127
+   \   11B0  F0                MOVX    @DPTR,A
+     78                  switch(key.bits.value)  {
+   \   11B1  E0                MOVX    A,@DPTR
+   \   11B2  540F              ANL     A,#15
+   \   11B4  120000            LCALL   ?A_V_SWITCH_L05
+   \   11B7  11D3              DW      ?0145
+   \   11B9  00                DB      0
+   \   11BA  11EF              DW      ?0149
+   \   11BC  01                DB      1
+   \   11BD  11DA              DW      ?0146
+   \   11BF  04                DB      4
+   \   11C0  11F6              DW      ?0150
+   \   11C2  05                DB      5
+   \   11C3  11E1              DW      ?0147
+   \   11C5  08                DB      8
+   \   11C6  11FD              DW      ?0151
+   \   11C8  09                DB      9
+   \   11C9  11E8              DW      ?0148
+   \   11CB  0C                DB      12
+   \   11CC  1204              DW      ?0152
+   \   11CE  0D                DB      13
+   \   11CF  0000              DW      0
+   \   11D1  120B              DW      ?0153
+   \   11D3            ?0145:
+     79                          case    UP       :              key_send_pc('U');       break;
+   \   11D3  7C55              MOV     R4,#85
+   \   11D5  120000            LCALL   $REFFN key_send_pc
+   \   11D8  8033              SJMP    ?0144
+   \   11DA            ?0146:
+     80                          case    DOWN :          key_send_pc('D');       break;
+   \   11DA  7C44              MOV     R4,#68
+   \   11DC  120000            LCALL   $REFFN key_send_pc
+   \   11DF  802C              SJMP    ?0144
+   \   11E1            ?0147:
+     81                          case    LEFT :          key_send_pc('L');       break;
+   \   11E1  7C4C              MOV     R4,#76
+   \   11E3  120000            LCALL   $REFFN key_send_pc
+   \   11E6  8025              SJMP    ?0144
+   \   11E8            ?0148:
+     82                          case    RIGHT:          key_send_pc('R');       break;
+   \   11E8  7C52              MOV     R4,#82
+   \   11EA  120000            LCALL   $REFFN key_send_pc
+   \   11ED  801E              SJMP    ?0144
+   \   11EF            ?0149:
+     83                          case    ENTR :          key_send_pc('E');       break;
+   \   11EF  7C45              MOV     R4,#69
+   \   11F1  120000            LCALL   $REFFN key_send_pc
+   \   11F4  8017              SJMP    ?0144
+   \   11F6            ?0150:
+     84                          case    ESC  :          key_send_pc('C');       break;
+   \   11F6  7C43              MOV     R4,#67
+   \   11F8  120000            LCALL   $REFFN key_send_pc
+   \   11FB  8010              SJMP    ?0144
+   \   11FD            ?0151:
+     85                          case    MODE :          key_send_pc('M');       break;
+   \   11FD  7C4D              MOV     R4,#77
+   \   11FF  120000            LCALL   $REFFN key_send_pc
+   \   1202  8009              SJMP    ?0144
+   \   1204            ?0152:
+     86                          case    POFF :          key_send_pc('F');       break;
+   \   1204  7C46              MOV     R4,#70
+   \   1206  120000            LCALL   $REFFN key_send_pc
+   \   1209  8002              SJMP    ?0144
+   \   120B            ?0153:
+     87                          default          :                                              break;
+   \   120B  8000              SJMP    ?0144
+   \   120D            ?0144:
+     88                  }       key_wait = ON;          SP(ON);
+   \   120D  7401              MOV     A,#1
+   \   120F  900000            MOV     DPTR,#key_wait
+   \   1212  F0                MOVX    @DPTR,A
+   \   1213  D290              SETB    P1.0
+     89          }
+   \   1215            ?0154:
+   \   1215  22                RET
+     90          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     91          void main(void)
+     92          {
+   \   1216            main:
+     93                  watch();
+   \   1216  E4                CLR     A
+   \   1217  A297              MOV     C,P1.7
+   \   1219  92E0              MOV     ACC.0,C
+   \   121B  F4                CPL     A
+   \   121C  04                INC     A
+   \   121D  04                INC     A
+   \   121E  A2E0              MOV     C,ACC.0
+   \   1220  9297              MOV     P1.7,C
+     94                  init_lcd();                     init_serial(92, rx_chk, rx_cat);
+   \   1222  120000            LCALL   $REFFN init_lcd
+   \   1225  7400              MOV     A,#LOW $IFREF rx_cat
+   \   1227  7D00              MOV     R5,#HIGH $IFREF rx_cat
+   \   1229  900000            MOV     DPTR,#$PRMBX init_serial+4
+   \   122C  CD                XCH     A,R5
+   \   122D  F0                MOVX    @DPTR,A
+   \   122E  A3                INC     DPTR
+   \   122F  CD                XCH     A,R5
+   \   1230  F0                MOVX    @DPTR,A
+   \   1231  7E00              MOV     R6,#LOW $IFREF rx_chk
+   \   1233  7F00              MOV     R7,#HIGH $IFREF rx_chk
+   \   1235  E4                CLR     A
+   \   1236  FD                MOV     R5,A
+   \   1237  7C5C              MOV     R4,#92
+   \   1239  120000            LCALL   $REFFN init_serial
+     95                  init_interrupt();       led_lcd_test();
+   \   123C  120000            LCALL   $REFFN init_interrupt
+   \   123F  120000            LCALL   $REFFN led_lcd_test
+   \   1242            ?0156:
+     96          
+     97                  while(1)        {
+     98                          watch();
+   \   1242  E4                CLR     A
+   \   1243  A297              MOV     C,P1.7
+   \   1245  92E0              MOV     ACC.0,C
+   \   1247  F4                CPL     A
+   \   1248  04                INC     A
+   \   1249  04                INC     A
+   \   124A  A2E0              MOV     C,ACC.0
+   \   124C  9297              MOV     P1.7,C
+     99                          receive_check();                transmit_check();       key_check();
+   \   124E  120000            LCALL   $REFFN receive_check
+   \   1251  120000            LCALL   $REFFN transmit_check
+   \   1254  120000            LCALL   $REFFN key_check
+    100          
+    101                          if(key_wait)                    {
+   \   1257  900000            MOV     DPTR,#key_wait
+   \   125A  E0                MOVX    A,@DPTR
+   \   125B  6026              JZ      ?0159
+   \   125D            ?0158:
+    102                                  if(key_wait_count++ > 2000)             {
+   \   125D  900001            MOV     DPTR,#key_wait_count
+   \   1260  E0                MOVX    A,@DPTR
+   \   1261  FD                MOV     R5,A
+   \   1262  A3                INC     DPTR
+   \   1263  E0                MOVX    A,@DPTR
+   \   1264  FC                MOV     R4,A
+   \   1265  E0                MOVX    A,@DPTR
+   \   1266  04                INC     A
+   \   1267  F0                MOVX    @DPTR,A
+   \   1268  900001            MOV     DPTR,#key_wait_count
+   \   126B  7003              JNZ     ?0175
+   \   126D  E0                MOVX    A,@DPTR
+   \   126E  04                INC     A
+   \   126F  F0                MOVX    @DPTR,A
+   \   1270            ?0175:
+   \   1270  D3                SETB    C
+   \   1271  EC                MOV     A,R4
+   \   1272  94D0              SUBB    A,#208
+   \   1274  ED                MOV     A,R5
+   \   1275  9407              SUBB    A,#7
+   \   1277  400A              JC      ?0161
+   \   1279            ?0160:
+    103                                          key_wait_count = 0;             key_wait = OFF;         SP(OFF);
+   \   1279  E4                CLR     A
+   \   127A  F0                MOVX    @DPTR,A
+   \   127B  A3                INC     DPTR
+   \   127C  F0                MOVX    @DPTR,A
+   \   127D  900000            MOV     DPTR,#key_wait
+   \   1280  F0                MOVX    @DPTR,A
+   \   1281  C290              CLR     P1.0
+   \   1283            ?0161:
+   \   1283            ?0159:
+    104                                  }
+    105                          }
+    106                  }
+    107          }
+   \   1283  80BD              SJMP    ?0156
+    108          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    109          //      lcd_buffer.page = 8;
+    110          //      display_buffer_clear(0);
+    111          //      display_buffer(0,0," ERROR KEY!!!", 0);
+    112          //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    113          
+   \   0000                    RSEG    CSTR
+   \   0000            ?0126:
+   \   0000  4A494E59          DB      'JINYANG INDUSTRIAL.',0
+   \   0004  414E4720
+   \   0008  494E4455
+   \   000C  53545249
+   \   0010  414C2E00
+   \   0014            ?0127:
+   \   0014  482F5720          DB      'H/W DESINE BY JK.  ',0
+   \   0018  44455349
+   \   001C  4E452042
+   \   0020  59204A4B
+   \   0024  2E202000
+   \   0028            ?0128:
+   \   0028  53414D50          DB      'SAMPLE BOARD       ',0
+   \   002C  4C452042
+   \   0030  4F415244
+   \   0034  20202020
+   \   0038  20202000
+   \   003C            ?0129:
+   \   003C  42415544          DB      'BAUDRATE 9600 BPS  ',0
+   \   0040  52415445
+   \   0044  20393630
+   \   0048  30204250
+   \   004C  53202000
+   \   0050            ?0130:
+   \   0050  566F6C75          DB      'Volume LED TEST....',0
+   \   0054  6D65204C
+   \   0058  45442054
+   \   005C  4553542E
+   \   0060  2E2E2E00
+   \   0064            ?0131:
+   \   0064  53504541          DB      'SPEAKER TEST.......',0
+   \   0068  4B455220
+   \   006C  54455354
+   \   0070  2E2E2E2E
+   \   0074  2E2E2E00
+   \   0078            ?0132:
+   \   0078  564F4943          DB      'VOICE SYNTHESIZER..',0
+   \   007C  45205359
+   \   0080  4E544845
+   \   0084  53495A45
+   \   0088  522E2E00
+   \   008C            ?0133:
+   \   008C  434F4D50          DB      'COMPUTER BOOTING...',0
+   \   0090  55544552
+   \   0094  20424F4F
+   \   0098  54494E47
+   \   009C  2E2E2E00
+   \   00A0            ?0134:
+   \   00A0  48415244          DB      'HARDWARE INITIALIZE',0
+   \   00A4  57415245
+   \   00A8  20494E49
+   \   00AC  5449414C
+   \   00B0  495A4500
+   \   00B4            ?0135:
+   \   00B4  50524F47          DB      'PROGRAM RUNNING!!!!',0
+   \   00B8  52414D20
+   \   00BC  52554E4E
+   \   00C0  494E4721
+   \   00C4  21212100
+   \   0000                    COMMON  INTVEC
+   \   000B                    DS      11
+   \   000B  02                DB      2
+   \   000C  024E              DB      HIGH(T0_int),LOW(T0_int)
+   \   0023                    DS      21
+   \   0023  02                DB      2
+   \   0024  0D87              DB      HIGH(SCON_int),LOW(SCON_int)
+   \   0000                    RSEG    X_UDATA
+   \   0000            key:
+   \   0001                    DS      1
+   \   0001            key_send:
+   \   000C                    DS      11
+   \   000C            lcd_buffer:
+   \   0331                    DS      805
+   \   0331            com:
+   \   12DF                    DS      4014
+   \   0000                    RSEG    X_IDATA
+   \   0000            key_wait:
+   \   0001                    DS      1
+   \   0001            key_wait_count:
+   \   0003                    DS      2
+   \   0003            led_test:
+   \   000B                    DS      8
+   \   0000                    RSEG    X_CDATA
+   \   0000  00                DB      0
+   \   0001  0000              DW      0
+   \   0003  01                DB      1
+   \   0004  02                DB      2
+   \   0005  04                DB      4
+   \   0006  08                DB      8
+   \   0007  10                DB      16
+   \   0008  20                DB      ' '
+   \   0009  40                DB      '@'
+   \   000A  80                DB      128
+   \   000B                    END
+
+Errors: none
+Warnings: none
+Code size: 4741
+Constant size: 249
+Static variable size: Data(0) Idata(0) Bit(0) Xdata(4842)
+

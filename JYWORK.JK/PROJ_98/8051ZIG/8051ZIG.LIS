@@ -1,0 +1,60 @@
+8051ZIG.pds
+
+PALASM90  PARSER   - MARKET RELEASE (2-14-90)
+ (C) - COPYRIGHT ADVANCED MICRO DEVICES INC., 1990
+
+
+                    ***********************************
+                    *     PALASM PARSER LISTING       *
+                    ***********************************
+
+LINE #   |----+----1----+----2----+----3----+----4----+----5----+----6----+
+   1     |;PALASM Design Description
+   2     |
+   3     |;---------------------------------- Declaration Segment ------------
+   4     |TITLE    8051 ZIG GAL(ADDRESS DECODER)
+   5     |PATTERN  
+   6     |REVISION 1.0
+   7     |AUTHOR   JK. PARK
+   8     |COMPANY  JINYANG
+   9     |DATE     3/10/98
+  10     |
+  11     |CHIP  DECODE  PALCE16V8
+  12     |
+  13     |;---------------------------------- PIN Declarations ---------------
+  14     |PIN  1          A15                  COMBINATORIAL ; INPUT
+  15     |PIN  2          A14                  COMBINATORIAL ; INPUT
+  16     |PIN  3          A13                  COMBINATORIAL ; INPUT
+  17     |PIN  4          RD                   COMBINATORIAL ; INPUT
+  18     |PIN  5          WR                   COMBINATORIAL ; INPUT
+  19     |PIN  6          TXD                  COMBINATORIAL ; INPUT
+  20     |PIN  7          RX                   COMBINATORIAL ; INPUT
+  21     |PIN  10         GND                                ; INPUT
+  22     |PIN  12         RAM                  COMBINATORIAL ; OUTPUT
+  23     |PIN  13         CS0                  COMBINATORIAL ; OUTPUT
+  24     |PIN  14         CS1                  COMBINATORIAL ; OUTPUT
+  25     |PIN  15         CS2                  COMBINATORIAL ; OUTPUT
+  26     |PIN  16         TX                   COMBINATORIAL ; OUTPUT
+  27     |PIN  17         RXD                  COMBINATORIAL ; OUTPUT
+  28     |PIN  18         READ                 COMBINATORIAL ; OUTPUT
+  29     |PIN  19         WRITE                COMBINATORIAL ; OUTPUT
+  30     |PIN  20         VCC                                ; INPUT
+  31     |;----------------------------------- Boolean Equation Segment ------
+  32     |EQUATIONS
+  33     |
+  34     |/RAM       = /A15 * (/RD  + /WR)                         ; RAM 0x0000 ~ 0x7FFF
+  35     |/CS0       =  A15 *  /A14 * /A13 * (/RD + /WR)           ; CS0 0x8000 ~ 0x9FFF
+  36     |/CS1       =  A15 *  /A14 *  A13 * (/RD + /WR)           ; CS1 0xA000 ~ 0xBFFF
+  37     |/CS2       =  A15 *   A14 * /A13 * (/RD + /WR)           ; CS2 0xC000 ~ 0xDFFF
+  38     |/TX        = /TXD                                        ; TXD Convert
+  39     |/RXD       = /RX                                         ; RXD Convert
+  40     |/READ      = /RD                                         ; RD  Convert
+  41     |/WRITE     = /WR                                         ; WR  Convert
+  42     |;----------------------------------- Simulation Segment ------------
+  43     |SIMULATION
+  44     |
+  45     |;-------------------------------------------------------------------
+
+ %% PARSE %%    No errors.  No warnings.
+
+ %% PARSE %%    File processed successfully.    File:  8051ZIG.pds

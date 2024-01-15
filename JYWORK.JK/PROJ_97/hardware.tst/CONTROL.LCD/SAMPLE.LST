@@ -1,0 +1,178 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12K/DXT                              31/Oct/97  17:34:45     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  large                                                                 #
+#           Source file   =  sample.c                                                              #
+#           List file     =  sample.lst                                                            #
+#           Object file   =  sample.r03                                                            #
+#           Command line  =  -ml -s -P SAMPLE -K -gO -L -q                                         #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+   \   0000                    NAME    sample(18)
+   \   0000                    RSEG    CODE(0)
+   \   0000                    RSEG    CSTR(0)
+   \   0000                    EXTERN  cursor_home
+   \   0000                    $DEFFN  cursor_home(0,0,0,0),init_lcd
+   \   0000                    EXTERN  delay
+   \   0000                    $DEFFN  delay(0,0,2,0),main
+   \   0000                    EXTERN  display_onoff
+   \   0000                    $DEFFN  display_onoff(0,0,1,0),init_lcd
+   \   0000                    EXTERN  entry_mode
+   \   0000                    $DEFFN  entry_mode(0,0,1,0),init_lcd
+   \   0000                    EXTERN  func_set
+   \   0000                    $DEFFN  func_set(0,0,1,0),init_lcd
+   \   0000                    PUBLIC  init_lcd
+   \   0000                    $DEFFN  init_lcd(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  init_timer
+   \   0000                    $DEFFN  init_timer(0,0,0,0,0,0,0,0),main
+   \   0000                    EXTERN  lcd_clr
+   \   0000                    $DEFFN  lcd_clr(0,0,0,0),init_lcd
+   \   0000                    EXTERN  lcd_printf
+   \   0000                    $DEFFN  lcd_printf(0,0,5,0),main
+   \   0000                    PUBLIC  main
+   \   0000                    $DEFFN  main(0,0,0,0,0,0,0,0)
+   \   0000                    EXTERN  ?CL8051L_5_12_L17
+   \   0000                    RSEG    CODE
+      1          #include <io51.h>
+      2          #include <stdio.h>
+      3          #include <stdlib.h>
+      4          
+      5          //#define       output(addr, odata)             ((*(char *)(0x010000 + addr)) = odata)
+      6          //#define       input(addr)             (*(char *)(0x010000 + addr))
+      7          #define         ON                              1
+      8          #define         OFF                             0
+      9          #define         disable(x)              x = OFF
+     10          #define         enable(y)               y = ON
+     11          //typedef       unsigned char   byte;
+     12          //typedef unsigned int  word;
+     13          
+     14          //[*]----------------------------------------------------------------------[*]
+     15          // Link lcd.r03
+     16          //[*]----------------------------------------------------------------------[*]
+     17          interrupt [0x0B]        void T0_int(void);
+     18                                  extern  void func_set(byte cfg);
+     19                                  extern  void display_onoff(byte cfg);
+     20                                  extern  void cursor_home(void);
+     21                                  extern  void entry_mode(byte cfg);
+     22                                  extern  void lcd_clr(void);
+     23                                  extern  void lcd_printf(byte x, byte y, byte *str);
+     24                                  extern  void cursor_locate(byte x, byte y);
+     25                                  extern  void lcd_write_byte(byte ch);
+     26                                  extern  void delay(word count);
+     27                                                  void init_lcd(void);
+     28                                                  void init_timer(void);
+     29                                                  void main(void);
+     30          //[*]----------------------------------------------------------------------[*]
+     31          void init_lcd(void)
+     32          {
+   \   0000            init_lcd:
+     33                  func_set(0x38);         display_onoff(0x0C);
+   \   0000  7C38              MOV     R4,#56
+   \   0002  120000            LCALL   $REFFN func_set
+   \   0005  7C0C              MOV     R4,#12
+   \   0007  120000            LCALL   $REFFN display_onoff
+     34                  cursor_home();      entry_mode(0x06);
+   \   000A  120000            LCALL   $REFFN cursor_home
+   \   000D  7C06              MOV     R4,#6
+   \   000F  120000            LCALL   $REFFN entry_mode
+     35                  lcd_clr();
+   \   0012  120000            LCALL   $REFFN lcd_clr
+     36          }
+   \   0015  22                RET
+     37          //[*]----------------------------------------------------------------------[*]
+     38          void init_timer(void)
+     39          {
+   \   0016            init_timer:
+     40                  TMOD = 0x21;    TH0 = 0xF0;             TL0 = 0x0;
+   \   0016  758921            MOV     TMOD,#33
+   \   0019  758CF0            MOV     TH0,#240
+   \   001C  758A00            MOV     TL0,#0
+     41                  SCON = 0x52;    enable(ET0);    enable(EA);
+   \   001F  759852            MOV     SCON,#82
+   \   0022  D2A9              SETB    IE.1
+   \   0024  D2AF              SETB    IE.7
+     42          }
+   \   0026  22                RET
+     43          //[*]----------------------------------------------------------------------[*]
+     44          void main(void)
+     45          {
+   \   0027            main:
+     46                  init_lcd();             init_timer();
+   \   0027  120000            LCALL   $REFFN init_lcd
+   \   002A  120000            LCALL   $REFFN init_timer
+   \   002D            ?0001:
+     47          
+     48                  // sample program
+     49                  while(1)        {
+     50                          lcd_printf(0, 0, "START PROGRAM..!");
+   \   002D  7D00              MOV     R5,#LOW(?0003)
+   \   002F  7E00              MOV     R6,#HIGH(?0003)
+   \   0031  7F02              MOV     R7,#2
+   \   0033  900000            MOV     DPTR,#$PRMBX lcd_printf+2
+   \   0036  EF                MOV     A,R7
+   \   0037  F0                MOVX    @DPTR,A
+   \   0038  A3                INC     DPTR
+   \   0039  EE                MOV     A,R6
+   \   003A  F0                MOVX    @DPTR,A
+   \   003B  A3                INC     DPTR
+   \   003C  ED                MOV     A,R5
+   \   003D  F0                MOVX    @DPTR,A
+   \   003E  7D00              MOV     R5,#0
+   \   0040  7C00              MOV     R4,#0
+   \   0042  120000            LCALL   $REFFN lcd_printf
+     51                          delay(2000);
+   \   0045  7D07              MOV     R5,#7
+   \   0047  7CD0              MOV     R4,#208
+   \   0049  120000            LCALL   $REFFN delay
+     52                          lcd_printf(0, 1, "END   PROGRAM..!");
+   \   004C  7D11              MOV     R5,#LOW(?0004)
+   \   004E  7E00              MOV     R6,#HIGH(?0004)
+   \   0050  7F02              MOV     R7,#2
+   \   0052  900000            MOV     DPTR,#$PRMBX lcd_printf+2
+   \   0055  EF                MOV     A,R7
+   \   0056  F0                MOVX    @DPTR,A
+   \   0057  A3                INC     DPTR
+   \   0058  EE                MOV     A,R6
+   \   0059  F0                MOVX    @DPTR,A
+   \   005A  A3                INC     DPTR
+   \   005B  ED                MOV     A,R5
+   \   005C  F0                MOVX    @DPTR,A
+   \   005D  7D01              MOV     R5,#1
+   \   005F  7C00              MOV     R4,#0
+   \   0061  120000            LCALL   $REFFN lcd_printf
+     53                          delay(2000);
+   \   0064  7D07              MOV     R5,#7
+   \   0066  7CD0              MOV     R4,#208
+   \   0068  120000            LCALL   $REFFN delay
+     54                  }
+     55          }
+   \   006B  80C0              SJMP    ?0001
+     56          //[*]----------------------------------------------------------------------[*]
+     57          //[*]----------------------------------------------------------------------[*]
+   \   0000                    RSEG    CSTR
+   \   0000            ?0003:
+   \   0000  53544152          DB      'START PROGRAM..!',0
+   \   0004  54205052
+   \   0008  4F475241
+   \   000C  4D2E2E21
+   \   0010  00
+   \   0011            ?0004:
+   \   0011  454E4420          DB      'END   PROGRAM..!',0
+   \   0015  20205052
+   \   0019  4F475241
+   \   001D  4D2E2E21
+   \   0021  00
+   \   0022                    END
+
+Errors: none
+Warnings: none
+Code size: 109
+Constant size: 34
+Static variable size: Data(0) Idata(0) Bit(0) Xdata(0)
+

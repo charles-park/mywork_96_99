@@ -1,0 +1,58 @@
+NAMYANG.pds
+
+PALASM90  PARSER   - MARKET RELEASE (2-14-90)
+ (C) - COPYRIGHT ADVANCED MICRO DEVICES INC., 1990
+
+
+                    ***********************************
+                    *     PALASM PARSER LISTING       *
+                    ***********************************
+
+LINE #   |----+----1----+----2----+----3----+----4----+----5----+----6----+
+   1     |;PALASM DesFign Description
+   2     |
+   3     |;---------------------------------- Declaration Segment ------------
+   4     |TITLE    DATA STORAGE ADDRESS DECODE GAL
+   5     |PATTERN  
+   6     |REVISION 1.0
+   7     |AUTHOR   JONG-KIL, PARK
+   8     |COMPANY  JINYANG INDUSTRIAL.,CO
+   9     |DATE     03/07/97
+  10     |
+  11     |CHIP  DSTODECO  PALCE16V8
+  12     |
+  13     |;---------------------------------- PIN Declarations ---------------
+  14     |PIN  1          A12                  COMBINATORIAL ; INPUT
+  15     |PIN  2          A13                  COMBINATORIAL ; INPUT
+  16     |PIN  3          A15                  COMBINATORIAL ; INPUT
+  17     |PIN  4          RD                   COMBINATORIAL ; INPUT
+  18     |PIN  5          WR                   COMBINATORIAL ; INPUT
+  19     |PIN  6          CLOCK                COMBINATORIAL ; INPUT
+  20     |PIN  7          STS                  COMBINATORIAL ; INPUT
+  21     |PIN  8          PRECIO               COMBINATORIAL ; INPUT
+  22     |PIN  10         GND                                ; INPUT
+  23     |PIN  12         MEM                  COMBINATORIAL ; OUTPUT
+  24     |PIN  13         RAD1                 COMBINATORIAL ; OUTPUT
+  25     |PIN  14         RAB1                 COMBINATORIAL ; OUTPUT
+  26     |PIN  15         INT0                 COMBINATORIAL ; OUTPUT
+  27     |PIN  16         INT1                 COMBINATORIAL ; OUTPUT
+  28     |PIN  17         P17                  COMBINATORIAL ; OUTPUT
+  29     |PIN  20         VCC                                ; INPUT
+  30     |
+  31     |;----------------------------------- Boolean Equation Segment ------
+  32     |EQUATIONS
+  33     |/MEM     = /A15                     ; 0000 - 7fff
+  34     |/RAD1    = A15 * /A13 * /A12        ; 8000  ADC
+  35     |/RAB1    = A15 * /A13 * A12         ; 9000  ID
+  36     |/INT0    = /CLOCK                   ;
+  37     |/P17     = /STS
+  38     |/INT1    = /PRECIO
+  39     |
+  40     |;----------------------------------- Simulation Segment ------------
+  41     |SIMULATION
+  42     |
+  43     |;-------------------------------------------------------------------
+
+ %% PARSE %%    No errors.  No warnings.
+
+ %% PARSE %%    File processed successfully.    File:  NAMYANG.pds

@@ -1,0 +1,653 @@
+{COMPONENT ORCAD.PCB
+ {ENVIRONMENT LAYS.PCB}
+ {DETAIL
+  {SUBCOMP
+{I 1000UF.PRT C1
+{CN
+    1 NET00002
+    2 GND
+}
+}
+{I 1000UF.PRT C2
+{CN
+    1 NET00007
+    2 GND
+}
+}
+{I 1000UF.PRT C3
+{CN
+    1 GND
+    2 NET00006
+}
+}
+{I 100UF.PRT C4
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 100UF.PRT C5
+{CN
+    1 V12+
+    2 GND
+}
+}
+{I 100UF.PRT C6
+{CN
+    1 GND
+    2 V12-
+}
+}
+{I 104.PRT C7
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 104.PRT C8
+{CN
+    1 V12+
+    2 GND
+}
+}
+{I 104.PRT C9
+{CN
+    1 V12-
+    2 GND
+}
+}
+{I 16V8.PRT U1
+{CN
+    1 HZO_1
+    2 DIN_1
+    3 HZ-IN_1
+    4 TX_1
+    5 ?
+    6 ?
+    7 ?
+    8 ?
+    9 ?
+   10 GND
+   11 ?
+   12 HZI_1
+   13 DOUT_1
+   14 HZ-OUT_1
+   15 RX_1
+   16 RXLED_1
+   17 TXLED_1
+   18 HZLED_1
+   19 ?
+   20 VCC
+}
+}
+{I 75176.PRT U2
+{CN
+    1 ?
+    2 VCC
+    3 VCC
+    4 DOUT_1
+    5 GND
+    6 TXD+_1
+    7 TXD-_1
+    8 VCC
+}
+}
+{I 75176.PRT U3
+{CN
+    1 DIN_1
+    2 GND
+    3 GND
+    4 ?
+    5 GND
+    6 NET00004
+    7 NET00003
+    8 VCC
+}
+}
+{I 75176.PRT U4
+{CN
+    1 ?
+    2 VCC
+    3 VCC
+    4 HZ-OUT_1
+    5 GND
+    6 HZ4OUT+_1
+    7 HZ4OUT-_1
+    8 VCC
+}
+}
+{I 75176.PRT U5
+{CN
+    1 HZ-IN_1
+    2 GND
+    3 GND
+    4 ?
+    5 GND
+    6 NET00016
+    7 NET00012
+    8 VCC
+}
+}
+{I BC.PRT C10
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I BC.PRT C11
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I BC.PRT C12
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I BC.PRT C13
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I BC.PRT C14
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I BRIDGE.PRT D1
+{CN
+    1 NET00002
+    2 AC5V_1
+    3 AC5GND_1
+    4 GND
+}
+}
+{I BRIDGE.PRT D2
+{CN
+    1 NET00007
+    2 AC12V_1
+    3 AC12V-_1
+    4 NET00006
+}
+}
+{I DB37S.PRT P1
+{CN
+    1 SD1-1_1
+    2 SD1-3_1
+    3 SD1-5_1
+    4 SD1-7_1
+    5 SD1-9_1
+    6 SD1-11_1
+    7 SD1-13_1
+    8 SD1-15_1
+    9 SD1-17_1
+   10 SD1-19_1
+   11 SD1-21_1
+   12 SD1-23_1
+   13 SD1-25_1
+   14 SD1-27_1
+   15 SD1-29_1
+   16 SD1-31_1
+   17 VCC
+   18 V12+
+   19 V12-
+   20 SD1-2_1
+   21 SD1-4_1
+   22 SD1-6_1
+   23 SD1-8_1
+   24 SD1-10_1
+   25 SD1-12_1
+   26 SD1-14_1
+   27 SD1-16_1
+   28 SD1-18_1
+   29 SD1-20_1
+   30 SD1-22_1
+   31 SD1-24_1
+   32 SD1-26_1
+   33 SD1-28_1
+   34 SD1-30_1
+   35 VCC
+   36 V12+
+   37 V12-
+}
+}
+{I DB37S.PRT P2
+{CN
+    1 VCC
+    2 GND
+    3 V12+
+    4 GND
+    5 V12-
+    6 GND
+    7 HZ4_1
+    8 RXD_1
+    9 ?
+   10 ?
+   11 ?
+   12 ?
+   13 ?
+   14 ?
+   15 SD2-1_1
+   16 SD2-3_1
+   17 SD2-5_1
+   18 SD2-7_1
+   19 SD2-9_1
+   20 VCC
+   21 GND
+   22 V12+
+   23 GND
+   24 V12-
+   25 GND
+   26 ?
+   27 TXD_1
+   28 ?
+   29 ?
+   30 ?
+   31 ?
+   32 ?
+   33 ?
+   34 SD2-2_1
+   35 SD2-4_1
+   36 SD2-6_1
+   37 SD2-8_1
+}
+}
+{I DB9S.PRT P3
+{CN
+    1 HZ4+_1
+    2 RXD+_1
+    3 TXD+_1
+    4 VCC
+    5 V12-
+    6 HZ4-_1
+    7 RXD-_1
+    8 TXD-_1
+    9 V12+
+}
+}
+{I HEADER 2.PRT JP2
+{CN
+    1 SD1-1_1
+    2 SD1-2_1
+}
+}
+{I HEADER 2.PRT JP3
+{CN
+    1 SD1-3_1
+    2 SD1-4_1
+}
+}
+{I HEADER 2.PRT JP4
+{CN
+    1 SD1-5_1
+    2 SD1-6_1
+}
+}
+{I HEADER 2.PRT JP5
+{CN
+    1 SD1-7_1
+    2 SD1-8_1
+}
+}
+{I HEADER 2.PRT JP6
+{CN
+    1 SD1-9_1
+    2 SD1-10_1
+}
+}
+{I HEADER 2.PRT JP7
+{CN
+    1 SD1-11_1
+    2 SD1-12_1
+}
+}
+{I HEADER 2.PRT JP8
+{CN
+    1 SD1-13_1
+    2 SD1-14_1
+}
+}
+{I HEADER 2.PRT JP9
+{CN
+    1 SD1-15_1
+    2 SD1-16_1
+}
+}
+{I HEADER 2.PRT JP10
+{CN
+    1 SD1-17_1
+    2 SD1-18_1
+}
+}
+{I HEADER 2.PRT JP11
+{CN
+    1 SD1-19_1
+    2 SD1-20_1
+}
+}
+{I HEADER 2.PRT JP12
+{CN
+    1 SD1-21_1
+    2 SD1-22_1
+}
+}
+{I HEADER 2.PRT JP13
+{CN
+    1 SD1-23_1
+    2 SD1-24_1
+}
+}
+{I HEADER 2.PRT JP14
+{CN
+    1 SD1-25_1
+    2 SD1-26_1
+}
+}
+{I HEADER 2.PRT JP15
+{CN
+    1 SD1-27_1
+    2 SD1-28_1
+}
+}
+{I HEADER 2.PRT JP16
+{CN
+    1 SD1-29_1
+    2 SD1-30_1
+}
+}
+{I HEADER 2.PRT JP17
+{CN
+    1 SD1-31_1
+    2 SD2-1_1
+}
+}
+{I HEADER 2.PRT JP18
+{CN
+    1 SD2-2_1
+    2 SD2-3_1
+}
+}
+{I HEADER 2.PRT JP19
+{CN
+    1 SD2-4_1
+    2 SD2-5_1
+}
+}
+{I HEADER 2.PRT JP20
+{CN
+    1 SD2-6_1
+    2 SD2-7_1
+}
+}
+{I HEADER 2.PRT JP21
+{CN
+    1 SD2-8_1
+    2 SD2-9_1
+}
+}
+{I HEADER 6.PRT JP1
+{CN
+    1 AC5V_1
+    2 AC5GND_1
+    3 AC12V_1
+    4 GND
+    5 AC12V-_1
+    6 ?
+}
+}
+{I LED3.PRT D3
+{CN
+    1 NET00008
+    2 GND
+    3 NET00008
+}
+}
+{I LED3.PRT D4
+{CN
+    1 NET00020
+    2 GND
+    3 NET00019
+}
+}
+{I LM7805.PRT U6
+{CN
+    1 NET00002
+    2 GND
+    3 VCC
+}
+}
+{I LM7812.PRT U7
+{CN
+    1 NET00007
+    2 GND
+    3 V12+
+}
+}
+{I LM7912.PRT U8
+{CN
+    1 GND
+    2 NET00006
+    3 V12-
+}
+}
+{I NPN.PRT Q1
+{CN
+    1 GND
+    2 NET00040
+    3 RX-OPEN_1
+}
+}
+{I NPN.PRT Q2
+{CN
+    1 NET00008
+    2 NET00011
+    3 NET00010
+}
+}
+{I R100.PRT R7
+{CN
+    1 RXD+_1
+    2 RXD-_1
+}
+}
+{I R100.PRT R12
+{CN
+    1 HZ4IN-_1
+    2 HZ4IN+_1
+}
+}
+{I R10K.PRT R1
+{CN
+    1 VCC
+    2 RXD_1
+}
+}
+{I R10K.PRT R2
+{CN
+    1 VCC
+    2 TXD_1
+}
+}
+{I R10K.PRT R3
+{CN
+    1 VCC
+    2 NET00003
+}
+}
+{I R10K.PRT R4
+{CN
+    1 GND
+    2 NET00004
+}
+}
+{I R10K.PRT R8
+{CN
+    1 NET00012
+    2 VCC
+}
+}
+{I R10K.PRT R9
+{CN
+    1 NET00016
+    2 GND
+}
+}
+{I R1K.PRT R5
+{CN
+    1 RXD-_1
+    2 NET00003
+}
+}
+{I R1K.PRT R6
+{CN
+    1 RXD+_1
+    2 NET00004
+}
+}
+{I R1K.PRT R10
+{CN
+    1 HZ4IN-_1
+    2 NET00012
+}
+}
+{I R1K.PRT R11
+{CN
+    1 HZ4IN+_1
+    2 NET00016
+}
+}
+{I R3K.PRT R14
+{CN
+    1 HZLED_1
+    2 NET00011
+}
+}
+{I R3K.PRT R17
+{CN
+    1 RX_1
+    2 NET00040
+}
+}
+{I R420.PRT R15
+{CN
+    1 TXLED_1
+    2 NET00019
+}
+}
+{I R420.PRT R16
+{CN
+    1 RXLED_1
+    2 NET00020
+}
+}
+{I R820.PRT R13
+{CN
+    1 VCC
+    2 NET00010
+}
+}
+{I SW DIP-4.PRT S2
+{CN
+    1 HZ4OUT+_1
+    2 HZ4IN+_1
+    3 HZ4OUT-_1
+    4 HZ4IN-_1
+    5 HZ4-_1
+    6 HZ4-_1
+    7 HZ4+_1
+    8 HZ4+_1
+}
+}
+{I SW DIP-6.PRT S1
+{CN
+    1 TXD_1
+    2 TXD_1
+    3 RXD_1
+    4 RXD_1
+    5 HZ4_1
+    6 HZ4_1
+    7 HZI_1
+    8 HZO_1
+    9 RX-OPEN_1
+   10 TX_1
+   11 TX_1
+   12 RX-OPEN_1
+}
+}
+{I SW DIP-6.PRT S3
+{CN
+    1 VCC
+    2 GND
+    3 V12+
+    4 GND
+    5 V12-
+    6 ?
+    7 ?
+    8 AC12V-_1
+    9 GND
+   10 AC12V_1
+   11 AC5GND_1
+   12 AC5V_1
+}
+}
+{I TNR.PRT Z1
+{CN
+    1 GND
+    2 RXD+_1
+}
+}
+{I TNR.PRT Z2
+{CN
+    1 GND
+    2 RXD-_1
+}
+}
+{I TNR.PRT Z3
+{CN
+    1 GND
+    2 HZ4+_1
+}
+}
+{I TNR.PRT Z4
+{CN
+    1 GND
+    2 HZ4-_1
+}
+}
+{I TNR.PRT Z5
+{CN
+    1 GND
+    2 TXD-_1
+}
+}
+{I TNR.PRT Z6
+{CN
+    1 GND
+    2 TXD+_1
+}
+}
+{I TNR.PRT Z7
+{CN
+    1 GND
+    2 VCC
+}
+}
+{I TNR.PRT Z8
+{CN
+    1 GND
+    2 V12+
+}
+}
+{I TNR.PRT Z9
+{CN
+    1 GND
+    2 V12-
+}
+}
+}
+}
+}

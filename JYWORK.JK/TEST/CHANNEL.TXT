@@ -1,0 +1,18 @@
+KMO 98 AD BOARD Channel Discription..
+
+DIP SW 0
+CH0 : TEMPERATURE       (-50 ~ +50)   Use TEMP Converter ( TEMP        )
+CH1 : TEMPERATURE       (-50 ~ +50)   Use TEMP Converter ( G_TEMP      )
+CH2 : TEMPERATURE       (-50 ~ +50)   Use TEMP Converter ( CHO_TEMP    )
+CH3 : HUMIDUTY          (0 ~ 99.9%)   Use AMP  Converter (Range Sig * 10 Range)
+
+DIP SW 1
+CH0 : PRECIPITATION     (0.1mm)       Direct Connection (PRE SIG - CH0.3 )
+	  * CH0.3 Pull Up Resister(4.7K)
+CH1 : PRECIPITATION     (0.5mm)       Direct Connection (PRE SIG - CH1.3 )
+	  * CH1.3 Pull Up Resister(4.7K)
+CH2 : SUN/RADA          (11.96uV/Wm^2)Use AMP  Converter(Range Sig * 100 Range)
+CH3 : SUN/DETECT        (ON or OFF)   Direct Connection  ( SIG - CH3.2 )
+
+* Temperature Range Upgrade 6.22 (-50~+80)
+* Convert Board Hardware Must Change

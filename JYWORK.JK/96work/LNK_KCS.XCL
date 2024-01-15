@@ -1,0 +1,117 @@
+-!                 	- LNK_KCS.XCL -
+
+    XLINK command file for the ICC196 C-compiler using the -v1, -ms options. 
+
+    Usage: xlink your_file(s) -f lnk_kcs
+
+    The following segments are used by the compiler:
+
+    Read only segments (PROM)
+    =========================
+
+    segment	address range	max size        used with compiler options
+    -------	-------------	--------        --------------------------
+    INTVEC	2000 - 207F		
+    CSTART	2080
+    CODE	page 0 (or FF)	64 KB
+    RCODE	page 0 (or FF)	64 KB (library code)
+    CDATA0	page 0 		matches IDATA0
+    CDATA1	page 0		matches IDATA1
+    CONST	page 0	                      
+    SWITCH	page 0
+    CSTR	page 0	
+    CCSTR	page 0		matches ECSTR	-y
+
+    Read/write segments (RAM)
+    =========================
+
+    segment	address range	max size	used with compiler options
+    -------	-------------	--------	--------------------------
+    GLOBREG	low registers   8 bytes
+    WRKSEG      low registers   32 bytes       -W
+    UDATA0	low registers   256 bytes	
+    IDATA0	low registers   256 bytes	
+    CSTACK	page 0          64 KB	
+    ECSTR	page 0          64 KB	        -y
+    NO_INIT	page 0          64 KB	        -e ("no_init" keyword)
+    UDATA1	page 0		64 KB	        -e ("near" keyword)
+    IDATA1	page 0		64 KB	        -e ("near" keyword)
+
+    "near" pointers can only access objects in page 0.
+-!
+
+-!    First define CPU  -!
+
+-c80196
+
+-!  Allocate segments which should be loaded -!
+
+-!  Allocate the lower register file segments
+    The segment for the compilers local registers, WRKSEG is assumed to be 
+    of size 32 (-W32 to the compiler). It is put in a vwindow if window 
+    functions are used in the compiler, else use
+     -Z(DATA)GLOBREG,WRKSEG+24,IDATA0,UDATA0=1C-FF) -!
+
+-Z(DATA)GLOBREG,IDATA0,UDATA0=1C-BF
+-Z(DATA)WRKSEG=E0-FF
+
+
+-!  Allocate the read only segments.
+    2000 is here supposed to be start of PROM 
+    (first interrupt vectors then code and constants) 
+    If the inst-pin is used to separate code and data spaces,
+    put INTVEC at FF2000, code segments (RCODE, CODE) should
+    be located at FARCODE i.e 0xFF2080, and data segments from 0.
+    I.e: Z(FARCODE)RCODE,CODE=FF2080		-!
+
+-Z(CONST)INTVEC=2000-207F
+-Z(CODE)CSTART,CODE,RCODE,CONST,SWITCH,CSTR,CCSTR,CDATA0,CDATA1=2080-9FFF
+
+
+-!  Then the writeable segments which must be mapped to a RAM area -!
+
+-Z(DATA)IDATA1,UDATA1,ECSTR=A000-FFFF
+
+-!  Then the CSTACK is allocated right after the DATA 
+    Note that the size of the run-time stack is set to 200 (hex) bytes by 
+    CSTACK+200 -!
+
+-Z(DATA)CSTACK+200
+
+-!  Select reduced "printf" support to reduce library size.
+    See configuration section in manual concerning printf/sprintf.	-!
+
+-e_small_write=_formatted_write
+
+-!  Disable floating-point support in "scanf" to reduce library size.
+    See configuration section in manual concerning scanf/sscanf 	-!
+
+-e_medium_read=_formatted_read
+
+
+-!  Setup the CCBs. Each SET_CCBx is a word, written down to the address 
+    2018 and upwards.
+    NotKC are the chip 196KR, 196KQ, 196KS, 196KT, 196JQ, 196JT, 196JV and 196CA -! 
+
+-DSET_CCB0=20EF         -! Change EF to CCR. Do not touch the MSB. Must be 20H.  -!
+-DSET_CCB1=FFFF         -! If NotKC change high FF to 20H and low FF to CCR1 (e.g: 20DEH ) -!
+-DSET_CCB2=FFFF         -! If NotKC change to 20FF -!
+-DSET_CCB3=FFFF         -! If NotKC change to 20FF -!
+
+-! Setup the WSR address that the C compiler uses (if turned on by -uw) -!
+
+-D?C_WSR=14
+
+
+-! Setup the WSR start value -!
+
+-DSET_WSR=0
+
+
+-!  Now load the 'C' library -!
+
+cl96kcs
+sample
+
+-! Code will now reside in file aout.a32 in Intel-extended Hex format -!
+

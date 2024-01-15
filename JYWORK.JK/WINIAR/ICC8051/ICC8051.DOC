@@ -1,0 +1,251 @@
+
+		==============================
+		Read Me File for ICC8051 V5.xx
+		==============================
+
+
+Updated: 	7/Jun/95 [IMAF] 	Release of ICC8051 V5.12M
+
+========
+Contents
+========
+
+  1.	Important information
+  2.	Manual corrections and Updates
+  3.	Known problems in Current Version
+  4.	Program Corrections and Updates
+
+
+========================
+1. Important Information
+========================
+
+5.12L
+
+	* Include file for Dallas 80C320, 80C520, and 80C530 derivative is
+	  included.
+
+	* Note that the TINY51 is not made for working in the banked memory
+	  model. To make it work in the banked model the user has to change
+	  the sizes of the function pointers in the assembler source.
+
+	* Note that the TINY51 has no support for the reentrant stack in 
+	  task-switches.
+
+	* Note that when changing the reentrant stack-pointer (done when
+	  pushing parameters or at the entrance and exit of a reentrant C
+	  function) You have to safe-guard against an interrupt. The way it is
+	  done in the library is to write the new stack-pointer so that if an
+	  interrupt occurs at most 256 bytes of reentrant stack will be 
+	  wasted. If You can have several stacked interrupts each with a
+	  reentrant interrupt function or calling a reentrant function, or You
+	  have an OS system with lots of processes that all are reentrant, 
+	  then this approach to safe-guard the stack-pointer possibly wastes
+	  to much reentrant stack. There is now a small library, move_xsp.r03,
+	  that safe-guards the change of the stack-pointer by disabling 
+	  interrupts instead. To use it, You have to either replace 
+	  move_xsp into the choosen library by using xlib, or put the move_xsp
+	  file in front of the library in the linker command file (.xcl).
+	  
+	* Versions
+	  This version of the compiler needs XLINK version 4.47c, XLIB version
+	  3.26A, A8051 version 2.03, and CS8051 2.30C/31B (simulator).
+
+	* Recompile
+	  Note that all C source must be recompiled with the new compiler!
+
+5.00A
+
+	* Debuggers/emulators
+	  UBROF from the linker can be incompatible with Debuggers/emulators
+	  UBROF loader, if that is the case try to use the option -Y# together
+	  with -Fdebug in the linker to get the old style of UBROF.
+
+=================================
+2. Manual Corrections and Updates
+=================================
+
+5.12L
+
+	* An interrupt-function with using directive compiled with 
+	  register-bank dependent code flag enabled (-h) can't call any other
+	  function.
+
+5.00A
+
+	* Intrinsic library functions
+	  The manual does not state that in addition to the macro functions 
+	  the following functions are decoded by the code-generator to 
+	  generate very quick and also reentrant code.  Note that this 
+	  requires that the proper .H file is #included.
+
+	  STDLIB.H:	abs()
+
+	  STRING.H:	memcpy()	memmove()	strcmp()
+			strncmp()	strcpy()	strncpy()
+
+====================================
+3. Known Problems in Current Version
+====================================
+
+	* Non-banked function-pointer
+	  A non-banked functionpointer type does not work yet. A generic 
+	  function pointer works okay, as long as it does not point to a 
+	  reentrant or non-banked function.
+
+	* ?-operator
+	  The code I = I ? I - (b ? 3 : 10) : 0; will not work. Rewrite it
+	  into I -= I ? (b ? 3 : 10) : 0; 
+
+	* Cast
+	  A cast to a pointer to a struct like (struct st xdata *) does not
+	  work, use a typedef for the struct and it will work, like typedef 
+	  struct st stt. The cast will then be (stt xdata *).
+
+	* Forward declaration
+	  A forward declaration of a function returning a bit inside a 
+	  function body does not work. Do the forward declaration outside the
+	  function body instead.
+
+	* Declaration
+	  A declaration of the form struct s const * ptr will not work. Use
+	  the equivalence struct s * const ptr.
+		
+	* ,-operator
+	  An expression like *(++p->ptr,p->ptr) does not work.
+
+	* Warning
+	  The declaration const char *const a[], *const b[]; will warn about
+	  attribute ignored. The warning is erroneous.
+
+	* Constant pointers to volatile
+	  The usage of constant pointers to volatile element does not treat
+	  the element as a volatile. Example is:
+		#define PTR	(*(volatile char *) 0x01FFFF)
+
+	* Strncpy
+	  The library function strncpy does not zero-extend the destination 
+	  string if the source is shorter than the prescibed number of bytes.
+
+	* The expression &p.arr where p is a struct with the array arr does
+	  not work. Use the equivalent expression &p.arr[0].
+
+
+==================================
+4. Program Corrections and Updates
+==================================
+
+5.12M   6/Jun/95
+
+	* SCON1 bits updated in IO320.h
+
+	* A monitor function with an endless loop didn't work.
+
+	* A char switch with about the following case values (in this order)
+	  0,1,3: ; 2: ; gave erroneous code.
+
+	* The statement if (char_var-- == 0) didn't save the updated value.
+
+	* The expression int_var <<= 0 gave incorrect code.
+
+	* The expression int_var = ~int_var didn't save back the updated
+	  value to memory.
+	 
+	* A call like f(p->int,p->int2,p->int3,p->int4); where the function
+	  f was declared as f(char,char,char,char); didn't work.
+
+	* The expressions int_var = int_var << 1; int_var += bit ? 1 : 0;
+	  didn't work.
+
+	* The expression  bit ? const : const where both consts are the same 
+	  didn't work.
+
+	* the statement if (int_var & 0x0fffc) gave erroneous code.
+
+	* The expression char = ~bit; gave erroneous code.
+
+5.12L	18/Jan/95
+
+	* The expression char ^= const, if the char was loaded up to a 
+	  register before the expression, was made to memory and then the
+	  register was used for the char in subsequent expressions.
+
+	* Forgot that the library-routine ?ST_R123_R567_L17 destroys R0. 
+
+	* An expression like if (long_var = long_expression) did sometimes
+	  not produce correct code (one way was to use -z and -ml). 
+
+	* The compiler couldn't handle the sign promotion of a signed integer
+	  bit-field. 
+
+	* An optimization of an int switch to byte size listed the whole
+	  int case-values in the assembler listing, instead of only listing
+	  the low or high byte.
+	
+	* The expression *idata_pointer_to_int + int_const gave wrong code. 
+
+	* The expression generic_pointer - generic_pointer_const iddn't
+	  give the correct code.
+
+	* The expression int_const * (compare_expr ? 1 : 0) didn't give
+	  correct code.
+
+	* The expression idata_char = compare_expression ? 1 : 0; didn't give
+	  correct code.
+
+	* An expression like :
+	  generic_pointer[int_index] = complex_long_or_float_expression;
+	  stored to wrong address.
+
+	* The expression ulong >>= int, where ulong was already in registers
+	  didn't work.
+
+	* The expression (*(*p)->fp)(*p) didn't work, i.e. to refer through
+	  the same variable for a parameter and the actual function-pointer
+	  itslef didn't work.
+
+	* the expression if (bit = !bit) didn't work.
+
+	* A problem with a char switch was reported.
+
+	* the expression char1 = char2 + char2 + 5; in a tight loop could
+	  be giving the wrong code.
+
+5.12K	10/Oct/94
+
+	* The expression (signed int) signed_char_variable * 2 was
+	  wrongly optimized.
+
+	* A struct-copy of a struct with size less than or equal to two
+	  generated internal error sometimes.
+
+	* The function f(unsigned char a,b,c) { return(a >= b && a <= c);}
+	  used a destoyed value of a instead of reading it up again. This
+	  problem came in the large memory model for -z/s.
+
+	* At entry of an interrupt function, the compiler sometimes thought
+	  that A had the same value as a register to be pushed.
+
+	* The expression char-loopvariable |= char-expression had a hard time
+	  to put the char-loopvariable back to it's proper register.
+
+	* When the option -u was used with a function with several returns,
+	  at the code for returning from the code the compiler sometimes
+	  thought that the address to the return-address was in DPTR.
+
+	* An int-switch where all case values had the same LSB generated the
+	  wrong case-values in the switch-table in the list-file.
+
+	* A plm function returning a bit called in an if-statement like
+	  if (plm_func()) made a JNZ instead of a JNC.
+
+5.12J   26/Sep/94
+
+=====================================
+End of Read Me File for ICC8051 V5.xx
+=====================================
+
+
+
+
+

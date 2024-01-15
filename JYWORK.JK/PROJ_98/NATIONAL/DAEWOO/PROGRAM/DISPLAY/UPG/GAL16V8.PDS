@@ -1,0 +1,47 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    DAEWOO RACK TYPE DISPLAY DECODE GAL
+PATTERN  
+REVISION 
+AUTHOR   JK,PARK
+COMPANY  JINYANG INC.
+DATE     98/10/28
+
+CHIP  DECOD  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          SINT                 COMBINATORIAL ; INPUT
+PIN  2          RD                   COMBINATORIAL ; INPUT
+PIN  3          WR                   COMBINATORIAL ; INPUT
+PIN  4          A9                   COMBINATORIAL ; INPUT
+PIN  5          A10                  COMBINATORIAL ; INPUT
+PIN  6          A11                  COMBINATORIAL ; INPUT
+PIN  7          A12                  COMBINATORIAL ; INPUT
+PIN  8          A13                  COMBINATORIAL ; INPUT
+PIN  9          A14                  COMBINATORIAL ; INPUT
+PIN  10         GND                  ; INPUT
+PIN  11         A15                  COMBINATORIAL ; INPUT
+PIN  12         INT0                 COMBINATORIAL ; OUTPUT
+PIN  13         COM                  COMBINATORIAL ; OUTPUT
+PIN  14         KEY                  COMBINATORIAL ; OUTPUT
+PIN  15         LED                  COMBINATORIAL ; OUTPUT
+PIN  16         FND0                 COMBINATORIAL ; OUTPUT
+PIN  17         FND1                 COMBINATORIAL ; OUTPUT
+PIN  18         FNDC0                COMBINATORIAL ; OUTPUT
+PIN  19         FNDC1                COMBINATORIAL ; OUTPUT
+PIN  20         VCC                  ; INPUT
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+ INT0  =  /SINT                                                      ;
+/COM   =                A15 * /A14 * /A13 * /A12 * /A11 * /A10 * /A9 ;0x8000
+/KEY   =  /RD        *  A15 * /A14 * /A13 *  A12 * /A11 * /A10 * /A9 ;0x9000
+ LED   =        /WR  *  A15 * /A14 *  A13 * /A12 * /A11 * /A10 * /A9 ;0xA000
+ FND0  =        /WR  *  A15 * /A14 *  A13 *  A12 * /A11 * /A10 * /A9 ;0xB000
+ FND1  =        /WR  *  A15 *  A14 * /A13 * /A12 * /A11 * /A10 * /A9 ;0xC000
+ FNDC0 =        /WR  *  A15 *  A14 * /A13 *  A12 * /A11 * /A10 * /A9 ;0xD000
+ FNDC1 =        /WR  *  A15 *  A14 *  A13 * /A12 * /A11 * /A10 * /A9 ;0xE000
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

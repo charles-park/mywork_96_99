@@ -1,0 +1,292 @@
+################################################################################
+#                                                                              #
+#      IAR Universal Linker V4.48F/386                                         #
+#                                                                              #
+#           Link time     =  31/Oct/97  17:34:45                               #
+#           Target CPU    =  8051                                              #
+#           List file     =  sample.map                                        #
+#           Output file 1 =  sample.hex                                        #
+#           Output format =  intel-standard                                    #
+#           Command line  =  -f SAMPLE (-c8051 -D_R=0                          #
+#                            -Z(XDATA)C_ARGX,X_UDATA,X_IDATA,NO_INIT,ECSTR=0   #
+#                            -Z(CODE)INTVEC=0                                  #
+#                            -Z(CODE)RCODE,D_CDATA,I_CDATA,X_CDATA=80          #
+#                            -Z(CODE)C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST     #
+#                            -Z(DATA)C_ARGD,D_UDATA,D_IDATA=30                 #
+#                            -Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK            #
+#                            -Z(BIT)C_ARGB,BITVARS=0                           #
+#                            -e_small_write=_formatted_write                   #
+#                            -e_medium_read=_formatted_read lcd sample cl8051l #
+#                            -Fintel-standard -o sample.hex -x -l sample.map)  #
+#                                                                              #
+#                                                                              #
+#                                               (c) Copyright IAR Systems 1996 #
+################################################################################
+
+
+
+
+
+                ****************************************
+                *                                      *
+                *           CROSS REFERENCE            *
+                *                                      *
+                ****************************************
+
+       Program entry at : 0000  Relocatable, from module : CSTARTUP
+
+
+
+                ****************************************
+                *                                      *
+                *             MODULE MAP               *
+                *                                      *
+                ****************************************
+
+  DEFINED ABSOLUTE ENTRIES
+  PROGRAM MODULE, NAME : ?ABS_ENTRY_MOD
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           _R                      0000            CSTARTUP
+
+
+  SEGMENTS IN THE MODULE
+  ======================
+C_ARGX
+  Relative segment, address : 0000 - 0006
+
+    *************************************************************************
+
+  FILE NAME : lcd.r03
+  PROGRAM MODULE, NAME : lcd
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 022E - 044A
+           ENTRIES                ADDRESS          REF BY MODULE
+           T0_int                  022E            Not referred to
+               interrupt function
+           cursor_home             0303            sample
+           cursor_locate           03CB            Not referred to
+               xdata = 0000 ( 0000 , 0002 )
+           delay                   040D            sample
+               xdata = 0002 ( 0002 , 0002 )
+           display_onoff           02F0            sample
+               xdata = 0006 ( 0000 , 0001 )
+           entry_mode              0311            sample
+               xdata = 0006 ( 0000 , 0001 )
+           func_set                02C1            sample
+               xdata = 0006 ( 0000 , 0001 )
+           lcd_clr                 0322            sample
+               xdata = 0002 ( 0002 , 0000 )
+           lcd_printf              0368            sample
+               xdata = 0002 ( 0000 , 0005 )
+           lcd_write_byte          0403            Not referred to
+               xdata = 0000 ( 0000 , 0001 )
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 000D
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : 0007 - 0028
+
+    *************************************************************************
+
+  FILE NAME : sample.r03
+  PROGRAM MODULE, NAME : sample
+
+  SEGMENTS IN THE MODULE
+  ======================
+CODE
+  Relative segment, address : 044B - 04B7
+           ENTRIES                ADDRESS          REF BY MODULE
+           init_lcd                044B            Not referred to
+           init_timer              0461            Not referred to
+           main                    0472            CSTARTUP
+    -------------------------------------------------------------------------
+CSTR
+  Relative segment, address : 020C - 022D
+
+    *************************************************************************
+
+  FILE NAME : d:\lang\cci_hdsl\lib\cl8051l.r03
+  PROGRAM MODULE, NAME : CSTARTUP
+
+  SEGMENTS IN THE MODULE
+  ======================
+CSTACK
+  Relative segment, address : 0030 - 004D
+    -------------------------------------------------------------------------
+INTVEC
+  Common segment, address : 0000 - 0002
+    -------------------------------------------------------------------------
+RCODE
+  Relative segment, address : 0080 - 012F
+    -------------------------------------------------------------------------
+D_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+D_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+I_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_UDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_CDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+X_IDATA
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+ECSTR
+  Relative segment, address : Not in use    
+    -------------------------------------------------------------------------
+CCSTR
+  Relative segment, address : Not in use    
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : exit
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0130 - 0131
+           ENTRIES                ADDRESS          REF BY MODULE
+           exit                    0130            Not referred to
+           ?C_EXIT                 0130            CSTARTUP
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?LOAD_A_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0132 - 015F
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?LOAD_A_L17             0144            Not referred to
+           ?LD_A_R123_L17          0132            lcd
+           ?LD_A_R567_L17          013C            lcd
+           ?LD_A_R123_DISP_L17     0137            Not referred to
+           ?LD_A_R567_DISP_L17     0141            Not referred to
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0160 - 017C
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_L17         0160            ?LOAD_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R123_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 017D - 01AD
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R123_DISP_L17    017D            ?LOAD_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01AE - 01CE
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_L17         01AE            ?LOAD_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?SETUP_R567_DISP_L17
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 01CF - 01FF
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?SETUP_R567_DISP_L17    01CF            ?LOAD_A_L17
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?VERSION_L17
+          ABSOLUTE ENTRIES        ADDRESS          REF BY MODULE
+           ==============         =======          =============
+           ?CL8051L_5_12_L17       C893            lcd
+                                                   sample
+
+    -------------------------------------------------------------------------
+  LIBRARY MODULE, NAME : ?PINC1_R567_TO_R123_L20
+
+  SEGMENTS IN THE MODULE
+  ======================
+RCODE
+  Relative segment, address : 0200 - 020B
+           ENTRIES                ADDRESS          REF BY MODULE
+           ?PINC1_R567_TO_R123_L20
+                                   0200            lcd
+
+    -------------------------------------------------------------------------
+                ****************************************
+                *                                      *
+                *        SEGMENTS IN DUMP ORDER        *
+                *                                      *
+                ****************************************
+
+ SEGMENT               START ADDRESS    END ADDRESS  TYPE  ORG  P/N  ALIGN
+ =======               =============    ===========  ====  ===  ===  =====
+C_ARGB                          Not in use            dse  stc  pos   0     
+BITVARS                         Not in use            dse  flt  pos   0     
+C_ARGX                      0000     -     0006       rel  stc  pos   0     
+X_UDATA                     0007     -     0028       rel  flt  pos   0     
+X_IDATA                         Not in use            rel  flt  pos   0     
+NO_INIT                         Not in use            dse  flt  pos   0     
+ECSTR                           Not in use            rel  flt  pos   0     
+INTVEC                      0000     -     000D       com  stc  pos   0     
+RCODE                       0080     -     020B       rel  stc  pos   0     
+D_CDATA                         Not in use            rel  flt  pos   0     
+I_CDATA                         Not in use            rel  flt  pos   0     
+X_CDATA                         Not in use            rel  flt  pos   0     
+C_ICALL                         Not in use            dse  flt  pos   0     
+C_RECFN                         Not in use            dse  flt  pos   0     
+CSTR                        020C     -     022D       rel  flt  pos   0     
+CCSTR                           Not in use            rel  flt  pos   0     
+CODE                        022E     -     04B7       rel  flt  pos   0     
+CONST                           Not in use            dse  flt  pos   0     
+C_ARGD                          Not in use            dse  stc  pos   0     
+D_UDATA                         Not in use            rel  flt  pos   0     
+D_IDATA                         Not in use            rel  flt  pos   0     
+C_ARGI                          Not in use            dse  flt  pos   0     
+I_UDATA                         Not in use            rel  flt  pos   0     
+I_IDATA                         Not in use            rel  flt  pos   0     
+CSTACK                      0030     -     004D       rel  flt  pos   0     
+
+                ****************************************
+                *                                      *
+                *        END OF CROSS REFERENCE        *
+                *                                      *
+                ****************************************
+
+Memory type       Used
+-----------       ----
+CODE              1094 bytes
+XDATA               41 bytes
+IDATA               30 bytes
+
+Errors: none
+Warnings: none
+

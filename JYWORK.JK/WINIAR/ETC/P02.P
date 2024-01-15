@@ -1,0 +1,31 @@
+p02: do;
+declare MEMORY_C00 byte external auxiliary;
+declare PRINT_THIS_ALSO_C03 structure (memory byte,adress word) external auxiliary;
+PRINT_C00: procedure(a) word external;
+declare a word; end;
+PRINT_BUFF_P01: procedure(a) word external;
+declare a word; end;
+
+HEJ_P02: procedure(p) public;
+declare p word;
+declare	nr word auxiliary;
+declare	arr (10) byte auxiliary;
+	
+arr(0) = 'P';
+arr(1) = ' ';
+arr(2) = 'w';
+arr(3) = 'r';
+arr(4) = 'i';
+arr(5) = 't';
+arr(6) = 'e';
+arr(7) = 's';
+arr(8) = 0dh;
+arr(9) = 0ah;
+nr = 0;
+memory_C00 = 1;
+nr = nr + PRINT_C00(.arr);
+nr = nr + PRINT_BUFF_P01(p);
+memory_C00 = PRINT_THIS_ALSO_C03.memory;
+nr = nr + PRINT_C00(PRINT_THIS_ALSO_C03.adress);
+end HEJ_P02;
+end P02;

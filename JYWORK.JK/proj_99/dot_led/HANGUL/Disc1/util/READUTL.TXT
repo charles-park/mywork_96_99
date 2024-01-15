@@ -1,0 +1,311 @@
+      Ðe‹i œa·¡§aœáŸ¡ 2.0 ·e  ¶ ”a´·Ðe ¦…´¡Ÿi Í¡ÐqÐa‰¡ ·¶·a£a¡ ‹aµA 
+˜aŸe ÍeŸ¡Ðe ¬a¶w·i ¶áÐ¬á ”a®· ·AË©Ÿ¡Ë¡—i·i Í¡ÐqÐa‰¡ ·¶”a. ·¡ ·AË©Ÿ¡
+Ë¡—i·e Ðe‹i œa·¡§aœáŸ¡ 2.0 ·a¡  e—i´á »¥ˆõ·¡ ”¦¦…·¡¡a  hlv20utl.exe
+­¢µA ¯©Ð—ÑÁ·©‰Á ¬é¡wÑÁ·©,‹aŸ¡‰¡ ­¡¯aˆa —i´á ·¶·a£a¡ Ò‰ŸWÐe µ¹A·  µb
+Ði•¡ ‰qÐi ˆõ·¡”a.
+
+<MKFONT.exe>
+
+      Ðe‹i œa·¡§aœáŸ¡ 2.0 ·e Ðe‹i 8x4x4,10x4x4,6x2x1,2x1x2 —w·i ¬a¶wÐi 
+® ·¶·a¡a µw¢…·e Ñe¸ 256 character  e·i ¬a¶wÐi ® ·¶”a. Í¥Ëa—i·e ÑÁ·©
+µA¬á ·ª´áµ© ®•¡ ·¶‰¡ œa·¡§aœáŸ¡· ¸w Í¥ËaŸi ¬a¶wÐi®•¡,™¡“e  ¥wÐ—Ði 
+®•¡ ·¶”a. ·¡˜ —w¢–A“e Í¥Ëa· Ñw¯¢·e .hft œa“e Ëb¥iÐe Ñw¯¢·¥•A  ·¡“e 
+œa·¡§aœáŸ¡µÁ ÐqA  ·¶“e  mkfont.exe  œa“e  ¯©Ð—ÑÁ·©µA¬á   e—i´á»¡“e  C 
+format ·¡”a. »b mkfont Ÿi ¯©Ð—¯¡Ç¡¡e ÑÁ¡eµA“e .fnt µÁ .kor,.eng ˆa  a
+Èae”a. ( ÐeÑÁ¡eµA Îa¯¡ˆa“wÐe ¦…œ· (´¢ 40~50 ˆ) ·¡¬w·e Ðe¤åµA  ÀáŸ¡ˆa 
+´e–A£a¡ ÐeÑÁ¡e ¡ Í¥Ëa®Ÿi  xÂ‰ˆõ ) ¤a´aŸi ¶‘»¢µa¬á Ÿ¡Èå·i Ã¡¡e  Ðe
+‹i œa·¡§aœáŸ¡µA¬á ÀáŸ¡ˆa ˆa“wÐe Ñw¯¢·¡¡e Ñw¯¢·i ¸a•· Ìe”eÐaµa (µw¢…,Ðe
+‹i•¡ Ìe”e.Ðe‹i· Ñw¯¢•¡ Ìe”e) ÑÁ¡eµA ˆe”eÐe ¢…¸w·a¡ Í¥Ëa· ¡¡´··i  ¥¡
+µaº…”a.
+
+        ™¡Ðe Í¥ËaÑÁ·©· Ñw¯¢•¡ ¥¡µaº‰A –E”a. ·¡ Ñw¯¢·e aº—µA  Í¥ËaŸi 
+ÑA”áÑÁ·©µA ´ó•A·¡ËaÐi˜ ™¡ ³a·¡£a¡ ¸i ¥¡´a–…”a.  a·qµA —a“e Í¥Ëaˆa ·¶
+·a¡e ‹a Í¥Ëa¶áµA ¤a´aŸi ˆx”a‘½‰¡ F1 Ç¡·¡Ÿi ’Ÿa¡e ‹a  —¡BÉ¡Ÿ¡µA  .hft 
+µÁ .asm ·¡ ¬—‹¡‰A –E”a. ·¡ .hft Ÿi Large ¡¡•I¡ bcc Ÿi  ·¡¶wÐ  ÄñÌa·© 
+Ða‰¡ .asm ·i tasm (Turbo Assembler) ·i ·¡¶wÐ¬á ÄñÌa·© Ða¡e .obj  ÑÁ·©
+—i·i ´è“e”a. ( .hft µÁ .asm · ÑÁ·© ·¡Ÿq·e ¹¡‹q ”aŸq. .hft ÑÁ·©· ·¡Ÿq 
+{µA“e ¸a•··a¡ I ˆa ¦›“e”a. - ÑÁ·© ·¡Ÿq·¡ a.fnt µv·i ‰w¶  ai.hft  µÁ 
+a.asm ·¡ ¬—¬÷–Q )
+
+           +- Í¥Ëa ÑÁ·©·i ÄñÌa·© Ða“e µ ----------+
+           |                                       |
+           |  ; ÑÁ·© ·¡Ÿq·¡ test.fnt œa‰¡ ˆa¸÷Ða¡e |
+           |    mkfont “e testi.hft µÁ test.asm ·i |
+           |     e—i´á º…”a.                       |
+           |                                       |
+           |  bcc -c -ml testi.hft <enter>         |
+           |  tasm test.asm <enter>                |
+           +---------------------------------------+
+
+·¡ˆõ·¡ µw¢… Í¥Ëa·¡¡e hgfontel.lib µA ÐsÃ¡‰¡,Ðe‹i Í¥Ëa·¡¡e hgfonthl.lib 
+µA ÐsÃ¥”a.
+
+           +- œa·¡§aœáŸ¡µA ÐsÃ¡“e µ ----------------+
+           |                                         |
+           |  tlib hgfontel.lib+testi.obj (µw¢…·©˜) |
+           |  tlib hgfontel.lib+test.obj             |
+           |                                         |
+           |  tlib hgfonthl.lib+testi.obj (Ðe‹i·©˜) |
+           |  tlib hgfonthl.lib+test.obj             |
+           +-----------------------------------------+
+
+·¡¹A —w¢·e {e ­Q·¡‰¡ hghlib.h Ÿi ®¸÷Ða“e ·© e q´v”a. hghlib.h  Ÿi 
+¸i ¬iÍa¥¡¡e ”a·q‰Á ˆ{·e ¦¦…·¡ ¥¡·¥”a.
+                                                         
+      +-- hghlib.h · ·©¦ -----------------------------+
+      |                                                 |
+      | // 9 english font define ...                    |
+      |                                                 |
+      | #define BIG_ENG         &big_eng    ,ENG_256    |
+      | .                                               |
+      | .                                               |
+      |                                                 |
+      | // 15 hangul font define ...                    |
+      |                                                 |
+      | #define GODIK1_HAN      &godik1_han ,HAN_8x4x4  |
+      | .                                               |
+      | .                                               |
+      +-------------------------------------------------+
+
+·¡ ¦¦…µA¬á '// 9 english font define..' œa‰¡ –A´á ·¶“e ¦¦…·¡ µw¢… Í¥
+ËaŸi —w¢Ða“e ¦¦…·¡¡a '// 15 hangul font define..' œa‰¡ –A´á ·¶“e  ¦
+¦…·¡ Ðe‹i Í¥ËaŸi —w¢Ða“e ¦¦…·¡”a.  e·© —w¢Ðe µw¢… Í¥Ëa ÑÁ·©·  ·¡Ÿq
+·¡ ABC µv·a¡e 
+
+              #define ABC_ENG         &abc_eng,ENG_256
+
+·i µw¢… Í¥Ëa ¸÷·¦µA ÂˆaÐa‰¡ Ðe‹i Í¥Ëa ÑÁ·©· ·¡Ÿq·¡ ABC µv·a¡e
+
+              #define ABC_HAN         &abc_han,Ðe‹iÑw¯¢
+
+·i Ðe‹i Í¥Ëa ¸÷·¦µA ÂˆaÐe”a. 'Ðe‹iÑw¯¢' ·¡œa‰¡ ³e ¦¦…·e ¤a¡  Ðe‹i
+· Š¬÷ Ñw¯¢·i  iÐa“e ˆõ·a¡ mkfont.exe µA¬á Ÿ¡ÈåÇ¡·¡¡ Í¥ËaŸi ¥©˜ ¦
+¶å•¡¶ Title ¦¦…µA aÈae”a.  ·¡ Ñw¯¢·e ”a·q· ˆõº— ¬åÈ‚Ða¡e –E”a. µw
+¢…·e ¢¹¡ˆå ENG_256 ·¡‰¡ Ðe‹i·e 4 ˆa»¡º— ¬åÈ‚Ðe”a.
+
+             +- Ðe‹i Í¥Ëa· Ñw¯¢ 4 ˆa»¡ --+
+             |                            |
+             |  // font format            |
+             |                            |
+             |  #define HAN_8x4x4       0 |
+             |  #define HAN_6x2x1       1 |
+             |  #define HAN_10x4x4      2 |
+             |  #define HAN_2x1x2       3 |
+             |  #define ENG_256         0 |
+             +----------------------------+
+
+ a»¡ b·a¡ q·e ¸b´ó·e extern.h · ´ó•A·¡Ëa·¡”a.  ÑA”áÑÁ·©·  {¦¦…·i 
+¬iÍa¥¡¡e ´aœµÁ ˆ{·e ¦¦…·¡ ·¶”a.
+
+             +- extern.h · ·©¦¦… ------------+
+             |                                 |
+             |  extern "C" {                   |
+             |                                 |
+             |      extern void  big_eng();    |
+             |      .                          |
+             |      .                          |
+             |                                 |
+             |      extern void  godik1_han(); |
+             |      .                          |
+             |      .                          |
+             |  };                             |
+             +---------------------------------+
+
+µa‹¡µA —w¢ Í¥ËaŸi ÂˆaÐ´¡ Ðe”a.  e·© µw¢… Í¥Ëa ÑÁ·© ·¡Ÿq·¡ ABC  µv”a
+¡e abc_eng ˆa ¬—‰v·i ˆõ·¡£a¡ 
+
+              extern void abc_eng();
+
+Ÿi ÂˆaÐa¡e –A‰¡ Ðe‹i Í¥Ëa ÑÁ·© ·¡Ÿq·¡ ABC µv”a¡e abc_han ·¡ ¬—‰v·i ˆõ
+·¡£a¡
+              extern void abc_han();
+
+·i  ÂˆaÐe”a.  ·¡¹A  ¡¡—e  —w¢¸b´ó·¡  {v·a“¡  hgSetHanFont   Ðq®a 
+hgSetEngFont Ðq®¡ ¦‰œá¬á ³a‹¡ e Ða¡e –E”a.
+
+<GETCHIP.exe>
+
+          Ñe¸   ˆa»¡‰¡   ·¶“e   §¡—¡µ¡   Äa—a·   ¹·ŸAŸi    ´iaº…”a. 
+Hercules,EGA,VGA Ÿi ¯¢¥iÐa¡a SuperVGA ·© ‰w¶ Ðe‹i œa·¡§aœáŸ¡  2.0  ·¡ 
+»¡¶¥Ða“e 7 ˆa»¡· SuperVGA ChipSet ·¥»¡Ÿi ¹¡¬aÐaµa ‹a ¹·ŸAµÁ ‰i‰ÁŸi ÑÁ
+¡eµA Îa¯¡Ð º…”a.
+
+<HELPC.exe>
+
+        Ðe‹i œa·¡§aœáŸ¡ 2.0 · Help ‹¡“w·i ¶áÐ  e—i´á »¥ˆõ·a¡ Ëb¸÷Ðe 
+Ñw¯¢·a¡  e—i´á»¥ •¡¶‘ i ÑÁ·©·i ¦…¬âÐaµa ·¥•B¯a ÑÁ·©·i  e—i´á º…”a. •¡
+¶‘ i ÑÁ·©· Ñw¯¢·e ”a·q‰Á ˆ{”a.
+
+                +- •¡¶‘ i ÑÁ·© (file.hhf) · Ñw¯¢ -+                       
+                |  ( ¤e—a¯¡ .hhf µa´¡Ðq )          |                       
+                |                                  |                       
+                |  $keyword                        |                       
+                |  ¢…¸w                            |                       
+                |  ¢…¸w                            |                       
+                |  .                               |                       
+                |  .                               |                       
+                |  $keyword2                       |                       
+                |  ¢…¸w                            |                       
+                |  .                               |                       
+                |  .                               |                       
+                |  $$      <- {Îa¯¡               |                       
+                +----------------------------------+                       
+
+µŸi —i´á test.hhf Ÿi ”a·q‰Á ˆ{·¡ ¸b¬÷Ð–”a‰¡ Ða¸a.
+
+             +- •¡¶‘ i ÑÁ·©· ¸b¬÷ µ --------------+
+             |                                      |
+             |  $Ðe‹iœa·¡§aœáŸ¡                     |
+             |  Ðe‹iµA ‰ÅÐe ·³/Â‰b žË¥—i·i        |
+             |  ¡¡´a ³a‹¡ ¹½•¡¢ œa·¡§aœáŸ¡ÑÁ Ðeˆõ. |
+             |  $$                                  |
+             +--------------------------------------+
+
+·¡Ÿi Ðe‹i œa·¡§aœáŸ¡ 2.0 · Ðq®µA¬á ¬a¶wÐa‹¡ ¶áÐ¬á“e  ·¥•B¯a  ÑÁ·©·¡ 
+Ï©¶aÐe•A ”a·q‰Á ˆ{·¡ Ða¡e –E”a.
+
+             +- ·¥•B¯a ÑÁ·©·i  e—a“e µ ------------------+
+             |                                            |
+             |  helpc test <enter> ( ÑÂ¸w¸a ¦›·¡»¡ ´g·q ) |
+             +--------------------------------------------+
+
+‹aœá¡e test.hix ˆa ¬—‹¡‰¡,•¡¶‘ i Ðq®µA¬á ·¡¶wÐi ® ·¶‰A –E”a. ·¡¶w ¤w
+¤ó·e hgHHELP_.. ŸA· Ðq® ¬a¶w¤ó·i Àq‰¡Ða‹¡ ¤aœe”a.
+
+<HMCMAKER.exe>
+
+        ·¡ ·AË©Ÿ¡Ë¡“e Ðe‹i œa·¡§aœáŸ¡ 2.0 ´eµA Í¡Ðq–E  a¶¯a  œa·¡§aœá
+Ÿ¡Ÿi ¶áÐe ˆõ·¡”a. ·¡  a¶¯a œa·¡§aœáŸ¡µA¬á“e 16x16 ·  a¶¯a Äá¬áŸi ·¡
+¶wÐa“e•A ·¡˜ ·¡ ·AË©Ÿ¡Ë¡Ÿi ¬a¶wÐa¡e  a¶¯a Äá¬áŸi  ¯©Ð—ÑÁ·©µA  ¸wÐi 
+® ·¶”a. ‹a ®…¬á“e ”a·q‰Á ˆ{”a.
+
+      +--------  a¶¯a Äá¬áŸi  e—a“e µ -----------------------+
+      |                                                        |
+      | 1.·©¤e¸â·¥ Í¥Ëa µA—¡Èá¡  a¶¯a Äá¬áŸi —¡¸a·¥ Ðe”a. ”e |
+      |   ·¡˜  a¶¯a Äá¬áŸi ¶áÐe ¦¦…‰Á ÉA–Ÿ¡Ÿi ‹aŸ¡‹¡  ¶áÐe |
+      |   ¦¦…·i µe”i´a¬á  e—e”a. »b 16x16 · – ‹i¸aŸi —¡¸a·¥ |
+      |   Ða“e ˆõ·¡”a. —¡¯aÅUµA“e hlv20mcr.exe ´eµA µ¹A   a¶ |
+      |   ¯a Äá¬áŸi ”q‰¡ ·¶“e Í¥Ëa ÑÁ·©—i (.hmc)  ·¡  —i´á·¶·a |
+      |   £a¡ ·¡ˆõ·i Í¥Ëa µA—¡Èá¡ ·ª´á¥¡¡e ®ó‰A ·¡ÐÐi ® ·¶ |
+      |   ·i ˆõ·¡”a.                                           |
+      | 2.ˆbˆb· ‹i¸aŸi µ¡Ÿe½¢·a¡ 8 ¤å ®áÏaËaÐ ‘½“e”a.       |
+      | 3.¸á¸wÐe”a.                                            |
+      +--------------------------------------------------------+
+
+·¡œý‰A —¡¸a·¥Ðe ÑÁ·©·i mctest.hmc œa‰¡ Ða¸a. —¡¸a·¥Ðe ‹i¸a·  ¡¡´·µA¬á 
+(8,8) ·¡  a¶¯a Äá¬á· ¢»¡¸ñ·¡œa‰¡ Ði˜ ”a·q‰Á ˆ{·¡ ·³bÐe”a.
+
+        hmcmaker mctest 8 8 <enter>
+
+‹aœá¡e mctest.hmf ˆa   e—i´á  »¡“e•A  ·¡ˆõ·i  ”a·q‰Á  ˆ{·¡  ÄñÌa·©Ð¬á 
+hginitl.lib µA ý“e”a.
+
+     +- œa·¡§aœáŸ¡µA ÐsÃ¡“e µ -------+
+     |                                |
+     |  bcc -c -ml mctest.hmf <enter> |
+     |  tlib hginitl+mctest <enter>   |
+     +--------------------------------+
+
+·¡¹A hginit.h µA¬á ”a·q‰Á ˆ{·e ¦¦…·i Àx“e”a.
+
+     +----------- hginit.h · ·©¦¦… -------------------+
+     |                                                  |
+     |  /* hgSetMouseCursor */                          |
+     |                                                  |
+     |  #define DEFAULT                 &default_arrow  |
+     |  #define CROSS                   &cross          |
+     |  #define QUESTION                &question       |
+     |  #define NOT                     &not            |
+     |  #define TIMER                   &timer          |
+     |  #define BUBBLE                  &bubble         |
+     |  #define ARROW2                  &arrow2         |
+     +--------------------------------------------------+
+
+‹aŸ¡‰¡ {µA ”a·q·i ÂˆaÐe”a.
+
+#define MCTEST                  &mctest
+
+™¡ extern.h · {¦¦…·i ¥¡¡e ”a·q‰Á ˆ{·e ¦¦…·¡ ·¶”a.
+
+              +-------- extern.h · ·©¦¦… ---------+
+              |                                     |
+              | /* mouse cursor external define */  |
+              |                                     |
+              | extern void cross();                |
+              | extern void default_arrow();        |
+              | extern void question();             |
+              | extern void not();                  |
+              | extern void timer();                |
+              | extern void bubble();               |
+              | extern void arrow2();               |
+              +-------------------------------------+
+
+µb¯¡ {µA ”a·q·i ÂˆaÐe”a.
+
+extern void mctest();
+
+‹aœá¡e ·¡¹A hgSetMouseCursor(MCTEST); Ðq®¡ Ñ¡Â‰Ða¡e Ïa¡‹aœ‘  µA¬á 
+ a¶¯a Äá¬á· ¡¡´··i ¤aŽ‰ ® ·¶‰A –E”a.
+
+<HPCX.exe>
+
+        Ðe‹i œa·¡§aœáŸ¡ 2.0 · PCX ÑÁ·© ‹¡“w·i ¯¡ÐñÐa“e  Ïa¡‹aœ‘·¡”a. 
+Hercules,VGA 16 color,VGA 256 color ¶w· PCX File ·i ·ª´á ÑÁ¡eµA  ¥¡µa
+º¡a Standard VGA · ‰w¶ VGA 16 color Ÿi 640x480,16 color  µA¬á,Super 
+VGA · ‰w¶ VGA 16 color “e 800x600,16 color µA¬á,VGA 256 color ·  ‰w
+¶ 800x600,256 color µA¬á ‹aŸ±·i ¥¡µaº…”a.
+
+<ICONDRAW.exe>
+
+        Ðe‹i œa·¡§aœáŸ¡ 2.0 · ´a·¡Å¥ ‹¡“w·i ¶áÐe ˆõ·¡”a.   ‹¡¥¥¸â·a¡ 
+VGA 16 color ¡¡—aµA¬á 16 ¬‚·i ˆa»¡‰¡ ´a·¡Å¥·i —¡¸a·¥ Ði ® ·¶•¡¢  e—i
+´á ¹v”a. ˆe”eÐe ´a·¡Å¥ —¡¸a·¥ ‹¡“w•¡ ˆa»¡‰¡ ·¶»¡ e Ðe‹i œa·¡§aœáŸ¡ 2.0 
+µA¬á ¬a¶w–A“e ¸w ´a·¡Å¥·i  e—i ® ·¶“e ‹¡“w·i º—¯±·a¡  —¡¸a·¥  –A´ö
+”a. Î‰”a¶… ¡A“A· ´a·¡ÉQº— ÑÁ·©¸á¸w·i ¬åÈ‚Ða¡e Ñe¸ Íe»³Ða‰¡ ·¶”å ´a·¡
+Å¥·i (ictest.hic œa‰¡ ˆa¸÷) ictest.hif œa“e ÑwÈ¡ ¤aŽ´á º…”a. ‹aœá¡e 
+·¡ ÑÁ·©·i ”a·q‰Á ˆ{·¡ ÄñÌa·©Ð¬á œa·¡§aœáŸ¡µA ý“e”a.
+
+             +- ´a·¡Å¥·i œa·¡§aœáŸ¡µA ÐsÃ¡“e µ -+
+             |                                   |
+             |  bcc -c -ml ictest.hif <enter>    |
+             |  tlib hgiconl.lib+ictest <enter>  |
+             +-----------------------------------+
+
+·¡˜ hgicon.h · ¶w·i ¥¡¡e ”a·q‰Á ˆ{”a.
+
+              +-------- hgicon.h · ·©¦ --------------+
+              |                                        |
+              | #define WINCLOSE_ICON  &winclose_icon  |
+              | #define WINEND_ICON    &winend_icon    |
+              | #define WINCLOSER_ICON &winclr_icon    |
+              | #define WINENDR_ICON   &winenr_icon    |
+              | .                                      |
+              | .                                      |
+              | extern void winclose_icon(HICON *p);   |
+              | extern void winend_icon(HICON *p);     |
+              | extern void winclr_icon(HICON *p);     |
+              | extern void winenr_icon(HICON *p);     |
+              +----------------------------------------+
+
+µa‹¡µA ”a·q· –º‰·i ÂˆaÐe”a.
+
+#define ICTEST_ICON     &ictest_icon
+.
+.
+extern void ictest_icon(HICON *p);
+
+‹aœá¡e ·¡¹A p=hgHICON_Set(ICTEST_ICON); Àáœñ Ð¬á ¸w ´a·¡Å¥·i Ïa¡‹a
+œ‘µA¬á ¬a¶wÐi ® ·¶‰A –E”a. hgHICON_.. Ðq®—iµA ”Ð¬á“e  manual  #3 
+Ÿi Àq‰¡Ða‹¡ ¤aœe”a. ”e ÐáÇIA¯a ¡¡—aµA¬á icondraw.exe Ÿi ¯©Ð—Ð–·i ‰w¶ 
+”¦¦…· ‹¡“w·e ·¡¬w·¡ ´ô»¡ e 2 ¬‚·a¡ ¤cµA —¡¸a·¥·¡  ´e–E”a.  (Ób/¤‚) 
+ a»¡ b·a¡ ·¡ icondraw.exe “e MS-Windows · 32x32 ´a·¡Å¥·i ·ª´á—i·© ® 
+·¶“e ‹¡“w·¡ ·¶”a. Windows · ˆwbÐe ´a·¡Å¥ µA—¡Èá¡ ´a·¡Å¥·i —¡¸a·¥ Ðe 
+Ò ·¡ icondraw.exe ¡ ·ª´á—iµa¬á "¬¡ ¸á¸w",Ñ¢·e "ÑÁ·©¸á¸w" Ðaµa ¶A¦
+/¸w ´a·¡Å¥·a¡ ¬a¶wÐi ® ·¶”a.
+
+<HR.exe>
+
+        Ðe‹i,‹aœÏ¢ ¢…¸aˆa ¬ãµa ·¶“e ¬w¶w¹¡ÐsÑw ¢…¬áŸi ÑÁ¡eµA ¥¡µaº“e 
+Ïa¡‹aœ‘·¡”a. Ðe‹i œa·¡§aœáŸ¡ 2.0 ‰Á ˆa¬w ¡A¡¡Ÿ¡ ¯¡¯aÉQ· ¬a¶w·a¡  Ðe
+¤åµA ·ª·i ® ·¶“e ÉB¯aËa· ´··e ®¡AˆaµA ·¡Ÿa¡a [F1] ·e •¡¶‘ i,[F2] “e 
+ÑÁ·©¬wÈŸi ¥¡µaº…”a.

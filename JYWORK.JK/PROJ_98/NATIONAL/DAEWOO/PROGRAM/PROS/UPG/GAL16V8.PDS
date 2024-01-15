@@ -1,0 +1,47 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    EWS-CONTROL BOARD
+PATTERN  
+REVISION 
+AUTHOR   JK,PARK
+COMPANY  JINYANG INC.
+DATE     98/08/14
+
+CHIP  DECOD  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A9                   COMBINATORIAL ; INPUT
+PIN  2          A10                  COMBINATORIAL ; INPUT
+PIN  3          A11                  COMBINATORIAL ; INPUT
+PIN  4          A12                  COMBINATORIAL ; INPUT
+PIN  5          A13                  COMBINATORIAL ; INPUT
+PIN  6          A14                  COMBINATORIAL ; INPUT
+PIN  7          A15                  COMBINATORIAL ; INPUT
+PIN  8          RD                   COMBINATORIAL ; INPUT
+PIN  9          WR                   COMBINATORIAL ; INPUT
+PIN  10         GND                  ; INPUT
+PIN  11         SINT                 COMBINATORIAL ; INPUT
+PIN  12         RTCC                 COMBINATORIAL ; OUTPUT
+PIN  13         ADC                  COMBINATORIAL ; OUTPUT
+PIN  14         INT1                 COMBINATORIAL ; OUTPUT
+PIN  15         CS0                  COMBINATORIAL ; OUTPUT
+PIN  16         CS1                  COMBINATORIAL ; OUTPUT
+PIN  17         CS2                  COMBINATORIAL ; OUTPUT
+PIN  18         CS3                  COMBINATORIAL ; OUTPUT
+PIN  19         CS4                  COMBINATORIAL ; OUTPUT
+PIN  20         VCC                  ; INPUT
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/RTCC =                A15 * /A14 * /A13 * /A12 * /A11 * /A10 * /A9 ;0x8000
+/ADC  = (/RD + /WR) *  A15 * /A14 * /A13 *  A12 * /A11 * /A10 * /A9 ;0x9000
+ INT1 = /SINT                                                       ;
+/CS0  =  /RD        *  A15 * /A14 *  A13 * /A12 * /A11 * /A10 * /A9 ;0xA000->VID
+/CS1  = (/RD + /WR) *  A15 * /A14 *  A13 *  A12 * /A11 * /A10 * /A9 ;0xB000->N.C
+/CS2  = (/RD + /WR) *  A15 *  A14 * /A13 * /A12 * /A11 * /A10 * /A9 ;0xC000->N.C
+/CS3  =                A15 *  A14 * /A13 *  A12 * /A11 * /A10 * /A9 ;0xD000->COM
+/CS4  =  /RD        *  A15 *  A14 *  A13 * /A12 * /A11 * /A10 * /A9 ;0xE000->PRE
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

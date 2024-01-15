@@ -1,0 +1,34 @@
+; nCr program
+	MACRO   %saveab   
+	PUSH    ACC            
+	PUSH    B
+	CALL    \0
+	POP     B
+	POP     ACC
+	ENDMAC
+
+result  SET     127
+
+	ORG     0
+main    MOV     SP,#0
+	MOV     B,#7
+	MOV     A,#3
+	ACALL   ncr
+	RET
+
+ncr     JZ      one
+	CJNE    A,B,none
+one     MOV     result,#1
+	RET
+	
+none    DEC     B
+	%saveab ncr
+	PUSH    result           
+	DEC     A
+	%saveab ncr
+	POP     ACC
+	ADD     A,result     
+	MOV     result,A
+	RET
+	
+	END

@@ -1,0 +1,62 @@
+
+      ICE 7.xx
+
+
+
+      These document describes support DLLs for ICE program.
+
+      ______________________________________________________________
+
+      Four kinds of DLLs come with ICE.EXE. 
+      The ICEHW.DLL and ICEDASM are essential for operation of ICE.
+      They contain routines that interface emulator hardware (ICEHW)
+      and disassemble the program according to selected CPU (ICEDASM).
+      The absolute object file loader ICELOADR.DLL is necessary to
+      convert linker output file(s) containing program code and debug
+      information in a generic SLO file format, which can be loaded
+      by ICE. When you add a download file to the download list, its
+      type is detected and the ICELOADR.DLL is sugested as the loader.
+      You can specify a different (older) loader if available. 
+      Bellow is a list of old loaders and file types that they can
+      load. Note that ICELOADR.DLL supports all listed file types.
+
+                  DLL   ³           File Format
+          ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+           FNODEBUG.DLL ³  Binary,
+                        ³  Intel (extended hex)
+                        ³  Tektronix millenium
+                        ³  Extended Tektronix hex
+                        ³  Motorola S
+                        ³
+           FMTEK.DLL    ³  Microtek symbolic
+                        ³  Extended Microtek symbolic
+                        ³
+           FZWORLD.DLL  ³  Zworld symbolic
+                        ³
+           FOMF51.DLL   ³  Keil/Franklin OMF-51
+                        ³
+           FOMF166.DLL  ³  Keil/Franklin OMF-166
+                        ³
+           FUBROF.DLL   ³  IAR,Softools UBROF 
+                        ³
+           FCOSM.DLL    ³  Whitesmiths/Intermetrics COSMIC 
+                        ³
+           FIEEE695.DLL ³  BSO, Microtek/Hewlett Packard IEEE-695
+                        ³  implementation
+
+
+      Third party compiler support DLLs all begin with 'X' and are
+      also located in the directory of ICE.EXE:
+
+                  DLL   ³           Compiler
+          ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+           XIARZ80.DLL  ³  IAR/Archimedes Z80 family compiler
+                        ³
+           XIAR11.DLL   ³  IAR/Archimedes 68HC11 compiler
+                        ³
+           XSOFTZ80.DLL ³  Softools Z80 family compiler
+                        ³
+           XKEIL51.DLL  ³  Keil/Franklin 8031 compiler
+                        ³
+           XKEIL166.DLL ³  Keil/Franklin 80166 compiler
+                        ³

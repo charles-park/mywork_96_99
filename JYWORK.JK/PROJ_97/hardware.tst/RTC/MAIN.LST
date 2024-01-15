@@ -1,0 +1,970 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12K/DXT                              23/Jan/97  09:47:35     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  large                                                                 #
+#           Source file   =  main.c                                                                #
+#           List file     =  main.lst                                                              #
+#           Object file   =  main.r03                                                              #
+#           Command line  =  MAIN.C -ml -s -K -P -L -q -C                                          #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+   \   0000                    NAME    main(18)
+   \   0000                    RSEG    CODE(0)
+   \   0000                    RSEG    CSTR(0)
+   \   0000                    COMMON  INTVEC(0)
+   \   0000                    RSEG    X_UDATA(0)
+   \   0000                    RSEG    X_IDATA(0)
+   \   0000                    RSEG    X_CDATA(0)
+   \   0000                    RSEG    BITVARS(0)
+   \   0000                    EXTERN  L_clr
+   \   0000                    $DEFFN  L_clr(0,0,0,0),main
+   \   0000                    EXTERN  L_printf
+   \   0000                    $DEFFN  L_printf(0,0,6,0),main
+   \   0000                    EXTERN  RTC_Set
+   \   0000                    $DEFFN  RTC_Set(0,0,4,0),main
+   \   0000                    EXTERN  Ret_data
+   \   0000                    $DEFFN  Ret_data(0,0,1,0),main
+   \   0000                    PUBLIC  SCON_int
+   \   0000                    $DEFFN  SCON_int(512,0,2,0,0,0,0,0)
+   \   0000                    PUBLIC  Time
+   \   0000                    EXTERN  Time_Set
+   \   0000                    $DEFFN  Time_Set(0,0,3,0),main
+   \   0000                    EXTERN  init_lcd
+   \   0000                    $DEFFN  init_lcd(0,0,0,0),main
+   \   0000                    EXTERN  init_rtc
+   \   0000                    $DEFFN  init_rtc(0,0,0,0),main
+   \   0000                    PUBLIC  initiliaze
+   \   0000                    $DEFFN  initiliaze(0,0,0,0,0,0,0,0),main
+   \   0000                    PUBLIC  main
+   \   0000                    $DEFFN  main(0,0,23,0,0,0,0,0)
+   \   0000                    EXTERN  sprintf
+   \   0000                    $DEFFN  sprintf(0,0,16,0),main
+   \   0000                    EXTERN  ?CL8051L_5_12_L17
+   \   0000                    RSEG    CODE
+      1          // 1997. 1. 11 ~
+      2          // Program : Park Jong Kil
+      3          // Program Link file : Main.c + Lcd.c + Rtc.c + Key.c
+      4          // Sheet : Project1.sch     JED File : Project1.PDS, Project1.JED
+      5          
+      6          #include <io51.h>
+      7          #include <stdio.h>
+      8          #include <lcd.h>
+      9          #include <rtc.h>
+     10          
+     11          #define     MAX_X   20
+     12          #define     MAX_Y   3
+     13          #define     On      1
+     14          #define     Off     0
+     15          
+     16          static Byte Update_Level ;   // default Value
+     17          static Byte KeyOn,test;
+     18          static Byte *DAYWEEK[8] = { "ErrorDay","Sunday   ","Monday   ","Tuesday  ","Wednesday","Thursday ","Friday   ","Saturday "};
+     19          static Byte Sbuf[20];
+     20          static Byte Rbuf[20];
+     21          static Byte Rcount=0,Scount=0;
+     22          static bit  Comin;
+     23          static bit  Comout;
+     24          
+     25          void initiliaze(void)       // interrupt initliaze Roution
+     26          {
+   \   0000            initiliaze:
+     27          
+     28              IE=0x80;
+   \   0000  75A880            MOV     IE,#128
+     29              PCON=0x80;          // Baudrate double set
+   \   0003  758780            MOV     PCON,#128
+     30          
+     31              TMOD = 0x25;        // T0 = counter 16Bit no,Prescaler,
+   \   0006  758925            MOV     TMOD,#37
+     32          
+     33              TH1 = 0xfa;
+   \   0009  758DFA            MOV     TH1,#250
+     34              TL1 = 0xfa;        // 23Mhz = F3, 22Mhz = F4,18Mhz = F6, 11Mhz = fa Set
+   \   000C  758BFA            MOV     TL1,#250
+     35          
+     36              SCON=0x50;
+   \   000F  759850            MOV     SCON,#80
+     37              TR1=1;
+   \   0012  D28E              SETB    TCON.6
+     38          
+     39              PS =1;      // Serial Priority
+   \   0014  D2BC              SETB    IP.4
+     40              ES =1;      // Serial Interrupt Enable
+   \   0016  D2AC              SETB    IE.4
+     41              
+     42              // IE = 0x80;              // External interrupt 0 Enable (Edge)
+     43              // TCON = 0x0f;
+     44              // EX0 = On;
+     45          }
+   \   0018  22                RET
+     46          
+     47          void main(void)
+     48          {
+   \   0019            main:
+     49              Byte BUF[20];
+     50              Byte i;
+     51              Word count;
+     52          
+     53              initiliaze();   // interrupt initiliaze
+   \   0019  120000            LCALL   $REFFN initiliaze
+     54              init_lcd();     // initiliaze LCD(20 Chars * 4 Line)
+   \   001C  120000            LCALL   $REFFN init_lcd
+     55              init_rtc();     // RTC initiliaze (MC146818)
+   \   001F  120000            LCALL   $REFFN init_rtc
+     56          
+     57              Update_Level = 0xff;
+   \   0022  74FF              MOV     A,#255
+   \   0024  90000E            MOV     DPTR,#Update_Level
+   \   0027  F0                MOVX    @DPTR,A
+     58              
+     59              P1 = 0xf0;
+   \   0028  7590F0            MOV     P1,#240
+     60              KeyOn = 0xf0;
+   \   002B  74F0              MOV     A,#240
+   \   002D  90000F            MOV     DPTR,#KeyOn
+   \   0030  F0                MOVX    @DPTR,A
+     61              Comin = 0;
+   \   0031  C200              CLR     Comin
+     62              Comout = 0;
+   \   0033  C201              CLR     Comout
+     63          
+     64              L_clr();
+   \   0035  120000            LCALL   $REFFN L_clr
+     65          
+     66              //  Day of Week : 1 = Sunday, 2 = Monday ...
+     67          
+     68              RTC_Set(97, 1, 21, 3); // Default Year, Month, Day of Month, Day of Week Setup
+   \   0038  7F03              MOV     R7,#3
+   \   003A  7E15              MOV     R6,#21
+   \   003C  7D01              MOV     R5,#1
+   \   003E  7C61              MOV     R4,#97
+   \   0040  120000            LCALL   $REFFN RTC_Set
+     69              Time_Set(16,10,0);       // Default Time Setup : Hour,Min,Sec
+   \   0043  7E00              MOV     R6,#0
+   \   0045  7D0A              MOV     R5,#10
+   \   0047  7C10              MOV     R4,#16
+   \   0049  120000            LCALL   $REFFN Time_Set
+     70              
+     71              Time[0].Year      = Time[1].Year      = Ret_data(RTC_YY);
+   \   004C  7C01              MOV     R4,#1
+   \   004E  120000            LCALL   $REFFN Ret_data
+   \   0051  EC                MOV     A,R4
+   \   0052  900000            MOV     DPTR,#Time
+   \   0055  F0                MOVX    @DPTR,A
+   \   0056  900007            MOV     DPTR,#Time+7
+   \   0059  F0                MOVX    @DPTR,A
+     72              Time[0].Month     = Time[1].Month     = Ret_data(RTC_MM);
+   \   005A  7C02              MOV     R4,#2
+   \   005C  120000            LCALL   $REFFN Ret_data
+   \   005F  EC                MOV     A,R4
+   \   0060  900001            MOV     DPTR,#Time+1
+   \   0063  F0                MOVX    @DPTR,A
+   \   0064  900008            MOV     DPTR,#Time+8
+   \   0067  F0                MOVX    @DPTR,A
+     73              Time[0].Day_Month = Time[1].Day_Month = Ret_data(RTC_DM);
+   \   0068  7C03              MOV     R4,#3
+   \   006A  120000            LCALL   $REFFN Ret_data
+   \   006D  EC                MOV     A,R4
+   \   006E  900002            MOV     DPTR,#Time+2
+   \   0071  F0                MOVX    @DPTR,A
+   \   0072  900009            MOV     DPTR,#Time+9
+   \   0075  F0                MOVX    @DPTR,A
+     74              Time[0].Day_Week  = Time[1].Day_Week  = Ret_data(RTC_DW);
+   \   0076  7C04              MOV     R4,#4
+   \   0078  120000            LCALL   $REFFN Ret_data
+   \   007B  EC                MOV     A,R4
+   \   007C  900003            MOV     DPTR,#Time+3
+   \   007F  F0                MOVX    @DPTR,A
+   \   0080  90000A            MOV     DPTR,#Time+10
+   \   0083  F0                MOVX    @DPTR,A
+     75              Time[0].Hour      = Time[1].Hour      = Ret_data(RTC_H);
+   \   0084  7C05              MOV     R4,#5
+   \   0086  120000            LCALL   $REFFN Ret_data
+   \   0089  EC                MOV     A,R4
+   \   008A  900004            MOV     DPTR,#Time+4
+   \   008D  F0                MOVX    @DPTR,A
+   \   008E  90000B            MOV     DPTR,#Time+11
+   \   0091  F0                MOVX    @DPTR,A
+     76              Time[0].Min       = Time[1].Min       = Ret_data(RTC_M);
+   \   0092  7C06              MOV     R4,#6
+   \   0094  120000            LCALL   $REFFN Ret_data
+   \   0097  EC                MOV     A,R4
+   \   0098  900005            MOV     DPTR,#Time+5
+   \   009B  F0                MOVX    @DPTR,A
+   \   009C  90000C            MOV     DPTR,#Time+12
+   \   009F  F0                MOVX    @DPTR,A
+     77              Time[0].Sec       = Time[1].Sec       = Ret_data(RTC_S);
+   \   00A0  7C07              MOV     R4,#7
+   \   00A2  120000            LCALL   $REFFN Ret_data
+   \   00A5  EC                MOV     A,R4
+   \   00A6  900006            MOV     DPTR,#Time+6
+   \   00A9  F0                MOVX    @DPTR,A
+   \   00AA  90000D            MOV     DPTR,#Time+13
+   \   00AD  F0                MOVX    @DPTR,A
+     78          
+     79              // Test Program -----------------------------------------------
+     80              Sbuf[0] = 0xff;     Sbuf[1] = 0xff;     Sbuf[2] = 'R';
+   \   00AE  74FF              MOV     A,#255
+   \   00B0  900011            MOV     DPTR,#Sbuf
+   \   00B3  F0                MOVX    @DPTR,A
+   \   00B4  A3                INC     DPTR
+   \   00B5  F0                MOVX    @DPTR,A
+   \   00B6  7452              MOV     A,#82
+   \   00B8  A3                INC     DPTR
+   \   00B9  F0                MOVX    @DPTR,A
+     81              Sbuf[3] = 0x0;      Sbuf[4] = 0x0;      Sbuf[5] = 0;
+   \   00BA  E4                CLR     A
+   \   00BB  A3                INC     DPTR
+   \   00BC  F0                MOVX    @DPTR,A
+   \   00BD  A3                INC     DPTR
+   \   00BE  F0                MOVX    @DPTR,A
+   \   00BF  A3                INC     DPTR
+   \   00C0  F0                MOVX    @DPTR,A
+     82              Sbuf[6] = 0;        Sbuf[7] = 0;        Sbuf[8] = 0;
+   \   00C1  A3                INC     DPTR
+   \   00C2  F0                MOVX    @DPTR,A
+   \   00C3  A3                INC     DPTR
+   \   00C4  F0                MOVX    @DPTR,A
+   \   00C5  A3                INC     DPTR
+   \   00C6  F0                MOVX    @DPTR,A
+     83              Sbuf[9] = 0xff;     Sbuf[10] = 0xfe;
+   \   00C7  14                DEC     A
+   \   00C8  A3                INC     DPTR
+   \   00C9  F0                MOVX    @DPTR,A
+   \   00CA  14                DEC     A
+   \   00CB  A3                INC     DPTR
+   \   00CC  F0                MOVX    @DPTR,A
+     84          
+     85              for(i=2;i != 8; i++)    Sbuf[8] ^= Sbuf[i];
+   \   00CD  7402              MOV     A,#2
+   \   00CF  900000            MOV     DPTR,#$LOCBX main+20
+   \   00D2  F0                MOVX    @DPTR,A
+   \   00D3            ?0009:
+   \   00D3  900000            MOV     DPTR,#$LOCBX main+20
+   \   00D6  E0                MOVX    A,@DPTR
+   \   00D7  6408              XRL     A,#8
+   \   00D9  601A              JZ      ?0008
+   \   00DB            ?0010:
+   \   00DB  E0                MOVX    A,@DPTR
+   \   00DC  2411              ADD     A,#LOW(Sbuf)
+   \   00DE  F582              MOV     DPL,A
+   \   00E0  E4                CLR     A
+   \   00E1  3400              ADDC    A,#HIGH(Sbuf)
+   \   00E3  F583              MOV     DPH,A
+   \   00E5  E0                MOVX    A,@DPTR
+   \   00E6  900019            MOV     DPTR,#Sbuf+8
+   \   00E9  FC                MOV     R4,A
+   \   00EA  E0                MOVX    A,@DPTR
+   \   00EB  6C                XRL     A,R4
+   \   00EC  F0                MOVX    @DPTR,A
+   \   00ED  900000            MOV     DPTR,#$LOCBX main+20
+   \   00F0  E0                MOVX    A,@DPTR
+   \   00F1  04                INC     A
+   \   00F2  F0                MOVX    @DPTR,A
+   \   00F3  80DE              SJMP    ?0009
+   \   00F5            ?0008:
+     86          
+     87              i=0;
+   \   00F5  E4                CLR     A
+   \   00F6  F0                MOVX    @DPTR,A
+   \   00F7            ?0013:
+     88          
+     89              //-------------------------------------------------------------
+     90              
+     91              while(1)
+     92              {
+     93                  if(Update_Level != 0)
+   \   00F7  90000E            MOV     DPTR,#Update_Level
+   \   00FA  E0                MOVX    A,@DPTR
+   \   00FB  601E              JZ      ?0016
+   \   00FD            ?0015:
+     94                  {
+     95                      // for(i=0;i<=20;i++)  BUF[i] = ' ';
+     96          
+     97                      switch(Update_Level)
+   \   00FD  C3                CLR     C
+   \   00FE  9401              SUBB    A,#1
+   \   0100  4008              JC      ?0019
+   \   0102  B40300            CJNE    A,#3,$+3
+   \   0105  B3                CPL     C
+   \   0106  4002              JC      ?0019
+   \   0108            ?0018:
+     98                      {
+     99                          case    RTC_YY:
+    100                          case    RTC_MM:
+    101                          case    RTC_DM:
+    102                                //  sprintf(BUF,"Year : 19%d, %d, %d   ",Time[0].Year, Time[0].Month, Time[0].Day_Month);
+    103                                //  L_printf(0,0,BUF,0);
+    104          
+    105                                //  sprintf(BUF,"Time : %d : %d : %d ",Time[0].Hour, Time[0].Min, Time[0].Sec);
+    106                                //  L_printf(0,2,BUF,0);
+    107                                  break;
+   \   0108  800C              SJMP    ?0017
+   \   010A            ?0019:
+   \   010A  B40302            CJNE    A,#3,?0020
+    108          
+    109                          case    RTC_DW:
+    110                                //  sprintf(BUF,"Day/Week : %s",DAYWEEK[Time[0].Day_Week]);
+    111                                //  L_printf(0,1,BUF,0);
+    112          
+    113                                //  sprintf(BUF,"Time : %d : %d : %d ",Time[0].Hour, Time[0].Min, Time[0].Sec);
+    114                                //  L_printf(0,2,BUF,0);
+    115                                  break;
+   \   010D  8007              SJMP    ?0017
+   \   010F            ?0020:
+   \   010F  B40602            CJNE    A,#6,?0021
+    116          
+    117                          case    RTC_S:
+    118                                //  sprintf(BUF,"Time : %d : %d : %d ",Time[0].Hour, Time[0].Min, Time[0].Sec);
+    119                                //  L_printf(0,2,BUF,0);
+    120                                  break;
+   \   0112  8002              SJMP    ?0017
+   \   0114            ?0021:
+    121          
+    122                          default   :
+    123                                //  sprintf(BUF,"Year : %d, %d, %d   ",Time[0].Year, Time[0].Month, Time[0].Day_Month);
+    124                                //  L_printf(0,0,BUF,0);
+    125          
+    126                                //  sprintf(BUF,"Day/Week : %s",DAYWEEK[Time[0].Day_Week]);
+    127                                //  L_printf(0,1,BUF,0);
+    128          
+    129                                //  sprintf(BUF,"Time : %d : %d : %d ",Time[0].Hour, Time[0].Min, Time[0].Sec);
+    130                                //  L_printf(0,2,BUF,0);
+    131          
+    132                                //  L_printf(0,3,"Good - Morning!!!   ",0);
+    133                                  break;
+   \   0114  8000              SJMP    ?0017
+   \   0116            ?0017:
+    134                      }
+    135                      Update_Level = 0;   // if Loop Out Command
+   \   0116  E4                CLR     A
+   \   0117  90000E            MOV     DPTR,#Update_Level
+   \   011A  F0                MOVX    @DPTR,A
+   \   011B            ?0016:
+    136                  }
+    137          
+    138                  if(KeyOn != 0xf0)
+   \   011B  90000F            MOV     DPTR,#KeyOn
+   \   011E  E0                MOVX    A,@DPTR
+   \   011F  64F0              XRL     A,#240
+   \   0121  6011              JZ      ?0023
+   \   0123            ?0022:
+    139                  {
+    140                      P1 = 0xf0;
+   \   0123  7590F0            MOV     P1,#240
+    141                      /* sprintf(BUF,"Year : %d, %d, %d   ",Time[0].Year, Time[0].Month, Time[0].Day_Month);
+    142                      L_printf(0,0,BUF,0);
+    143          
+    144                      sprintf(BUF,"Day/Week : %s",DAYWEEK[Time[0].Day_Week]);
+    145                      L_printf(0,1,BUF,0);
+    146          
+    147                      sprintf(BUF,"Time : %d : %d : %d ",Time[0].Hour, Time[0].Min, Time[0].Sec);
+    148                      L_printf(0,2,BUF,0);
+    149          
+    150                      L_printf(0,3,"Time is a Gold..!!!!",0); */
+    151                      L_clr();
+   \   0126  120000            LCALL   $REFFN L_clr
+    152          
+    153                      Scount = 0;
+   \   0129  E4                CLR     A
+   \   012A  900019            MOV     DPTR,#Scount
+   \   012D  F0                MOVX    @DPTR,A
+    154                      Rcount = 0;
+   \   012E  900018            MOV     DPTR,#Rcount
+   \   0131  F0                MOVX    @DPTR,A
+    155                      Comout = 1;
+   \   0132  D201              SETB    Comout
+   \   0134            ?0023:
+   \   0134            ?0025:
+    156                  }
+    157                  while(Comout && !TI)  SBUF = Sbuf[Scount++];
+   \   0134  300119            JNB     Comout,?0024
+   \   0137  209916            JB      SCON.1,?0024
+   \   013A            ?0028:
+   \   013A            ?0027:
+   \   013A            ?0026:
+   \   013A  900019            MOV     DPTR,#Scount
+   \   013D  E0                MOVX    A,@DPTR
+   \   013E  FC                MOV     R4,A
+   \   013F  04                INC     A
+   \   0140  F0                MOVX    @DPTR,A
+   \   0141  EC                MOV     A,R4
+   \   0142  2411              ADD     A,#LOW(Sbuf)
+   \   0144  F582              MOV     DPL,A
+   \   0146  E4                CLR     A
+   \   0147  3400              ADDC    A,#HIGH(Sbuf)
+   \   0149  F583              MOV     DPH,A
+   \   014B  E0                MOVX    A,@DPTR
+   \   014C  F599              MOV     SBUF,A
+   \   014E  80E4              SJMP    ?0025
+   \   0150            ?0024:
+    158                  
+    159                  if(Comin)
+   \   0150  200003            JB      Comin,$+6
+   \   0153  020304            LJMP    ?0030
+   \   0156            ?0029:
+    160                  {
+    161                      sprintf(BUF,"%x%x%x%x%x",(char)Rbuf[0],(char)Rbuf[1],(char)Rbuf[2],(char)Rbuf[3],(char)Rbuf[4]);
+   \   0156  900029            MOV     DPTR,#Rbuf+4
+   \   0159  E0                MOVX    A,@DPTR
+   \   015A  7D00              MOV     R5,#0
+   \   015C  900000            MOV     DPTR,#$PRMBX sprintf+14
+   \   015F  CD                XCH     A,R5
+   \   0160  F0                MOVX    @DPTR,A
+   \   0161  A3                INC     DPTR
+   \   0162  CD                XCH     A,R5
+   \   0163  F0                MOVX    @DPTR,A
+   \   0164  900028            MOV     DPTR,#Rbuf+3
+   \   0167  E0                MOVX    A,@DPTR
+   \   0168  900000            MOV     DPTR,#$PRMBX sprintf+12
+   \   016B  CD                XCH     A,R5
+   \   016C  F0                MOVX    @DPTR,A
+   \   016D  A3                INC     DPTR
+   \   016E  CD                XCH     A,R5
+   \   016F  F0                MOVX    @DPTR,A
+   \   0170  900027            MOV     DPTR,#Rbuf+2
+   \   0173  E0                MOVX    A,@DPTR
+   \   0174  900000            MOV     DPTR,#$PRMBX sprintf+10
+   \   0177  CD                XCH     A,R5
+   \   0178  F0                MOVX    @DPTR,A
+   \   0179  A3                INC     DPTR
+   \   017A  CD                XCH     A,R5
+   \   017B  F0                MOVX    @DPTR,A
+   \   017C  900026            MOV     DPTR,#Rbuf+1
+   \   017F  E0                MOVX    A,@DPTR
+   \   0180  900000            MOV     DPTR,#$PRMBX sprintf+8
+   \   0183  CD                XCH     A,R5
+   \   0184  F0                MOVX    @DPTR,A
+   \   0185  A3                INC     DPTR
+   \   0186  CD                XCH     A,R5
+   \   0187  F0                MOVX    @DPTR,A
+   \   0188  900025            MOV     DPTR,#Rbuf
+   \   018B  E0                MOVX    A,@DPTR
+   \   018C  900000            MOV     DPTR,#$PRMBX sprintf+6
+   \   018F  CD                XCH     A,R5
+   \   0190  F0                MOVX    @DPTR,A
+   \   0191  A3                INC     DPTR
+   \   0192  CD                XCH     A,R5
+   \   0193  F0                MOVX    @DPTR,A
+   \   0194  7D4F              MOV     R5,#LOW(?0031)
+   \   0196  7E00              MOV     R6,#HIGH(?0031)
+   \   0198  7F02              MOV     R7,#2
+   \   019A  900000            MOV     DPTR,#$PRMBX sprintf+3
+   \   019D  EF                MOV     A,R7
+   \   019E  F0                MOVX    @DPTR,A
+   \   019F  A3                INC     DPTR
+   \   01A0  EE                MOV     A,R6
+   \   01A1  F0                MOVX    @DPTR,A
+   \   01A2  A3                INC     DPTR
+   \   01A3  ED                MOV     A,R5
+   \   01A4  F0                MOVX    @DPTR,A
+   \   01A5  7D00              MOV     R5,#LOW $LOCBX main
+   \   01A7  7E00              MOV     R6,#HIGH $LOCBX main
+   \   01A9  1F                DEC     R7
+   \   01AA  120000            LCALL   $REFFN sprintf
+    162                      L_printf(0,0,BUF,0);
+   \   01AD  E4                CLR     A
+   \   01AE  900000            MOV     DPTR,#$PRMBX L_printf+5
+   \   01B1  F0                MOVX    @DPTR,A
+   \   01B2  7D00              MOV     R5,#LOW $LOCBX main
+   \   01B4  7E00              MOV     R6,#HIGH $LOCBX main
+   \   01B6  7F01              MOV     R7,#1
+   \   01B8  900000            MOV     DPTR,#$PRMBX L_printf+2
+   \   01BB  EF                MOV     A,R7
+   \   01BC  F0                MOVX    @DPTR,A
+   \   01BD  A3                INC     DPTR
+   \   01BE  EE                MOV     A,R6
+   \   01BF  F0                MOVX    @DPTR,A
+   \   01C0  A3                INC     DPTR
+   \   01C1  ED                MOV     A,R5
+   \   01C2  F0                MOVX    @DPTR,A
+   \   01C3  7D00              MOV     R5,#0
+   \   01C5  7C00              MOV     R4,#0
+   \   01C7  120000            LCALL   $REFFN L_printf
+    163          
+    164                      sprintf(BUF,"%x%x%x%x%x",(char)Rbuf[5],(char)Rbuf[6],(char)Rbuf[7],(char)Rbuf[8],(char)Rbuf[9]);
+   \   01CA  90002E            MOV     DPTR,#Rbuf+9
+   \   01CD  E0                MOVX    A,@DPTR
+   \   01CE  7D00              MOV     R5,#0
+   \   01D0  900000            MOV     DPTR,#$PRMBX sprintf+14
+   \   01D3  CD                XCH     A,R5
+   \   01D4  F0                MOVX    @DPTR,A
+   \   01D5  A3                INC     DPTR
+   \   01D6  CD                XCH     A,R5
+   \   01D7  F0                MOVX    @DPTR,A
+   \   01D8  90002D            MOV     DPTR,#Rbuf+8
+   \   01DB  E0                MOVX    A,@DPTR
+   \   01DC  900000            MOV     DPTR,#$PRMBX sprintf+12
+   \   01DF  CD                XCH     A,R5
+   \   01E0  F0                MOVX    @DPTR,A
+   \   01E1  A3                INC     DPTR
+   \   01E2  CD                XCH     A,R5
+   \   01E3  F0                MOVX    @DPTR,A
+   \   01E4  90002C            MOV     DPTR,#Rbuf+7
+   \   01E7  E0                MOVX    A,@DPTR
+   \   01E8  900000            MOV     DPTR,#$PRMBX sprintf+10
+   \   01EB  CD                XCH     A,R5
+   \   01EC  F0                MOVX    @DPTR,A
+   \   01ED  A3                INC     DPTR
+   \   01EE  CD                XCH     A,R5
+   \   01EF  F0                MOVX    @DPTR,A
+   \   01F0  90002B            MOV     DPTR,#Rbuf+6
+   \   01F3  E0                MOVX    A,@DPTR
+   \   01F4  900000            MOV     DPTR,#$PRMBX sprintf+8
+   \   01F7  CD                XCH     A,R5
+   \   01F8  F0                MOVX    @DPTR,A
+   \   01F9  A3                INC     DPTR
+   \   01FA  CD                XCH     A,R5
+   \   01FB  F0                MOVX    @DPTR,A
+   \   01FC  90002A            MOV     DPTR,#Rbuf+5
+   \   01FF  E0                MOVX    A,@DPTR
+   \   0200  900000            MOV     DPTR,#$PRMBX sprintf+6
+   \   0203  CD                XCH     A,R5
+   \   0204  F0                MOVX    @DPTR,A
+   \   0205  A3                INC     DPTR
+   \   0206  CD                XCH     A,R5
+   \   0207  F0                MOVX    @DPTR,A
+   \   0208  7D4F              MOV     R5,#LOW(?0031)
+   \   020A  7E00              MOV     R6,#HIGH(?0031)
+   \   020C  7F02              MOV     R7,#2
+   \   020E  900000            MOV     DPTR,#$PRMBX sprintf+3
+   \   0211  EF                MOV     A,R7
+   \   0212  F0                MOVX    @DPTR,A
+   \   0213  A3                INC     DPTR
+   \   0214  EE                MOV     A,R6
+   \   0215  F0                MOVX    @DPTR,A
+   \   0216  A3                INC     DPTR
+   \   0217  ED                MOV     A,R5
+   \   0218  F0                MOVX    @DPTR,A
+   \   0219  7D00              MOV     R5,#LOW $LOCBX main
+   \   021B  7E00              MOV     R6,#HIGH $LOCBX main
+   \   021D  1F                DEC     R7
+   \   021E  120000            LCALL   $REFFN sprintf
+    165                      L_printf(0,1,BUF,0);
+   \   0221  E4                CLR     A
+   \   0222  900000            MOV     DPTR,#$PRMBX L_printf+5
+   \   0225  F0                MOVX    @DPTR,A
+   \   0226  7D00              MOV     R5,#LOW $LOCBX main
+   \   0228  7E00              MOV     R6,#HIGH $LOCBX main
+   \   022A  7F01              MOV     R7,#1
+   \   022C  900000            MOV     DPTR,#$PRMBX L_printf+2
+   \   022F  EF                MOV     A,R7
+   \   0230  F0                MOVX    @DPTR,A
+   \   0231  A3                INC     DPTR
+   \   0232  EE                MOV     A,R6
+   \   0233  F0                MOVX    @DPTR,A
+   \   0234  A3                INC     DPTR
+   \   0235  ED                MOV     A,R5
+   \   0236  F0                MOVX    @DPTR,A
+   \   0237  7D01              MOV     R5,#1
+   \   0239  7C00              MOV     R4,#0
+   \   023B  120000            LCALL   $REFFN L_printf
+    166          
+    167                      sprintf(BUF,"%x%x%x%x%x",(char)Rbuf[10],(char)Rbuf[11],(char)Rbuf[12],(char)Rbuf[13],(char)Rbuf[14]);
+   \   023E  900033            MOV     DPTR,#Rbuf+14
+   \   0241  E0                MOVX    A,@DPTR
+   \   0242  7D00              MOV     R5,#0
+   \   0244  900000            MOV     DPTR,#$PRMBX sprintf+14
+   \   0247  CD                XCH     A,R5
+   \   0248  F0                MOVX    @DPTR,A
+   \   0249  A3                INC     DPTR
+   \   024A  CD                XCH     A,R5
+   \   024B  F0                MOVX    @DPTR,A
+   \   024C  900032            MOV     DPTR,#Rbuf+13
+   \   024F  E0                MOVX    A,@DPTR
+   \   0250  900000            MOV     DPTR,#$PRMBX sprintf+12
+   \   0253  CD                XCH     A,R5
+   \   0254  F0                MOVX    @DPTR,A
+   \   0255  A3                INC     DPTR
+   \   0256  CD                XCH     A,R5
+   \   0257  F0                MOVX    @DPTR,A
+   \   0258  900031            MOV     DPTR,#Rbuf+12
+   \   025B  E0                MOVX    A,@DPTR
+   \   025C  900000            MOV     DPTR,#$PRMBX sprintf+10
+   \   025F  CD                XCH     A,R5
+   \   0260  F0                MOVX    @DPTR,A
+   \   0261  A3                INC     DPTR
+   \   0262  CD                XCH     A,R5
+   \   0263  F0                MOVX    @DPTR,A
+   \   0264  900030            MOV     DPTR,#Rbuf+11
+   \   0267  E0                MOVX    A,@DPTR
+   \   0268  900000            MOV     DPTR,#$PRMBX sprintf+8
+   \   026B  CD                XCH     A,R5
+   \   026C  F0                MOVX    @DPTR,A
+   \   026D  A3                INC     DPTR
+   \   026E  CD                XCH     A,R5
+   \   026F  F0                MOVX    @DPTR,A
+   \   0270  90002F            MOV     DPTR,#Rbuf+10
+   \   0273  E0                MOVX    A,@DPTR
+   \   0274  900000            MOV     DPTR,#$PRMBX sprintf+6
+   \   0277  CD                XCH     A,R5
+   \   0278  F0                MOVX    @DPTR,A
+   \   0279  A3                INC     DPTR
+   \   027A  CD                XCH     A,R5
+   \   027B  F0                MOVX    @DPTR,A
+   \   027C  7D4F              MOV     R5,#LOW(?0031)
+   \   027E  7E00              MOV     R6,#HIGH(?0031)
+   \   0280  7F02              MOV     R7,#2
+   \   0282  900000            MOV     DPTR,#$PRMBX sprintf+3
+   \   0285  EF                MOV     A,R7
+   \   0286  F0                MOVX    @DPTR,A
+   \   0287  A3                INC     DPTR
+   \   0288  EE                MOV     A,R6
+   \   0289  F0                MOVX    @DPTR,A
+   \   028A  A3                INC     DPTR
+   \   028B  ED                MOV     A,R5
+   \   028C  F0                MOVX    @DPTR,A
+   \   028D  7D00              MOV     R5,#LOW $LOCBX main
+   \   028F  7E00              MOV     R6,#HIGH $LOCBX main
+   \   0291  1F                DEC     R7
+   \   0292  120000            LCALL   $REFFN sprintf
+    168                      L_printf(0,2,BUF,0);
+   \   0295  E4                CLR     A
+   \   0296  900000            MOV     DPTR,#$PRMBX L_printf+5
+   \   0299  F0                MOVX    @DPTR,A
+   \   029A  7D00              MOV     R5,#LOW $LOCBX main
+   \   029C  7E00              MOV     R6,#HIGH $LOCBX main
+   \   029E  7F01              MOV     R7,#1
+   \   02A0  900000            MOV     DPTR,#$PRMBX L_printf+2
+   \   02A3  EF                MOV     A,R7
+   \   02A4  F0                MOVX    @DPTR,A
+   \   02A5  A3                INC     DPTR
+   \   02A6  EE                MOV     A,R6
+   \   02A7  F0                MOVX    @DPTR,A
+   \   02A8  A3                INC     DPTR
+   \   02A9  ED                MOV     A,R5
+   \   02AA  F0                MOVX    @DPTR,A
+   \   02AB  7D02              MOV     R5,#2
+   \   02AD  7C00              MOV     R4,#0
+   \   02AF  120000            LCALL   $REFFN L_printf
+    169          
+    170                      sprintf(BUF,"%x%x",(char)Rbuf[15],(char)Rbuf[16]);
+   \   02B2  900035            MOV     DPTR,#Rbuf+16
+   \   02B5  E0                MOVX    A,@DPTR
+   \   02B6  7D00              MOV     R5,#0
+   \   02B8  900000            MOV     DPTR,#$PRMBX sprintf+8
+   \   02BB  CD                XCH     A,R5
+   \   02BC  F0                MOVX    @DPTR,A
+   \   02BD  A3                INC     DPTR
+   \   02BE  CD                XCH     A,R5
+   \   02BF  F0                MOVX    @DPTR,A
+   \   02C0  900034            MOV     DPTR,#Rbuf+15
+   \   02C3  E0                MOVX    A,@DPTR
+   \   02C4  900000            MOV     DPTR,#$PRMBX sprintf+6
+   \   02C7  CD                XCH     A,R5
+   \   02C8  F0                MOVX    @DPTR,A
+   \   02C9  A3                INC     DPTR
+   \   02CA  CD                XCH     A,R5
+   \   02CB  F0                MOVX    @DPTR,A
+   \   02CC  7D5A              MOV     R5,#LOW(?0032)
+   \   02CE  7E00              MOV     R6,#HIGH(?0032)
+   \   02D0  7F02              MOV     R7,#2
+   \   02D2  900000            MOV     DPTR,#$PRMBX sprintf+3
+   \   02D5  EF                MOV     A,R7
+   \   02D6  F0                MOVX    @DPTR,A
+   \   02D7  A3                INC     DPTR
+   \   02D8  EE                MOV     A,R6
+   \   02D9  F0                MOVX    @DPTR,A
+   \   02DA  A3                INC     DPTR
+   \   02DB  ED                MOV     A,R5
+   \   02DC  F0                MOVX    @DPTR,A
+   \   02DD  7D00              MOV     R5,#LOW $LOCBX main
+   \   02DF  7E00              MOV     R6,#HIGH $LOCBX main
+   \   02E1  1F                DEC     R7
+   \   02E2  120000            LCALL   $REFFN sprintf
+    171                      L_printf(0,3,BUF,0);
+   \   02E5  E4                CLR     A
+   \   02E6  900000            MOV     DPTR,#$PRMBX L_printf+5
+   \   02E9  F0                MOVX    @DPTR,A
+   \   02EA  7D00              MOV     R5,#LOW $LOCBX main
+   \   02EC  7E00              MOV     R6,#HIGH $LOCBX main
+   \   02EE  7F01              MOV     R7,#1
+   \   02F0  900000            MOV     DPTR,#$PRMBX L_printf+2
+   \   02F3  EF                MOV     A,R7
+   \   02F4  F0                MOVX    @DPTR,A
+   \   02F5  A3                INC     DPTR
+   \   02F6  EE                MOV     A,R6
+   \   02F7  F0                MOVX    @DPTR,A
+   \   02F8  A3                INC     DPTR
+   \   02F9  ED                MOV     A,R5
+   \   02FA  F0                MOVX    @DPTR,A
+   \   02FB  7D03              MOV     R5,#3
+   \   02FD  7C00              MOV     R4,#0
+   \   02FF  120000            LCALL   $REFFN L_printf
+    172          
+    173                      Comin = 0;
+   \   0302  C200              CLR     Comin
+   \   0304            ?0030:
+    174                  }
+    175                  KeyOn = P1;
+   \   0304  E590              MOV     A,P1
+   \   0306  90000F            MOV     DPTR,#KeyOn
+   \   0309  F0                MOVX    @DPTR,A
+    176              }
+    177          }
+   \   030A  0200F7            LJMP    ?0013
+    178          
+    179          /* interrupt [0x03] void EX0_int (void)
+    180          {
+    181              EA = Off;
+    182              Time[0].Hour       = Ret_data(RTC_H);
+    183              Time[0].Min        = Ret_data(RTC_M);
+    184              Time[0].Sec        = Ret_data(RTC_S);
+    185              Time[0].Year       = Ret_data(RTC_YY);
+    186              Time[0].Month      = Ret_data(RTC_MM);
+    187              Time[0].Day_Week   = Ret_data(RTC_DW);
+    188              Time[0].Day_Month  = Ret_data(RTC_DM);
+    189          
+    190              if     (Time[0].Year      != Time[1].Year     ) { Time[0].Year      = Time[1].Year;      Update_Level = RTC_YY;  }   // Year Update
+    191              else if(Time[0].Month     != Time[1].Month    ) { Time[0].Month     = Time[1].Month;     Update_Level = RTC_MM;  }   // Month Update
+    192              else if(Time[0].Day_Week  != Time[1].Day_Week ) { Time[0].Day_Week  = Time[1].Day_Week;  Update_Level = RTC_DW;  }   // Day_Week Update
+    193              else if(Time[0].Day_Month != Time[1].Day_Month) { Time[0].Day_Month = Time[1].Day_Month; Update_Level = RTC_DM;  }   // Day_Month Update
+    194              else                                            Update_Level = RTC_S ; // Sec Update
+    195          
+    196              test = input(REG_C);
+    197              EA = On;
+    198          }  */
+    199          
+    200          interrupt [0x23] void SCON_int (void)    /* Serial Port */
+    201          {
+   \   030D            SCON_int:
+   \   030D  C0E0              PUSH    ACC
+   \   030F  C082              PUSH    DPL
+   \   0311  C083              PUSH    DPH
+   \   0313  C0D0              PUSH    PSW
+   \   0315  EC                MOV     A,R4
+   \   0316  C0E0              PUSH    ACC
+   \   0318  ED                MOV     A,R5
+   \   0319  C0E0              PUSH    ACC
+    202              Byte cks=0;
+   \   031B  E4                CLR     A
+   \   031C  900000            MOV     DPTR,#$LOCBX SCON_int
+   \   031F  F0                MOVX    @DPTR,A
+    203              Byte i=0;
+   \   0320  A3                INC     DPTR
+   \   0321  F0                MOVX    @DPTR,A
+    204              
+    205              if(TI == 1)
+   \   0322  309911            JNB     SCON.1,?0034
+   \   0325            ?0033:
+    206              {
+    207                  TI = 0;
+   \   0325  C299              CLR     SCON.1
+    208                  if(Scount == 11)    Comout = 0;
+   \   0327  900019            MOV     DPTR,#Scount
+   \   032A  E0                MOVX    A,@DPTR
+   \   032B  B40B04            CJNE    A,#11,?0036
+   \   032E            ?0035:
+   \   032E  C201              CLR     Comout
+   \   0330  8002              SJMP    ?0037
+   \   0332            ?0036:
+    209                  else                Comout = 1;
+   \   0332  D201              SETB    Comout
+   \   0334            ?0037:
+   \   0334  8063              SJMP    ?0038
+   \   0336            ?0034:
+    210              }
+    211              
+    212              else if(RI == 1)
+   \   0336  309860            JNB     SCON.0,?0040
+   \   0339            ?0039:
+    213              {
+    214                  RI = 0;
+   \   0339  C298              CLR     SCON.0
+    215                  
+    216                  Rbuf[Rcount++] = SBUF;
+   \   033B  E599              MOV     A,SBUF
+   \   033D  900018            MOV     DPTR,#Rcount
+   \   0340  FC                MOV     R4,A
+   \   0341  E0                MOVX    A,@DPTR
+   \   0342  FD                MOV     R5,A
+   \   0343  04                INC     A
+   \   0344  F0                MOVX    @DPTR,A
+   \   0345  ED                MOV     A,R5
+   \   0346  2425              ADD     A,#LOW(Rbuf)
+   \   0348  F582              MOV     DPL,A
+   \   034A  E4                CLR     A
+   \   034B  3400              ADDC    A,#HIGH(Rbuf)
+   \   034D  F583              MOV     DPH,A
+   \   034F  EC                MOV     A,R4
+   \   0350  F0                MOVX    @DPTR,A
+    217                  
+    218                  if(Rcount == 17)
+   \   0351  900018            MOV     DPTR,#Rcount
+   \   0354  E0                MOVX    A,@DPTR
+   \   0355  B41141            CJNE    A,#17,?0042
+   \   0358            ?0041:
+    219                  {
+    220                      cks = 0;
+   \   0358  E4                CLR     A
+   \   0359  900000            MOV     DPTR,#$LOCBX SCON_int
+   \   035C  F0                MOVX    @DPTR,A
+    221                      for(i=2;i<14;i++)    cks ^= Rbuf[i];
+   \   035D  7402              MOV     A,#2
+   \   035F  A3                INC     DPTR
+   \   0360  F0                MOVX    @DPTR,A
+   \   0361            ?0044:
+   \   0361  900000            MOV     DPTR,#$LOCBX SCON_int+1
+   \   0364  E0                MOVX    A,@DPTR
+   \   0365  C3                CLR     C
+   \   0366  940E              SUBB    A,#14
+   \   0368  5018              JNC     ?0043
+   \   036A            ?0045:
+   \   036A  E0                MOVX    A,@DPTR
+   \   036B  2425              ADD     A,#LOW(Rbuf)
+   \   036D  F582              MOV     DPL,A
+   \   036F  E4                CLR     A
+   \   0370  3400              ADDC    A,#HIGH(Rbuf)
+   \   0372  F583              MOV     DPH,A
+   \   0374  E0                MOVX    A,@DPTR
+   \   0375  900000            MOV     DPTR,#$LOCBX SCON_int
+   \   0378  FC                MOV     R4,A
+   \   0379  E0                MOVX    A,@DPTR
+   \   037A  6C                XRL     A,R4
+   \   037B  F0                MOVX    @DPTR,A
+   \   037C  A3                INC     DPTR
+   \   037D  E0                MOVX    A,@DPTR
+   \   037E  04                INC     A
+   \   037F  F0                MOVX    @DPTR,A
+   \   0380  80DF              SJMP    ?0044
+   \   0382            ?0043:
+    222                      
+    223                      if(cks == Rbuf[14])     Comin = 1;      // check sum
+   \   0382  900000            MOV     DPTR,#$LOCBX SCON_int
+   \   0385  E0                MOVX    A,@DPTR
+   \   0386  FC                MOV     R4,A
+   \   0387  900033            MOV     DPTR,#Rbuf+14
+   \   038A  E0                MOVX    A,@DPTR
+   \   038B  6C                XRL     A,R4
+   \   038C  7004              JNZ     ?0048
+   \   038E            ?0047:
+   \   038E  D200              SETB    Comin
+   \   0390  8002              SJMP    ?0049
+   \   0392            ?0048:
+    224                      else                    Comin = 0;
+   \   0392  C200              CLR     Comin
+   \   0394            ?0049:
+    225                  
+    226                      Rcount = 0;
+   \   0394  E4                CLR     A
+   \   0395  900018            MOV     DPTR,#Rcount
+   \   0398  F0                MOVX    @DPTR,A
+   \   0399            ?0042:
+   \   0399            ?0040:
+   \   0399            ?0038:
+    227                  }
+    228              }
+    229          }
+   \   0399  D0E0              POP     ACC
+   \   039B  FD                MOV     R5,A
+   \   039C  D0E0              POP     ACC
+   \   039E  FC                MOV     R4,A
+   \   039F  D0D0              POP     PSW
+   \   03A1  D083              POP     DPH
+   \   03A3  D082              POP     DPL
+   \   03A5  D0E0              POP     ACC
+   \   03A7  32                RETI
+    230          
+    231          
+   \   0000                    RSEG    CSTR
+   \   0000            ?0000:
+   \   0000  4572726F          DB      'ErrorDay',0
+   \   0004  72446179
+   \   0008  00
+   \   0009            ?0001:
+   \   0009  53756E64          DB      'Sunday   ',0
+   \   000D  61792020
+   \   0011  2000
+   \   0013            ?0002:
+   \   0013  4D6F6E64          DB      'Monday   ',0
+   \   0017  61792020
+   \   001B  2000
+   \   001D            ?0003:
+   \   001D  54756573          DB      'Tuesday  ',0
+   \   0021  64617920
+   \   0025  2000
+   \   0027            ?0004:
+   \   0027  5765646E          DB      'Wednesday',0
+   \   002B  65736461
+   \   002F  7900
+   \   0031            ?0005:
+   \   0031  54687572          DB      'Thursday ',0
+   \   0035  73646179
+   \   0039  2000
+   \   003B            ?0006:
+   \   003B  46726964          DB      'Friday   ',0
+   \   003F  61792020
+   \   0043  2000
+   \   0045            ?0007:
+   \   0045  53617475          DB      'Saturday ',0
+   \   0049  72646179
+   \   004D  2000
+   \   004F            ?0031:
+   \   004F  25782578          DB      '%x%x%x%x%x',0
+   \   0053  25782578
+   \   0057  257800
+   \   005A            ?0032:
+   \   005A  25782578          DB      '%x%x',0
+   \   005E  00
+   \   0000                    COMMON  INTVEC
+   \   0023                    DS      35
+   \   0023  02                DB      2
+   \   0024  030D              DB      HIGH(SCON_int),LOW(SCON_int)
+   \   0000                    RSEG    X_UDATA
+   \   0000            Time:
+   \   000E                    DS      14
+   \   000E            Update_Level:
+   \   000F                    DS      1
+   \   000F            KeyOn:
+   \   0010                    DS      1
+   \   0010            test:
+   \   0011                    DS      1
+   \   0011            Sbuf:
+   \   0025                    DS      20
+   \   0025            Rbuf:
+   \   0039                    DS      20
+   \   0000                    RSEG    X_IDATA
+   \   0000            DAYWEEK:
+   \   0018                    DS      24
+   \   0018            Rcount:
+   \   0019                    DS      1
+   \   0019            Scount:
+   \   001A                    DS      1
+   \   0000                    RSEG    X_CDATA
+   \   0000  02                DB      2
+   \   0001  0000              DW      ?0000
+   \   0003  02                DB      2
+   \   0004  0009              DW      ?0001
+   \   0006  02                DB      2
+   \   0007  0013              DW      ?0002
+   \   0009  02                DB      2
+   \   000A  001D              DW      ?0003
+   \   000C  02                DB      2
+   \   000D  0027              DW      ?0004
+   \   000F  02                DB      2
+   \   0010  0031              DW      ?0005
+   \   0012  02                DB      2
+   \   0013  003B              DW      ?0006
+   \   0015  02                DB      2
+   \   0016  0045              DW      ?0007
+   \   0018  00                DB      0
+   \   0019  00                DB      0
+   \   0000                    RSEG    BITVARS
+   \   0000            Comin:
+   \   0001                    DS      1
+   \   0001            Comout:
+   \   0002                    DS      1
+   \   0002                    END
+
+Errors: none
+Warnings: none
+Code size: 936
+Constant size: 159
+Static variable size: Data(0) Idata(0) Bit(2) Xdata(83)
+

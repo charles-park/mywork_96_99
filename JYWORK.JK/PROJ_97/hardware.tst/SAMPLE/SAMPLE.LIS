@@ -1,0 +1,57 @@
+sample.pds
+
+PALASM90  PARSER   - MARKET RELEASE (2-14-90)
+ (C) - COPYRIGHT ADVANCED MICRO DEVICES INC., 1990
+
+
+                    ***********************************
+                    *     PALASM PARSER LISTING       *
+                    ***********************************
+
+LINE #   |----+----1----+----2----+----3----+----4----+----5----+----6----+
+   1     |;PALASM Design Description
+   2     |
+   3     |;---------------------------------- Declaration Segment ------------
+   4     |TITLE    DATA STORAGE ADDRESS DECODE GAL
+   5     |PATTERN  
+   6     |REVISION 1.0
+   7     |AUTHOR   HAE SUK, JIN
+   8     |COMPANY  JINYANG INDUSTRIAL.,CO
+   9     |DATE     09/23/95
+  10     |
+  11     |CHIP  DSTODECO  PALCE16V8
+  12     |
+  13     |;---------------------------------- PIN Declarations ---------------
+  14     |PIN  1          A15                  COMBINATORIAL ; INPUT 
+  15     |PIN  2          A14                  COMBINATORIAL ; INPUT 
+  16     |PIN  3          A13                  COMBINATORIAL ; INPUT 
+  17     |PIN  4          RD                   COMBINATORIAL ; INPUT 
+  18     |PIN  5          WR                   COMBINATORIAL ; INPUT 
+  19     |PIN  6          RTI                  COMBINATORIAL ; INPUT 
+  20     |PIN  7          RTCK                 COMBINATORIAL ; INPUT 
+  21     |PIN  8          RTSQ                 COMBINATORIAL ; INPUT 
+  22     |PIN  9          SINT                 COMBINATORIAL ; INPUT 
+  23     |PIN  10         GND                             ; INPUT 
+  24     |PIN  12         MEM                  COMBINATORIAL ; OUTPUT
+  25     |PIN  13         LCD                  COMBINATORIAL ; OUTPUT
+  26     |PIN  14         RTC                  COMBINATORIAL ; OUTPUT
+  27     |PIN  15         T1                   COMBINATORIAL ; OUTPUT
+  28     |PIN  16         T0                   COMBINATORIAL ; OUTPUT
+  29     |PIN  17         INT1                 COMBINATORIAL ; OUTPUT
+  30     |PIN  18         INT0                 COMBINATORIAL ; OUTPUT
+  31     |PIN  19         SCS0                 COMBINATORIAL ; OUTPUT
+  32     |PIN  20         VCC                             ; INPUT
+  33     |
+  34     |;----------------------------------- Boolean Equation Segment ------
+  35     |EQUATIONS
+  36     |/MEM     = /A15
+  37     |/RTC     = A15 * /A14 * /A13
+  38     |
+  39     |;----------------------------------- Simulation Segment ------------
+  40     |SIMULATION
+  41     |
+  42     |;-------------------------------------------------------------------
+
+ %% PARSE %%    No errors.  No warnings.
+
+ %% PARSE %%    File processed successfully.    File:  sample.pds

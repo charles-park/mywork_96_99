@@ -1,0 +1,3 @@
+-! This file is needed for assembler-only projects under windows -!
+-! define processor -!
+-c8051

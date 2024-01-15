@@ -1,0 +1,45 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    8051 ZIG GAL(ADDRESS DECODER)
+PATTERN  
+REVISION 1.0
+AUTHOR   JK. PARK
+COMPANY  JINYANG
+DATE     3/10/98
+
+CHIP  DECODE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          CS2                  COMBINATORIAL ; INPUT
+PIN  2          A0                   COMBINATORIAL ; INPUT
+PIN  3          A1                   COMBINATORIAL ; INPUT
+PIN  4          A2                   COMBINATORIAL ; INPUT
+PIN  5          READ                 COMBINATORIAL ; INPUT
+PIN  6          WRITE                COMBINATORIAL ; INPUT
+PIN  7          PORT                 COMBINATORIAL ; INPUT
+PIN  10         GND                                ; INPUT
+PIN  12         GRLCD                COMBINATORIAL ; OUTPUT
+PIN  13         RD                   COMBINATORIAL ; OUTPUT
+PIN  14         ENB                  COMBINATORIAL ; OUTPUT
+PIN  15         GRCS0                COMBINATORIAL ; OUTPUT
+PIN  16         GRCS1                COMBINATORIAL ; OUTPUT
+PIN  17         GRRST                COMBINATORIAL ; OUTPUT
+PIN  18         DI                   COMBINATORIAL ; OUTPUT
+PIN  19         RW                   COMBINATORIAL ; OUTPUT
+PIN  20         VCC                                ; INPUT
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+/GRLCD     = /CS2               * (/READ + /WRITE)     ; 0xC000~
+/RD        = /READ                                     ; BY PASS
+ ENB       = /CS2               * (/READ + /WRITE)     ; ENABLE LOGIC
+/GRCS0     = /CS2  * /A2        * (/READ + /WRITE)     ; 0xC000~0xC003
+/GRCS1     = /CS2  *  A2        * (/READ + /WRITE)     ; 0xC004~0xC007
+/GRRST     = /PORT                                     ; BY PASS
+/DI        = /A0                                       ; BY PASS
+/RW        = /A1                                       ; BY PASS
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

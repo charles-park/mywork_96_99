@@ -1,0 +1,47 @@
+
+;PALASM Design Description
+;----------------------------------- Declaration Segment -----------
+
+TITLE    MAIN PROCESSER MODULE U27
+PATTERN  
+REVISION 2.0
+AUTHOR   M.J.M
+COMPANY  JINYANG
+DATE     03/22/97
+
+CHIP  GATE  PALCE16V8
+;----------------------------------- PIN Declarations --------------
+
+PIN  1          P11                  COMBINATORIAL ; INPUT
+PIN  2          P12                  COMBINATORIAL ; INPUT
+PIN  3          P13                  COMBINATORIAL ; INPUT
+PIN  4          P14                  COMBINATORIAL ; INPUT
+PIN  5          P15                  COMBINATORIAL ; INPUT
+PIN  6          RD                   COMBINATORIAL ; INPUT
+PIN  7          WR                   COMBINATORIAL ; INPUT
+PIN  8          RST_L                COMBINATORIAL ; INPUT
+PIN  12         LCD_CS               COMBINATORIAL ; OUTPUT
+PIN  13         IO_GATE              COMBINATORIAL ; OUTPUT
+PIN  14         KEY_CS               COMBINATORIAL ; OUTPUT
+PIN  15         CNT_CSH              COMBINATORIAL ; OUTPUT
+PIN  16         CNT_CSL              COMBINATORIAL ; OUTPUT
+PIN  17         RD0                  COMBINATORIAL ; OUTPUT
+PIN  18         WR0                  COMBINATORIAL ; OUTPUT
+PIN  19         RTC_RST              COMBINATORIAL ; OUTPUT
+PIN  10         GND                                ;
+PIN  20         VCC                                ;
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+/CNT_CSH = /P15 * /P14 *  P13 *  P12 * /P11 *  /RD       ; --00110-
+/CNT_CSL = /P15 * /P14 *  P13 *  P12 *  P11 *  /RD       ; --00111-
+ LCD_CS  = /P15 *  P14 * /P13 * /P12 * /P11 * (/RD + /WR); --01000-
+/IO_GATE =( P15 * P14)+ (/P15 * /P14)
+/KEY_CS  = /P15 *  P14 * /P13 * /P12 *  P11              ; --01001-
+/RD0     = /RD
+/WR0     = /WR
+ RTC_RST = RST_L
+
+;----------------------------------- End ---------------------------
+

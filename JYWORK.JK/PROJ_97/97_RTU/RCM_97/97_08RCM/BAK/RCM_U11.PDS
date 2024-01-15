@@ -1,0 +1,46 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    Communication Switching GAL
+PATTERN  
+REVISION 1.0
+AUTHOR   JK. PARK
+COMPANY  JINYANG
+DATE     3/27/97
+
+CHIP  DECODE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          RSTP                 COMBINATORIAL ; INPUT  (Power Reset Input)
+PIN  2          TXD                  COMBINATORIAL ; INPUT  (8051 TXD)
+PIN  3          TXD1                 COMBINATORIAL ; INPUT  (16C550 1 : default)
+PIN  4          TXD2                 COMBINATORIAL ; INPUT  (16C550 2 : Com2  )
+PIN  5          TXD3                 COMBINATORIAL ; INPUT  (BYPASS Com1->Com3)
+PIN  6          RRXD                 COMBINATORIAL ; INPUT  (8051 RXD IN From MPM)
+PIN  10         GND                                ; INPUT
+PIN  12         PR1                  COMBINATORIAL ; OUTPUT (5V Power Control)
+PIN  13         PR2                  COMBINATORIAL ; OUTPUT (12V Power Control)
+PIN  14         PR3                  COMBINATORIAL ; OUTPUT (-12V Power Control)
+PIN  15         TXDD                 COMBINATORIAL ; OUTPUT (Open TXD  : 8051)
+PIN  16         TXO1                 COMBINATORIAL ; OUTPUT (Open TXD1 : Com1)
+PIN  17         TXO2                 COMBINATORIAL ; OUTPUT (Open TXD2 : Com2)
+PIN  18         TXO3                 COMBINATORIAL ; OUTPUT (Open TXD3 : BYPASS)
+PIN  19         RXD                  COMBINATORIAL ; OUTPUT (Input RXD : 8051)
+PIN  20         VCC                                ; INPUT
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+PR1   = /RSTP
+PR2   = /RSTP
+PR3   = /RSTP
+TXDD  = /TXD
+TXO1  = /TXD1
+TXO2  = /TXD2
+TXO3  = /TXD3
+RXD   =  RRXD
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

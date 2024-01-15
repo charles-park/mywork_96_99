@@ -1,0 +1,46 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    AD_97 BOARD CONTROL GAL
+PATTERN  
+REVISION 1.0
+AUTHOR   JK. PARK
+COMPANY  JINYANG
+DATE     8/16/97
+
+CHIP  DECODE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A12                  COMBINATORIAL ; INPUT
+PIN  2          A13                  COMBINATORIAL ; INPUT
+PIN  3          A14                  COMBINATORIAL ; INPUT
+PIN  4          A15                  COMBINATORIAL ; INPUT
+PIN  5          RD                   COMBINATORIAL ; INPUT
+PIN  6          WR                   COMBINATORIAL ; INPUT
+PIN  7          TXD                  COMBINATORIAL ; INPUT
+PIN  8          RX_COM               COMBINATORIAL ; INPUT
+PIN  10         GND                                ; INPUT
+PIN  12         TTXD                 COMBINATORIAL ; OUTPUT
+PIN  13         RXD                  COMBINATORIAL ; OUTPUT
+PIN  14         ADC                  COMBINATORIAL ; OUTPUT
+PIN  15         COUNT0_CS            COMBINATORIAL ; OUTPUT
+PIN  16         COUNT1_CS            COMBINATORIAL ; OUTPUT
+PIN  17         JUMPER               COMBINATORIAL ; OUTPUT
+PIN  18         RD_IO                COMBINATORIAL ; OUTPUT
+PIN  19         SELECT               COMBINATORIAL ; OUTPUT
+PIN  20         VCC                                ; INPUT
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+TTXD       = /TXD                                        ; TXD Line Buffering
+RXD        = RX_COM                                      ; RXD Line Buffering
+/ADC       = A15 * /A14 * /A13 * /A12 * (/RD + /WR)      ; AD Convert Address
+/COUNT0_CS = A15 * /A14 * /A13 *  A12 * (/RD )           ; PRE Count CS0 Address
+/COUNT1_CS = A15 * /A14 *  A13 * /A12 * (/RD )           ; PRE Count CS1 Address
+/JUMPER    = A15 * /A14 *  A13 *  A12 * (/RD )           ; JUMPER Read Address
+RD_IO      = RD                                          ; Read Signal Buffering
+SELECT     = A15 *  A14 * /A13 * /A12 * (/WR )           ; Mux Select Latch IC
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

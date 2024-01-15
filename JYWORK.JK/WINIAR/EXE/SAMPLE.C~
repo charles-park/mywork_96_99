@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <io51.h>
+
+#define  ON    1
+#define  OFF   0
+
+void delay(unsigned int count)
+{
+   unsigned int cmp;
+   for(cmp=0; cmp<count; cmp++)  {  cmp++;   cmp--;   }
+}
+
+void main(void)
+{
+   while(1) {
+      P1.0 = ON;  delay(5000);   delay(5000);   delay(5000);   P1.0 = OFF;   
+      P1.1 = ON;  delay(5000);   delay(5000);   delay(5000);   P1.1 = OFF;
+      P1.2 = ON;  delay(5000);   delay(5000);   delay(5000);   P1.2 = OFF;
+      P1.3 = ON;  delay(5000);   delay(5000);   delay(5000);   P1.3 = OFF;   
+      P1.4 = ON;  delay(5000);   delay(5000);   delay(5000);   P1.4 = OFF;   
+      P1.5 = ON;  delay(5000);   delay(5000);   delay(5000);   P1.5 = OFF;   
+      P1.6 = ON;  delay(5000);   delay(5000);   delay(5000);   P1.6 = OFF;   
+      P1.7 = ON;  delay(5000);   delay(5000);   delay(5000);   P1.7 = OFF;   
+   }
+}

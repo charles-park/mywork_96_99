@@ -1,0 +1,20 @@
+        MODULE  rightshift
+        PUBLIC  rightshift
+        RSEG    CODE
+rightshift:
+        RR      A
+        DJNZ    B,rightshift
+        RET
+        ENDMOD
+
+        MODULE  leftshift
+        PUBLIC  leftshift
+        RSEG    CODE
+leftshift:
+        RL      A
+        DJNZ    B,leftshift
+        RET
+
+        END
+
+

@@ -1,0 +1,4154 @@
+	NAME	jejoo(16)
+	RSEG	CODE(0)
+	RSEG	CONST(0)
+	COMMON	INTVEC(0)
+	RSEG	X_UDATA(0)
+	RSEG	BITVARS(0)
+	PUBLIC	EX0_int
+	$DEFFN	EX0_int(512,0,0,0,0,0,0,0)
+	PUBLIC	Initialize
+	$DEFFN	Initialize(4,0,0,0,0,0,0,0),main
+	PUBLIC	One_pros
+	$DEFFN	One_pros(0,0,0,0,0,0,0,0),Time_pros
+	PUBLIC	S0_pros
+	$DEFFN	S0_pros(4,0,0,0,0,0,0,0),main
+	PUBLIC	S1_pros
+	$DEFFN	S1_pros(4,0,0,0,0,0,0,0),main
+	PUBLIC	SCON_int
+	$DEFFN	SCON_int(514,0,0,0,0,0,0,0)
+	PUBLIC	Ten_pros
+	$DEFFN	Ten_pros(0,0,0,0,0,0,0,0),Time_pros
+	PUBLIC	Time_pros
+	$DEFFN	Time_pros(0,0,0,0,0,0,0,0),main
+	PUBLIC	Title
+	PUBLIC	main
+	$DEFFN	main(0,0,0,0,0,0,0,0)
+	EXTERN	?UI_DIV_L00
+	EXTERN	?L_ADD_ASG_DPTR_R4567_L01
+	EXTERN	?F_ADD_L02
+	EXTERN	?F_DIV_L02
+	EXTERN	?R4567_FLT_TO_LONG_L02
+	EXTERN	?R4567_ULONG_TO_FLT_L02
+	EXTERN	?LD_R4567_XDPTR_L20
+	EXTERN	?CL8051C_5_12_L17
+	RSEG	CODE
+; 1.	#include <c:\cci_hdsl\include\io51.h>
+; 2.	#include <c:\cci_hdsl\include\math.h>
+; 3.	#include <jejoo.h>
+; 4.	
+; 5.	#pragma memory=code
+; 6.	char Title[20][65]={
+; 7.	//          1         2         3         4         5
+; 8.	// 123456789012345678901234567890123456789012345678901234567890
+; 9.	  "/ /// /////////////////////////////////////////////// /// /",
+; 10.	  "/ /// /////////////////////////////////////////////// /// /",
+; 11.	  "/ /// ///       JIN-YANG  INDUSTRIAL.,CO LTD      /// /// /",
+; 12.	  "/ /// ///       Program By  Hae-suk. Jin          /// /// /",
+; 13.	  "/ /// ///     Start :  1997. 2. 19.               /// /// /",
+; 14.	  "/ /// ///       End :  1996.        Ver 1.0       /// /// /",
+; 15.	  "/ /// ///                                         /// /// /",    // Dew Point Value <= Temp
+; 16.	  "/ /// ///    1.Temperature   : 1 EA  Analog Ch=0  /// /// /",
+; 17.	  "/ /// ///    2.Humidity      : 1 EA  Analog Ch=1  /// /// /",
+; 18.	  "/ /// /////////////////////////////////////////////// /// /",
+; 19.	  "/ /// /////////////////////////////////////////////// /// /"
+; 20.	};
+; 21.	#pragma memory=default
+; 22.	
+; 23.	#define BD9600L 0x0c
+; 24.	#define BD9600H 0x00
+; 25.	#define BPS96   0xFA // FA=11MHz, F4=22Mhz, F6=18 MHz
+; 26.	
+; 27.	/**************************  Sensor Code's  ********************************/
+; 28.	#define TEMPCODE    2   // ID 2
+; 29.	#define HUMICODE    6   // ID 4
+; 30.	
+; 31.	/**************************  Multiplexer  **********************************/
+; 32.	#define     Mux0    P1.3        // Multiplexer Select Pin 0
+; 33.	#define     Mux1    P1.4        // Multiplexer Select Pin 1
+; 34.	#define     Mux2    P1.5        // Multiplexer Select Pin 2
+; 35.	
+; 36.	//      1 : Temperature
+; 37.	//      2 : Humidity
+; 38.	
+; 39.	/***************************  ETC.  ****************************************/
+; 40.	#define     SRH     P1.2        // Sample/Hold
+; 41.	#define     RedL    P1.1        // Transm
+; 42.	#define     BlueL   P1.0        // Receve
+; 43.	#define     STS     P1.7        // AD Status
+; 44.	#define     LightL  0x300
+; 45.	
+; 46.	/**************************  Function's   **********************************/
+; 47.	interrupt void T0_int       (void);         // Timer 0
+; 48.	interrupt void EX0_int      (void);         // Clock_check Interrupt
+; 49.	interrupt void EX1_int      (void);         // Precipi-Detect Interrupt
+; 50.	interrupt void SCON_int     (void);         // Serial Interrupt
+; 51.	
+; 52.	          void Initialize   (void);
+; 53.	          void Time_pros    (void);
+; 54.	          void One_pros     (void);
+; 55.	          void Ten_pros     (void);
+; 56.	          void S0_pros      (void);         // Temperature    Analog
+; 57.	          void S1_pros      (void);         // Humidity       Calc
+; 58.	
+; 59.	/*************************** Main ******************************************/
+; 60.	void main(void)
+; 61.	{
+main:
+; 62.	    Initialize();
+	LCALL	$REFFN Initialize
+?0001:
+; 63.	    while(1)
+; 64.	    {
+; 65.	        if(Receve)
+	JNB	Receve,?0004
+?0003:
+; 66.	        {
+; 67.	            if(!Blueb--)
+	MOV	DPTR,#Blueb
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	ADD	A,#255
+	MOVX	@DPTR,A
+	MOV	DPTR,#Blueb
+	MOVX	A,@DPTR
+	ADDC	A,#255
+	MOVX	@DPTR,A
+	MOV	A,R4
+	ORL	A,R5
+	JNZ	?0006
+?0005:
+; 68.	            {
+; 69.	                BlueL=0;     /*Receive LED off  */
+	CLR	P1.0
+; 70.	                Receve=0;
+	CLR	Receve
+?0006:
+?0004:
+; 71.	            }
+; 72.	        }
+; 73.	        if(Transm)
+	JNB	Transm,?0008
+?0007:
+; 74.	        {
+; 75.	            if(!Redb--)
+	MOV	DPTR,#Redb
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	ADD	A,#255
+	MOVX	@DPTR,A
+	MOV	DPTR,#Redb
+	MOVX	A,@DPTR
+	ADDC	A,#255
+	MOVX	@DPTR,A
+	MOV	A,R4
+	ORL	A,R5
+	JNZ	?0010
+?0009:
+; 76.	            {
+; 77.	                RedL=0;
+	CLR	P1.1
+; 78.	                Transm=0;
+	CLR	Transm
+?0010:
+?0008:
+; 79.	            }
+; 80.	        }
+; 81.	
+; 82.	        if(Adcerr)
+	JNB	Adcerr,?0012
+?0011:
+; 83.	        {
+; 84.	            ES=0;
+	CLR	IE.4
+; 85.	            Tempsta |= 4;         // 100
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	ORL	A,#4
+	MOVX	@DPTR,A
+; 86.	            Humista |= 4;         // 100
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	ORL	A,#4
+	MOVX	@DPTR,A
+; 87.	            ES=1;
+	SETB	IE.4
+; 88.	        }
+; 89.	        else
+	SJMP	?0013
+?0012:
+; 90.	        {
+; 91.	            ES=0;
+	CLR	IE.4
+; 92.	            Tempsta &= 3;         // 011
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	ANL	A,#3
+	MOVX	@DPTR,A
+; 93.	            Humista &= 3;         // 011
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	ANL	A,#3
+	MOVX	@DPTR,A
+; 94.	            ES=1;
+	SETB	IE.4
+?0013:
+; 95.	        }
+; 96.	
+; 97.	        if(TempEcount > 14400)
+	SETB	C
+	MOV	DPTR,#TempEcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#64
+	MOV	DPTR,#TempEcount
+	MOVX	A,@DPTR
+	SUBB	A,#56
+	JC	?0015
+?0014:
+; 98.	        {
+; 99.	            ES=0;
+	CLR	IE.4
+; 100.	            Tempsta |= 2;         // 010
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	ORL	A,#2
+	MOVX	@DPTR,A
+; 101.	            ES=1;
+	SETB	IE.4
+; 102.	        }
+; 103.	        else
+	SJMP	?0016
+?0015:
+; 104.	        {
+; 105.	            ES=0;
+	CLR	IE.4
+; 106.	            Tempsta &= 5;         // 101
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	ANL	A,#5
+	MOVX	@DPTR,A
+; 107.	            ES=1;
+	SETB	IE.4
+?0016:
+; 108.	        }
+; 109.	
+; 110.	        if(HumiEcount > 14400)
+	SETB	C
+	MOV	DPTR,#HumiEcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#64
+	MOV	DPTR,#HumiEcount
+	MOVX	A,@DPTR
+	SUBB	A,#56
+	JC	?0018
+?0017:
+; 111.	        {
+; 112.	            ES=0;
+	CLR	IE.4
+; 113.	            Humista |= 2;         // 010
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	ORL	A,#2
+	MOVX	@DPTR,A
+; 114.	            ES=1;
+	SETB	IE.4
+; 115.	        }
+; 116.	        else
+	SJMP	?0019
+?0018:
+; 117.	        {
+; 118.	            ES=0;
+	CLR	IE.4
+; 119.	            Humista &= 5;         // 101
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	ANL	A,#5
+	MOVX	@DPTR,A
+; 120.	            ES=1;
+	SETB	IE.4
+?0019:
+; 121.	        }
+; 122.	
+; 123.	        if(Tcount > 10000)
+	SETB	C
+	MOV	DPTR,#Tcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#16
+	MOV	DPTR,#Tcount
+	MOVX	A,@DPTR
+	SUBB	A,#39
+	JC	?0021
+?0020:
+; 124.	        {
+; 125.	            ES=0;
+	CLR	IE.4
+; 126.	            Tempsta |= 1;         // 001
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	ORL	A,#1
+	MOVX	@DPTR,A
+; 127.	            Humista |= 1;         // 001
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	ORL	A,#1
+	MOVX	@DPTR,A
+; 128.	            ES=1;
+	SETB	IE.4
+; 129.	        }
+; 130.	        else
+	SJMP	?0022
+?0021:
+; 131.	        {
+; 132.	            Tcount++;
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#Tcount
+	JNZ	?0217
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0217:
+; 133.	            ES=0;
+	CLR	IE.4
+; 134.	            Tempsta &= 6;         // 110
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	ANL	A,#6
+	MOVX	@DPTR,A
+; 135.	            Humista &= 6;         // 110
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	ANL	A,#6
+	MOVX	@DPTR,A
+; 136.	            ES=1;
+	SETB	IE.4
+?0022:
+; 137.	        }
+; 138.	
+; 139.	        if(MeasQ == 1)
+	JNB	MeasQ,?0024
+?0023:
+; 140.	        {
+; 141.	            MeasQ=0;
+	CLR	MeasQ
+; 142.	            if(Quad == 0)
+	MOV	DPTR,#Quad
+	MOVX	A,@DPTR
+	JNZ	?0026
+?0025:
+; 143.	            {
+; 144.	                S0_pros();          // Temperature      A
+	LCALL	$REFFN S0_pros
+	SJMP	?0027
+?0026:
+; 145.	            }
+; 146.	            else if(Quad == 2)
+	CJNE	A,#2,?0029
+?0028:
+; 147.	            {
+; 148.	                S1_pros();          // Humidity      Calculation
+	LCALL	$REFFN S1_pros
+	SJMP	?0030
+?0029:
+; 149.	            }
+; 150.	            else if(Quad == 3)
+	CJNE	A,#3,?0032
+?0031:
+; 151.	            {
+; 152.	                Time_pros();
+	LCALL	$REFFN Time_pros
+?0032:
+?0030:
+?0027:
+?0024:
+; 153.	            }
+; 154.	        }
+; 155.	    }
+; 156.	}
+	LJMP	?0001
+; 157.	
+; 158.	/*************************** Initialize ************************************/
+; 159.	void Initialize(void)
+; 160.	{
+Initialize:
+; 161.	    unsigned int i,j;
+; 162.	
+; 163.	    IE=0x80;
+	MOV	IE,#128
+; 164.	    PCON=0x80;          // Baudrate Double set
+	MOV	PCON,#128
+; 165.	
+; 166.	    TMOD = 0x25;        // T0 = Internal Timer 16Bit no,Prescaler,
+	MOV	TMOD,#37
+; 167.	                        // T1 = Using to Serial
+; 168.	    TH1 = 0xfa;
+	MOV	TH1,#250
+; 169.	    TL1 = 0xfa;         // 23Mhz = F3, 22Mhz = F4,18Mhz = F6, 11Mhz = fa Set
+	MOV	TL1,#250
+; 170.	    TH0=0xff;
+	MOV	TH0,#255
+; 171.	    TL0=0xff;
+	MOV	TL0,#255
+; 172.	    SCON=0x50;
+	MOV	SCON,#80
+; 173.	
+; 174.	    Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 175.	    Spoint=0;
+	MOV	DPTR,#Spoint
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 176.	    Comon=0;
+	CLR	Comon
+; 177.	    Quad=1;
+	INC	A
+	MOV	DPTR,#Quad
+	MOVX	@DPTR,A
+; 178.	    Second=1;
+	MOV	DPTR,#Second
+	MOVX	@DPTR,A
+; 179.	    Minute=0;
+	CLR	A
+	MOV	DPTR,#Minute
+	MOVX	@DPTR,A
+; 180.	    Tcount=0;
+	MOV	DPTR,#Tcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 181.	
+; 182.	    Tcount=0;
+	MOV	DPTR,#Tcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 183.	    TempEcount= 0;
+	MOV	DPTR,#TempEcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 184.	    HumiEcount= 0;
+	MOV	DPTR,#HumiEcount
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 185.	
+; 186.	    TempMsum  = 500;
+	MOV	DPTR,#TempMsum
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 187.	    TempTsum  = 500;
+	MOV	DPTR,#TempTsum
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	INC	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 188.	    TempMin   = 500;
+	MOV	DPTR,#TempMin
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 189.	    TempTen   = 500;
+	MOV	DPTR,#TempTen
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 190.	
+; 191.	    TempOmax = 500;
+	MOV	DPTR,#TempOmax
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 192.	    TempMmax = 500;
+	MOV	DPTR,#TempMmax
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 193.	    TempTmax = 500;
+	MOV	DPTR,#TempTmax
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 194.	    TempOmin = 500;
+	MOV	DPTR,#TempOmin
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 195.	    TempMmin = 500;
+	MOV	DPTR,#TempMmin
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 196.	    TempTmin = 500;
+	MOV	DPTR,#TempTmin
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 197.	
+; 198.	    TempMsmax= 500;
+	MOV	DPTR,#TempMsmax
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 199.	    TempMsmin= 500;
+	MOV	DPTR,#TempMsmin
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 200.	    TempTsmax= 500;
+	MOV	DPTR,#TempTsmax
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 201.	    TempTsmin= 500;
+	MOV	DPTR,#TempTsmin
+	MOV	A,#1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#244
+	MOVX	@DPTR,A
+; 202.	// ************************
+; 203.	    HumiMsum=0;
+	MOV	DPTR,#HumiMsum
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 204.	    HumiTsum=0;
+	MOV	DPTR,#HumiTsum
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 205.	
+; 206.	    HumiMin=0;
+	MOV	DPTR,#HumiMin
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 207.	    HumiTen=0;
+	MOV	DPTR,#HumiTen
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 208.	
+; 209.	    HumiOmax=0;
+	MOV	DPTR,#HumiOmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 210.	    HumiMmax=0;
+	MOV	DPTR,#HumiMmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 211.	    HumiTmax=0;
+	MOV	DPTR,#HumiTmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 212.	    HumiOmin=0;
+	MOV	DPTR,#HumiOmin
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 213.	    HumiMmin=0;
+	MOV	DPTR,#HumiMmin
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 214.	    HumiTmin=0;
+	MOV	DPTR,#HumiTmin
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 215.	
+; 216.	    HumiMsmax=0;
+	MOV	DPTR,#HumiMsmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 217.	    HumiMsmin=0;
+	MOV	DPTR,#HumiMsmin
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 218.	    HumiTsmax=0;
+	MOV	DPTR,#HumiTsmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 219.	    HumiTsmin=0;
+	MOV	DPTR,#HumiTsmin
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 220.	
+; 221.	            // Bit Default Set
+; 222.	    Init=1;
+	SETB	Init
+; 223.	    MeasQ=1;
+	SETB	MeasQ
+; 224.	    Adcerr=0;
+	CLR	Adcerr
+?0035:
+; 225.	            // Hard Ware Set up ID READ
+; 226.	    do
+; 227.	    {
+; 228.	        ID=read_XDATA(VID);
+	MOV	DPTR,#16384
+	MOVX	A,@DPTR
+	MOV	DPTR,#ID
+	MOVX	@DPTR,A
+; 229.	        for(i=10; i != 0; i--)
+	CLR	A
+	MOV	$LOCBD Initialize,A
+	MOV	$LOCBD Initialize+1,#10
+?0037:
+	MOV	A,$LOCBD Initialize+1
+	ORL	A,$LOCBD Initialize
+	JZ	?0036
+?0038:
+; 230.	        {
+; 231.	            if(ID != read_XDATA(VID))
+	MOV	DPTR,#16384
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JZ	?0041
+?0040:
+; 232.	                break;
+	SJMP	?0036
+?0041:
+	MOV	A,$LOCBD Initialize+1
+	DEC	$LOCBD Initialize+1
+	JNZ	$+4
+	DEC	$LOCBD Initialize
+	SJMP	?0037
+?0036:
+; 233.	        }
+; 234.	    } while(i != 0);
+	MOV	A,$LOCBD Initialize+1
+	ORL	A,$LOCBD Initialize
+	JNZ	?0035
+?0033:
+; 235.	
+; 236.	    ID  = (0xff-ID) & 0xff;     /* ID Number Complemently   */
+	MOV	DPTR,#ID
+	MOVX	A,@DPTR
+	MOV	R7,A
+	CPL	A
+	INC	A
+	DEC	A
+	MOV	R7,A
+	MOVX	@DPTR,A
+; 237.	
+; 238.	    TempID=2;
+	MOV	A,#2
+	MOV	DPTR,#TempID
+	MOVX	@DPTR,A
+; 239.	    HumiID=5;
+	MOV	A,#5
+	MOV	DPTR,#HumiID
+	MOVX	@DPTR,A
+; 240.	
+; 241.	    BlueL=0;
+	CLR	P1.0
+; 242.	    RedL=0;
+	CLR	P1.1
+; 243.	    Receve=0;
+	CLR	Receve
+; 244.	    Transm=0;
+	CLR	Transm
+; 245.	
+; 246.	    Mux0=1;     // Humidity Set
+	SETB	P1.3
+; 247.	    Mux1=0;
+	CLR	P1.4
+; 248.	    Mux2=0;
+	CLR	P1.5
+; 249.	
+; 250.	    TR1=1;
+	SETB	TCON.6
+; 251.	    PS =1;
+	SETB	IP.4
+; 252.	    IT0=1;      /* Edge Trigger */
+	SETB	TCON.0
+; 253.	    EX0=1;      /* 4 Hz Clock Enalble */
+	SETB	IE.0
+; 254.	    ES =1;      /* Serial Interrupt Enable  */
+	SETB	IE.4
+; 255.	}
+	RET
+; 256.	
+; 257.	/***************************  Temperature  *********************************/
+; 258.	void S0_pros      (void)
+; 259.	{
+S0_pros:
+; 260.	    unsigned int i,j;
+; 261.	
+; 262.	    SRH=0;                          // Holding
+	CLR	P1.2
+; 263.	    for(i=0; i < 15; i++)
+	CLR	A
+	MOV	$LOCBD S0_pros+1,A
+	MOV	$LOCBD S0_pros,A
+?0043:
+	CLR	C
+	MOV	A,$LOCBD S0_pros+1
+	SUBB	A,#15
+	MOV	A,$LOCBD S0_pros
+	SUBB	A,#0
+	JNC	?0042
+?0044:
+; 264.	    {
+; 265.	        i++;
+	INC	$LOCBD S0_pros+1
+	MOV	A,$LOCBD S0_pros+1
+	JNZ	$+4
+	INC	$LOCBD S0_pros
+; 266.	        i--;
+	MOV	A,$LOCBD S0_pros+1
+	DEC	$LOCBD S0_pros+1
+	JNZ	$+4
+	DEC	$LOCBD S0_pros
+	INC	$LOCBD S0_pros+1
+	MOV	A,$LOCBD S0_pros+1
+	JNZ	$+4
+	INC	$LOCBD S0_pros
+	SJMP	?0043
+?0042:
+; 267.	    }                               // Delay
+; 268.	    write_XDATA(ADCMSB,0xff);       // Converting Start
+	MOV	A,#255
+	MOV	DPTR,#8192
+	MOVX	@DPTR,A
+; 269.	    for(i=0; i < 10; i++)
+	CLR	A
+	MOV	$LOCBD S0_pros+1,A
+	MOV	$LOCBD S0_pros,A
+?0047:
+	CLR	C
+	MOV	A,$LOCBD S0_pros+1
+	SUBB	A,#10
+	MOV	A,$LOCBD S0_pros
+	SUBB	A,#0
+	JNC	?0046
+?0048:
+; 270.	    {
+; 271.	        i++;
+	INC	$LOCBD S0_pros+1
+	MOV	A,$LOCBD S0_pros+1
+	JNZ	$+4
+	INC	$LOCBD S0_pros
+; 272.	        i--;
+	MOV	A,$LOCBD S0_pros+1
+	DEC	$LOCBD S0_pros+1
+	JNZ	$+4
+	DEC	$LOCBD S0_pros
+	INC	$LOCBD S0_pros+1
+	MOV	A,$LOCBD S0_pros+1
+	JNZ	$+4
+	INC	$LOCBD S0_pros
+	SJMP	?0047
+?0046:
+; 273.	    }
+; 274.	    i=0;                            // Delay
+	CLR	A
+	MOV	$LOCBD S0_pros+1,A
+	MOV	$LOCBD S0_pros,A
+?0051:
+; 275.	    while(STS == 1)                 // Converting Delay
+	JNB	P1.7,?0050
+?0052:
+; 276.	    {
+; 277.	        if(i++ > 100)
+	MOV	R4,$LOCBD S0_pros+1
+	MOV	R5,$LOCBD S0_pros
+	INC	$LOCBD S0_pros+1
+	MOV	A,$LOCBD S0_pros+1
+	JNZ	$+4
+	INC	$LOCBD S0_pros
+	SETB	C
+	MOV	A,R4
+	SUBB	A,#100
+	MOV	A,R5
+	SUBB	A,#0
+	JC	?0054
+?0053:
+; 278.	            break;
+	SJMP	?0050
+?0054:
+	SJMP	?0051
+?0050:
+; 279.	    }
+; 280.	    if(i > 100)
+	SETB	C
+	MOV	A,$LOCBD S0_pros+1
+	SUBB	A,#100
+	MOV	A,$LOCBD S0_pros
+	SUBB	A,#0
+	JC	?0056
+?0055:
+; 281.	        Adcerr=1;
+	SETB	Adcerr
+; 282.	    else
+	SJMP	?0057
+?0056:
+; 283.	        Adcerr=0;
+	CLR	Adcerr
+?0057:
+; 284.	
+; 285.	    ES=0;
+	CLR	IE.4
+; 286.	    Tempreal = read_XDATA(ADCLSB) >> 4;
+	MOV	DPTR,#8193
+	MOVX	A,@DPTR
+	SWAP	A
+	ANL	A,#15
+	MOV	R5,#0
+; 287.	    Tempreal|= read_XDATA(ADCMSB) << 4;      // Measuring Wind Direction
+	MOV	R4,A
+	MOV	DPL,R5
+	MOVX	A,@DPTR
+	MOV	R7,#0
+	MOV	R6,#4
+?0218:
+	ADD	A,ACC
+	XCH	A,R7
+	RLC	A
+	XCH	A,R7
+	DJNZ	R6,?0218
+	MOV	R6,A
+	MOV	A,R4
+	ORL	A,R6
+	MOV	R4,A
+	MOV	A,R5
+	ORL	A,R7
+; 288.	    ES=1;
+	SETB	IE.4
+; 289.	    SRH=1;                          // Sampling
+	SETB	P1.2
+; 290.	
+; 291.	    i=(Tempreal/4.095)+500.;        // Scale Calculate
+	MOV	DPTR,#Tempreal
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+	MOV	R5,A
+	MOV	A,R4
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R1,#10
+	MOV	R0,#61
+	MOV	R3,#64
+	MOV	R2,#131
+	LCALL	?F_DIV_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#67
+	MOV	R2,#250
+	LCALL	?F_ADD_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+; 292.	
+; 293.	    Tempd[Second%10]=i;
+	MOV	DPTR,#Second
+	MOVX	A,@DPTR
+	MOV	B,#10
+	DIV	AB
+	MOV	A,B
+	ADD	A,ACC
+	ADD	A,#LOW(Tempd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Tempd)
+	MOV	DPH,A
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 294.	    i=0;
+	CLR	A
+	MOV	R4,A
+	MOV	R5,A
+	MOV	$LOCBD S0_pros+1,R4
+	MOV	$LOCBD S0_pros,R5
+; 295.	    for(j=0;j < 10;j++)
+	MOV	$LOCBD S0_pros+3,A
+	MOV	$LOCBD S0_pros+2,A
+?0059:
+	CLR	C
+	MOV	A,$LOCBD S0_pros+3
+	SUBB	A,#10
+	MOV	A,$LOCBD S0_pros+2
+	SUBB	A,#0
+	JNC	?0058
+?0060:
+; 296.	        i+=Tempd[j];
+	MOV	A,$LOCBD S0_pros+3
+	ADD	A,ACC
+	ADD	A,#LOW(Tempd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Tempd)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,$LOCBD S0_pros+1
+	ADD	A,R4
+	MOV	$LOCBD S0_pros+1,A
+	MOV	A,$LOCBD S0_pros
+	ADDC	A,R5
+	MOV	$LOCBD S0_pros,A
+	INC	$LOCBD S0_pros+3
+	MOV	A,$LOCBD S0_pros+3
+	JNZ	$+4
+	INC	$LOCBD S0_pros+2
+	SJMP	?0059
+?0058:
+; 297.	    i/=10;
+	CLR	A
+	MOV	R3,A
+	MOV	R2,#10
+	MOV	R0,$LOCBD S0_pros+1
+	MOV	R1,$LOCBD S0_pros
+	LCALL	?UI_DIV_L00
+; 298.	
+; 299.	    ES=0;
+	CLR	IE.4
+; 300.	    TempSec=i;
+	MOV	DPTR,#TempSec
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 301.	    ES=1;
+	SETB	IE.4
+; 302.	    TempMsum+=i;
+	MOV	$LOCBD S0_pros+1,R0
+	MOV	$LOCBD S0_pros,R1
+	MOV	R4,A
+	MOV	A,R1
+	MOV	R5,A
+	MOV	R6,#0
+	MOV	R7,#0
+	MOV	DPTR,#TempMsum
+	LCALL	?L_ADD_ASG_DPTR_R4567_L01
+; 303.	    TempTsum+=i;
+	MOV	A,R0
+	MOV	R4,A
+	MOV	A,R1
+	MOV	R5,A
+	MOV	R6,#0
+	MOV	R7,#0
+	MOV	DPTR,#TempTsum
+	LCALL	?L_ADD_ASG_DPTR_R4567_L01
+; 304.	
+; 305.	    if(Init)
+	JNB	Init,?0063
+?0062:
+; 306.	    {
+; 307.	        for(j=0;j<10;j++)
+	CLR	A
+	MOV	$LOCBD S0_pros+3,A
+	MOV	$LOCBD S0_pros+2,A
+?0065:
+	CLR	C
+	MOV	A,$LOCBD S0_pros+3
+	SUBB	A,#10
+	MOV	A,$LOCBD S0_pros+2
+	SUBB	A,#0
+	JNC	?0064
+?0066:
+; 308.	            Tempd[j]=i;
+	MOV	R5,$LOCBD S0_pros
+	MOV	A,$LOCBD S0_pros+1
+	MOV	R4,A
+	MOV	A,$LOCBD S0_pros+3
+	ADD	A,ACC
+	ADD	A,#LOW(Tempd)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Tempd)
+	MOV	DPH,A
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	INC	$LOCBD S0_pros+3
+	MOV	A,$LOCBD S0_pros+3
+	JNZ	$+4
+	INC	$LOCBD S0_pros+2
+	SJMP	?0065
+?0064:
+; 309.	        TempMin = i;
+	MOV	R5,$LOCBD S0_pros
+	MOV	A,$LOCBD S0_pros+1
+	MOV	DPTR,#TempMin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 310.	        TempTen = i;
+	MOV	DPTR,#TempTen
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 311.	        TempOmax= i;
+	MOV	DPTR,#TempOmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 312.	        TempOmin= i;
+	MOV	DPTR,#TempOmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	SJMP	?0068
+?0063:
+; 313.	
+; 314.	    }
+; 315.	    else if(TempOmax < i)           // One Day
+	MOV	DPTR,#TempOmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R0
+	MOV	DPTR,#TempOmax
+	MOVX	A,@DPTR
+	SUBB	A,R1
+	JNC	?0070
+?0069:
+; 316.	    {
+; 317.	        ES=0;
+	CLR	IE.4
+; 318.	        TempOmax=i;
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 319.	        ES=1;
+	SETB	IE.4
+	SJMP	?0071
+?0070:
+; 320.	    }
+; 321.	    else if(TempOmin > i)
+	MOV	DPTR,#TempOmin+1
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R0
+	MOV	DPTR,#TempOmin
+	MOVX	A,@DPTR
+	SUBB	A,R1
+	JC	?0073
+?0072:
+; 322.	    {
+; 323.	        ES=0;
+	CLR	IE.4
+; 324.	        TempOmin=i;
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 325.	        ES=1;
+	SETB	IE.4
+?0073:
+?0071:
+?0068:
+; 326.	    }
+; 327.	
+; 328.	    if(TempMsmax < i)           // One Minute
+	MOV	R4,$LOCBD S0_pros+1
+	MOV	R5,$LOCBD S0_pros
+	MOV	DPTR,#TempMsmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#TempMsmax
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0075
+?0074:
+; 329.	        TempMsmax=i;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	SJMP	?0076
+?0075:
+; 330.	    else if(TempMsmin > i)
+	MOV	DPTR,#TempMsmin+1
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#TempMsmin
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0078
+?0077:
+; 331.	        TempMsmin=i;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0078:
+?0076:
+; 332.	
+; 333.	    if(TempTsmax < i)           // Ten Minute
+	MOV	R4,$LOCBD S0_pros+1
+	MOV	R5,$LOCBD S0_pros
+	MOV	DPTR,#TempTsmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#TempTsmax
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0080
+?0079:
+; 334.	        TempTsmax=i;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	SJMP	?0081
+?0080:
+; 335.	    else if(TempTsmin > i)
+	MOV	DPTR,#TempTsmin+1
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#TempTsmin
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0083
+?0082:
+; 336.	        TempTsmin=i;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0083:
+?0081:
+; 337.	
+; 338.	    if(OldTemp == i)
+	MOV	R4,$LOCBD S0_pros+1
+	MOV	R5,$LOCBD S0_pros
+	MOV	DPTR,#OldTemp+1
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0219
+	MOV	DPTR,#OldTemp
+	MOVX	A,@DPTR
+	XRL	A,R5
+?0219:
+	JNZ	?0085
+?0084:
+; 339.	    {
+; 340.	        if(TempEcount < 14401)
+	CLR	C
+	MOV	DPTR,#TempEcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#65
+	MOV	DPTR,#TempEcount
+	MOVX	A,@DPTR
+	SUBB	A,#56
+	JNC	?0087
+?0086:
+; 341.	            TempEcount++;
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#TempEcount
+	JNZ	?0220
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0220:
+?0087:
+; 342.	    }
+; 343.	    else
+	SJMP	?0088
+?0085:
+; 344.	        TempEcount=0;
+	MOV	DPTR,#TempEcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0088:
+; 345.	    OldTemp=i;
+	MOV	DPTR,#OldTemp
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 346.	
+; 347.	    Mux0=1;             // Humidity Set
+	SETB	P1.3
+; 348.	    Mux1=0;
+	CLR	P1.4
+; 349.	    Mux2=0;
+	CLR	P1.5
+; 350.	
+; 351.	    Init=0;
+	CLR	Init
+; 352.	}
+	RET
+; 353.	
+; 354.	/***************************  Humidity     *********************************/
+; 355.	void S1_pros      (void)
+; 356.	{
+S1_pros:
+; 357.	    unsigned int i,j;
+; 358.	
+; 359.	    SRH=0;                          // Holding
+	CLR	P1.2
+; 360.	    for(i=0; i < 15; i++)
+	CLR	A
+	MOV	$LOCBD S1_pros+1,A
+	MOV	$LOCBD S1_pros,A
+?0090:
+	CLR	C
+	MOV	A,$LOCBD S1_pros+1
+	SUBB	A,#15
+	MOV	A,$LOCBD S1_pros
+	SUBB	A,#0
+	JNC	?0089
+?0091:
+; 361.	    {
+; 362.	        i++;
+	INC	$LOCBD S1_pros+1
+	MOV	A,$LOCBD S1_pros+1
+	JNZ	$+4
+	INC	$LOCBD S1_pros
+; 363.	        i--;
+	MOV	A,$LOCBD S1_pros+1
+	DEC	$LOCBD S1_pros+1
+	JNZ	$+4
+	DEC	$LOCBD S1_pros
+	INC	$LOCBD S1_pros+1
+	MOV	A,$LOCBD S1_pros+1
+	JNZ	$+4
+	INC	$LOCBD S1_pros
+	SJMP	?0090
+?0089:
+; 364.	    }                               // Delay
+; 365.	    write_XDATA(ADCMSB,0xff);       // Converting Start
+	MOV	A,#255
+	MOV	DPTR,#8192
+	MOVX	@DPTR,A
+; 366.	    for(i=0; i < 10; i++)
+	CLR	A
+	MOV	$LOCBD S1_pros+1,A
+	MOV	$LOCBD S1_pros,A
+?0094:
+	CLR	C
+	MOV	A,$LOCBD S1_pros+1
+	SUBB	A,#10
+	MOV	A,$LOCBD S1_pros
+	SUBB	A,#0
+	JNC	?0093
+?0095:
+; 367.	    {
+; 368.	        i++;
+	INC	$LOCBD S1_pros+1
+	MOV	A,$LOCBD S1_pros+1
+	JNZ	$+4
+	INC	$LOCBD S1_pros
+; 369.	        i--;
+	MOV	A,$LOCBD S1_pros+1
+	DEC	$LOCBD S1_pros+1
+	JNZ	$+4
+	DEC	$LOCBD S1_pros
+	INC	$LOCBD S1_pros+1
+	MOV	A,$LOCBD S1_pros+1
+	JNZ	$+4
+	INC	$LOCBD S1_pros
+	SJMP	?0094
+?0093:
+; 370.	    }
+; 371.	    i=0;                            // Delay
+	CLR	A
+	MOV	$LOCBD S1_pros+1,A
+	MOV	$LOCBD S1_pros,A
+?0098:
+; 372.	    while(STS == 1)                 // Converting Delay
+	JNB	P1.7,?0097
+?0099:
+; 373.	    {
+; 374.	        if(i++ > 100)
+	MOV	R4,$LOCBD S1_pros+1
+	MOV	R5,$LOCBD S1_pros
+	INC	$LOCBD S1_pros+1
+	MOV	A,$LOCBD S1_pros+1
+	JNZ	$+4
+	INC	$LOCBD S1_pros
+	SETB	C
+	MOV	A,R4
+	SUBB	A,#100
+	MOV	A,R5
+	SUBB	A,#0
+	JC	?0101
+?0100:
+; 375.	            break;
+	SJMP	?0097
+?0101:
+	SJMP	?0098
+?0097:
+; 376.	    }
+; 377.	    if(i > 100)
+	SETB	C
+	MOV	A,$LOCBD S1_pros+1
+	SUBB	A,#100
+	MOV	A,$LOCBD S1_pros
+	SUBB	A,#0
+	JC	?0103
+?0102:
+; 378.	        Adcerr=1;
+	SETB	Adcerr
+; 379.	    else
+	SJMP	?0104
+?0103:
+; 380.	        Adcerr=0;
+	CLR	Adcerr
+?0104:
+; 381.	
+; 382.	    ES=0;
+	CLR	IE.4
+; 383.	    Humireal  = read_XDATA(ADCLSB) >> 4;
+	MOV	DPTR,#8193
+	MOVX	A,@DPTR
+	SWAP	A
+	ANL	A,#15
+	MOV	R5,#0
+; 384.	    Humireal |= read_XDATA(ADCMSB) << 4;      // Measuring Wind Direction
+	MOV	R4,A
+	MOV	DPL,R5
+	MOVX	A,@DPTR
+	MOV	R7,#0
+	MOV	R6,#4
+?0221:
+	ADD	A,ACC
+	XCH	A,R7
+	RLC	A
+	XCH	A,R7
+	DJNZ	R6,?0221
+	MOV	R6,A
+	MOV	A,R4
+	ORL	A,R6
+	MOV	R4,A
+	MOV	A,R5
+	ORL	A,R7
+; 385.	    ES=1;
+	SETB	IE.4
+; 386.	    SRH=1;                          // Sampling
+	SETB	P1.2
+; 387.	
+; 388.	    i=Humireal/4.095;        // Scale Calculate
+	MOV	DPTR,#Humireal
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+	MOV	R5,A
+	MOV	A,R4
+	MOV	A,R5
+	CLR	A
+	MOV	R6,A
+	MOV	R7,A
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	MOV	R1,#10
+	MOV	R0,#61
+	MOV	R3,#64
+	MOV	R2,#131
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+; 389.	
+; 390.	    Humid[Second%10]=i;
+	MOV	DPTR,#Second
+	MOVX	A,@DPTR
+	MOV	B,#10
+	DIV	AB
+	MOV	A,B
+	ADD	A,ACC
+	ADD	A,#LOW(Humid)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Humid)
+	MOV	DPH,A
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 391.	    i=0;
+	CLR	A
+	MOV	R4,A
+	MOV	R5,A
+	MOV	$LOCBD S1_pros+1,R4
+	MOV	$LOCBD S1_pros,R5
+; 392.	    for(j=0;j < 10;j++)
+	MOV	$LOCBD S1_pros+3,A
+	MOV	$LOCBD S1_pros+2,A
+?0106:
+	CLR	C
+	MOV	A,$LOCBD S1_pros+3
+	SUBB	A,#10
+	MOV	A,$LOCBD S1_pros+2
+	SUBB	A,#0
+	JNC	?0105
+?0107:
+; 393.	        i+=Humid[j];
+	MOV	A,$LOCBD S1_pros+3
+	ADD	A,ACC
+	ADD	A,#LOW(Humid)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Humid)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	A,$LOCBD S1_pros+1
+	ADD	A,R4
+	MOV	$LOCBD S1_pros+1,A
+	MOV	A,$LOCBD S1_pros
+	ADDC	A,R5
+	MOV	$LOCBD S1_pros,A
+	INC	$LOCBD S1_pros+3
+	MOV	A,$LOCBD S1_pros+3
+	JNZ	$+4
+	INC	$LOCBD S1_pros+2
+	SJMP	?0106
+?0105:
+; 394.	    i/=10;
+	CLR	A
+	MOV	R3,A
+	MOV	R2,#10
+	MOV	R0,$LOCBD S1_pros+1
+	MOV	R1,$LOCBD S1_pros
+	LCALL	?UI_DIV_L00
+; 395.	
+; 396.	    if(i > 999)
+	MOV	$LOCBD S1_pros+1,R0
+	MOV	$LOCBD S1_pros,R1
+	SETB	C
+	MOV	A,R0
+	SUBB	A,#231
+	MOV	A,R1
+	SUBB	A,#3
+	JC	?0110
+?0109:
+; 397.	        i=999;
+	MOV	R1,#3
+	MOV	R0,#231
+	MOV	$LOCBD S1_pros+1,R0
+	MOV	$LOCBD S1_pros,R1
+?0110:
+; 398.	    ES=0;
+	CLR	IE.4
+; 399.	    HumiSec=i;
+	MOV	DPTR,#HumiSec
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 400.	    ES=1;
+	SETB	IE.4
+; 401.	    HumiMsum+=i;
+	MOV	R4,A
+	MOV	A,R1
+	MOV	R5,A
+	MOV	R6,#0
+	MOV	R7,#0
+	MOV	DPTR,#HumiMsum
+	LCALL	?L_ADD_ASG_DPTR_R4567_L01
+; 402.	    HumiTsum+=i;
+	MOV	A,R0
+	MOV	R4,A
+	MOV	A,R1
+	MOV	R5,A
+	MOV	R6,#0
+	MOV	R7,#0
+	MOV	DPTR,#HumiTsum
+	LCALL	?L_ADD_ASG_DPTR_R4567_L01
+; 403.	
+; 404.	    if(Init)
+	JNB	Init,?0112
+?0111:
+; 405.	    {
+; 406.	        for(j=0;j<10;j++)
+	CLR	A
+	MOV	$LOCBD S1_pros+3,A
+	MOV	$LOCBD S1_pros+2,A
+?0114:
+	CLR	C
+	MOV	A,$LOCBD S1_pros+3
+	SUBB	A,#10
+	MOV	A,$LOCBD S1_pros+2
+	SUBB	A,#0
+	JNC	?0113
+?0115:
+; 407.	            Humid[j]=i;
+	MOV	R5,$LOCBD S1_pros
+	MOV	A,$LOCBD S1_pros+1
+	MOV	R4,A
+	MOV	A,$LOCBD S1_pros+3
+	ADD	A,ACC
+	ADD	A,#LOW(Humid)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Humid)
+	MOV	DPH,A
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	INC	$LOCBD S1_pros+3
+	MOV	A,$LOCBD S1_pros+3
+	JNZ	$+4
+	INC	$LOCBD S1_pros+2
+	SJMP	?0114
+?0113:
+; 408.	        HumiMin=i;
+	MOV	R5,$LOCBD S1_pros
+	MOV	A,$LOCBD S1_pros+1
+	MOV	DPTR,#HumiMin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 409.	        HumiTen=i;
+	MOV	DPTR,#HumiTen
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 410.	        HumiOmax=i;
+	MOV	DPTR,#HumiOmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 411.	        HumiOmin=i;
+	MOV	DPTR,#HumiOmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+	SJMP	?0117
+?0112:
+; 412.	    }
+; 413.	    else if(HumiOmax < i)
+	MOV	DPTR,#HumiOmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R0
+	MOV	DPTR,#HumiOmax
+	MOVX	A,@DPTR
+	SUBB	A,R1
+	JNC	?0119
+?0118:
+; 414.	    {
+; 415.	        ES=0;
+	CLR	IE.4
+; 416.	        HumiOmax=i;
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 417.	        ES=1;
+	SETB	IE.4
+	SJMP	?0120
+?0119:
+; 418.	    }
+; 419.	    else if(HumiOmin > i)
+	MOV	DPTR,#HumiOmin+1
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R0
+	MOV	DPTR,#HumiOmin
+	MOVX	A,@DPTR
+	SUBB	A,R1
+	JC	?0122
+?0121:
+; 420.	    {
+; 421.	        ES=0;
+	CLR	IE.4
+; 422.	        HumiOmin=i;
+	MOV	A,R1
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R0
+	MOVX	@DPTR,A
+; 423.	        ES=1;
+	SETB	IE.4
+?0122:
+?0120:
+?0117:
+; 424.	    }
+; 425.	
+; 426.	    if(HumiMsmax < i)           // One Minute
+	MOV	R4,$LOCBD S1_pros+1
+	MOV	R5,$LOCBD S1_pros
+	MOV	DPTR,#HumiMsmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#HumiMsmax
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0124
+?0123:
+; 427.	        HumiMsmax=i;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	SJMP	?0125
+?0124:
+; 428.	    else if(HumiMsmin > i)
+	MOV	DPTR,#HumiMsmin+1
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#HumiMsmin
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0127
+?0126:
+; 429.	        HumiMsmin=i;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0127:
+?0125:
+; 430.	
+; 431.	    if(HumiTsmax < i)           // Ten Minute
+	MOV	R4,$LOCBD S1_pros+1
+	MOV	R5,$LOCBD S1_pros
+	MOV	DPTR,#HumiTsmax+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,R4
+	MOV	DPTR,#HumiTsmax
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JNC	?0129
+?0128:
+; 432.	        HumiTsmax=i;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+	SJMP	?0130
+?0129:
+; 433.	    else if(HumiTsmin > i)
+	MOV	DPTR,#HumiTsmin+1
+	MOVX	A,@DPTR
+	SETB	C
+	SUBB	A,R4
+	MOV	DPTR,#HumiTsmin
+	MOVX	A,@DPTR
+	SUBB	A,R5
+	JC	?0132
+?0131:
+; 434.	        HumiTsmin=i;
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+?0132:
+?0130:
+; 435.	
+; 436.	    if(OldHumi == i)
+	MOV	R4,$LOCBD S1_pros+1
+	MOV	R5,$LOCBD S1_pros
+	MOV	DPTR,#OldHumi+1
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JNZ	?0222
+	MOV	DPTR,#OldHumi
+	MOVX	A,@DPTR
+	XRL	A,R5
+?0222:
+	JNZ	?0134
+?0133:
+; 437.	    {
+; 438.	        if(HumiEcount < 14401)
+	CLR	C
+	MOV	DPTR,#HumiEcount+1
+	MOVX	A,@DPTR
+	SUBB	A,#65
+	MOV	DPTR,#HumiEcount
+	MOVX	A,@DPTR
+	SUBB	A,#56
+	JNC	?0136
+?0135:
+; 439.	            HumiEcount++;
+	INC	DPTR
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#HumiEcount
+	JNZ	?0223
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0223:
+?0136:
+; 440.	    }
+; 441.	    else
+	SJMP	?0137
+?0134:
+; 442.	        HumiEcount=0;
+	MOV	DPTR,#HumiEcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0137:
+; 443.	    OldHumi=i;
+	MOV	DPTR,#OldHumi
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 444.	
+; 445.	    Mux0=0;             // Temperature Set
+	CLR	P1.3
+; 446.	    Mux1=0;
+	CLR	P1.4
+; 447.	    Mux2=0;
+	CLR	P1.5
+; 448.	}
+	RET
+; 449.	
+; 450.	/*********************** External Interrupt 0 ******************************/
+; 451.	interrupt void EX0_int(void)
+; 452.	{
+EX0_int:
+	PUSH	ACC
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R4
+	PUSH	ACC
+; 453.	    if(Quad++ == 3)
+	MOV	DPTR,#Quad
+	MOVX	A,@DPTR
+	MOV	R4,A
+	INC	A
+	MOVX	@DPTR,A
+	MOV	A,R4
+	CJNE	A,#3,?0139
+?0138:
+; 454.	        Quad=0;
+	CLR	A
+	MOVX	@DPTR,A
+?0139:
+; 455.	    MeasQ=1;
+	SETB	MeasQ
+; 456.	}
+	POP	ACC
+	MOV	R4,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	ACC
+	RETI
+; 457.	/*********************** One, Ten Data Processing **************************/
+; 458.	void Time_pros(void)
+; 459.	{
+Time_pros:
+; 460.	    if(++Second == 60)
+	MOV	DPTR,#Second
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	CJNE	A,#60,?0141
+?0140:
+; 461.	    {
+; 462.	        Second=0;
+	CLR	A
+	MOVX	@DPTR,A
+; 463.	        Minute=++Minute%10;
+	MOV	DPTR,#Minute
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	R7
+	MOV	A,R7
+	MOV	B,#10
+	DIV	AB
+	MOV	A,B
+; 464.	        One_pros();
+	MOVX	@DPTR,A
+	LCALL	$REFFN One_pros
+; 465.	        if(Minute == 0)
+	MOV	DPTR,#Minute
+	MOVX	A,@DPTR
+	JNZ	?0143
+?0142:
+; 466.	            Ten_pros();
+	LCALL	$REFFN Ten_pros
+?0143:
+?0141:
+; 467.	    }
+; 468.	    Tcount=0;
+	MOV	DPTR,#Tcount
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 469.	}
+	RET
+; 470.	
+; 471.	/*********************** One Minute Processing *****************************/
+; 472.	void One_pros(void)
+; 473.	{
+One_pros:
+; 474.	    ES=0;
+	CLR	IE.4
+; 475.	    TempMin = TempMsum/60.;
+	MOV	DPTR,#TempMsum
+	LCALL	?LD_R4567_XDPTR_L20
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#66
+	MOV	R2,#112
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#TempMin
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 476.	    HumiMin = HumiMsum/60.;
+	MOV	DPTR,#HumiMsum
+	LCALL	?LD_R4567_XDPTR_L20
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R3,#66
+	MOV	R2,#112
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#HumiMin
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 477.	
+; 478.	    TempMmax= TempMsmax;
+	MOV	DPTR,#TempMsmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempMmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 479.	    TempMmin= TempMsmin;
+	MOV	DPTR,#TempMsmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempMmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 480.	    HumiMmax= HumiMsmax;
+	MOV	DPTR,#HumiMsmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiMmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 481.	    HumiMmin= HumiMsmin;
+	MOV	DPTR,#HumiMsmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiMmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 482.	    ES=1;
+	SETB	IE.4
+; 483.	
+; 484.	    TempMsmax=TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempMsmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 485.	    TempMsmin=TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempMsmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 486.	    HumiMsmax=TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiMsmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 487.	    HumiMsmin=TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiMsmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 488.	
+; 489.	    TempMsum = 0;
+	MOV	DPTR,#TempMsum
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 490.	    HumiMsum = 0;
+	MOV	DPTR,#HumiMsum
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 491.	}
+	RET
+; 492.	
+; 493.	/*********************** Ten Minute Processing *****************************/
+; 494.	void Ten_pros(void)
+; 495.	{
+Ten_pros:
+; 496.	    ES=0;
+	CLR	IE.4
+; 497.	    TempTen = TempTsum/600.;
+	MOV	DPTR,#TempTsum
+	LCALL	?LD_R4567_XDPTR_L20
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#22
+	MOV	R3,#68
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#TempTen
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 498.	    HumiTen = HumiTsum/600.;
+	MOV	DPTR,#HumiTsum
+	LCALL	?LD_R4567_XDPTR_L20
+	LCALL	?R4567_ULONG_TO_FLT_L02
+	CLR	A
+	MOV	R0,A
+	MOV	R1,A
+	MOV	R2,#22
+	MOV	R3,#68
+	LCALL	?F_DIV_L02
+	LCALL	?R4567_FLT_TO_LONG_L02
+	MOV	DPTR,#HumiTen
+	MOV	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,R4
+	MOVX	@DPTR,A
+; 499.	
+; 500.	    TempTmax= TempTsmax;
+	MOV	DPTR,#TempTsmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempTmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 501.	    TempTmin= TempTsmin;
+	MOV	DPTR,#TempTsmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempTmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 502.	    HumiTmax= HumiTsmax;
+	MOV	DPTR,#HumiTsmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiTmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 503.	    HumiTmin= HumiTsmin;
+	MOV	DPTR,#HumiTsmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiTmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 504.	    ES=1;
+	SETB	IE.4
+; 505.	
+; 506.	    TempTsmax=TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempTsmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 507.	    TempTsmin=TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempTsmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 508.	    HumiTsmax=TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiTsmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 509.	    HumiTsmin=TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiTsmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 510.	
+; 511.	    TempTsum = 0;
+	MOV	DPTR,#TempTsum
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 512.	    HumiTsum = 0;
+	MOV	DPTR,#HumiTsum
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 513.	}
+	RET
+; 514.	
+; 515.	/*********************** Serial Interrupt **********************************/
+; 516.	interrupt void  SCON_int (void)          /* Serial Port */
+; 517.	{
+SCON_int:
+	PUSH	ACC
+	PUSH	DPL
+	PUSH	DPH
+	PUSH	PSW
+	MOV	A,R2
+	PUSH	ACC
+	MOV	A,R3
+	PUSH	ACC
+	MOV	A,R4
+	PUSH	ACC
+	MOV	A,R5
+	PUSH	ACC
+	MOV	A,R6
+	PUSH	ACC
+	MOV	A,R7
+	PUSH	ACC
+; 518.	    unsigned char i,j;
+; 519.	
+; 520.	    if(RI == 1)
+	JB	SCON.0,$+6
+	LJMP	?0145
+?0144:
+; 521.	    {
+; 522.	        RI=0;
+	CLR	SCON.0
+; 523.	        Receve=1;
+	SETB	Receve
+; 524.	        BlueL=1;
+	SETB	P1.0
+; 525.	        Blueb=LightL;
+	MOV	DPTR,#Blueb
+	MOV	A,#3
+	MOVX	@DPTR,A
+	INC	DPTR
+	CLR	A
+	MOVX	@DPTR,A
+; 526.	        Rbuf[Rpoint++]=SBUF;
+	MOV	A,SBUF
+	MOV	DPTR,#Rpoint
+	MOV	R6,A
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+	MOV	DPTR,#Rpoint
+	JNZ	?0224
+	MOVX	A,@DPTR
+	INC	A
+	MOVX	@DPTR,A
+?0224:
+	MOV	A,R4
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOV	A,R6
+	MOVX	@DPTR,A
+; 527.	
+; 528.	        if( Rbuf[Rpoint-1]  == 0xfe && Rbuf[Rpoint-2]  == 0xff
+; 529.	         && Rbuf[Rpoint-10] == 0xff && Rbuf[Rpoint-11] == 0xff)
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	DEC	A
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	CJNE	A,#254,$+5
+	SJMP	$+5
+	LJMP	?0147
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#254
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	$+5
+	LJMP	?0147
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#246
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	$+5
+	LJMP	?0147
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#245
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	INC	A
+	JZ	$+5
+	LJMP	?0147
+?0149:
+?0148:
+?0146:
+; 530.	        {
+; 531.	            j=0;
+	MOV	$LOCBD SCON_int+1,#0
+; 532.	            for(i=9; i != 3; i--)
+	MOV	$LOCBD SCON_int,#9
+?0151:
+	MOV	A,$LOCBD SCON_int
+	XRL	A,#3
+	JZ	?0150
+?0152:
+; 533.	                j ^= Rbuf[Rpoint-i];
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	CLR	C
+	SUBB	A,$LOCBD SCON_int
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	XRL	$LOCBD SCON_int+1,A
+	DEC	$LOCBD SCON_int
+	SJMP	?0151
+?0150:
+; 534.	            if(j == Rbuf[Rpoint-3])
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#253
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	XRL	A,$LOCBD SCON_int+1
+	JZ	$+5
+	LJMP	?0155
+?0154:
+; 535.	            {
+; 536.	                if(Rbuf[Rpoint-8] == TempID)            // Temp 1 Call
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#248
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#TempID
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JZ	$+5
+	LJMP	?0157
+?0156:
+; 537.	                {
+; 538.	                    switch(Rbuf[Rpoint-9])
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#247
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	CJNE	A,#77,$+5
+	SJMP	$+5
+	LJMP	?0164
+?0159:
+; 539.	                    {
+; 540.	                        case 'M':
+; 541.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 542.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 543.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 544.	                            Sbuf[14]= 'M';
+	MOV	A,#77
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 545.	                            Sbuf[13]= Tempsta;
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 546.	                            Sbuf[12]= TEMPCODE;         // Sensor Code
+	MOV	A,#2
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 547.	                            Sbuf[11]= TempID;           // Sensor ID
+	MOV	DPTR,#TempID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 548.	                            Sbuf[10]= TempSec >> 8;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 549.	                            Sbuf[9] = TempSec;
+	MOV	DPTR,#TempSec+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 550.	                            Sbuf[8] = 0;                // Special Data
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 551.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 552.	                            Sbuf[6] = TempOmin >> 8;
+	MOV	DPTR,#TempOmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 553.	                            Sbuf[5] = TempOmin;
+	MOV	DPTR,#TempOmin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 554.	                            Sbuf[4] = TempOmax >> 8;
+	MOV	DPTR,#TempOmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 555.	                            Sbuf[3] = TempOmax;
+	MOV	DPTR,#TempOmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 556.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 557.	                            for(j=14;j != 2;j--)
+	MOV	$LOCBD SCON_int+1,#14
+?0161:
+	MOV	A,$LOCBD SCON_int+1
+	XRL	A,#2
+	JZ	?0160
+?0162:
+; 558.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,$LOCBD SCON_int+1
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	$LOCBD SCON_int+1
+	SJMP	?0161
+?0160:
+; 559.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 560.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 561.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 562.	                            Comon=1;
+	SETB	Comon
+; 563.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 564.	                            break;
+	LJMP	?0158
+?0164:
+	CJNE	A,#79,$+5
+	SJMP	$+5
+	LJMP	?0169
+; 565.	                        case 'O':
+; 566.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 567.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 568.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 569.	                            Sbuf[14]= 'O';
+	MOV	A,#79
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 570.	                            Sbuf[13]= Tempsta;
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 571.	                            Sbuf[12]= TEMPCODE;         // Sensor Code
+	MOV	A,#2
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 572.	                            Sbuf[11]= TempID;           // Sensor ID
+	MOV	DPTR,#TempID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 573.	                            Sbuf[10]= TempMin >> 8;
+	MOV	DPTR,#TempMin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 574.	                            Sbuf[9] = TempMin;
+	MOV	DPTR,#TempMin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 575.	                            Sbuf[8] = 0;            // Special Data
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 576.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 577.	                            Sbuf[6] = TempMmin >> 8;
+	MOV	DPTR,#TempMmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 578.	                            Sbuf[5] = TempMmin;
+	MOV	DPTR,#TempMmin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 579.	                            Sbuf[4] = TempMmax >> 8;
+	MOV	DPTR,#TempMmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 580.	                            Sbuf[3] = TempMmax;
+	MOV	DPTR,#TempMmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 581.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 582.	                            for(j=14;j != 2;j--)
+	MOV	$LOCBD SCON_int+1,#14
+?0166:
+	MOV	A,$LOCBD SCON_int+1
+	XRL	A,#2
+	JZ	?0165
+?0167:
+; 583.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,$LOCBD SCON_int+1
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	$LOCBD SCON_int+1
+	SJMP	?0166
+?0165:
+; 584.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 585.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 586.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 587.	                            Comon=1;
+	SETB	Comon
+; 588.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 589.	                            break;
+	LJMP	?0158
+?0169:
+	CJNE	A,#84,$+5
+	SJMP	$+5
+	LJMP	?0174
+; 590.	                        case 'T':
+; 591.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 592.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 593.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 594.	                            Sbuf[14]= 'T';
+	MOV	A,#84
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 595.	                            Sbuf[13]= Tempsta ;
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 596.	                            Sbuf[12]= TEMPCODE;         // Sensor Code
+	MOV	A,#2
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 597.	                            Sbuf[11]= TempID;           // Sensor ID
+	MOV	DPTR,#TempID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 598.	                            Sbuf[10]= TempTen >> 8;
+	MOV	DPTR,#TempTen
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 599.	                            Sbuf[9] = TempTen;
+	MOV	DPTR,#TempTen+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 600.	                            Sbuf[8] = 0;            // Special Data
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 601.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 602.	                            Sbuf[6] = TempTmin >> 8;
+	MOV	DPTR,#TempTmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 603.	                            Sbuf[5] = TempTmin;
+	MOV	DPTR,#TempTmin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 604.	                            Sbuf[4] = TempTmax >> 8;
+	MOV	DPTR,#TempTmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 605.	                            Sbuf[3] = TempTmax;
+	MOV	DPTR,#TempTmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 606.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 607.	                            for(j=14;j != 2;j--)
+	MOV	$LOCBD SCON_int+1,#14
+?0171:
+	MOV	A,$LOCBD SCON_int+1
+	XRL	A,#2
+	JZ	?0170
+?0172:
+; 608.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,$LOCBD SCON_int+1
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	$LOCBD SCON_int+1
+	SJMP	?0171
+?0170:
+; 609.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 610.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 611.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 612.	                            Comon=1;
+	SETB	Comon
+; 613.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 614.	                            break;
+	LJMP	?0158
+?0174:
+	CJNE	A,#82,$+5
+	SJMP	$+5
+	LJMP	?0179
+; 615.	                        case 'R':
+; 616.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 617.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 618.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 619.	                            Sbuf[14]= 'R';
+	MOV	A,#82
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 620.	                            Sbuf[13]= Tempsta;
+	MOV	DPTR,#Tempsta
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 621.	                            Sbuf[12]= TEMPCODE;         // Sensor Code
+	MOV	A,#2
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 622.	                            Sbuf[11]= TempID;           // Sensor ID
+	MOV	DPTR,#TempID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 623.	                            Sbuf[10]= Tempreal >> 8;
+	MOV	DPTR,#Tempreal
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 624.	                            Sbuf[9] = Tempreal;
+	MOV	DPTR,#Tempreal+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 625.	                            Sbuf[8] = 0;            // Special Data
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 626.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 627.	                            Sbuf[6] = TempOmin >> 8;
+	MOV	DPTR,#TempOmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 628.	                            Sbuf[5] = TempOmin;
+	MOV	DPTR,#TempOmin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 629.	                            Sbuf[4] = TempOmax >> 8;
+	MOV	DPTR,#TempOmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 630.	                            Sbuf[3] = TempOmax;
+	MOV	DPTR,#TempOmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 631.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 632.	                            for(j=14;j != 2;j--)
+	MOV	$LOCBD SCON_int+1,#14
+?0176:
+	MOV	A,$LOCBD SCON_int+1
+	XRL	A,#2
+	JZ	?0175
+?0177:
+; 633.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,$LOCBD SCON_int+1
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	$LOCBD SCON_int+1
+	SJMP	?0176
+?0175:
+; 634.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 635.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 636.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 637.	                            Comon=1;
+	SETB	Comon
+; 638.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 639.	                            break;
+	SJMP	?0158
+?0179:
+	CJNE	A,#64,?0158
+; 640.	                        case '@':
+; 641.	                            TempOmax=Rbuf[Rpoint-5] << 8 | Rbuf[Rpoint-4];
+	MOV	DPTR,#Rpoint
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R6,A
+	ADD	A,#251
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,#0
+	XCH	A,R6
+	MOV	R2,A
+	XCH	A,R6
+	MOV	R5,A
+	MOV	A,R2
+	ADD	A,#252
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R3,#0
+	MOV	R2,A
+	MOV	A,R4
+	ORL	A,R2
+	MOV	R4,A
+	MOV	A,R5
+	MOV	DPTR,#TempOmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 642.	                            TempOmin=Rbuf[Rpoint-7] << 8 | Rbuf[Rpoint-6];
+	MOV	A,R6
+	ADD	A,#249
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,#0
+	XCH	A,R6
+	MOV	R2,A
+	XCH	A,R6
+	MOV	R5,A
+	MOV	A,R2
+	ADD	A,#250
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R2,A
+	MOV	A,R4
+	ORL	A,R2
+	MOV	R4,A
+	MOV	A,R5
+	MOV	DPTR,#TempOmin
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 643.	                            Rpoint=0;
+	MOV	A,R3
+	MOV	R6,A
+	MOV	R7,A
+	MOV	DPTR,#Rpoint
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 644.	                            break;
+	SJMP	?0158
+?0158:
+	LJMP	?0180
+?0157:
+; 645.	                    }
+; 646.	                }
+; 647.	                else if(Rbuf[Rpoint-8] == HumiID)          // Humidity 1 Call
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#248
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOV	DPTR,#HumiID
+	MOVX	A,@DPTR
+	XRL	A,R4
+	JZ	$+5
+	LJMP	?0182
+?0181:
+; 648.	                {
+; 649.	                    switch(Rbuf[Rpoint-9])
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#247
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	CJNE	A,#77,$+5
+	SJMP	$+5
+	LJMP	?0189
+?0184:
+; 650.	                    {
+; 651.	                        case 'M':
+; 652.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 653.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 654.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 655.	                            Sbuf[14]='M';
+	MOV	A,#77
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 656.	                            Sbuf[13]= Humista;
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 657.	                            Sbuf[12]= HUMICODE;          // Sensor Code
+	MOV	A,#6
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 658.	                            Sbuf[11]= HumiID;            // sensor code & ID
+	MOV	DPTR,#HumiID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 659.	                            Sbuf[10]= HumiSec >> 8;
+	MOV	DPTR,#HumiSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 660.	                            Sbuf[9] = HumiSec;
+	MOV	DPTR,#HumiSec+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 661.	                            Sbuf[8] = 0;                // Special Data
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 662.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 663.	                            Sbuf[6] = HumiOmin >> 8;
+	MOV	DPTR,#HumiOmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 664.	                            Sbuf[5] = HumiOmin;
+	MOV	DPTR,#HumiOmin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 665.	                            Sbuf[4] = HumiOmax >> 8;
+	MOV	DPTR,#HumiOmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 666.	                            Sbuf[3] = HumiOmax;
+	MOV	DPTR,#HumiOmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 667.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 668.	                            for(j=14;j != 2;j--)
+	MOV	$LOCBD SCON_int+1,#14
+?0186:
+	MOV	A,$LOCBD SCON_int+1
+	XRL	A,#2
+	JZ	?0185
+?0187:
+; 669.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,$LOCBD SCON_int+1
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	$LOCBD SCON_int+1
+	SJMP	?0186
+?0185:
+; 670.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 671.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 672.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 673.	                            Comon=1;
+	SETB	Comon
+; 674.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 675.	                            break;
+	LJMP	?0183
+?0189:
+	CJNE	A,#79,$+5
+	SJMP	$+5
+	LJMP	?0194
+; 676.	                        case 'O':
+; 677.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 678.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 679.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 680.	                            Sbuf[14]='O';
+	MOV	A,#79
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 681.	                            Sbuf[13]= Humista;
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 682.	                            Sbuf[12]= HUMICODE;          // Sensor Code
+	MOV	A,#6
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 683.	                            Sbuf[11]= HumiID;            // sensor code & ID
+	MOV	DPTR,#HumiID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 684.	                            Sbuf[10]= HumiMin >> 8;
+	MOV	DPTR,#HumiMin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 685.	                            Sbuf[9] = HumiMin;
+	MOV	DPTR,#HumiMin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 686.	                            Sbuf[8] = 0;            // Special Data
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 687.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 688.	                            Sbuf[6] = HumiMmin >> 8;
+	MOV	DPTR,#HumiMmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 689.	                            Sbuf[5] = HumiMmin;
+	MOV	DPTR,#HumiMmin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 690.	                            Sbuf[4] = HumiMmax >> 8;
+	MOV	DPTR,#HumiMmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 691.	                            Sbuf[3] = HumiMmax;
+	MOV	DPTR,#HumiMmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 692.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 693.	                            for(j=14;j != 2;j--)
+	MOV	$LOCBD SCON_int+1,#14
+?0191:
+	MOV	A,$LOCBD SCON_int+1
+	XRL	A,#2
+	JZ	?0190
+?0192:
+; 694.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,$LOCBD SCON_int+1
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	$LOCBD SCON_int+1
+	SJMP	?0191
+?0190:
+; 695.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 696.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 697.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 698.	                            Comon=1;
+	SETB	Comon
+; 699.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 700.	                            break;
+	LJMP	?0183
+?0194:
+	CJNE	A,#84,$+5
+	SJMP	$+5
+	LJMP	?0199
+; 701.	                        case 'T':
+; 702.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 703.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 704.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 705.	                            Sbuf[14]='T';
+	MOV	A,#84
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 706.	                            Sbuf[13]= Humista;
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 707.	                            Sbuf[12]= HUMICODE;          // Sensor Code
+	MOV	A,#6
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 708.	                            Sbuf[11]= HumiID;            // sensor ID
+	MOV	DPTR,#HumiID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 709.	                            Sbuf[10]= HumiTen >> 8;
+	MOV	DPTR,#HumiTen
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 710.	                            Sbuf[9] = HumiTen;
+	MOV	DPTR,#HumiTen+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 711.	                            Sbuf[8] = 0;                // Special Data
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 712.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 713.	                            Sbuf[6] = HumiTmin >> 8;
+	MOV	DPTR,#HumiTmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 714.	                            Sbuf[5] = HumiTmin;
+	MOV	DPTR,#HumiTmin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 715.	                            Sbuf[4] = HumiTmax >> 8;
+	MOV	DPTR,#HumiTmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 716.	                            Sbuf[3] = HumiTmax;
+	MOV	DPTR,#HumiTmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 717.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 718.	                            for(j=14;j != 2;j--)
+	MOV	$LOCBD SCON_int+1,#14
+?0196:
+	MOV	A,$LOCBD SCON_int+1
+	XRL	A,#2
+	JZ	?0195
+?0197:
+; 719.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,$LOCBD SCON_int+1
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	$LOCBD SCON_int+1
+	SJMP	?0196
+?0195:
+; 720.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 721.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 722.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 723.	                            Comon=1;
+	SETB	Comon
+; 724.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 725.	                            break;
+	LJMP	?0183
+?0199:
+	CJNE	A,#82,$+5
+	SJMP	$+5
+	LJMP	?0204
+; 726.	                        case 'R':
+; 727.	                            Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 728.	                            Sbuf[16]= 0xff;             // Head
+	DEC	A
+	MOV	DPTR,#Sbuf+16
+	MOVX	@DPTR,A
+; 729.	                            Sbuf[15]= 0xff;
+	MOV	DPTR,#Sbuf+15
+	MOVX	@DPTR,A
+; 730.	                            Sbuf[14]='R';
+	MOV	A,#82
+	MOV	DPTR,#Sbuf+14
+	MOVX	@DPTR,A
+; 731.	                            Sbuf[13]= Humista;
+	MOV	DPTR,#Humista
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+13
+	MOVX	@DPTR,A
+; 732.	                            Sbuf[12]= HUMICODE;          // Sensor Code
+	MOV	A,#6
+	MOV	DPTR,#Sbuf+12
+	MOVX	@DPTR,A
+; 733.	                            Sbuf[11]= HumiID;            // sensor code & ID
+	MOV	DPTR,#HumiID
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+11
+	MOVX	@DPTR,A
+; 734.	                            Sbuf[10]= HumiSec >> 8;
+	MOV	DPTR,#HumiSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+10
+	MOVX	@DPTR,A
+; 735.	                            Sbuf[9] = HumiSec;
+	MOV	DPTR,#HumiSec+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+9
+	MOVX	@DPTR,A
+; 736.	                            Sbuf[8] = 0;            // Special Data
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+8
+	MOVX	@DPTR,A
+; 737.	                            Sbuf[7] = 0;
+	MOV	DPTR,#Sbuf+7
+	MOVX	@DPTR,A
+; 738.	                            Sbuf[6] = HumiOmin >> 8;
+	MOV	DPTR,#HumiOmin
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+6
+	MOVX	@DPTR,A
+; 739.	                            Sbuf[5] = HumiOmin;
+	MOV	DPTR,#HumiOmin+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+5
+	MOVX	@DPTR,A
+; 740.	                            Sbuf[4] = HumiOmax >> 8;
+	MOV	DPTR,#HumiOmax
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	A,R5
+	MOV	R5,#0
+	MOV	DPTR,#Sbuf+4
+	MOVX	@DPTR,A
+; 741.	                            Sbuf[3] = HumiOmax;
+	MOV	DPTR,#HumiOmax+1
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+3
+	MOVX	@DPTR,A
+; 742.	                            Sbuf[2] = 0;
+	MOV	A,R5
+	MOV	DPTR,#Sbuf+2
+	MOVX	@DPTR,A
+; 743.	                            for(j=14;j != 2;j--)
+	MOV	$LOCBD SCON_int+1,#14
+?0201:
+	MOV	A,$LOCBD SCON_int+1
+	XRL	A,#2
+	JZ	?0200
+?0202:
+; 744.	                                Sbuf[2] ^= Sbuf[j];
+	MOV	A,$LOCBD SCON_int+1
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	DPTR,#Sbuf+2
+	MOV	R4,A
+	MOVX	A,@DPTR
+	XRL	A,R4
+	MOVX	@DPTR,A
+	DEC	$LOCBD SCON_int+1
+	SJMP	?0201
+?0200:
+; 745.	                            Sbuf[1] = 0xff;
+	MOV	A,#255
+	MOV	DPTR,#Sbuf+1
+	MOVX	@DPTR,A
+; 746.	                            Sbuf[0] = 0xfe;
+	DEC	A
+	MOV	DPTR,#Sbuf
+	MOVX	@DPTR,A
+; 747.	                            Spoint=16;
+	MOV	DPTR,#Spoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOV	A,#16
+	MOVX	@DPTR,A
+; 748.	                            Comon=1;
+	SETB	Comon
+; 749.	                            SBUF=Sbuf[16];
+	MOV	DPTR,#Sbuf+16
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 750.	                            break;
+	SJMP	?0183
+?0204:
+	CJNE	A,#64,?0183
+; 751.	                        case '@':
+; 752.	                            HumiOmax=Rbuf[Rpoint-5] << 8 | Rbuf[Rpoint-4];
+	MOV	DPTR,#Rpoint
+	MOVX	A,@DPTR
+	MOV	R7,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R6,A
+	ADD	A,#251
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,#0
+	XCH	A,R6
+	MOV	R2,A
+	XCH	A,R6
+	MOV	R5,A
+	MOV	A,R2
+	ADD	A,#252
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R3,#0
+	MOV	R2,A
+	MOV	A,R4
+	ORL	A,R2
+	MOV	R4,A
+	MOV	A,R5
+	MOV	DPTR,#HumiOmax
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 753.	                            HumiOmin=Rbuf[Rpoint-7] << 8 | Rbuf[Rpoint-6];
+	MOV	A,R6
+	ADD	A,#249
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R5,#0
+	MOV	R4,#0
+	XCH	A,R6
+	MOV	R2,A
+	XCH	A,R6
+	MOV	R5,A
+	MOV	A,R2
+	ADD	A,#250
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	R2,A
+	MOV	A,R4
+	ORL	A,R2
+	MOV	R4,A
+	MOV	A,R5
+	MOV	DPTR,#HumiOmin
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R4
+	MOVX	@DPTR,A
+	XCH	A,R4
+; 754.	                            Rpoint=0;
+	MOV	A,R3
+	MOV	R6,A
+	MOV	R7,A
+	MOV	DPTR,#Rpoint
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 755.	                            break;
+	SJMP	?0183
+?0183:
+	LJMP	?0205
+?0182:
+; 756.	                    }
+; 757.	                }
+; 758.	                else if(Rbuf[Rpoint-9] == 'I')
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	ADD	A,#247
+	ADD	A,#LOW(Rbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Rbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	CJNE	A,#73,$+5
+	SJMP	$+5
+	LJMP	?0207
+?0206:
+; 759.	                {
+; 760.	                    Rpoint=0;
+	MOV	DPTR,#Rpoint
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+; 761.	                    TempMin   = TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempMin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 762.	                    TempTen   = TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempTen
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 763.	                    TempOmin  = TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempOmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 764.	                    TempOmax  = TempSec;
+	MOV	DPTR,#TempSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#TempOmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 765.	
+; 766.	                    HumiMin   = HumiSec;
+	MOV	DPTR,#HumiSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiMin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 767.	                    HumiTen   = HumiSec;
+	MOV	DPTR,#HumiSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiTen
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 768.	                    HumiOmin  = HumiSec;
+	MOV	DPTR,#HumiSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiOmin
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+; 769.	                    HumiOmax  = HumiSec;
+	MOV	DPTR,#HumiSec
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	DPTR,#HumiOmax
+	XCH	A,R5
+	MOVX	@DPTR,A
+	INC	DPTR
+	XCH	A,R5
+	MOVX	@DPTR,A
+?0207:
+?0205:
+?0180:
+?0155:
+?0147:
+; 770.	                }
+; 771.	            }
+; 772.	        }
+; 773.	        if(Rpoint > 90)
+	SETB	C
+	MOV	DPTR,#Rpoint+1
+	MOVX	A,@DPTR
+	SUBB	A,#90
+	MOV	DPTR,#Rpoint
+	MOVX	A,@DPTR
+	SUBB	A,#0
+	JC	?0209
+?0208:
+; 774.	            Rpoint=0;
+	CLR	A
+	MOVX	@DPTR,A
+	INC	DPTR
+	MOVX	@DPTR,A
+?0209:
+?0145:
+; 775.	    }
+; 776.	
+; 777.	    if(TI == 1)
+	JNB	SCON.1,?0211
+?0210:
+; 778.	    {
+; 779.	        TI=0;
+	CLR	SCON.1
+; 780.	        if(Comon == 1)
+	JNB	Comon,?0213
+?0212:
+; 781.	        {
+; 782.	            if( Spoint-- != 0 )
+	MOV	DPTR,#Spoint
+	MOVX	A,@DPTR
+	MOV	R5,A
+	INC	DPTR
+	MOVX	A,@DPTR
+	MOV	R4,A
+	MOVX	A,@DPTR
+	ADD	A,#255
+	MOVX	@DPTR,A
+	MOV	DPTR,#Spoint
+	MOVX	A,@DPTR
+	ADDC	A,#255
+	MOVX	@DPTR,A
+	MOV	A,R4
+	ORL	A,R5
+	JZ	?0215
+?0214:
+; 783.	            {
+; 784.	                SBUF=Sbuf[Spoint];
+	INC	DPTR
+	MOVX	A,@DPTR
+	ADD	A,#LOW(Sbuf)
+	MOV	DPL,A
+	CLR	A
+	ADDC	A,#HIGH(Sbuf)
+	MOV	DPH,A
+	MOVX	A,@DPTR
+	MOV	SBUF,A
+; 785.	                Transm=1;
+	SETB	Transm
+; 786.	                RedL=1;
+	SETB	P1.1
+; 787.	                Redb=LightL;
+	MOV	DPTR,#Redb
+	MOV	A,#3
+	MOVX	@DPTR,A
+	INC	DPTR
+	CLR	A
+	MOVX	@DPTR,A
+; 788.	            }
+; 789.	            else
+	SJMP	?0216
+?0215:
+; 790.	                Comon=0;
+	CLR	Comon
+?0216:
+?0213:
+?0211:
+; 791.	        }
+; 792.	    }
+; 793.	}
+	POP	ACC
+	MOV	R7,A
+	POP	ACC
+	MOV	R6,A
+	POP	ACC
+	MOV	R5,A
+	POP	ACC
+	MOV	R4,A
+	POP	ACC
+	MOV	R3,A
+	POP	ACC
+	MOV	R2,A
+	POP	PSW
+	POP	DPH
+	POP	DPL
+	POP	ACC
+	RETI
+	RSEG	CONST
+Title:
+	DB	'/ /// /////////////////////////////////////////////// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// /////////////////////////////////////////////// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///       JIN-YANG  INDUSTRIAL.,CO LTD      /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///       Program By  Hae-suk. Jin          /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///     Start :  1997. 2. 19.               /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///       End :  1996.        Ver 1.0       /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///                                         /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///    1.Temperature   : 1 EA  Analog Ch=0  /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// ///    2.Humidity      : 1 EA  Analog Ch=1  /// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// /////////////////////////////////////////////// /// /',0
+	DB	0,0,0,0,0
+	DB	'/ /// /////////////////////////////////////////////// /// /',0
+	DB	0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	DB	0,0,0,0,0,0,0
+	COMMON	INTVEC
+	DS	3
+	DB	2
+	DB	HIGH(EX0_int),LOW(EX0_int)
+	DS	29
+	DB	2
+	DB	HIGH(SCON_int),LOW(SCON_int)
+	RSEG	X_UDATA
+Quad:
+	DS	1
+Second:
+	DS	1
+Minute:
+	DS	1
+ID:
+	DS	1
+TempID:
+	DS	1
+DewpID:
+	DS	1
+HumiID:
+	DS	1
+PresID:
+	DS	1
+PrecID:
+	DS	1
+Rbuf:
+	DS	256
+Sbuf:
+	DS	256
+Rpoint:
+	DS	2
+Spoint:
+	DS	2
+Redb:
+	DS	2
+Blueb:
+	DS	2
+Tempsta:
+	DS	1
+Humista:
+	DS	1
+Templ:
+	DS	1
+Temph:
+	DS	1
+Tempreal:
+	DS	2
+Humil:
+	DS	1
+Humih:
+	DS	1
+Humireal:
+	DS	2
+TempSec:
+	DS	2
+HumiSec:
+	DS	2
+TempMin:
+	DS	2
+TempMsum:
+	DS	4
+HumiMin:
+	DS	2
+HumiMsum:
+	DS	4
+TempTen:
+	DS	2
+TempTsum:
+	DS	4
+HumiTen:
+	DS	2
+HumiTsum:
+	DS	4
+TempOmin:
+	DS	2
+TempOmax:
+	DS	2
+TempMmin:
+	DS	2
+TempMmax:
+	DS	2
+TempTmin:
+	DS	2
+TempTmax:
+	DS	2
+HumiOmin:
+	DS	2
+HumiOmax:
+	DS	2
+HumiMmin:
+	DS	2
+HumiMmax:
+	DS	2
+HumiTmin:
+	DS	2
+HumiTmax:
+	DS	2
+TempMsmin:
+	DS	2
+TempMsmax:
+	DS	2
+TempTsmin:
+	DS	2
+TempTsmax:
+	DS	2
+HumiMsmin:
+	DS	2
+HumiMsmax:
+	DS	2
+HumiTsmin:
+	DS	2
+HumiTsmax:
+	DS	2
+OldTemp:
+	DS	2
+OldHumi:
+	DS	2
+PrecSTR:
+	DS	2
+Tempv:
+	DS	4
+Tcount:
+	DS	2
+TempEcount:
+	DS	2
+HumiEcount:
+	DS	2
+Tempd:
+	DS	60
+Humid:
+	DS	60
+	RSEG	BITVARS
+Comon:
+	DS	1
+Receve:
+	DS	1
+Transm:
+	DS	1
+MeasQ:
+	DS	1
+Init:
+	DS	1
+PrecSbit:
+	DS	1
+Adcerr:
+	DS	1
+PInit:
+	DS	1
+	END

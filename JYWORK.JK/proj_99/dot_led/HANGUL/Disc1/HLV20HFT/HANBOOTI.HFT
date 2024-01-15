@@ -1,0 +1,27 @@
+/* ======================================= */
+/*       THIS IS Hurumi Total Library      */
+/*     Font File. this can be compiled     */
+/*      by BC 2.0 and can be linked by     */
+/*            Tlink 2.0 or higher.         */
+/*                                         */
+/*              Good luck to you.          */
+/*                                         */
+/*           written by KIT e900519        */
+/*                 Han Woo-jin             */
+/* ======================================= */
+
+extern char *fir;
+extern char *mid;
+extern char *las;
+extern char *eng;
+
+extern char far HANBOOT_han_f[8][20][32];
+extern char far HANBOOT_han_m[4][22][32];
+extern char far HANBOOT_han_l[4][28][32];
+
+void hanboot_han()
+{
+	fir=&HANBOOT_han_f[0][0][0];
+	mid=&HANBOOT_han_m[0][0][0];
+	las=&HANBOOT_han_l[0][0][0];
+};

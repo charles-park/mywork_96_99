@@ -1,0 +1,465 @@
+		===============================
+         	Read Me File for XLINK V4.XX
+		===============================
+
+Updated:	30/May/95 [IMAF]	Release of XLINK 4.47D
+
+========
+Contents
+========
+
+  1.	Important Information
+  2.	Manual Corrections and Updates
+  3.	Known Problems in Current Version
+  4.	Program Corrections and Updates
+
+
+========================
+1. Important Information
+========================
+
+
+4.46M
+	* HP-format
+
+	  Note that the HP-format does not support source debugging or local
+	  variables, due to the fact that the linker can't produce the 
+	  relevant local-info files necessary for this to work in the 
+	  HP-emulator.
+
+	* C code in include file support
+
+	  The UBROF does not support C code in include files, therefore can
+	  the linker not support it either. A workaround is to use the 
+	  -ri -L compiler options to include the include files into the main
+	  file and produce a listing of the source into one list-file, then
+	  use the produced list-file instead of the source-files when 
+	  debugging in any other debugger than C-SPY.
+
+	* X-reference listing
+
+	  Index is deleted from the xref.	
+
+	  The absolute segments will be printed in the module map and in the 
+	  segment map when producing cross reference. 
+
+	  The addresses for bit variables and bit segments are now displayed 
+	  as byteaddress.bitnumber in the cross reference. 
+
+	  The cross-reference map now has ove as type in the segment-map and
+	  overlayable as segment-type in the  module map.
+
+
+	* Command file
+
+	  \ is a line continuation mark in command files.
+
+	* Segment overlay flag (-z)
+
+	  The segment overlap flag (-z) has been changed to degrade the 
+	  segment overlap error to a similar warning. Note the check is always
+	  done now. The segment overlap will check absolute segments against 
+	  each other and against relocatable segments. This produced three 
+	  errors and three new warnings about absolute segments overlapping 
+	  absolute segments or relocatable segments. 
+
+	* Formats
+
+	  A new option flag -Y{character} exists. It will take a character to 
+	  enable optional features in specific formats choosen by -F. If only
+	  -Y is given, then xlink will take that as the option -Y0.
+
+	  Error 81: "Unknown flag in cross reference option -Ymmm" is changed 
+	  to "Unknown flag in extended format option -Ymmm"
+
+	  nec78k-symb format is introduced.
+
+	  Nec2-symbolic is a symbol format as nec-symbolic with maximum 31 
+	  char symbols	and upper and lower case symbols.
+
+	  Nec2 is a format containing nec2-symbolic and intel-standard.
+
+	  Sysrof is a symbol format for cpu H16, H8500 and H8300. The default
+	  extension to the format sysrof is .abs. If not compiled with -r, 
+	  SYSROF will have types on variables (base types, pointers, arrays 
+	  and functions). If compiled with -r it will additionaly have 
+	  function variable info (parameters, local and static variables) and 
+	  line numbers. If the variable is an assembler variable and it is not
+	  referred to from any C module then the type of the variable will be
+	  deduced on the type of the segment it is in:
+	  	segment type	 		entry		
+		------------			-----		
+		absolute segment		variable/data		
+		CODE				entry		
+		CONST,DATA,XDATA,IDATA	variable/data	
+		UNTYPED,BIT,REGISTER		variable/data	
+	  The segment names will be deduced by:
+	  	segment type to XLINK		segment name
+		---------------------		------------
+		CONST				C
+		DATA,XDATA,IDATA,BIT,REGISTER	D
+		UNTYPED,CODE			P
+	  The equates in the DSY record cannot perhaps be handled by the ASE.
+	  If so, then try the -Y0 option.
+
+	  The format AOMF8051 can now be used with the emulator from Intel
+	  ICE51FX. It has function and local variables information as well as
+	  the absolute bits and SFR:s from the compiler as local variables.
+
+	  Format for the Hitex emulator for 8051 is included, if you use the 
+	  options -Faomf8051 and -Y0, with the same prestanda as the AOMF8051 
+	  with added type information.
+
+	  The formats ashling-cpu has got function information and local 
+	  variables information.
+
+	  The format AOMF8096 can now be used with the newest version of the 
+	  Intel emulator for the 8096. The format has also got information
+	  about functions, locals and basic types.
+
+	  The format intel standard now always produce the end record 0100000f
+	  now, even if there is an end record with program start address.
+	  If our normal intel-std way of ending (if exist program entry write
+	  that then write :00000001FF) does not work try:
+	    	-Y or -Y0 => Always end only with :00000001FF
+		-Y1       => End with program entry, if exist, else :0000001FF
+
+
+	  The motorola format now produces the S8 end of file record for 
+	  program entries larger than 0xffff.
+
+  	  Pentica-a, -b, -c, -d now outputs three byte addresses for addresses
+	  that are more than two bytes.
+
+	  Pentica-a, -b, -c, -d and msd-symb formats use the -Y0 option to
+	  enable all symbols to be module:symbolname instead in the formats, 
+	  the -Y1 option to enable local and line symbols to be 
+	  module:symbolname instead, the -Y2 option to enable line symbols
+	  to be module:linenumber instead.
+
+	  The mpds-code can now fill bytes with 0xFF instead by using the -Y0
+	  option.
+
+
+
+	* Overlayable relative segments
+
+	  The linker now has support for overlayable relative segments. 
+
+	  Error 82: "Conflict in segment 'name'. Mixing overlayable and not
+	  overlayable segment parts".
+
+	  Error 83: "The overlayable segment 'name' may not be banked".
+
+	  Error 84: "The overlayable segment 'name' must be of relative type".
+
+	  The linker now supports the omfconverter program. This means that it
+	  matches PL/M-51 call-system with our C call-system. The entries is
+	  linked as usual. The overlayable segments in PL/M-51 is supported.
+
+
+
+	* DOS compatibility
+
+	  Don't use the DOS command APPEND due to the fact that the linker
+	  does not handle it correctly.
+
+
+=================================
+2. Manual Corrections and Updates
+=================================
+
+
+====================================
+3. Known Problems in Current Version
+====================================
+
+
+===================================
+4. Program Corrections and Updates
+===================================
+
+4.47D	950530
+
+	* Segment types ZPAGE and NPAGE introduced for the 740 chip.
+
+	* Segment types NEARCONST, FARCONST, HUGECONST introduced. They
+	  are the same as NEARC, FARC, HUGEC.
+	
+	* Segment types NEARCODE, FARCODE, HUGECODE introduced.
+
+4.47C	950216	
+
+	* Mitsubishis 740 is now recognized.
+
+	* double formats debug-motorola, debug-intel-std, and debug-intel-ext
+	  are introduced.
+
+	* New info tags are introduced.
+
+	* SYSROF no longer produces DFL info, and some other updates of it.
+
+4.47B		941221
+
+	* Windows nts DOS box wasn't compatible with DOS, so we run into 
+	  problems, now it is corrected.
+
+4.47A		941214
+
+	* TLCS900 introduced.
+
+4.46N		941201
+
+	* Faulty range errors was made to external functions that were banked
+	  but had an UBROF exn number larger than 255.
+
+	* To add size to a FAR(C) or HUGE(C) segment in the -Z definiton
+	  didn't work.
+
+	* Intel-extended now always writes the sequence :00000001FF
+	  at the end of the file.
+
+	* SFE on a common segment didn't work corectly.
+
+4.46M		941005
+
+
+	* Chip 68hc16 or 6816 is now available.
+
+	* Chip 6811 is accepted for 68hc11.
+
+	* Near and nearc segment types are accepted, and will not be 
+	  range-checked.
+
+	* Fixed a problem in the SYSROF format for pointer-sizes in the 
+	  DSY record.
+
+4.46L		940407
+
+	* H8300H bits are supported properly, as well as sign of message for
+	  H8300H.
+
+	* If a comment followed immediately by an eof was in a command file 
+	  the linker crashed.
+
+4.46K		940315
+
+	* The overlay-algorithm missed if there was a recursive system that
+	  directly called another recursive system and at the same time called
+	  it indirectly (via other functions).
+
+	* Xlink now works for 80751 code together with ICC8051 V5.
+
+4.46J		940301
+
+	* Xlink HP format now works for H8/300H
+
+4.46I		940228
+
+	* Fixed a malloc bug for PC.
+
+	* Xlink now works with ICC8051 V4 and -r1=3 compiler option.
+
+4.46H		931109
+
+	* -Y# will now work with old C-SPYs, even if -r1.
+
+	* Tweaked overlay algorithm a bit (indirect callable that does not
+	  call indirect itself)
+
+4.46G		930921
+
+	* Relocatable bits in AUBROF was changed to output the address as
+	  (byteaddress << 3) + bitaddress for H8300, 78000, 78200 and 78330.
+
+	* Aomf8051, Aomf8096 could still not handle specific parts in the
+	  new UBROF perfectly. fixed.
+
+4.46F		930825
+	
+	* H8300H had wrong default extensions.
+
+	* Aomf8051, SYROF, Aomf8096 could not handle new UBROF perfectly. 
+	  fixed.
+
+4.46E		930816
+
+	* Bug in absolute segment overlap check has been fixed.
+
+	* H8300H is acepted as cpu.
+
+	* SYSROF is now able to cope with H8300H. -Y1 will give more info
+	  about EQUATES.
+
+4.46D		930702
+
+	* Bug in -Y# generation fixed.
+
+4.46C		930527
+	
+	* Bug in Load of t_func_begin1 and t_block_begin1
+
+4.46B		930517
+
+	* Support for 8051 Rom monitor included
+	  
+4.46A		930428
+
+	* Relaxed error: seg is too long for seg def. Now it will continue. 
+
+	* Now exists MELPS7700 bits.
+
+	* Now we have FAR (FARC for far const) and HUGE (HUGEC for huge const)
+	  segment types. A reference to these segments will not be checked by 
+	  the linker. The FAR segment will not allow a modules segment part to
+	  be placed over a 64k boundary (then it will move the part to start 
+	  at the new boundary). A new error has been made for the FAR 
+	  segments, namely if a module contributes with a far segment part 
+	  that is larger than 64k.
+
+	* intel-extended can now dump banked code. And has been updated to
+	  correctly follow the Intel specification. Note that the IAR XLINK
+	  manual is incorrect about the intel-extended format.
+	    -Y or -Y0 (default)   => Intel-extended segmented variant.
+	    -Y1 and not 8086 chip => Intel-extended 32-bit linear variant.
+
+	* OKI bit variables is more supported (T_PRM_ARG_BL51).
+
+	* New Sub_tags ATTRIBUTE1 and FUNCTION1 has been incorporated.
+
+4.45B		930318
+
+	* More support for ICC8051:s recursion detection.
+
+4.45A		930315
+
+	* Included t_symbol_def1 handling of locations.
+
+
+4.44F		930312
+	
+	* New tags for New asm.
+	  
+	* Corrected a bug in absolute seg overlap check.
+
+4.44E		930127
+
+	* ashling format produced wrong address for addreses above 7fff
+
+4.44D		921220
+
+4.44C		921205
+
+	* t_func_begin didn't change name according to -e switch
+
+4.44B		921116
+
+	* Better 65000 support in segment types.
+
+4.44A		921112
+
+	* New tags, Support for ICC8051 V5.00. To get old UBROF use -Y#
+
+	* MELPS7700 supported
+
+4.43M		920918
+
+	* Let HP-formats produce banked code if it can.
+	  
+4.43L		920813 
+
+	* Corrected the same t_ext_n?? as in 4.43I.
+
+4.43K		920805
+
+	* Corrected a bug in OMF8051 format, made it do funny things.
+
+4.43J		920727
+
+	* Corrected a bug relating to t_ext_n??. Gave larger values than 
+	  correct. 
+
+4.43I		920720
+	
+	* Nothing
+
+4.43H		920708
+
+	* Corrected a bug in temp file operations (-t) that gave funny errors.
+
+4.43G		920611
+
+	* Corrected a bug in the 8051 static overlay algorithm (it hanged).
+
+4.43F		920526
+
+	* H8300 has bit segment allocation now.
+
+4.43E		920424
+
+	* Fixed a bug for t_n(pcrel,16). It gave a range error always
+	  due to a new bug in Microsoft C.
+
+4.43D		920410
+
+	* Fixed a bug in version 5 UBROF when loading (t_ext_p8/n8).
+
+	* Inserted tag t_stack_error_D01 to get more info to the user for
+	  t_check errors (range error, number 18)
+
+4.43C		920327
+
+	* Changed HP-symbolic format again (linker-names xx)
+
+4.43B		920310
+
+	* Changed HP-symbolic format again (linker-names l).
+
+4.43A		920302
+
+	* Fixed a bug in the LAN checking system for 8051. Now it let C lan 
+	  models that were zero by.
+
+	* Revised the version number. No it is built up like:
+		<major>.<minor><sub-minor>
+
+		major :== a digit (1 - 9)
+		minor :== two digits (00 - 99)
+		sub-minor :== a character (A - Z)
+
+	* Included a lot of stack tags for UBROF version 5.
+
+4.42		920226
+
+	* Included OKI 65000
+
+	* Corrected a bug in the HP-format. Linker name is checked by
+	  later versions of the emulators (don't know why, but they do),
+	  and we had not updated our linker names for each cpu.
+
+4.41		920221
+
+	* Fixed a problem in the ashling-64180 format. When banked code was
+	  moved to the CONST??? modules it didn't produce the correct
+	  load address.
+
+4.40		920217
+
+	* UBROF version 5 is now acceptable as input (more external refs).
+
+4.39		Not released
+
+	* Corrected an annoying bug in HP-symbol format. Writing LINKER BY
+	  JC/MF as file name sometimes.
+
+4.38		911029
+
+	* Corrected a bug in AOMF8051 sfrs. It crashed.
+
+4.37		910912
+
+======================================
+End of Read Me File for XLINK V4.XX
+======================================
+		
+

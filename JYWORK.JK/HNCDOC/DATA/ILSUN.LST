@@ -1,0 +1,121 @@
+  Thu Feb  3 1994 20:35                                                                                                  Page    1
+
+
+
+
+
+
+
+               2500 A.D. 8051 Macro Assembler  -  Version 4.03c
+               ------------------------------------------------
+
+                       Input  Filename : ILSUN.asm
+                       Output Filename : ILSUN.obj
+
+
+    1   0000                   	        ORG     0000H
+    2   0000   02 00 30        	        JMP     START
+    3                          	
+    4   0003                   	        ORG     0003H
+    5   0003   C2 87           	        CLR     P0.7
+    6   0005                   	LOOP:
+    7   0005   30 B2 FD        	        JNB     P3.2,LOOP
+    8   0008   32              	        RETI
+    9                          	
+   10                          	; --
+   11   0030                   	        ORG     0030H
+   12   0030                   	START:
+   13   0030   75 81 60        	        MOV     SP,#60H
+   14   0033   75 A8 81        	        MOV     IE,#81H
+   15   0036   78 00           	        MOV     R0,#00H
+   16   0038   79 00           	        MOV     R1,#00H
+   17   003A   7A 00           	        MOV     R2,#00H
+   18   003C                   	MAIN:
+   19   003C   B8 03 05        	        CJNE    R0,#03H,CON2
+   20   003F   D2 A7           	        SETB    P2.7
+   21   0041   02 00 46        	        JMP     CON3
+   22   0044                   	CON2:
+   23   0044   C2 A7           	        CLR     P2.7
+   24   0046                   	CON3:
+   25   0046   09              	        INC     R1
+   26   0047   B9 FF 0E        	        CJNE    R1,#0FFH,CONTINUE
+   27   004A   79 00           	        MOV     R1,#00H
+   28                          	
+   29   004C   0A              	        INC     R2
+   30   004D   BA 60 08        	        CJNE    R2,#60H,CONTINUE
+   31   0050   7A 00           	        MOV     R2,#00H
+   32                          	
+   33   0052   08              	        INC     R0
+   34   0053   B8 0A 02        	        CJNE    R0,#0AH,CONTINUE
+   35   0056   78 00           	        MOV     R0,#0H
+   36   0058                   	CONTINUE:
+   37   0058   12 00 A1        	        CALL    DISPLAY
+   38                          	
+   39   005B   20 90 04        	        JB      P1.0,NEXT1
+   40   005E   78 00           	        MOV     R0,#00H
+   41   0060   01 3C           	        JMP     MAIN
+   42   0062                   	NEXT1:
+   43   0062   20 91 04        	        JB      P1.1,NEXT2
+   44   0065   78 01           	        MOV     R0,#01H
+   45   0067   01 3C           	        JMP     MAIN
+   46   0069                   	NEXT2:
+   47   0069   20 92 04        	        JB      P1.2,NEXT3
+  Thu Feb  3 1994 20:35                                                                                                  Page    2
+
+
+
+
+   48   006C   78 02           	        MOV     R0,#02H
+   49   006E   01 3C           	        JMP     MAIN
+   50   0070                   	NEXT3:
+   51   0070   20 93 04        	        JB      P1.3,NEXT4
+   52   0073   78 03           	        MOV     R0,#03H
+   53   0075   01 3C           	        JMP     MAIN
+   54   0077                   	NEXT4:
+   55   0077   20 94 04        	        JB      P1.4,NEXT5
+   56   007A   78 04           	        MOV     R0,#04H
+   57   007C   01 3C           	        JMP     MAIN
+   58   007E                   	NEXT5:
+   59   007E   20 95 04        	        JB      P1.5,NEXT6
+   60   0081   78 05           	        MOV     R0,#05H
+   61   0083   01 3C           	        JMP     MAIN
+   62   0085                   	NEXT6:
+   63   0085   20 96 04        	        JB      P1.6,NEXT7
+   64   0088   78 06           	        MOV     R0,#06H
+   65   008A   01 3C           	        JMP     MAIN
+   66   008C                   	NEXT7:
+   67   008C   20 97 04        	        JB      P1.7,NEXT8
+   68   008F   78 07           	        MOV     R0,#07H
+   69   0091   01 3C           	        JMP     MAIN
+   70   0093                   	NEXT8:
+   71   0093   20 A0 04        	        JB      P2.0,NEXT9
+   72   0096   78 08           	        MOV     R0,#08H
+   73   0098   01 3C           	        JMP     MAIN
+   74   009A                   	NEXT9:
+   75   009A   20 A1 9F        	        JB      P2.1,MAIN
+   76   009D   78 09           	        MOV     R0,#09H
+   77   009F   01 3C           	        JMP     MAIN
+   78                          	; --
+   79   00A1                   	DISPLAY:
+   80   00A1   C0 E0           	        PUSH    A
+   81                          	
+   82   00A3   E8              	        MOV     A,R0
+   83   00A4   90 00 AD        	        MOV     DPTR,#FONT
+   84   00A7   93              	        MOVC    A,@A+DPTR
+   85   00A8   F5 80           	        MOV     P0,A
+   86                          	
+   87   00AA   D0 E0           	        POP     A
+   88   00AC   22              	        RET
+   89                          	; --
+   90   00AD                   	FONT:
+   91   00AD   C0 F9 A4 B0 99  	        DB      C0H,F9H,A4H,B0H,99H,92H,82H,F8H,80H,90H
+        00B2   92 82 F8 80 90 
+   92                          	        ;        0   1   2   3   4   5   6   7   8   9
+   93   00B7                   	        END
+
+
+
+           Lines Assembled :  93             Assembly Errors :  0
+
+
+

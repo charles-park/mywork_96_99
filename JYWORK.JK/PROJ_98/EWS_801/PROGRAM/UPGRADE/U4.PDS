@@ -1,0 +1,46 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    W/S W/D TEMP BOARD
+PATTERN  
+REVISION 
+AUTHOR   PARK WOONG
+COMPANY  JINYANG INC.
+DATE     96/10/15
+
+CHIP  DECOD  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A12                  COMBINATORIAL ; INPUT
+PIN  2          A13                  COMBINATORIAL ; INPUT
+PIN  3          A14                  COMBINATORIAL ; INPUT
+PIN  4          A15                  COMBINATORIAL ; INPUT
+PIN  5          RD                   COMBINATORIAL ; INPUT
+PIN  6          WR                   COMBINATORIAL ; INPUT
+PIN  10         GND     ; INPUT
+PIN  12         ADC                  COMBINATORIAL ; OUTPUT
+PIN  13         RAM                  COMBINATORIAL ; OUTPUT
+PIN  14         LEDH                 COMBINATORIAL ; OUTPUT
+PIN  15         CS0                  COMBINATORIAL ; OUTPUT
+PIN  16         CS1                  COMBINATORIAL ; OUTPUT
+PIN  17         LEDL                 COMBINATORIAL ; OUTPUT
+PIN  18         CS3                  COMBINATORIAL ; OUTPUT
+PIN  20         VCC     ; INPUT
+
+;----------------------------------- Boolean Equation Segment ------
+
+EQUATIONS
+/ADC  =  (/RD + /WR) *  A15 *  A14 * /A13 * /A12         ; C000h
+/RAM  =                /A15
+ LEDH =   /WR *  A15 *  A14 * /A13 *  A12                ; D000h ; IDV
+/CS0  =                 A15 * /A14 * /A13 * /A12         ; 8000h ; 8250
+/CS1  =                 A15 * /A14 * /A13 *  A12         ; 9000h ; RTCC
+ LEDL =         /WR  *  A15 * /A14 *  A13 * /A12         ; A000h
+/CS3  =  (/RD + /WR) *  A15 * /A14 *  A13 *  A12         ; B000h ; Read id
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+;/CS0 = (/RD + /WR) *  A15 * /A14 * /A13 * /A12         ; 8000h ; 8250
+;/CS1 = (/RD + /WR) *  A15 * /A14 * /A13 *  A12         ; 9000h ; RTCC
+
+;-------------------------------------------------------------------

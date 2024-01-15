@@ -1,0 +1,1717 @@
+{COMPONENT ORCAD.PCB
+ {ENVIRONMENT LAYS.PCB}
+ {DETAIL
+  {SUBCOMP
+{I 4R1.PRT R2
+{CN
+    1 VBB
+    2 NET00062
+}
+}
+{I 4R1.PRT R6
+{CN
+    1 NET00103
+    2 NET00124
+}
+}
+{I 4R1.PRT R11
+{CN
+    1 RX1-B_1
+    2 RX1-A_1
+}
+}
+{I 4R1.PRT R12
+{CN
+    1 TX1-A_1
+    2 NET00067
+}
+}
+{I 4R1.PRT R13
+{CN
+    1 TX1-B_1
+    2 NET00074
+}
+}
+{I 4R1.PRT R39
+{CN
+    1 NET00170
+    2 FND7A_2
+}
+}
+{I 4R1.PRT R40
+{CN
+    1 NET00173
+    2 FND7B_2
+}
+}
+{I 4R1.PRT R41
+{CN
+    1 NET00176
+    2 FND7C_2
+}
+}
+{I 4R1.PRT R42
+{CN
+    1 NET00179
+    2 FND7D_2
+}
+}
+{I 4R1.PRT R43
+{CN
+    1 NET00186
+    2 FND7E_2
+}
+}
+{I 4R1.PRT R44
+{CN
+    1 NET00189
+    2 FND7F_2
+}
+}
+{I 4R1.PRT R45
+{CN
+    1 NET00192
+    2 FND7G_2
+}
+}
+{I 4R1.PRT R46
+{CN
+    1 NET00195
+    2 FND7DP_2
+}
+}
+{I 4R1.PRT R47
+{CN
+    1 NET00204
+    2 FND7A1_2
+}
+}
+{I 4R1.PRT R48
+{CN
+    1 NET00207
+    2 FND7B1_2
+}
+}
+{I 4R1.PRT R49
+{CN
+    1 NET00211
+    2 FND7C1_2
+}
+}
+{I 4R1.PRT R50
+{CN
+    1 NET00215
+    2 FND7D1_2
+}
+}
+{I 4R1.PRT R51
+{CN
+    1 NET00219
+    2 FND7E1_2
+}
+}
+{I 4R1.PRT R52
+{CN
+    1 NET00224
+    2 FND7F1_2
+}
+}
+{I 4R1.PRT R53
+{CN
+    1 NET00232
+    2 FND7G1_2
+}
+}
+{I 4R1.PRT R54
+{CN
+    1 NET00236
+    2 FND7DP1_2
+}
+}
+{I 4R1.PRT R14
+{CN
+    1 RST_1
+    2 GND
+}
+}
+{I 2C2.PRT C2
+{CN
+   +   V+_1
+   -   GND
+}
+}
+{I 2C2.PRT C3
+{CN
+   +   VCC
+   -   GND
+}
+}
+{I 2C2.PRT C6
+{CN
+   -   V-_1
+   +   GND
+}
+}
+{I 2R2.PRT BC1
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC2
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC3
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC4
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC5
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC6
+{CN
+    1 GND
+    2 VCC
+}
+}
+{I 2R2.PRT BC7
+{CN
+    1 GND
+    2 VCC
+}
+}
+{I 2R2.PRT BC8
+{CN
+    1 GND
+    2 VCC
+}
+}
+{I 2R2.PRT BC9
+{CN
+    1 GND
+    2 VCC
+}
+}
+{I 2R2.PRT BC10
+{CN
+    1 GND
+    2 VCC
+}
+}
+{I 2R2.PRT BC11
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC12
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC13
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC14
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC15
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC16
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 2R2.PRT BC17
+{CN
+    1 GND
+    2 VCC
+}
+}
+{I 2R2.PRT BC18
+{CN
+    1 VCC
+    2 GND
+}
+}
+{I 4R1.PRT R1
+{CN
+    1 VBB
+    2 CS1_1
+}
+}
+{I 4R1.PRT R8
+{CN
+    1 NET00050
+    2 VCC
+}
+}
+{I 4R1.PRT R9
+{CN
+    1 NET00057
+    2 GND
+}
+}
+{I 4R1.PRT R3
+{CN
+    1 NET00038
+    2 NET00047
+}
+}
+{I OSC.PRT X1
+{CN
+    1 ?
+    2 GND
+    3 NET00004
+    4 VCC
+}
+}
+{I DIP24.PRT U1
+{CN
+    1 GND
+    2 NET00038
+    3 NET00047
+    4 D0_1
+    5 D1_1
+    6 D2_1
+    7 D3_1
+    8 D4_1
+    9 D5_1
+   10 D6_1
+   11 D7_1
+   12 GND
+   13 CS1_1
+   14 ALE_1
+   15 WR_1
+   16 VBB
+   17 RD_1
+   18 VBB
+   19 IRQ_1
+   20 GND
+   21 ?
+   22 NET00062
+   23 SQW_1
+   24 VCC
+}
+}
+{I DIP20.PRT U3
+{CN
+    1 A12_1
+    2 A13_1
+    3 A14_1
+    4 A15_1
+    5 RD_1
+    6 WR_1
+    7 ?
+    8 ?
+    9 ?
+   10 GND
+   11 ?
+   12 RAM_1
+   13 LOUT_1
+   14 IDV_1
+   15 CS0_1
+   16 CS1_1
+   17 CS2_1
+   18 CS3_1
+   19 CS4_1
+   20 VCC
+}
+}
+{I TNR.PRT Z1
+{CN
+    1 GND
+    2 NET00067
+}
+}
+{I TNR.PRT Z2
+{CN
+    1 GND
+    2 NET00074
+}
+}
+{I TNR.PRT Z3
+{CN
+    1 GND
+    2 RX1-B_1
+}
+}
+{I TNR.PRT Z4
+{CN
+    1 GND
+    2 RX1-A_1
+}
+}
+{I 4R1.PRT R7
+{CN
+    1 RX1-A_1
+    2 NET00050
+}
+}
+{I 4R1.PRT R10
+{CN
+    1 RX1-B_1
+    2 NET00057
+}
+}
+{I 1K.PRT R23
+{CN
+    1 FNDS1_2
+    2 NET00132
+}
+}
+{I 1K.PRT R24
+{CN
+    1 FNDS2_2
+    2 NET00135
+}
+}
+{I 1K.PRT R25
+{CN
+    1 FNDS3_2
+    2 NET00139
+}
+}
+{I 1K.PRT R26
+{CN
+    1 FNDS4_2
+    2 NET00142
+}
+}
+{I 1K.PRT R27
+{CN
+    1 FNDS5_2
+    2 NET00149
+}
+}
+{I 1K.PRT R28
+{CN
+    1 FNDS6_2
+    2 NET00153
+}
+}
+{I 1K.PRT R29
+{CN
+    1 FNDS7_2
+    2 NET00158
+}
+}
+{I 1K.PRT R30
+{CN
+    1 FNDS8_2
+    2 NET00162
+}
+}
+{I 1K.PRT R31
+{CN
+    1 FNDS9_2
+    2 NET00133
+}
+}
+{I 1K.PRT R32
+{CN
+    1 FNDS10_2
+    2 NET00136
+}
+}
+{I 1K.PRT R33
+{CN
+    1 FNDS11_2
+    2 NET00140
+}
+}
+{I 1K.PRT R34
+{CN
+    1 FNDS12_2
+    2 NET00143
+}
+}
+{I 1K.PRT R35
+{CN
+    1 FNDS13_2
+    2 NET00151
+}
+}
+{I 1K.PRT R36
+{CN
+    1 FNDS14_2
+    2 NET00156
+}
+}
+{I 1K.PRT R37
+{CN
+    1 FNDS15_2
+    2 NET00160
+}
+}
+{I 1K.PRT R38
+{CN
+    1 FNDS16_2
+    2 NET00164
+}
+}
+{I DIODE.PRT D1
+{CN
+   CATHODE   ?
+   ANODE   VCC
+}
+}
+{I DIODE.PRT D2
+{CN
+   CATHODE   NET00059
+   ANODE   ?
+}
+}
+{I DIODE.PRT D3
+{CN
+   ANODE   NET00070
+   CATHODE   ?
+}
+}
+{I 4R1.PRT R5
+{CN
+    1 BUZZER_1
+    2 NET00130
+}
+}
+{I 1R1.PRT C4
+{CN
+    1 GND
+    2 NET00038
+}
+}
+{I 1R1.PRT C5
+{CN
+    1 GND
+    2 NET00047
+}
+}
+{I DIP28.PRT U5
+{CN
+    1 NET00022
+    2 A12_1
+    3 A7_1
+    4 A6_1
+    5 A5_1
+    6 A4_1
+    7 A3_1
+    8 A2_1
+    9 A1_1
+   10 A0_1
+   11 D0_1
+   12 D1_1
+   13 D2_1
+   14 GND
+   15 D3_1
+   16 D4_1
+   17 D5_1
+   18 D6_1
+   19 D7_1
+   20 GND
+   21 A10_1
+   22 PSEN_1
+   23 A11_1
+   24 A9_1
+   25 A8_1
+   26 A13_1
+   27 A14_1
+   28 VCC
+}
+}
+{I TR1.PRT Q1
+{CN
+   EMITTER   NET00124
+   BASE   NET00130
+   COLLECTOR   GND
+}
+}
+{I BATTERY.PRT BT1
+{CN
+   +   NET00070
+   -   GND
+}
+}
+{I X-TAL.PRT Y1
+{CN
+    1 NET00047
+    2 NET00038
+}
+}
+{I 4R1.PRT R4
+{CN
+    1 NET00070
+    2 NET00059
+}
+}
+{I 1R1.PRT C1
+{CN
+    1 GND
+    2 NET00062
+}
+}
+{I 4R1.PRT R15
+{CN
+    1 LD1_1
+    2 LDV1_1
+}
+}
+{I 4R1.PRT R16
+{CN
+    1 LD2_1
+    2 LDV2_1
+}
+}
+{I 4R1.PRT R17
+{CN
+    1 LD3_1
+    2 LDV3_1
+}
+}
+{I 4R1.PRT R18
+{CN
+    1 LD4_1
+    2 LDV4_1
+}
+}
+{I 4R1.PRT R19
+{CN
+    1 LD5_1
+    2 LDV5_1
+}
+}
+{I 4R1.PRT R20
+{CN
+    1 LD6_1
+    2 LDV6_1
+}
+}
+{I 4R1.PRT R21
+{CN
+    1 LD7_1
+    2 LDV7_1
+}
+}
+{I 4R1.PRT R22
+{CN
+    1 LD8_1
+    2 LDV8_1
+}
+}
+{I DIP28.PRT U6
+{CN
+    1 A14_1
+    2 A12_1
+    3 A7_1
+    4 A6_1
+    5 A5_1
+    6 A4_1
+    7 A3_1
+    8 A2_1
+    9 A1_1
+   10 A0_1
+   11 D0_1
+   12 D1_1
+   13 D2_1
+   14 GND
+   15 D3_1
+   16 D4_1
+   17 D5_1
+   18 D6_1
+   19 D7_1
+   20 RAM_1
+   21 A10_1
+   22 WR_1
+   23 A11_1
+   24 A9_1
+   25 A8_1
+   26 A13_1
+   27 RD_1
+   28 VCC
+}
+}
+{I DIP20.PRT U9
+{CN
+    1 SW4_1
+    2 SW5_1
+    3 SW6_1
+    4 SW7_1
+    5 GND
+    6 KD2_1
+    7 KD1_1
+    8 GND
+    9 KD0_1
+   10 SW0_1
+   11 SW1_1
+   12 SW2_1
+   13 SW3_1
+   14 KINT_1
+   15 ?
+   16 VCC
+}
+}
+{I DIP20.PRT U10
+{CN
+    1 GND
+    2 D0_1
+    3 D1_1
+    4 D2_1
+    5 D3_1
+    6 D4_1
+    7 D5_1
+    8 D6_1
+    9 D7_1
+   10 GND
+   11 GND
+   12 GND
+   13 GND
+   14 GND
+   15 GND
+   16 KD2_1
+   17 KD1_1
+   18 KD0_1
+   19 CS3_1
+   20 VCC
+}
+}
+{I DIP20.PRT U11
+{CN
+    1 GND
+    2 D0_1
+    3 D1_1
+    4 D2_1
+    5 D3_1
+    6 D4_1
+    7 D5_1
+    8 D6_1
+    9 D7_1
+   10 GND
+   11 NET00093
+   12 NET00092
+   13 NET00089
+   14 NET00088
+   15 NET00087
+   16 NET00086
+   17 NET00085
+   18 NET00083
+   19 IDV_1
+   20 VCC
+}
+}
+{I DIP20.PRT U7
+{CN
+    1 GND
+    2 D0_1
+    3 D1_1
+    4 D2_1
+    5 D3_1
+    6 D4_1
+    7 D5_1
+    8 D6_1
+    9 D7_1
+   10 GND
+   11 ALE_1
+   12 A7_1
+   13 A6_1
+   14 A5_1
+   15 A4_1
+   16 A3_1
+   17 A2_1
+   18 A1_1
+   19 A0_1
+   20 VCC
+}
+}
+{I DIP20.PRT U8
+{CN
+    1 GND
+    2 D0_1
+    3 D1_1
+    4 D2_1
+    5 D3_1
+    6 D4_1
+    7 D5_1
+    8 D6_1
+    9 D7_1
+   10 GND
+   11 LOUT_1
+   12 LD8_1
+   13 LD7_1
+   14 LD6_1
+   15 LD5_1
+   16 LD4_1
+   17 LD3_1
+   18 LD2_1
+   19 LD1_1
+   20 VCC
+}
+}
+{I 74HC574.PRT U13
+{CN
+    1 GND_2
+    2 D0_2
+    3 D1_2
+    4 D2_2
+    5 D3_2
+    6 D4_2
+    7 D5_2
+    8 D6_2
+    9 D7_2
+   10 GND
+   11 CS2_2
+   12 FNDS8_2
+   13 FNDS7_2
+   14 FNDS6_2
+   15 FNDS5_2
+   16 FNDS4_2
+   17 FNDS3_2
+   18 FNDS2_2
+   19 FNDS1_2
+   20 VCC
+}
+}
+{I 74HC574.PRT U14
+{CN
+    1 GND_2
+    2 D0_2
+    3 D1_2
+    4 D2_2
+    5 D3_2
+    6 D4_2
+    7 D5_2
+    8 D6_2
+    9 D7_2
+   10 GND
+   11 CS3_2
+   12 FNDS16_2
+   13 FNDS15_2
+   14 FNDS14_2
+   15 FNDS13_2
+   16 FNDS12_2
+   17 FNDS11_2
+   18 FNDS10_2
+   19 FNDS9_2
+   20 VCC
+}
+}
+{I 74HC574.PRT U15
+{CN
+    1 GND_2
+    2 D0_2
+    3 D1_2
+    4 D2_2
+    5 D3_2
+    6 D4_2
+    7 D5_2
+    8 D6_2
+    9 D7_2
+   10 GND
+   11 CS0_2
+   12 NET00194
+   13 NET00191
+   14 NET00188
+   15 NET00185
+   16 NET00178
+   17 NET00175
+   18 NET00172
+   19 NET00169
+   20 VCC
+}
+}
+{I 74HC574.PRT U17
+{CN
+    1 GND_2
+    2 D0_2
+    3 D1_2
+    4 D2_2
+    5 D3_2
+    6 D4_2
+    7 D5_2
+    8 D6_2
+    9 D7_2
+   10 GND
+   11 CS1_2
+   12 NET00235
+   13 NET00231
+   14 NET00223
+   15 NET00218
+   16 NET00214
+   17 NET00210
+   18 NET00206
+   19 NET00203
+   20 VCC
+}
+}
+{I DIP40.PRT U4
+{CN
+    1 ?
+    2 ?
+    3 ?
+    4 KINT_1
+    5 BUZZER_1
+    6 SEL1_1
+    7 SEL2_1
+    8 SEL3_1
+    9 RST_1
+   10 RXD_1
+   11 TXD_1
+   12 IRQ_1
+   13 INT1_1
+   14 WSDTA_1
+   15 SQW_1
+   16 WR_1
+   17 RD_1
+   18 ?
+   19 NET00005
+   20 GND
+   21 A8_1
+   22 A9_1
+   23 A10_1
+   24 A11_1
+   25 A12_1
+   26 A13_1
+   27 A14_1
+   28 A15_1
+   29 PSEN_1
+   30 ALE_1
+   31 NET00001
+   32 D7_1
+   33 D6_1
+   34 D5_1
+   35 D4_1
+   36 D3_1
+   37 D2_1
+   38 D1_1
+   39 D0_1
+   40 VCC
+}
+}
+{I A945.PRT Q2
+{CN
+   BASE   NET00132
+   COLLECTOR   LED1_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q3
+{CN
+   BASE   NET00135
+   COLLECTOR   LED2_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q4
+{CN
+   BASE   NET00139
+   COLLECTOR   LED3_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q5
+{CN
+   BASE   NET00142
+   COLLECTOR   LED4_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q6
+{CN
+   BASE   NET00149
+   COLLECTOR   LED5_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q7
+{CN
+   BASE   NET00153
+   COLLECTOR   LED6_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q8
+{CN
+   BASE   NET00158
+   COLLECTOR   LED7_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q9
+{CN
+   BASE   NET00162
+   COLLECTOR   LED8_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q10
+{CN
+   BASE   NET00133
+   COLLECTOR   LED9_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q11
+{CN
+   BASE   NET00136
+   COLLECTOR   LED10_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q12
+{CN
+   BASE   NET00140
+   COLLECTOR   LED11_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q13
+{CN
+   BASE   NET00143
+   COLLECTOR   LED12_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q14
+{CN
+   BASE   NET00151
+   COLLECTOR   LED13_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q15
+{CN
+   BASE   NET00156
+   COLLECTOR   LED14_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q16
+{CN
+   BASE   NET00160
+   COLLECTOR   LED15_2
+   EMITTER   VBL
+}
+}
+{I A945.PRT Q17
+{CN
+   BASE   NET00164
+   COLLECTOR   LED16_2
+   EMITTER   VBL
+}
+}
+{I SIP9.PRT AR1
+{CN
+    1 VCC
+    2 D0_1
+    3 D1_1
+    4 D2_1
+    5 D3_1
+    6 D4_1
+    7 D5_1
+    8 D6_1
+    9 D7_1
+}
+}
+{I SIP9.PRT AR2
+{CN
+    1 VCC
+    2 A8_1
+    3 A9_1
+    4 A10_1
+    5 A11_1
+    6 A12_1
+    7 A13_1
+    8 A14_1
+    9 A15_1
+}
+}
+{I SIP9.PRT AR3
+{CN
+    1 VCC
+    2 S/H_1
+    3 PRTST_1
+    4 STS_1
+    5 WDT_1
+    6 BUZ_1
+    7 SEL1_1
+    8 SEL2_1
+    9 SEL3_1
+}
+}
+{I SIP9.PRT AR4
+{CN
+    1 VCC
+    2 SW0_1
+    3 SW1_1
+    4 SW2_1
+    5 SW3_1
+    6 SW4_1
+    7 SW5_1
+    8 SW6_1
+    9 SW7_1
+}
+}
+{I SIP9.PRT AR5
+{CN
+    1 VCC
+    2 NET00093
+    3 NET00092
+    4 NET00089
+    5 NET00088
+    6 NET00087
+    7 NET00086
+    8 NET00085
+    9 NET00083
+}
+}
+{I 5R1.PRT BD1
+{CN
+    1 NET00004
+    2 NET00005
+}
+}
+{I 5R1.PRT BD2
+{CN
+    1 V-_1
+    2 -12V_1
+}
+}
+{I 5R1.PRT BD3
+{CN
+    1 V+_1
+    2 +12V_1
+}
+}
+{I 5R1.PRT BD4
+{CN
+    1 VCC
+    2 VCC
+}
+}
+{I BUZ.PRT BZ1
+{CN
+   A   NET00103
+   B   VCC
+}
+}
+{I SIP9.PRT CN4
+{CN
+    1 LDV1_1
+    2 LDV2_1
+    3 LDV3_1
+    4 LDV4_1
+    5 LDV5_1
+    6 LDV6_1
+    7 LDV7_1
+    8 LDV8_1
+    9 VCC
+   10 GND
+}
+}
+{I CON3.PRT J1
+{CN
+    1 VCC
+    2 NET00001
+    3 GND
+}
+}
+{I CON3.PRT J2
+{CN
+    1 VCC
+    2 NET00022
+    3 A15_1
+}
+}
+{I CON4.PRT CN1
+{CN
+    1 VCC
+    2 +12V_1
+    3 -12V_1
+    4 GND
+}
+}
+{I SIP5.PRT CN3
+{CN
+    1 TX1-A_1
+    2 TX1-B_1
+    3 GND
+    4 RX1-A_1
+    5 RX1-B_1
+}
+}
+{I SIP9.PRT CN2
+{CN
+    1 SW0_1
+    2 SW1_1
+    3 SW2_1
+    4 SW3_1
+    5 SW4_1
+    6 SW5_1
+    7 SW6_1
+    8 SW7_1
+    9 GND
+}
+}
+{I LTS8301.PRT F1
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED1_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED1_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F2
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED2_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED2_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F3
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED3_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED3_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F4
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED4_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED4_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F5
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED5_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED5_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F6
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED6_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED6_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F7
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED7_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED7_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F8
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED8_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED8_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F9
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED9_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED9_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F10
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED10_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED10_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F11
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED11_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED11_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F12
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED12_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED12_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F13
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED13_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED13_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F14
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED14_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED14_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F15
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED15_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED15_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F16
+{CN
+    1 FND7E_2
+    2 FND7D_2
+    3 LED16_2
+    4 FND7C_2
+    5 FND7DP_2
+    6 FND7B_2
+    7 FND7A_2
+    8 LED16_2
+    9 FND7F_2
+   10 FND7G_2
+}
+}
+{I LTS8301.PRT F17
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED1_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED1_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F18
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED2_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED2_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F19
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED3_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED3_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F20
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED4_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED4_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F21
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED5_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED5_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F22
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED6_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED6_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F23
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED7_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED7_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F24
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED8_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED8_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F25
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED9_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED9_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F26
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED10_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED10_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F27
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED11_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED11_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F28
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED12_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED12_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F29
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED13_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED13_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F30
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED14_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED14_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F31
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED15_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED15_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I LTS8301.PRT F32
+{CN
+    1 FND7E1_2
+    2 FND7D1_2
+    3 LED16_2
+    4 FND7C1_2
+    5 FND7DP1_2
+    6 FND7B1_2
+    7 FND7A1_2
+    8 LED16_2
+    9 FND7F1_2
+   10 FND7G1_2
+}
+}
+{I 1DIP16.PRT JP1
+{CN
+    1 NET00083
+    2 GND
+    3 NET00085
+    4 GND
+    5 NET00086
+    6 GND
+    7 NET00087
+    8 GND
+    9 NET00088
+   10 GND
+   11 NET00089
+   12 GND
+   13 NET00092
+   14 GND
+   15 NET00093
+   16 GND
+}
+}
+{I DIP8.PRT U12
+{CN
+    1 VCC
+    2 ?
+    3 VCC
+    4 GND
+    5 RST_1
+    6 ?
+    7 WDT_1
+    8 VCC
+}
+}
+{I DIP8.PRT U2
+{CN
+    1 VCC
+    2 TXDV_1
+    3 RXDV_1
+    4 GND
+    5 NET00074
+    6 NET00067
+    7 NET00057
+    8 NET00050
+}
+}
+{I ULS28XXH.PRT U16
+{CN
+    1 NET00169
+    2 NET00172
+    3 NET00175
+    4 NET00178
+    5 NET00185
+    6 NET00188
+    7 NET00191
+    8 NET00194
+    9 ?
+   10 VBL_2
+   11 NET00195
+   12 NET00192
+   13 NET00189
+   14 NET00186
+   15 NET00179
+   16 NET00176
+   17 NET00173
+   18 NET00170
+}
+}
+{I ULS28XXH.PRT U18
+{CN
+    1 NET00203
+    2 NET00206
+    3 NET00210
+    4 NET00214
+    5 NET00218
+    6 NET00223
+    7 NET00231
+    8 NET00235
+    9 ?
+   10 VBL_2
+   11 NET00236
+   12 NET00232
+   13 NET00224
+   14 NET00219
+   15 NET00215
+   16 NET00211
+   17 NET00207
+   18 NET00204
+}
+}
+}
+}
+}

@@ -1,0 +1,44 @@
+
+;PALASM Design Description
+;----------------------------------- Declaration Segment -----------
+
+TITLE    WIND & D/A PROCESSER MODULE U28
+PATTERN  
+REVISION 2.0
+AUTHOR   M.J.M
+COMPANY  JINYANG
+DATE     08/18/97
+
+CHIP  GATE  PALCE16V8
+;----------------------------------- PIN Declarations --------------
+
+PIN  1          A11                  COMBINATORIAL ; INPUT
+PIN  2          A12                  COMBINATORIAL ; INPUT
+PIN  3          A13                  COMBINATORIAL ; INPUT
+PIN  4          A14                  COMBINATORIAL ; INPUT
+PIN  5          A15                  COMBINATORIAL ; INPUT
+PIN  6          RD                   COMBINATORIAL ; INPUT
+PIN  7          WR                   COMBINATORIAL ; INPUT
+PIN  12         READ                 COMBINATORIAL ; OUTPUT
+PIN  13         WRITE                COMBINATORIAL ; OUTPUT
+PIN  14         CS_AD                COMBINATORIAL ; OUTPUT
+PIN  15         CS_SW                COMBINATORIAL ; OUTPUT
+PIN  16         CS_CH                COMBINATORIAL ; OUTPUT
+PIN  17         CS_DH                COMBINATORIAL ; OUTPUT
+PIN  18         CS_DL                COMBINATORIAL ; OUTPUT
+PIN  10         GND                                ;
+PIN  20         VCC                                ;
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+/READ  = /RD                                       ; Read
+/WRITE = /WR                                       ; Write
+/CS_AD =  A15 * /A14 * /A13 * /A12 * (/WR + /RD)   ; A/D select           (8000)
+/CS_SW =  A15 * /A14 * /A13 *  A12 * /RD           ; Switch select        (9000)
+ CS_CH =  A15 * /A14 *  A13 * /A12 * /WR           ; D/A channel select   (A000)
+ CS_DH =  A15 * /A14 *  A13 *  A12 * /WR           ; D/A data high select (B000)
+ CS_DL =  A15 *  A14 * /A13 * /A12 * /WR           ; D/A data low  select (C000)
+
+;----------------------------------- End ---------------------------
+

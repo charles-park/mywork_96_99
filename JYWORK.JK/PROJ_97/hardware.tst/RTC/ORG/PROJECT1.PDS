@@ -1,0 +1,39 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    Jong-Kil,PARK        PROJECT1
+PATTERN  
+REVISION 
+AUTHOR   
+COMPANY  
+DATE     01/16/97
+
+CHIP  DECODER  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A15                  COMBINATORIAL ; INPUT
+PIN  2          A14                  COMBINATORIAL ; INPUT
+PIN  3          A13                  COMBINATORIAL ; INPUT
+PIN  4          CRD                  COMBINATORIAL ; INPUT
+PIN  5          CWR                  COMBINATORIAL ; INPUT
+PIN  6          RESET                COMBINATORIAL ; INPUT
+PIN  7          PSEN                 COMBINATORIAL ; INPUT
+PIN  10         GND                  ; INPUT
+PIN  12         RAM                  COMBINATORIAL ; OUTPUT
+PIN  13         RTC                  COMBINATORIAL ; OUTPUT
+PIN  14         LCD                  COMBINATORIAL ; OUTPUT
+PIN  15         RSTH                 COMBINATORIAL ; OUTPUT
+PIN  16         RSTL                 COMBINATORIAL ; OUTPUT
+PIN  20         VCC                  ; INPUT
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/RAM  = (/CRD + /CWR) * /A15                  ; MEMORY ( S- RAM:0x0 )
+/RTC  = /A13 * /A14 * A15                     ; RTC Address(0x8000)
+ LCD  = (/CRD + /CWR) * /A13 * A14 * A15      ; LCD Address(0xC000)
+/RSTH = RESET                                 ; 8051 RESET
+/RSTL = /RESET                                ; RTC RESET
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

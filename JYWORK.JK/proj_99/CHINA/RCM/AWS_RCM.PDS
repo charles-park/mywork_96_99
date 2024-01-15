@@ -1,0 +1,43 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    96'AWS REMOTE CONTROLL PROCESSING MODULE
+PATTERN  
+REVISION 1.0
+AUTHOR   M.J.M
+COMPANY  JINYANG
+DATE     03/12/96
+
+CHIP  GATE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A12                  COMBINATORIAL ; INPUT
+PIN  2          A13                  COMBINATORIAL ; INPUT
+PIN  3          A14                  COMBINATORIAL ; INPUT
+PIN  4          A15                  COMBINATORIAL ; INPUT
+PIN  5          WR                   COMBINATORIAL ; INPUT 
+PIN  6          RD                   COMBINATORIAL ; INPUT
+PIN  10         GND                                ;
+PIN  11         SINT                 COMBINATORIAL ; INPUT
+PIN  12         INT1                 COMBINATORIAL ; OUTPUT
+PIN  13         STA                  COMBINATORIAL ; OUTPUT
+PIN  15         CS4                  COMBINATORIAL ; OUTPUT
+PIN  16         CS3                  COMBINATORIAL ; OUTPUT
+PIN  17         CS2                  COMBINATORIAL ; OUTPUT
+PIN  18         CS1                  COMBINATORIAL ; OUTPUT
+PIN  19         CS0                  COMBINATORIAL ; OUTPUT
+PIN  20         VCC                                ;
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/CS0  = /A15
+/CS1  =  A15 * /A14 * /A13 * /A12                  ; 8000H
+/CS4  =  A15 * /A14 * /A13 *  A12 * /RD            ; 9000H
+ CS2  =  A15 * /A14 *  A13 * /A12 * /RD            ; A000H
+ CS3  =  A15 * /A14 *  A13 *  A12 * /RD            ; B000H
+ STA  =  A15 * /A14 *  A13 * /WR                   ; A000H or B000H
+/INT1 =  SINT
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+;-------------------------------------------------------------------

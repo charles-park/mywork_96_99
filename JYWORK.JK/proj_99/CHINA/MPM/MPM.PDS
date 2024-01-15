@@ -1,0 +1,53 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    MAIN PROCESSER MODULE
+PATTERN  
+REVISION 1.0
+AUTHOR   M.J.M
+COMPANY  JINYANG
+DATE     11/11/95
+
+CHIP  GATE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          P1                   COMBINATORIAL ; INPUT 
+PIN  2          P2                   COMBINATORIAL ; INPUT 
+PIN  3          P3                   COMBINATORIAL ; INPUT 
+PIN  4          P4                   COMBINATORIAL ; INPUT 
+PIN  5          WR                   COMBINATORIAL ; INPUT 
+PIN  6          SQW                  COMBINATORIAL ; INPUT 
+PIN  7          RD                   COMBINATORIAL ; INPUT
+PIN  9          SINT1                COMBINATORIAL ; INPUT
+PIN  11         SINT2                COMBINATORIAL ; INPUT
+PIN  12         INT1                 COMBINATORIAL ; OUTPUT
+PIN  13         INT0                 COMBINATORIAL ; OUTPUT
+PIN  14         CS5                  COMBINATORIAL ; OUTPUT
+PIN  15         CS4                  COMBINATORIAL ; OUTPUT
+PIN  16         CS3                  COMBINATORIAL ; OUTPUT
+PIN  17         CS2                  COMBINATORIAL ; OUTPUT
+PIN  18         CS1                  COMBINATORIAL ; OUTPUT
+PIN  19         CS0                  COMBINATORIAL ; OUTPUT
+PIN  10         GND                                ;
+PIN  20         VCC                                ;
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/CS0  = /P4 * /P3 * /P2 * /P1
+/CS1  = /P4 * /P3 * /P2 *  P1
+/CS2  = /P4 * /P3 *  P2 * /P1
+/CS3  = /P4 * /P3 *  P2 *  P1
+ CS4  = /P4 *  P3 * /P2 * /P1 * /WR
+/CS5  = /P4 *  P3 * /P2 *  P1 *  WR * /RD
+/INT0 = /SQW
+/INT1 = SINT1 + SINT2
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+TRACE_ON INT1 SINT1 SINT2
+SETF /SINT1 /SINT2
+SETF SINT1 /SINT2
+SETF /SINT1 SINT2
+SETF SINT1 SINT2
+TRACE_OFF INT1 SINT1 SINT2
+;-------------------------------------------------------------------

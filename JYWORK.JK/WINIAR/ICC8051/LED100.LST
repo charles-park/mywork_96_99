@@ -1,0 +1,360 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12M/WIN                              15/Apr/98  11:03:00     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  large                                                                 #
+#           Source file   =  j:\common\aws100.up\led100ea\program\upgrade\led100.c                 #
+#           List file     =  led100.lst                                                            #
+#           Object file   =  led100.r03                                                            #
+#           Command line  =  j:\common\aws100.up\led100ea\program\upgrade\led100.c -RCODE          #
+#                            -Hj:\common\aws100 -e -K -z8 -gA -c -t4 -ml -h0 -Id:\winiar\inc\ -L   #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+      1            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+      2            #include <io51.h>
+      3            #include <math.h>
+      4            #include <stdio.h>
+      5            #include <stdlib.h>
+      6            #include "led100.h"
+      7            #include "serial.hpp"
+      8            #include "chk&cat.hpp"
+
+    asctoled(atoi(led_cat.wd  ), WD_SEN  ); asctoled(atoi(led_cat.ws  ), WS_SEN  );
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",78  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.wd  ), WD_SEN  ); asctoled(atoi(led_cat.ws  ), WS_SEN  );
+----------------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",78  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.temp), TEMP_SEN); asctoled(atoi(led_cat.pre ), PRE_SEN );
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",79  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.temp), TEMP_SEN); asctoled(atoi(led_cat.pre ), PRE_SEN );
+----------------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",79  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.humi), HUMI_SEN); asctoled(atoi(led_cat.ypre), YPRE_SEN);
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",80  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.humi), HUMI_SEN); asctoled(atoi(led_cat.ypre), YPRE_SEN);
+----------------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",80  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.pred), PRED_SEN); asctoled(atoi(led_cat.pres), PRES_SEN);
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",81  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.pred), PRED_SEN); asctoled(atoi(led_cat.pres), PRES_SEN);
+----------------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",81  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.dew ), DEW_SEN );
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",82  Error[128]: Function argument incompatible with its declaration
+
+    dd = atoi(time.day);
+----------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",101  Error[128]: Function argument incompatible with its declaration
+
+    time.ypre_save = atoi(led_cat.pre);
+-------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",126  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.wd  ), WD_SEN  ); asctoled(atoi(led_cat.ws  ), WS_SEN  );
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",127  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.wd  ), WD_SEN  ); asctoled(atoi(led_cat.ws  ), WS_SEN  );
+----------------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",127  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.temp), TEMP_SEN); asctoled(atoi(led_cat.pre ), PRE_SEN );
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",128  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.temp), TEMP_SEN); asctoled(atoi(led_cat.pre ), PRE_SEN );
+----------------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",128  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.humi), HUMI_SEN); asctoled(atoi(led_cat.pres), PRES_SEN);
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",129  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.humi), HUMI_SEN); asctoled(atoi(led_cat.pres), PRES_SEN);
+----------------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",129  Error[128]: Function argument incompatible with its declaration
+
+    asctoled(atoi(led_cat.dew ), DEW_SEN ); asctoled(time.ypre_disp,     YPRE_SEN);
+------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\chk&cat.hpp",130  Error[128]: Function argument incompatible with its declaration
+      9            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     10            #pragma memory=code
+     11            byte  NAME[30][60] = {
+     12               "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+
+   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+----------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\led100.c",12  Error[132]: Incompatible initializer
+     13               "[*]   JIN훊ANG  INDUSTRIAL.,CO LTD                       [*]",
+
+   "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+-----------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\led100.c",12  Error[16]: Identifier expected
+
+   "[*]   JIN훊ANG  INDUSTRIAL.,CO LTD                       [*]",
+-----------------------------------------------------------------^
+"j:\common\aws100.up\led100ea\program\upgrade\led100.c",13  Warning[14]: Type specifier missing; assumed "int"
+"j:\common\aws100.up\led100ea\program\upgrade\led100.c",13  Error[112]: ',' unexpected
+     14               "[*]  Program : PARK. JongKil   Date : 1998. 3. 11~      [*]",
+     15               "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     16               "[*]  Project NAME : LED 100 SET UPGRADE.                [*]",
+     17               "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     18               "[*]  BOARD : 98' LED BOARD( 10 CHANNEL )                [*]",
+     19               "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     20               "[*]  VERSION : 1.0                                      [*]",
+     21               "[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�[*]",
+     22            };
+
+};
+-^
+"j:\common\aws100.up\led100ea\program\upgrade\led100.c",22  Error[109]: ';' unexpected
+     23            #pragma memory=default
+     24            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     25            byte read_board_id(void)
+     26            {
+     27               byte  value1, value2, count = 0;
+     28            
+     29               watch();
+     30               value1 = input(JUMPER); // read jumper
+     31            
+     32               while(1) {
+     33                  value2 = input(JUMPER);
+     34                  if(value1 == value2) count++;
+     35                  else  {  count = 0;  value1 = input(JUMPER);}
+     36                  if(count > 10)       break;
+     37               }
+     38               value1 = (~value1);
+     39            
+     40               if(value1 == 0x80)         Test_Mode = ON ;
+     41               else                 Test_Mode = OFF;
+     42            
+     43               return (value1);
+     44            }
+     45            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     46            void delay(word count)
+     47            {
+     48               word  i;
+     49            
+     50               for(i=0; i<count; i++)     {  watch(); i++;  i--;  }
+     51            }
+     52            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     53            void display_grp_init(void)
+     54            {
+     55               word  i;
+     56               watch();
+     57            
+     58               for(i=0; i<CS_MAX * 2; i++)   {
+     59                  buf[i].disp   = ASCII_TBL[BLK];
+     60                  buf[i].on_off = ON;     buf[i].point  = OFF;
+     61               }
+     62               // display init
+     63               buf[WD_SEN   + 2].disp  = (ASCII_TBL[0] & ASCII_TBL[PNT]);
+     64               buf[WD_SEN   + 3].disp  =  ASCII_TBL[0];
+     65               buf[WS_SEN   + 2].disp  = (ASCII_TBL[0] & ASCII_TBL[PNT]);
+     66               buf[WS_SEN   + 3].disp  =  ASCII_TBL[0];
+     67               buf[TEMP_SEN + 2].disp  = (ASCII_TBL[0] & ASCII_TBL[PNT]);
+     68               buf[TEMP_SEN + 3].disp  =  ASCII_TBL[0];
+     69               buf[PRE_SEN  + 2].disp  = (ASCII_TBL[0] & ASCII_TBL[PNT]);
+     70               buf[PRE_SEN  + 3].disp  =  ASCII_TBL[0];
+     71               buf[HUMI_SEN + 2].disp  = (ASCII_TBL[0] & ASCII_TBL[PNT]);
+     72               buf[HUMI_SEN + 3].disp  =  ASCII_TBL[0];
+     73               buf[YPRE_SEN + 2].disp  = (ASCII_TBL[0] & ASCII_TBL[PNT]);
+     74               buf[YPRE_SEN + 3].disp  =  ASCII_TBL[0];
+     75               buf[PRED_SEN + 1].disp  =  FONT_TBL[2];   //'o'
+     76               buf[PRED_SEN + 2].disp  =  FONT_TBL[3];   //'F'
+     77               buf[PRED_SEN + 3].disp  =  FONT_TBL[4];   //'F'
+     78               buf[PRES_SEN + 3].disp  = (ASCII_TBL[0] & ASCII_TBL[PNT]);
+     79               buf[PRES_SEN + 4].disp  =  ASCII_TBL[0];
+     80               buf[DEW_SEN  + 2].disp  = (ASCII_TBL[0] & ASCII_TBL[PNT]);
+     81               buf[DEW_SEN  + 3].disp  =  ASCII_TBL[0];
+     82               LED_TX(OFF);            LED_RX(OFF);
+     83            }
+     84            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+     85            void com_port_init(void)
+     86            {
+     87               watch();
+     88               switch(Board_id)  {
+     89                  case  JY_LED0:    // old led
+     90                     init_serial_grp(&com1, INTERNAL, 0x0, BPS1200, M22, SMOD_OFF, NOT_USED, 1);
+     91                     init_serial_pro(&com1, 0, 36, rx_chk_jy0, rx_cat_jy0_dj);
+     92                     break;
+     93                  case  JY_LED1:    // Workstation protocol catch
+     94                     init_serial_grp(&com1, INTERNAL, 0x0, BPS4800, M22, SMOD_OFF, NOT_USED, 1);
+     95                     init_serial_pro(&com1, 0, 101, rx_chk_jy1, rx_cat_jy1);
+     96                     break;
+     97                  case  DAEJU_LED:     // daeju led
+     98                     init_serial_grp(&com1, INTERNAL, 0x0, BPS1200, M22, SMOD_OFF, NOT_USED, 1);
+     99                     init_serial_pro(&com1, 0, 37, rx_chk_dj, rx_cat_jy0_dj);
+    100                     break;
+    101                  default  :           // jy_led0
+    102                     init_serial_grp(&com1, INTERNAL, 0x0, BPS1200, M22, SMOD_OFF, NOT_USED, 1);
+    103                     init_serial_pro(&com1, 0, 36, rx_chk_jy0, rx_cat_jy0_dj);
+    104                     break;
+    105               }     set_protocol_flag(&com1, 0, ON);
+    106            }
+    107            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    108            void init_interrupt(void)
+    109            {
+    110               watch();
+    111               TMOD |= 0x01;  TH0 = 0xFD;    TL0 = 0;
+    112               enable(ET0);   enable(TR0);   enable(EA);
+    113            }
+    114            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    115            void transmit_check(void)
+    116            {
+    117               watch();
+    118               if(com1.tx_sp != com1.tx_ep)  {
+    119                  if(com1.tx_flag)  {
+    120                     disable(EA);
+    121                     SBUF = com1.tx_buf[com1.tx_sp++];
+    122                     enable(EA);
+    123                     if(com1.tx_sp >= BUFFER_SIZE) com1.tx_sp = 0;
+    124                     com1.tx_flag = OFF;
+    125                  }
+    126               }  else  com1.cat_flag = ON;
+    127            }
+    128            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    129            void receive_check(void)
+    130            {
+    131               watch();
+    132               if(com1.rx_sp != com1.rx_ep)  {
+    133                  if(com1.cat_flag == OFF)            return;
+    134                  protocol_event(&com1, com1.rx_buf[com1.rx_sp++]);
+    135                  if(com1.rx_sp >= BUFFER_SIZE) com1.rx_sp = 0;
+    136               }
+    137            }
+    138            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    139            interrupt [0x0B] void T0_int (void)
+    140            {
+    141               disable(TR0);  disable(TF0);
+    142               TH0 = 0xFE;    TL0 = 0x00;
+    143            
+    144               // jansang jaekur
+    145               output(LED_CS0, 0);  output(LED_CS1, 0);  output(LED_CS2, 0);
+    146            
+    147               if(D_on) {
+    148                  output(LED_L, buf[LED_L_BUF + Locate].disp);
+    149                  output(LED_H, ASCII_TBL[BLK]);
+    150                  D_on = OFF;
+    151               }  else  {
+    152                  output(LED_H, buf[LED_H_BUF + Locate].disp);
+    153                  output(LED_L, ASCII_TBL[BLK]);
+    154                  D_on = ON;
+    155               }
+    156            
+    157               if     (Cs_count == 0)     output(LED_CS0, Cs_data);
+    158               else if(Cs_count == 1)     output(LED_CS1, Cs_data);
+    159               else if(Cs_count == 2)     output(LED_CS2, Cs_data);
+    160            
+    161               if(D_on) {
+    162                  Cs_data = (Cs_data << 1);
+    163                  if(Cs_data == 0x0)   {
+    164                     Cs_data = 0x01;
+    165                     if(++Cs_count > 2)      Cs_count = 0;
+    166                  }
+    167                  if(++Locate >= 24)         Locate = 0;
+    168               }
+    169               enable(TR0);
+    170            }
+    171            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    172            interrupt [0x23] void SCON_int (void)
+    173            {
+    174               disable(ES);
+    175               if(RI)   {
+    176                  disable(RI);      LED_RX(ON);
+    177                  com1.rx_buf[com1.rx_ep++] = SBUF;
+    178                  if(com1.rx_ep >= BUFFER_SIZE)    com1.rx_ep = 0;
+    179               } else if(TI)  {
+    180                  disable(TI);      LED_TX(ON);
+    181                  if(com1.tx_sp != com1.tx_ep)  {
+    182                     SBUF = com1.tx_buf[com1.tx_sp++];
+    183                     if(com1.tx_sp >= BUFFER_SIZE) com1.tx_sp = 0;
+    184                  } else   {
+    185                     com1.tx_flag = ON;   LED_TX(OFF);
+    186                  }
+    187               }
+    188               enable(ES);
+    189            }
+    190            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    191            void struct_init(byte s_id, byte s_code)
+    192            {
+    193               watch();
+    194               feed.send[s_id].header  = 0xFFFF;   feed.send[s_id].cmd  = 'M'   ;
+    195               feed.send[s_id].sta  = 0x0   ;   feed.send[s_id].scode   = s_code;
+    196               feed.send[s_id].sid  = s_id  ;   feed.send[s_id].avr  = 0x0000;
+    197               feed.send[s_id].spc  = 0x0000;   feed.send[s_id].min  = 0x0000;
+    198               feed.send[s_id].max  = 0x0000;   feed.send[s_id].xor  = 0x00  ;
+    199               feed.send[s_id].tail    = 0xFFFE;
+    200            }
+    201            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    202            void init_variable(void)
+    203            {
+    204               watch();
+    205               Locate   = 0;     Board_id = 0x0;      Test_Mode = OFF;
+    206               Cs_data  = 0x01;  Cs_count = 0  ;
+    207            
+    208               // Yester Day Precipitation pros struct..
+    209               time.old_day = 0; time.ypre_save = 0;  time.ypre_disp = 0;
+    210            
+    211               // feedback led form initialize...
+    212               struct_init(Board_id + 0, WD_CODE  );  struct_init(Board_id + 1, WS_CODE  );
+    213                                             // ypre field min
+    214               struct_init(Board_id + 2, TEMP_CODE);  struct_init(Board_id + 3, PRE_CODE );
+    215               struct_init(Board_id + 4, HUMI_CODE);   struct_init(Board_id + 5, PRED_CODE);
+    216               struct_init(Board_id + 6, PRES_CODE);   struct_init(Board_id + 7, DEW_CODE );
+    217            }
+    218            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    219            void led_test(void)
+    220            {
+    221               word  i, j;
+    222               // LED TEST
+    223               watch();
+    224               for(j=0; j<13; j++)  {
+    225                  for(i=0; i<CS_MAX * 2; i++)   {
+    226                     buf[i].disp   = ASCII_TBL[j];
+    227                     buf[i].on_off = ON;     buf[i].point  = OFF;
+    228                  }
+    229                  delay(5000);   delay(5000);   delay(5000);
+    230               }
+    231            }
+    232            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    233            void main(void)
+    234            {
+    235               init_variable();           Board_id = read_board_id();
+    236               com_port_init();                init_interrupt();
+    237               display_grp_init();
+    238            
+    239               // testing....
+    240               if(Test_Mode)  {  while(1) {  led_test();    watch(); }  }
+    241            
+    242               while(1)
+    243               {
+    244                  watch();    receive_check();     transmit_check();
+    245               }
+    246            }
+    247            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    248            //[*]컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴[*]
+    249            
+    250            
+
+Errors: 22
+Warnings: 1
+

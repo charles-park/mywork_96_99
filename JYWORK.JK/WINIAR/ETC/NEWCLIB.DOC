@@ -1,0 +1,504 @@
+			- NEWCLIB.DOC -
+
+		NEWCLIB Release Information
+		===========================
+
+Created:	05/Mar/91
+
+Revised:	03/Dec/93
+		o The sscanf function returned a wrong value in some cases, if
+		  e.g. the format %*[-] was used.
+
+Revised:	10/Jan/94 [IHAW]
+		o cosh, sinh and tanh added in <math.h>.
+		o <assert.h> added.
+		o realloc now handles null-pointers correctly.
+		o The macros isalpha etc can now handle character-codes in
+		  range [0,256] if the macro __8_BIT_ASCII_WANTED is #defined
+		  before #including <ctype.h>.  Moreover isalpha etc has also
+		  been implemented as functions.
+
+Revised:	20/Apr/94 [IANB]
+		o setjmp.h has special declarations for ICCH8300
+
+------------------------------------------------------------------------------
+
+Some or all of the following library functions are currently NOT described in
+the manual:
+
+
+
+abort()
+
+Purpose: To terminate the program abnormally.
+
+Prototype:
+#include <stdlib.h>
+
+void abort(void);
+
+
+
+abs()
+
+Purpose: The abs function computes the absolute value of an integer.
+
+Prototype:
+#include <stdlib.h>
+
+int abs(int j);
+
+
+
+acos()
+
+Purpose: The acos function computes the principal valueof the arc cosine 
+of x. Argument should be in the range [-1, +1]. The return value is in 
+the range [0, pi].
+
+Prototype:
+#include <math.h>
+
+double acos(double x);
+
+
+
+asin()
+
+Purpose: The asin function computes the principal value of the arc sine of x. 
+The argument should be in the range [-1, +1]. The return value is in the 
+range [-pi/2, +pi/2].
+
+Prototype:
+#include <math.h>
+
+double asin(double x);
+
+
+
+assert()
+
+Purpose: The assert macro issues a diagnostic and calls the abort function if
+the asserted expression fails. If the macro NDEBUG is defined when <assert.h>
+is included the assert macro is 'disarmed'.
+
+
+Prototype:
+#include <assert.h>
+
+void assert(int expression);
+
+
+
+ceil()
+
+Purpose: Computes and returns the smallest integral value not less than x.
+
+Prototype:
+#include <math.h>
+
+double ceil(double x);
+
+
+
+cosh()
+
+Purpose: The cosh function computes the hyperbolic cosine of x.
+
+Prototype:
+#include <math.h>
+
+double cosh(double x);
+
+
+
+div()
+
+Purpose: Computes the quotient and remainder of the division of the 
+numerator numer by the denominator denom. If the division is inexact, 
+the resulting quotient is the integer of lesser magnitude that is the 
+nearest to the algebraic quotient. The div function returns a structure 
+of type div_t, comprising both the quotient and the remainder (see stdlib.h 
+for the structure). quot * denom + rem shall equal numer.
+
+Prototype:
+#include <stdlib.h>
+
+div_t div(int numer, int denom);
+
+
+
+fabs()
+
+Purpose: computes the absolute value of a floating-point number.
+
+Prototype:
+#include <math.h>
+
+double fabs(double x);
+
+
+
+floor()
+
+Purpose: Computes and returns the largest integral value not 
+greater than x.
+
+Prototype:
+#include <math.h>
+
+Double floor(double x);
+
+
+
+fmod()
+
+Purpose: Computes the floating-point remainder of x/y, i.e. the value 
+x - i * y, for some integer i such that, if y is nonzero, the result 
+has the same sign as x and magnitude less than the magnitude of y.
+
+Prototype:
+#include <math.h>
+
+double fmod(double x, double y);
+
+
+
+labs()
+
+Purpose: computes the absolute value of an long integer j.
+
+Prototype:
+#include <stdlib.h>
+
+long int labs(long int j);
+
+
+
+ldexp()
+
+Purpose: The ldexp function returns the value of the floating-point 
+number x multplied by 2 raised by an integral exp.
+
+Prototype:
+#include <math.h>
+
+double ldexp(double x,int exp);
+
+
+
+ldiv()
+
+Purpose: Computes the quotient and remainder of the division 
+of the numerator numer by the denominator denom. If the division 
+is inexact, the resulting quotient is the long integer of lesser 
+magnitude that is the nearest to the algebraic quotient. The div 
+function returns a structure of type ldiv_t, comprising both the 
+quotient and the remainder (see stdlib.h for the structure). 
+quot * denom + rem shall equal numer.
+
+Prototype:
+#include <stdlib.h>
+
+ldiv_t ldiv(long int numer, long int denom);
+
+
+
+memchr()
+
+Purpose: The memchr locates the first occurrence of c (converted 
+to an unsigned char) in the initial n characters (each interpreted 
+as unsigned char) of the object pointed to by s. It returns a pointer 
+to the located character, or a null pointer if the character does not 
+occur in the object.
+
+Prototype:
+#include <string.h>
+
+void *memchr(const void *s, int c, size_t n);
+
+
+
+memcmp()
+
+Purpose: The memcmp function compares the first n characters of the 
+object pointed to by s1 to the first n characters of the object 
+pointed to by s2. It returns an integer greater than, equal to, or 
+less than zero, accordingly as the object pointed to by s1 is greater 
+than, equal to, or less than the objetc pointed to by s2 
+
+Prototype:
+#include <string.h>
+
+int memcmp(const void *s1, const void *s2, size_t n);
+
+
+
+memcpy()
+
+Purpose: The memcpy function copies n characters from the object 
+pointed to by s2 into the object pointed to by s1. If copying takes 
+place between objects that overlap, the behavior is undefined (see memmove). 
+It returns the value of s1.
+
+Prototype:
+#include <string.h>
+
+void *memcpy(void *s1, const void *s2, size_t n);
+
+
+
+memmove()
+
+Purpose: The memmove function copies n characters from the object 
+pointed to by s2 into the object pointed to by s1. Copying takes 
+place as if the n characters from the object pointed to by s2 are 
+first copied into a temporary array of n characters that does not 
+overlap the objects pointed to by s1 and s2, and then the n characters 
+from the temporary array are copied into the object pointed to by s1 
+(see memcpy). It returns the value of s1.
+
+Prototype:
+#include <string.h>
+
+void *memmove(void *s1, const void *s2, size_t n);
+
+
+
+memset()
+
+Purpose: The memset function copies the value of c (converted to an 
+unsigned char) into each of the first n characters of the object 
+pointed to by s. It returns the value of s.
+
+Prototype:
+#include <string.h>
+
+void *memset(void *s, int c, size_t n);
+
+
+
+puts()
+
+Purpose: The puts function writes the string pointed to by s to the 
+standard output, and appends a new-line character to the output. It 
+returns EOF (-1) if errors occur, otherwise it returns a nonnegative value.
+
+Prototype:
+#include <stdio.h>
+
+int puts(const char *s);
+
+
+
+rand()
+
+Purpose: The rand function computes a sequence of pseudo-random 
+integers in the 0 to RAND_MAX. It returns a pseudo-random integer. 
+See srand for a description of the pseudo-random sequences.
+
+Prototype:
+#include <stdlib.h>
+
+int rand(void);
+
+
+
+sinh()
+
+Purpose: The sinh function computes the hyperbolic sine of x.
+
+Prototype:
+#include <math.h>
+
+double sinh(double x);
+
+
+
+srand()
+
+Purpose: The srand function uses the argument as a seed for a new 
+sequence of pseudo-random numbers to be returned by subsequent calls 
+to rand. If then srand is then called with the same seed value,the 
+sequence of pseudo-random numbers shall be repeated. If rand is called 
+before any calls to srand have been made, the same sequence shall be 
+generated as when srand is first called with a seed value of 1.
+
+Prototype:
+#include <stdlib.h>
+
+void srand(unsigned int seed);
+
+
+
+strchr()
+
+Purpose: The strchr function locates the first occurrence of c (converted 
+to a char) in the string pointed to by s. The terminating null character 
+is considered to be part of the string. It returns a pointer to the locate
+d character, or a null pointer if the character does not occur in the string.
+
+Prototype:
+#include <string.h>
+
+char *strchr(const char *s, int c);
+
+
+
+strcoll()
+
+Purpose: The strcoll function compares the string pointed to by s1 to the 
+string pointed to by s2. It returns an integer greater than, equal to, 
+or less than zero, accordingly as the string pointed to by s1 is greater 
+than, equal to, or less than the string pointed to by s2.
+
+Prototype:
+#include <string.h>
+
+int strcoll(const char *s1, const char *s2);
+
+
+
+strcspn()
+
+Purpose: The strcspn function computes the length of the maximum initial 
+segment of the string pointed to by s1 which consists entirely of 
+characters not from the string pointed to by s2. It returns the length.
+
+Prototype:
+#include <string.h>
+
+size_t strcspn(const char *s1, const char *s2);
+
+
+
+strpbrk()
+
+Purpose: The strpbrk function locates the first occurrence in the string 
+pointed to by s1 of any character from the string pointed to by s2. 
+It returns a pointer to the character, or a null pointer if no character 
+from s2 occurs in s1.
+
+Prototype:
+#include <string.h>
+
+char *strpbrk(const char *s1, const char *s2);
+
+
+
+strrchr()
+
+Purpose: The strrchr function locates the last occurrence of c (converted 
+to a char) in the string pointed to by s. The terminating null character 
+is considered to be part of the string. It returns a pointer to the located 
+character, or a null pointer if the character does not occur in the string.
+
+Prototype:
+#include <string.h>
+
+char *strrchr(const char *s, int c);
+
+
+
+strspn()
+
+Purpose: The strspn function computes the length of the maximum initial 
+segment of the string pointed to by s1 which consists entirely of characters 
+from the string pointed to by s2. It returns the length.
+
+Prototype:
+#include <string.h>
+
+size_t  strspn(const char *s1, const char *s2);
+
+
+
+strstr()
+
+Purpose: The strstr function locates the first occurrence in the string 
+pointed to by s1 of the sequence of characters (excluding the terminating 
+null character) in the string pointed to by s2. It returns a pointer to 
+the located string, or a null pointer if the string is not found. 
+If s2 points to a string with zero length, the functions returns s1.
+
+Prototype:
+#include <string.h>
+
+char *strstr(const char *s1, const char *s2);
+
+
+
+strtod()
+
+Purpose: The strtod function converts a sequence, resembling a 
+floating-point constant, found in the string pointed to by nptr to 
+a double. The function returns the double, or if no floating-point 
+constant is found it returns zero. The endptr will point to the first 
+character in the string after the floating-point constant if there is 
+such a constant, else endptr will have the value of nptr.
+
+Prototype:
+#include <stdlib.h>
+
+double strtod(const char *nptr, char **endptr);
+
+
+
+strtol()
+
+Purpose: The strtol function converts a sequence, resembling an integer 
+constant, found in the string pointed to by nptr to a long integer. 
+The function returns the long integer, or if no integer constant is found 
+it returns zero. The endptr will point to the first character in the string 
+after the integer constant if there is such a constant, else endptr will 
+have the value of nptr. 
+
+If the base is zero the sequence expected is an ordinary integer, else the 
+expected sequence is an integer consisting of digits and letters 
+representing an integer with the radix specified by base (must be between 
+2 and 36). The letters from a (A) through z (Z) are ascribed the values 
+10 through 35. If the base is 16, the 0x portion of an hex integer is 
+allowed as initial sequence.
+
+Prototype:
+#include <stdlib.h>
+
+long int strtol(const char *nptr, char **endptr, int base);
+
+
+
+strtoul()
+
+Purpose: The strtoul function converts a sequence, resembling an integer 
+constant, found in the string pointed to by nptr to an unsigned long 
+integer. The function returns the unsigned long integer, or if no integer 
+constant is found it returns zero. The endptr will point to the first 
+character in the string after the integer constant if there is such a 
+constant, else endptr will have the value of nptr. 
+
+If the base is zero the sequence expected is an ordinary integer, else 
+the expected sequence is an integer consisting of digits and letters 
+representing an integer with the radix specified by base (must be between 
+2 and 36). The letters from a (A) through z (Z) are ascribed the values 
+10 through 35. If the base is 16, the 0x portion of an hex integer is 
+allowed as initial sequence.
+
+Prototype:
+#include <stdlib.h>
+
+unsigned long int strtoul(const char *nptr, char **endptr, bases int);
+
+
+tanh()
+
+Purpose: The tanh function computes the hyperbolic tangent of x.
+
+Prototype:
+#include <math.h>
+
+double tanh(double x);
+
+
+
+			- NEWCLIB.DOC -
+

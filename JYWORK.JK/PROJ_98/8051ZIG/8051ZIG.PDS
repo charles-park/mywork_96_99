@@ -1,0 +1,45 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    8051 ZIG GAL(ADDRESS DECODER)
+PATTERN  
+REVISION 1.0
+AUTHOR   JK. PARK
+COMPANY  JINYANG
+DATE     3/10/98
+
+CHIP  DECODE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A15                  COMBINATORIAL ; INPUT
+PIN  2          A14                  COMBINATORIAL ; INPUT
+PIN  3          A13                  COMBINATORIAL ; INPUT
+PIN  4          RD                   COMBINATORIAL ; INPUT
+PIN  5          WR                   COMBINATORIAL ; INPUT
+PIN  6          TXD                  COMBINATORIAL ; INPUT
+PIN  7          RX                   COMBINATORIAL ; INPUT
+PIN  10         GND                                ; INPUT
+PIN  12         RAM                  COMBINATORIAL ; OUTPUT
+PIN  13         CS0                  COMBINATORIAL ; OUTPUT
+PIN  14         CS1                  COMBINATORIAL ; OUTPUT
+PIN  15         CS2                  COMBINATORIAL ; OUTPUT
+PIN  16         TX                   COMBINATORIAL ; OUTPUT
+PIN  17         RXD                  COMBINATORIAL ; OUTPUT
+PIN  18         READ                 COMBINATORIAL ; OUTPUT
+PIN  19         WRITE                COMBINATORIAL ; OUTPUT
+PIN  20         VCC                                ; INPUT
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+
+/RAM       = /A15 * (/RD  + /WR)                         ; RAM 0x0000 ~ 0x7FFF
+/CS0       =  A15 *  /A14 * /A13 * (/RD + /WR)           ; CS0 0x8000 ~ 0x9FFF
+/CS1       =  A15 *  /A14 *  A13 * (/RD + /WR)           ; CS1 0xA000 ~ 0xBFFF
+/CS2       =  A15 *   A14 * /A13 * (/RD + /WR)           ; CS2 0xC000 ~ 0xDFFF
+/TX        = /TXD                                        ; TXD Convert
+/RXD       = /RX                                         ; RXD Convert
+/READ      = /RD                                         ; RD  Convert
+/WRITE     = /WR                                         ; WR  Convert
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

@@ -1,0 +1,54 @@
+PROJECT1.pds
+
+PALASM90  PARSER   - MARKET RELEASE (2-14-90)
+ (C) - COPYRIGHT ADVANCED MICRO DEVICES INC., 1990
+
+
+                    ***********************************
+                    *     PALASM PARSER LISTING       *
+                    ***********************************
+
+LINE #   |----+----1----+----2----+----3----+----4----+----5----+----6----+
+   1     |;PALASM Design Description
+   2     |
+   3     |;---------------------------------- Declaration Segment ------------
+   4     |TITLE    Jong-Kil,PARK        PROJECT1
+   5     |PATTERN  
+   6     |REVISION 
+   7     |AUTHOR   
+   8     |COMPANY  
+   9     |DATE     01/16/97
+  10     |
+  11     |CHIP  DECODER  PALCE16V8
+  12     |
+  13     |;---------------------------------- PIN Declarations ---------------
+  14     |PIN  1          A15                  COMBINATORIAL ; INPUT
+  15     |PIN  2          A14                  COMBINATORIAL ; INPUT
+  16     |PIN  3          A13                  COMBINATORIAL ; INPUT
+  17     |PIN  4          CRD                  COMBINATORIAL ; INPUT
+  18     |PIN  5          CWR                  COMBINATORIAL ; INPUT
+  19     |PIN  6          RESET                COMBINATORIAL ; INPUT
+  20     |PIN  7          PSEN                 COMBINATORIAL ; INPUT
+  21     |PIN  10         GND                  ; INPUT
+  22     |PIN  12         RAM                  COMBINATORIAL ; OUTPUT
+  23     |PIN  13         RTC                  COMBINATORIAL ; OUTPUT
+  24     |PIN  14         LCD                  COMBINATORIAL ; OUTPUT
+  25     |PIN  15         RSTH                 COMBINATORIAL ; OUTPUT
+  26     |PIN  16         RSTL                 COMBINATORIAL ; OUTPUT
+  27     |PIN  20         VCC                  ; INPUT
+  28     |
+  29     |;----------------------------------- Boolean Equation Segment ------
+  30     |EQUATIONS
+  31     |/RAM  = (/CRD + /CWR) * /A15                  ; MEMORY ( S- RAM:0x0 )
+  32     |/RTC  = /A13 * /A14 * A15                     ; RTC Address(0x8000)
+  33     | LCD  = (/CRD + /CWR) * /A13 * A14 * A15      ; LCD Address(0xC000)
+  34     |/RSTH = RESET                                 ; 8051 RESET
+  35     |/RSTL = /RESET                                ; RTC RESET
+  36     |;----------------------------------- Simulation Segment ------------
+  37     |SIMULATION
+  38     |
+  39     |;-------------------------------------------------------------------
+
+ %% PARSE %%    No errors.  No warnings.
+
+ %% PARSE %%    File processed successfully.    File:  PROJECT1.pds

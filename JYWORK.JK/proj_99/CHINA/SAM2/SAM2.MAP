@@ -1,0 +1,24 @@
+################################################################################
+#                                                                              #
+#      IAR Universal Linker V4.48F/386                                         #
+#                                                                              #
+#           Link time     =  24/Mar/99  18:45:54                               #
+#           Target CPU    =  8051                                              #
+#           List file     =  sam2.map                                          #
+#           Output file 1 =  sam2.hex                                          #
+#           Output format =  intel-standard                                    #
+#           Command line  =  -f SAM2 (-c8051 -D_R=0                            #
+#                            -Z(CODE)INTVEC,RCODE,D_CDATA,I_CDATA,X_CDATA,     #
+#                            C_ICALL,C_RECFN,CSTR,CCSTR,CODE,CONST=0           #
+#                            -Z(XDATA)C_ARGX,X_UDATA,X_IDATA,ECSTR,RF_XDATA=0  #
+#                            -Z(DATA)C_ARGD,D_UDATA,D_IDATA=28                 #
+#                            -Z(IDATA)C_ARGI,I_UDATA,I_IDATA,CSTACK            #
+#                            -Z(BIT)C_ARGB,BITVARS=0                           #
+#                            -e_medium_write=_formatted_write                  #
+#                            -e_medium_read=_formatted_read cl8051l sam2 -o    #
+#                            sam2.hex -x -l sam2.map -Fintel-standard)         #
+#                                                                              #
+#                                               (c) Copyright IAR Systems 1996 #
+################################################################################
+
+Error[12]: Unable to open file cl8051l.r03

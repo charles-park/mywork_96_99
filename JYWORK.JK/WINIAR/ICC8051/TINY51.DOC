@@ -1,0 +1,15 @@
+
+			   - TINY51.DOC -
+
+
+	Created: 20/Dec/92	IANB
+	Revised:
+
+
+	The source files for the TINY51 may differ sometimes compared
+	to the description in the manual. The functionallity has not
+	changed, we have just optimised the code a bit.
+
+	Note that EXMPL1.C and EXMPL2.C are the only examples you can run
+	in the C-SPY simulator. The other examples need the timer function
+	which is not supported by the C-SPY simulator.

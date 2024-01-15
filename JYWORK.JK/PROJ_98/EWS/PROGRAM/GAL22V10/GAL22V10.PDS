@@ -1,0 +1,54 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    EWS-DISPLAY BOARD
+PATTERN  
+REVISION 
+AUTHOR   JK,PARK
+COMPANY  JINYANG INC.
+DATE     98/08/10
+
+CHIP  DECOD  PALCE22V10
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          A8                   COMBINATORIAL ; INPUT
+PIN  2          A9                   COMBINATORIAL ; INPUT
+PIN  3          A10                  COMBINATORIAL ; INPUT
+PIN  4          A11                  COMBINATORIAL ; INPUT
+PIN  5          A12                  COMBINATORIAL ; INPUT
+PIN  6          A13                  COMBINATORIAL ; INPUT
+PIN  7          A14                  COMBINATORIAL ; INPUT
+PIN  8          A15                  COMBINATORIAL ; INPUT
+PIN  9          RD                   COMBINATORIAL ; INPUT
+PIN  10         WR                   COMBINATORIAL ; INPUT
+PIN  12         GND                  ; INPUT
+PIN  14         CS7                  COMBINATORIAL ; OUTPUT
+PIN  15         CS6                  COMBINATORIAL ; OUTPUT
+PIN  16         CS5                  COMBINATORIAL ; OUTPUT
+PIN  17         CS4                  COMBINATORIAL ; OUTPUT
+PIN  18         CS3                  COMBINATORIAL ; OUTPUT
+PIN  19         CS2                  COMBINATORIAL ; OUTPUT
+PIN  20         CS1                  COMBINATORIAL ; OUTPUT
+PIN  21         CS0                  COMBINATORIAL ; OUTPUT
+PIN  22         IDV                  COMBINATORIAL ; OUTPUT
+PIN  23         LOUT                 COMBINATORIAL ; OUTPUT
+PIN  24         VCC                 ; INPUT
+
+;----------------------------------- Boolean Equation Segment ------
+
+EQUATIONS
+ LOUT =  /WR *  A15 * /A14 * /A13 * /A12                 ; 8000h   LED DISP
+/IDV  =  /RD *  A15 * /A14 * /A13 *  A12                 ; 9000h   jumper
+ CS0  =  /WR *  A15 * /A14 *  A13 * /A12 * /A11 * /A10   ; A000h   COM1
+ CS1  =  /WR *  A15 * /A14 *  A13 * /A12 *  A11 * /A10   ; A800h   COM2
+ CS2  =  /WR *  A15 * /A14 *  A13 *  A12 * /A11 * /A10   ; B000h   DRV1
+ CS3  =  /WR *  A15 * /A14 *  A13 *  A12 * /A11 *  A10   ; B400h   DRV2
+ CS4  =  /WR *  A15 * /A14 *  A13 *  A12 *  A11 * /A10   ; B800h   DRV3
+/CS5  = (/RD + /WR) *  A15 *  A14 * /A13 * /A12          ; C000h   RTCC
+/CS6  =  /RD *  A15 *  A14 * /A13 *  A12                 ; D000h   KEY
+/CS7  = (/RD + /WR) *  A15 *  A14 *  A13 * /A12          ; E000h   SERIAL
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

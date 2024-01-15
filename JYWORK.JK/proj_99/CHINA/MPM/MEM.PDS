@@ -1,0 +1,43 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    BUFFER MEMORY BOARD
+PATTERN  
+REVISION 
+AUTHOR   
+COMPANY  JINYANG
+DATE     11/26/95
+
+CHIP  GAYE  PALCE16V8
+
+;---------------------------------- PIN Declarations ---------------
+PIN  1          P1                   COMBINATORIAL ; INPUT 
+PIN  2          P2                   COMBINATORIAL ; INPUT 
+PIN  3          P3                   COMBINATORIAL ; INPUT 
+PIN  4          P4                   COMBINATORIAL ; INPUT 
+PIN  10         GND                             ;       
+PIN  12         RCS7                 COMBINATORIAL ; OUTPUT
+PIN  13         RCS6                 COMBINATORIAL ; OUTPUT
+PIN  14         RCS5                 COMBINATORIAL ; OUTPUT
+PIN  15         RCS4                 COMBINATORIAL ; OUTPUT
+PIN  16         RCS3                 COMBINATORIAL ; OUTPUT
+PIN  17         RCS2                 COMBINATORIAL ; OUTPUT
+PIN  18         RCS1                 COMBINATORIAL ; OUTPUT
+PIN  19         RCS0                 COMBINATORIAL ; OUTPUT
+PIN  20         VCC                             ;       
+
+;----------------------------------- Boolean Equation Segment ------
+EQUATIONS
+/RCS0  =  P4 * /P3 * /P2 * /P1
+/RCS1  =  P4 * /P3 * /P2 *  P1
+/RCS2  =  P4 * /P3 *  P2 * /P1
+/RCS3  =  P4 * /P3 *  P2 *  P1
+/RCS4  =  P4 *  P3 * /P2 * /P1
+/RCS5  =  P4 *  P3 * /P2 *  P1
+/RCS6  =  P4 *  P3 *  P2 * /P1
+/RCS7  =  P4 *  P3 *  P2 *  P1
+
+;----------------------------------- Simulation Segment ------------
+SIMULATION
+
+;-------------------------------------------------------------------

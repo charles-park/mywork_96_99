@@ -1,0 +1,143 @@
+####################################################################################################
+#                                                                                                  #
+#     Micro Series 8051 C-Compiler V5.12M/WIN                              13/Apr/98  13:22:49     #
+#     Front end V4.04                                                                              #
+#     Global Optimizer V1.00E                                                                      #
+#                                                                                                  #
+#           Target option =  8051                                                                  #
+#           Memory model  =  large                                                                 #
+#           Source file   =  test.c                                                                #
+#           List file     =  test.lst                                                              #
+#           Object file   =  test.r03                                                              #
+#           Command line  =  test.c -e -K -RCODE -L -x -ml -z8 -h0 -gAO -Id:\winiar\inc\           #
+#                                                                                                  #
+#                                                                   (c) Copyright IAR Systems 1994 #
+####################################################################################################
+
+      1            #include <io51.h>
+      2            #include <stdio.h>
+      3            
+      4            #define  watch()     P1.7  = 1 - P1.7
+      5            
+      6            void delay(unsigned int count)
+      7            {
+      8               unsigned int i;
+      9               for(i=0; i<count ;i++)   { i++;  i--;  }
+     10            }
+     11            
+     12            void main(void)
+     13            {
+     14               while(1) {
+     15                  watch();
+     16                  P1 = 0xff;
+     17                  delay(10000);
+     18                  P1 = 0x00;
+     19               }
+     20            }
+
+
+                                       S Y M B O L - T A B L E
+                                       =======================
+
+
+            #include file(s):
+
+       [1]       d:\winiar\inc\io51.h
+       [2]       d:\winiar\inc\stdio.h
+
+
+            Symbol                     Type     Mem     Class   Defline   Refline(s)
+            ------                     ----     ---     -----   -------   ----------
+
+AC                                      bit             ---       49:1  
+ACC                                     sfr             ---       20:1  
+B                                       sfr             ---       21:1  
+CP_RL2                                  bit             ---      117:1  
+CY                                      bit             ---       48:1  
+C_T2                                    bit             ---      116:1  
+DPH                                     sfr             ---       24:1  
+DPL                                     sfr             ---       23:1  
+EA                                      bit             ---       69:1  
+ES                                      bit             ---       71:1  
+ET0                                     bit             ---       74:1  
+ET1                                     bit             ---       72:1  
+ET2                                     bit             ---       70:1  
+EX0                                     bit             ---       75:1  
+EX1                                     bit             ---       73:1  
+EXEN2                                   bit             ---      114:1  
+EXF2                                    bit             ---      111:1  
+F0                                      bit             ---       50:1  
+IE                                      sfr             ---       32:1  
+IE0                                     bit             ---       64:1  
+IE1                                     bit             ---       62:1  
+INT0                                    bit             ---       93:1  
+INT1                                    bit             ---       92:1  
+IP                                      sfr             ---       33:1  
+IT0                                     bit             ---       65:1  
+IT1                                     bit             ---       63:1  
+MEMORY_ATTRIBUTE                    #define             ---       38:2       41:2     42:2     43:2     44:2
+                                                                             45:2     46:2     47:2     48:2
+OV                                      bit             ---       53:1  
+P                                       bit             ---       54:1  
+P0                                      sfr             ---       15:1  
+P1                                      sfr             ---       16:1         15       15       16       18
+P2                                      sfr             ---       17:1  
+P3                                      sfr             ---       18:1  
+PCON                                    sfr             ---       25:1  
+PS                                      bit             ---       80:1  
+PSW                                     sfr             ---       19:1  
+PT0                                     bit             ---       83:1  
+PT1                                     bit             ---       81:1  
+PT2                                     bit             ---       79:1  
+PX0                                     bit             ---       84:1  
+PX1                                     bit             ---       82:1  
+RB8                                     bit             ---      104:1  
+RCAP2H                                  sfr             ---       38:1  
+RCAP2L                                  sfr             ---       37:1  
+RCLK                                    bit             ---      112:1  
+RD                                      bit             ---       88:1  
+REN                                     bit             ---      102:1  
+RI                                      bit             ---      106:1  
+RS0                                     bit             ---       52:1  
+RS1                                     bit             ---       51:1  
+RXD                                     bit             ---       95:1  
+SBUF                                    sfr             ---       35:1  
+SCON                                    sfr             ---       34:1  
+SM0                                     bit             ---       99:1  
+SM1                                     bit             ---      100:1  
+SM2                                     bit             ---      101:1  
+SP                                      sfr             ---       22:1  
+T0                                      bit             ---       91:1  
+T1                                      bit             ---       90:1  
+T2CON                                   sfr             ---       36:1  
+TB8                                     bit             ---      103:1  
+TCLK                                    bit             ---      113:1  
+TCON                                    sfr             ---       26:1  
+TF0                                     bit             ---       60:1  
+TF1                                     bit             ---       58:1  
+TF2                                     bit             ---      110:1  
+TH0                                     sfr             ---       30:1  
+TH1                                     sfr             ---       31:1  
+TH2                                     sfr             ---       40:1  
+TI                                      bit             ---      105:1  
+TL0                                     sfr             ---       28:1  
+TL1                                     sfr             ---       29:1  
+TL2                                     sfr             ---       39:1  
+TMOD                                    sfr             ---       27:1  
+TR0                                     bit             ---       61:1  
+TR1                                     bit             ---       59:1  
+TR2                                     bit             ---      115:1  
+TXD                                     bit             ---       94:1  
+WR                                      bit             ---       89:1  
+__TID__                             #define             ---          0       50:2
+delay                              function    code    public        7         17
+main                               function    code    public       13  
+watch                               #define             ---          4         15
+
+
+Errors: none
+Warnings: none
+Code size: 72
+Constant size: 0
+Static variable size: Data(0) Idata(0) Bit(0) Xdata(0)
+

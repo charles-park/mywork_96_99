@@ -1,0 +1,79 @@
+	MODULE	?BANK_SWITCHER_L18
+	TITL	'8051 - C - BANK-SWITCHER'
+	RSEG	RCODE	
+;---------------------------------------------------------------;
+;								;
+;			- L18.S03 -				;
+;								;
+;	Function(s):	Banked swiched CALL and RET		;
+;								;
+;	Must be tailored for actual bank-switching hardware.	;
+;	In the sample system the P1 port was used.		;
+;								;
+;	Version: 5.00 [IMAF]					;
+;								;
+;---------------------------------------------------------------;
+
+
+;---------------------------------------;
+;					;
+;	Call a non-local function	;
+;					;
+;---------------------------------------;
+;					;
+;	Inputs:				;
+;         Stack: 16-bit return address  ;
+;	  DPTR: 16-bit function-address	;
+;	  A: 8-bit page address		;
+;					;
+;---------------------------------------;
+
+	PUBLIC	?X_CALL_L18
+
+?X_CALL_L18:
+;===========================;
+;       Save old bank	    ;
+;===========================;
+;			    ;
+	PUSH	P1	    ;
+;			    ;
+;===========================;
+;       Bank-switch	    ;
+;===========================;
+;			    ;
+	MOV	P1,A	    ;
+;			    ;
+;===========================;
+;	Go to function      ;
+;===========================;
+
+	CLR	A
+	JMP	@A+DPTR
+
+;---------------------------------------;
+;					;
+;	Leave current function		;
+;					;
+;---------------------------------------;
+;					;
+;	Input:				;
+;	  Stack: 24-bit return address  ;
+;					;
+;---------------------------------------;
+
+	PUBLIC	?X_RET_L18
+
+?X_RET_L18:
+;===========================;
+;       Bank-switch	    ;
+;===========================;
+;			    ;
+	POP	P1	    ;
+;			    ;
+;===========================;
+;	Return              ;
+;===========================;
+
+	RET
+
+	END
